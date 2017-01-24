@@ -1,5 +1,5 @@
 ---
-title: "Biol 607: Intro to Computational Data Analysis for Biology"
+title: "Biol 609: Advanced Data Analysis for Biology"
 ---
 
 ```{r demoplot, fig.align='center', echo=FALSE, fig.height=4, fig.width=6, cache=TRUE, warning=FALSE, message=FALSE, comment=NA, results="hide"}
