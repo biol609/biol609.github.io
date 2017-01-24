@@ -1,0 +1,205 @@
+---
+title: 
+output:
+  revealjs::revealjs_presentation:
+    reveal_options:
+      slideNumber: true
+      previewLinks: true
+    theme: white
+    center: false
+    transition: fade
+    self_contained: false
+    lib_dir: libs
+    css: style.css
+
+---
+
+## {data-background="images/01/gorgeous-wildflowers-37110-37953-hd-wallpapers.jpg"}
+
+<br><br><center><div style="font-size: 2em;font-weight: bold; color:black;background-color:white;opacity:0.8;"> Advanced Data Analysis for Biology</div>  
+  
+  
+<div style="background-color:white;font-size:1em;opacity:0.8;">Jarrett Byrnes  
+UMass Boston  
+https://biol609.github.io/</span></center>
+
+```{r prep, echo=FALSE, cache=FALSE, message=FALSE, warning=FALSE}
+library(knitr)
+opts_chunk$set(fig.height=4.5, comment=NA, 
+               warning=FALSE, message=FALSE, 
+               dev="jpeg", echo=FALSE)
+library(tidyverse)
+library(ggplot2)
+```
+
+
+## First, SomeNew Technology
+https://etherpad.wikimedia.org/p/609-intro
+
+- This class will use collaborative note-taking
+
+- Research shows that this enhances learning!
+
+- It's also a way to ask me a question during class
+
+## Second, Some Old Technology
+![](images/01/sticky-note-color-clipart.jpeg){width="30%"}
+
+> - Green: Party on, Wayne 
+> - Red: I fell off the understanding wagon  
+> - Blue: Write a question/Other
+
+
+## Outline for Today
+1. Who are you?  
+  
+2. How will this course work?   
+  
+3. What are we doing here?  
+  
+4. Review of generalized linear modeling techniques so far 
+
+## Who are You?
+1. Name  
+
+2. Lab  
+
+3. Brief research description  
+
+4. Why are you here?  
+
+## Outline for Today
+1. Who are you?  
+  
+2. **How will this course work?**   
+  
+3. What are we doing here?  
+  
+4. Review of generalized linear modeling techniques so far 
+
+## Lecture and Lab
+ - 1 Hour Lecutre on Concepts with code
+ - 1/2 Hour work on problem
+ - Occasional Paper/Chapter Discussion
+ 
+
+## Lectures are Coded
+R Markdown sometimes with Reveal.js
+&nbsp;  
+<center><img src="images/01/lecture_code.jpg"></center>
+http://github.com/biol609/biol609.github.io
+
+
+## The Book: Statistical Rethinking
+![](./images/01/book.jpg)
+
+## Monthly Problem Sets
+
+## Final Paper
+
+## Extra Credit 1: Be Me
+
+## Extra Credit 2: Livin' La Vida Data Science
+|                       |                       |
+|-----------------------|-----------------------|
+|![](images/01/nssd.jpg)|![](images/01/hadley.jpg)|
+
+## Extra Credit 3: Data Science for Social Good
+![](images/01/dssg.png)
+
+http://www.meetup.com/Data-Science-for-Social-Good/
+
+
+## Outline for Today
+1. Who are you?  
+  
+2. How will this course work?   
+  
+3. **What are we doing here?**  
+  
+4. Review of generalized linear modeling techniques so far 
+
+
+## Model-A-Palooza
+  
+**Objective 1)**	To learn how to think about your study system and research question of interest in a systematic way and match it with a realistic process-based model.
+
+## Enter The Reverend
+  
+**Objective 2)**	To understand how to build and fit hierarchical/multilevel models in a likelihood and Bayesian framework.
+
+## The Rest of Your Life
+
+**Objective 3)**	Provide the grounding needed to effectively collaborate with statistical experts.  
+  
+**Objective 4)**	Allow students to gain the knowledge necessary to become life-long learners of data analysis techniques, able to incorporate new techniques into their analytic toolbelt as needed.
+
+## Modeling So Far: General Linear Models
+$$\boldsymbol{Y} = \boldsymbol{b X} + \boldsymbol{\epsilon}$$
+
+```{r iris_plot}
+ggplot(iris, mapping=aes(y=Sepal.Width, x=Sepal.Length, color=Species)) +
+  geom_point() +
+  stat_smooth(method="lm") +
+  theme_bw(base_size=17)
+```
+
+## Foundational Modeling Approache
+
+1. What is your data generating process?  
+  
+2. What is your error generating process?
+
+## Foundational Philosophical Approaches
+
+> - **Frequentist Inference:** Correct conclusion drawn from repeated experiments  
+>     - Uses p-values and CIs as inferential engine  
+\
+> - **Likelihoodist/Information Theoretic Inference:** Evaluate the weight of evidence for different hypotheses  
+>     - Derivative of frequentist mode of thinking  
+>     - Uses model comparison (sometimes with p-values...)  
+\
+> - **Bayesian Inference:** Probability of belief that is constantly updated  
+>     - Uses explicit statements of probability and degree of belief for inferences  
+
+
+
+## Two Foci of the Course
+  
+1.  Funky Error Structures 
+  
+2. Bayesian Inference and the Freedom it Brings for Process-Based Models
+
+## Spatial Autocorrelation
+
+## Temporal Autocorrelation
+
+## Mixed Models
+
+## Zero Inflated Models
+
+## Deep Dives into Bayes
+
+## Process Models
+
+
+## Outline for Today
+1. Who are you?  
+  
+2. How will this course work?  
+  
+3. What are we doing here?  
+  
+4. **Review of generalized linear modeling techniques so far **
+
+## General Linear Model
+
+## Simple Linear Regression
+
+## Multiple Linear Regression
+
+## Categorical Predictors and ANOVA
+
+## Interactions
+
+## Generalized Linear Models
