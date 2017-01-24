@@ -1,0 +1,26 @@
+---
+  title: "Course Texts"
+---
+  
+**Required Texts:**  
+McElreath, R. Statistical Rethinking: A Bayesian Course with Examples in R and Stan. 2015. https://www.amazon.com/Statistical-Rethinking-Bayesian-Examples-Chapman/dp/1482253445
+
+**Recommended Texts: **  
+I will be drawing on examples and materials from a few other sources.  They include wonderful examples of R code in the context of data analysis.  You are not required to have these, but you will either find them useful in this course or in future endeavors.   
+
+* Bolker, B. (2009) Ecological Models and Data in R. Princeton University Press. http://www.amazon.com/Ecological-Models-Data-Benjamin-Bolker/dp/0691125228  
+
+* Gelman, A., and Hill, J. (2006) Data Analysis Using Regression and Multilevel/Hierarchical Models. https://www.amazon.com/Analysis-Regression-Multilevel-Hierarchical-Models/dp/052168689X  
+
+* Song, S. Qian (2009) Environmental and Ecological Statistics with R. Chapman and Hall/CRC Press, London. http://www.amazon.com/Environmental-Ecological-Statistics-Chapman-Applied-ebook/dp/B005H6YDPU  
+
+* Wickham, H. 2014. Advanced R. The book can be found online at http://adv-r.had.co.nz/  
+
+* Zuur, A. et al. (2009) Mixed Effects Models and Extensions in Ecology with R. https://www.amazon.com/Effects-Extensions-Ecology-Statistics-Biology-ebook/dp/B008CLYMQW/ref=sr_1_1?ie=UTF8&qid=1485273094&sr=8-1&keywords=zuur  
+  
+**Software**  
+
+* R - http://www.r-project.org/  
+* R Studio, a fantastic cross-platform interface for R - http://www.rstudio.org/  
+* STAN - http://mc-stan.org/
+  

@@ -1,0 +1,27 @@
+name: "Biol 607 - Intro to Computational Data Analysis for Biology"
+
+navbar:
+ title: ""
+ left:
+  - text: "Home"
+    href: index.html
+  - text: "Overview"
+    href: overview.html
+  - text: "Schedule"
+    href: schedule.html
+  - text: "R Errors"
+    href: error.html
+  - text: "Texts"
+    href: texts.html
+  - text: "Syllabus"
+    href: syllabus/adv_data_analysis_syllabus_2016a.doc
+  - text: "Resources"
+    href: http://biol607.github.io/resources.html
+  - text: "Local Meetups"
+    href: http://byrneslab.net/resources/boston-area-data-science-groups/
+
+
+output:
+  html_document:
+    theme: lumen
+output_dir: "."
