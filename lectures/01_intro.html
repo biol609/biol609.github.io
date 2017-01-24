@@ -155,16 +155,30 @@ R Markdown sometimes with Reveal.js  <br />
 </section>
 <section id="the-book-statistical-rethinking" class="slide level2">
 <h1>The Book: Statistical Rethinking</h1>
-<p><img src="images/01/book.jpg" /></p>
+<p><img src="images/01/book.jpg" style="width:40.0%" /></p>
 </section>
 <section id="monthly-problem-sets" class="slide level2">
 <h1>Monthly Problem Sets</h1>
+<ol type="1">
+<li><p>2-3 Problems covering topics from the month</p></li>
+<li><p>We will go over them in 1/2 hour of the next class, self-graded</p></li>
+</ol>
 </section>
 <section id="final-paper" class="slide level2">
 <h1>Final Paper</h1>
+<br><br><br>
+<h3>
+Do your research
+</h3>
+<p>(but be statsy about it)</p>
 </section>
 <section id="extra-credit-1-be-me" class="slide level2">
 <h1>Extra Credit 1: Be Me</h1>
+<ul>
+<li><p>I have a few meetings this semester</p></li>
+<li><p>Will have some guest lectures</p></li>
+<li><p>BUT - you can be that guest lecturer</p></li>
+</ul>
 </section>
 <section id="extra-credit-2-livin-la-vida-data-science" class="slide level2">
 <h1>Extra Credit 2: Livin’ La Vida Data Science</h1>
@@ -181,6 +195,13 @@ R Markdown sometimes with Reveal.js  <br />
 <h1>Extra Credit 3: Data Science for Social Good</h1>
 <p><img src="images/01/dssg.png" /></p>
 <p><a href="http://www.meetup.com/Data-Science-for-Social-Good/" class="uri">http://www.meetup.com/Data-Science-for-Social-Good/</a></p>
+</section>
+<section id="extra-credit-4-stats-lunch" class="slide level2">
+<h1>Extra Credit 4: Stats Lunch</h1>
+<h3>
+Tuesdays 12-1 in M-2-628
+</h3>
+<p>It’s mostly psychologists, so let’s start interacting!</p>
 </section>
 <section id="outline-for-today-2" class="slide level2">
 <h1>Outline for Today</h1>
@@ -209,15 +230,15 @@ R Markdown sometimes with Reveal.js  <br />
 <p><span class="math display">\[\boldsymbol{Y} = \boldsymbol{b X} + \boldsymbol{\epsilon}\]</span></p>
 <p><img src="01_intro_files/figure-revealjs/iris_plot-1.jpeg" width="768" /></p>
 </section>
-<section id="foundational-modeling-approache" class="slide level2">
-<h1>Foundational Modeling Approache</h1>
+<section id="foundational-modeling-approach" class="slide level2">
+<h1>Foundational Modeling Approach</h1>
 <ol type="1">
 <li><p>What is your data generating process?</p></li>
 <li><p>What is your error generating process?</p></li>
 </ol>
 </section>
-<section id="foundational-philosophical-approaches" class="slide level2">
-<h1>Foundational Philosophical Approaches</h1>
+<section id="philosophical-approach" class="slide level2">
+<h1>Philosophical Approach</h1>
 <ul>
 <li class="fragment"><strong>Frequentist Inference:</strong> Correct conclusion drawn from repeated experiments
 <ul>
@@ -246,23 +267,37 @@ R Markdown sometimes with Reveal.js  <br />
 <li><p>Bayesian Inference and the Freedom it Brings for Process-Based Models</p></li>
 </ol>
 </section>
+<section id="heterogeneous-error-structure" class="slide level2">
+<h1>Heterogeneous Error Structure</h1>
+<p><img src="images/01/Fig-1-Linear-models-fi-tted-using-the-generalized-least-squares-GLS-method-corrected.png" /></p>
+</section>
 <section id="spatial-autocorrelation" class="slide level2">
 <h1>Spatial Autocorrelation</h1>
+<p><img src="images/01/spatial_auto.png" style="width:70.0%" /></p>
 </section>
 <section id="temporal-autocorrelation" class="slide level2">
 <h1>Temporal Autocorrelation</h1>
+<p><img src="images/01/dfs_autocorrelation_sm.gif" /></p>
 </section>
 <section id="mixed-models" class="slide level2">
 <h1>Mixed Models</h1>
+<p><img src="images/01/repeated_measures.png" /></p>
+</section>
+<section id="mixed-models-1" class="slide level2">
+<h1>Mixed Models</h1>
+<p><img src="images/01/mixed_models_walken.jpg" /></p>
 </section>
 <section id="zero-inflated-models" class="slide level2">
 <h1>Zero Inflated Models</h1>
+<p><img src="01_intro_files/figure-revealjs/z-1.jpeg" width="768" /></p>
 </section>
 <section id="deep-dives-into-bayes" class="slide level2">
 <h1>Deep Dives into Bayes</h1>
+<p><img src="images/01/052816_bayesian-opener_free.jpg" /></p>
 </section>
 <section id="process-models" class="slide level2">
 <h1>Process Models</h1>
+<p><img src="images/01/process.jpg" style="width:80.0%" /></p>
 </section>
 <section id="outline-for-today-3" class="slide level2">
 <h1>Outline for Today</h1>
@@ -273,23 +308,157 @@ R Markdown sometimes with Reveal.js  <br />
 <li><p><strong>Review of generalized linear modeling techniques so far </strong></p></li>
 </ol>
 </section>
-<section id="general-linear-model" class="slide level2">
-<h1>General Linear Model</h1>
+<section id="the-general-linear-model" class="slide level2">
+<h1>The General Linear Model</h1>
+<p><span class="math display">\[\Large \boldsymbol{Y} = \boldsymbol{\beta X} + \boldsymbol{\epsilon} \]</span> <span class="math display">\[\Large \epsilon \sim \mathcal{N}(0,\sigma^{2})\]</span></p>
+<ul>
+<li><p>This equation is huge. X can be anything - categorical, continuous, squared, sine, etc.</p></li>
+<li><p>There can be straight additivity, or interactions</p></li>
+</ul>
+</section>
+<section id="general-linear-models" class="slide level2">
+<h1>General Linear Models</h1>
+<ol type="1">
+<li><p>Simple Linear Regresion</p></li>
+<li><p>ANOVA</p></li>
+<li><p>ANCOVA</p></li>
+<li><p>Multiple Linear Regression</p></li>
+<li><p>MLR with Interactions</p></li>
+</ol>
 </section>
 <section id="simple-linear-regression" class="slide level2">
 <h1>Simple Linear Regression</h1>
+<p><span class="math display">\[y_{i} = \beta_{0} + \beta_{1}x_{i} + \epsilon_{i}\]</span> <span class="math display">\[\epsilon \sim \mathcal{N}(0,\sigma^{2})\]</span></p>
+<p><img src="01_intro_files/figure-revealjs/iris_plot_lm-1.jpeg" width="768" /></p>
 </section>
 <section id="multiple-linear-regression" class="slide level2">
 <h1>Multiple Linear Regression</h1>
+<p><span class="math display">\[y_{i} = \beta_{0} + \sum^{k}_{j=0}\beta_{j}x_{ij} + \epsilon_{i}\]</span></p>
+<p><img src="01_intro_files/figure-revealjs/iris_plot_mlm-1.jpeg" width="768" /></p>
 </section>
 <section id="categorical-predictors-and-anova" class="slide level2">
 <h1>Categorical Predictors and ANOVA</h1>
+<p><span class="math display">\[y_{ij} = \beta_{0} + \sum \beta_{j}x_{ij} + \epsilon_{j}, \qquad x_{i} = 0,1\]</span></p>
+<p><img src="01_intro_files/figure-revealjs/iris_plot_anova-1.jpeg" width="768" /></p>
 </section>
-<section id="interactions" class="slide level2">
-<h1>Interactions</h1>
+<section id="interactions-and-mixing-categorical-and-continuous-predictors" class="slide level2">
+<h1>Interactions and Mixing Categorical and Continuous Predictors</h1>
+<p><img src="01_intro_files/figure-revealjs/iris_plot-1.jpeg" width="768" /></p>
 </section>
 <section id="generalized-linear-models" class="slide level2">
 <h1>Generalized Linear Models</h1>
+<p><span class="math display">\[\boldsymbol{\eta} = \boldsymbol{\beta X}\]</span><br />
+<span class="math display">\[f(\boldsymbol{\hat{Y}}) = \boldsymbol{\eta}\]</span><br />
+f(y) is called the <strong>link</strong> function<br />
+<br />
+<span class="math display">\[\boldsymbol{Y} = E(\boldsymbol{\hat{Y}}, \theta)\]</span><br />
+E is any distribution from the Exponential Family<br />
+<span class="math inline">\(\theta\)</span> is an error parameter, and can be a function of Y</p>
+</section>
+<section id="glms-link-functions" class="slide level2">
+<h1>GLMs: Link Functions</h1>
+<p>Basic Premise:</p>
+<ol type="1">
+<li><span>We have a linear predictor, <span class="math inline">\(\eta_i = a+Bx\)</span></span><br />
+<br />
+</li>
+<li>That predictor is linked to the fitted value of <span class="math inline">\(Y_i\)</span>, <span class="math inline">\(\mu_i\)</span><br />
+<br />
+</li>
+<li>We call this a link function, such that <span class="math inline">\(g(\mu_i) = \eta_i\)</span><br />
+
+<ul>
+<li>For example, for a linear function, <span class="math inline">\(\mu_i = \eta_i\)</span><br />
+</li>
+<li>For an exponential function, <span class="math inline">\(log(\mu_i) = \eta_i\)</span></li>
+</ul></li>
+</ol>
+</section>
+<section id="some-common-links" class="slide level2">
+<h1>Some Common Links</h1>
+<ul>
+<li><p>Identity: <span class="math inline">\(\mu = \eta\)</span>, e.g. <span class="math inline">\(\mu = a + bx\)</span></p></li>
+<li><p>Log: <span class="math inline">\(log(\mu) = \eta\)</span>, e.g. <span class="math inline">\(\mu = e^{a + bx}\)</span></p></li>
+<li><p>Logit: <span class="math inline">\(logit(\mu) = \eta\)</span>, e.g. <span class="math inline">\(\mu = \frac{e^{a + bx}}{1+e^{a + bx}}\)</span></p></li>
+<li><p>Inverse: <span class="math inline">\(\frac{1}{\mu} = \eta\)</span>, e.g. <span class="math inline">\(\mu = (a + bx)^{-1}\)</span></p></li>
+</ul>
+</section>
+<section id="glms-error" class="slide level2">
+<h1>GLMs: Error</h1>
+<p>Basic Premise:</p>
+<ol type="1">
+<li><p><span>The error distribution is from the <span><em>exponential</em></span> family</span></p>
+<ul>
+<li>e.g., Normal, Poisson, Binomial, and more.</li>
+</ul>
+<br />
+<br />
+</li>
+<li><p>For these distributions, the variance is a funciton of the fitted value on the curve: <span class="math inline">\(var(Y_i) = \theta V(\mu_i)\)</span></p>
+<ul>
+<li>For a normal distribution, <span class="math inline">\(var(\mu_i) = \theta*1\)</span> as <span class="math inline">\(V(\mu_i)=1\)</span><br />
+</li>
+<li>For a poisson distribution, <span class="math inline">\(var(\mu_i) = 1*\mu_i\)</span> as <span class="math inline">\(V(\mu_i)=\mu_i\)</span></li>
+</ul></li>
+</ol>
+</section>
+<section id="distributions-canonical-links-and-dispersion" class="slide level2">
+<h1>Distributions, Canonical Links, and Dispersion</h1>
+<table>
+<thead>
+<tr class="header">
+<th>Distribution</th>
+<th>Canonical Link</th>
+<th>Variance Function</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Normal</td>
+<td>identity</td>
+<td><span class="math inline">\(\theta\)</span></td>
+</tr>
+<tr class="even">
+<td>Poisson</td>
+<td>log</td>
+<td><span class="math inline">\(\mu\)</span></td>
+</tr>
+<tr class="odd">
+<td>Quasipoisson</td>
+<td>log</td>
+<td><span class="math inline">\(\mu\theta\)</span></td>
+</tr>
+<tr class="even">
+<td>Binomial</td>
+<td>logit</td>
+<td><span class="math inline">\(\mu(1-\mu)\)</span></td>
+</tr>
+<tr class="odd">
+<td>Quasibinomial</td>
+<td>logit</td>
+<td><span class="math inline">\(\mu(1-\mu)\theta\)</span></td>
+</tr>
+<tr class="even">
+<td>Negative Binomial</td>
+<td>log</td>
+<td><span class="math inline">\(\mu + \kappa\mu^2\)</span></td>
+</tr>
+<tr class="odd">
+<td>Gamma</td>
+<td>inverse</td>
+<td><span class="math inline">\(\mu^2\)</span></td>
+</tr>
+<tr class="even">
+<td>Inverse Normal</td>
+<td><span class="math inline">\(1/\mu^2\)</span></td>
+<td><span class="math inline">\(\mu^3\)</span></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="glms-in-practice" class="slide level2">
+<h1>GLMs in Practice</h1>
+<p><img src="01_intro_files/figure-revealjs/iris_plot_glm-1.jpeg" width="768" /></p>
 </section>
     </div>
   </div>

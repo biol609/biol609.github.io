@@ -1,0 +1,11 @@
+---  
+  title: "Course Schedule and Readings"  
+---  
+  While the topics covered are broad, each week will feature different examples from genetics, ecology, molecular, and evolutionary biology highlighting uses of each individual set of techniques.    
+  
+    
+      
+### Week 1.  
+__Lecture:__ [Why Advanced Data Analysis?](lectures/01_intro.html)\
+__Etherpad:__ https://etherpad.wikimedia.org/p/609-intro
+  
