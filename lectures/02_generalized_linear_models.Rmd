@@ -1,0 +1,706 @@
+---
+title:
+output:
+  revealjs::revealjs_presentation:
+    reveal_options:
+      slideNumber: true
+      previewLinks: true
+    theme: white
+    center: false
+    transition: fade
+    self_contained: false
+    lib_dir: libs
+    css: style.css
+---
+
+##
+
+![](images/02/gosling_normality.jpg){width="40.00000%"}\
+
+<h3>Genearlized Linear Models</h3>
+
+
+```{r prep, echo=FALSE, cache=FALSE, message=FALSE, warning=FALSE}
+library(knitr)
+opts_chunk$set(fig.height=4.5, comment=NA, 
+               warning=FALSE, message=FALSE, 
+               dev="jpeg", echo=FALSE)
+library(dplyr)
+library(tidyr)
+library(broom)
+library(ggplot2)
+library(car)
+library(DHARMa)
+```
+
+## A Generalized Outline
+1. Logistic Regression Verus Linear Regression  
+\
+2. Generalized Linear Models  
+\
+3. Poisson Regression (Poisson Error, Long Link)  
+\
+4. Overdispersion
+
+##  {data-background="./images/02/cryptosporidiosis-cryptosporidium-hominis.jpeg"}
+<h2 style="color:white">Infection by Cryptosporidium</h2>
+
+## {data-background="./images/02/mouseinject.jpg"}
+
+## Cryptosporidum Infection Rates
+```{r crypto_data}
+crypto <- read.csv("data/02/cryptoDATA.csv") %>%
+  mutate(success=Y/N)
+```
+
+```{r crypto_plot}
+
+cryptoPlot <- qplot(Dose, success, data=crypto) +
+  theme_bw(base_size=16) +
+  ylab("Fraction of Mice Infected")
+cryptoPlot
+```
+
+## This is not linear or gaussian
+
+```{r crypto_linear}
+cryptoPlot +
+  stat_smooth(method="lm")
+```
+
+Why?
+
+## The General Linear Model
+
+$$\Large \boldsymbol{Y_i} = \boldsymbol{\beta X_i} + \boldsymbol{\epsilon} $$ 
+\
+\
+\
+\
+\
+\
+$$\Large \epsilon \sim \mathcal{N}(0,\sigma^{2})$$
+
+## The General(ized) Linear Model
+
+$$\Large \boldsymbol{\hat{Y}_{i}} = \boldsymbol{\beta X_i} $$ 
+\
+\
+\
+\
+\
+\
+$$\Large Y_i \sim \mathcal{N}(\hat{Y_i},\sigma^{2})$$
+  
+## The General(ized) Linear Model
+
+$$\Large \boldsymbol{\eta_{i}} = \boldsymbol{\beta X_i} $$ 
+\
+\
+$$\Large \hat{Y_i} = \eta_{i}$$
+<span class="fragment"><font color="red">Identity Link Function</font></span>
+\
+\
+$$\Large Y_i \sim \mathcal{N}(\hat{Y_i},\sigma^{2})$$
+    
+## A Generalized Linear Model
+
+$$\Large \boldsymbol{\eta_{i}} = \boldsymbol{\beta X_i} $$ 
+\
+\
+$$\Large Log(\hat{Y_i}) = \eta_{i}$$
+<span class="fragment"><font color="red">Log Link Function</font></span>
+\
+\
+$$\Large Y_i \sim \mathcal{N}(\hat{Y_i},\sigma^{2})$$
+    
+## Log Link
+```{r crypto_log}
+cryptoPlot +
+   stat_smooth(method="glm", 
+               method.args=list(family=gaussian(link="log")), formula=y+0.0000001 ~ x)
+```
+
+## Isn't this just a transformation?
+
+Aren't we just doing
+$$\Large \boldsymbol{log(Y_{i})} = \boldsymbol{\beta X_i} + \boldsymbol{\epsilon_i}$$ 
+\
+<div class="fragment">NO!</div>
+\
+<div class="fragment">$$\Large \boldsymbol{Y_{i}} = e^{\boldsymbol{\beta X_i} + \boldsymbol{\epsilon_i}}$$ </div>
+\
+<div class="fragment">Error is log-normal</div>
+
+## A Generalized Linear Model
+
+$$\Large \boldsymbol{\eta_{i}} = \boldsymbol{\beta X_i} $$ 
+\
+\
+$$\Large Log(\hat{Y_i}) = \eta_{i}$$
+\
+\
+\
+$$\Large Y_i \sim \mathcal{N}(\hat{Y_i},\sigma^{2})$$
+<span class="fragment"><font color="red">Error is Normal</font></span>
+    
+## But This is Not Normal
+```{r crypto_plot}
+```
+    
+
+## Binomial Distribution
+$$ Y_i \sim B(prob, size) $$
+
+> * Discrete Distribution
+> * prob = probability of something happening (% Infected)
+> * size = # of discrete trials
+> * Used for frequency or probability data
+> * We estimate coefficients that influence prob
+
+## So, Y is a Logistic Curve
+\
+$$Probability = \frac{1}{1+e^{\beta X}}$$
+\
+\
+<div class="fragment">$$logit(Probability) = \beta X$$</div>
+
+## Generalized Linear Model with a Logit Link
+
+$$\Large \boldsymbol{\eta_{i}} = \boldsymbol{\beta X_i} $$ 
+\
+\
+<span class="fragment">$$\Large Logit(\hat{Y_i}) = \eta_{i}$$</span>
+<span class="fragment"><font color="red">Logit Link Function</font></span>
+\
+\
+<span class="fragment">$$\Large Y_i \sim \mathcal{B}(\hat{Y_i}, size)$$<span class="fragment">
+
+## Logitistic Regression
+```{r crypto_logit}
+cryptoPlot+
+  stat_smooth(method="glm", aes(weight=N), 
+              method.args=list(family=binomial()),  col="red", lwd=2) 
+
+```
+
+## Generalized Linear Model with Logit Link
+```{r glm_crypto, echo=TRUE}
+crypto_glm <- glm(Y/N ~ Dose,
+                  weight=N,
+                  family=binomial(link="logit"),
+                  data=crypto)
+```
+
+OR, with Success and Failures
+
+```{r glm_crypto2, echo=TRUE, eval=FALSE}
+crypto_glm <- glm(cbind(Y, Y-N) ~ Dose,
+                  family=binomial(link="logit"),
+                  data=crypto)
+```
+
+## Outputs
+```{r crypto_out}
+knitr::kable(Anova(crypto_glm))
+```
+
+And logit coefficients
+```{r crypto_out2}
+knitr::kable(broom::tidy(crypto_glm))
+```
+
+
+## The Odds
+
+$$Odds  = \frac{p}{1-p}$$\
+\
+<div class="fragment">
+$$Log-Odds = Log\frac{p}{1-p} = logit(p)$$
+</div>
+
+
+## The Meaning of a Logit Coefficient
+
+Logit Coefficient: A 1 unit increase in a predictor = an increase of
+$\beta$ increase in the log-odds of the response.  
+\
+<div class="fragment">
+$$\beta = logit(p_2) - logit(p_1)$$
+</div><div class="fragment">
+$$\beta =  Log\frac{p_1}{1-p_1} -  Log\frac{p_2}{1-p_2}$$
+</div>
+\
+<div class="fragment">
+We need to know both p1 and $\beta$ to interpret this.\
+</div><div class="fragment">
+If p1 = 0.5, $\beta$ = 0.01347, then p2 = 0.503\ </div>
+<div class="fragment">
+If p1 = 0.7, $\beta$ = 0.01347, then p2 = 0.702\
+</div>
+
+## But how do we assess assumptions?
+> - Should still be no fitted v. residual relationship  
+\
+> - But QQ plots lose meaning
+>     - Not a normal distribution
+>     - Mean scales with variance  
+\
+> - Also many types of residuals
+>     - Deviance, Pearson, raw, etc.
+
+## Randomized quantile residuals
+> - If model fits well, quantiles of residuals should be uniformly distributed  
+\
+> - I.E., for any point, if we had its distribution, there should be no bias in its quantile  
+\
+> - We do this via simulation  
+\
+> - Works for **many** models, and naturally via Bayesian simuation
+
+## Randomized quantile residuals: Steps
+1. Get ~1000 (or more) simulations of model coefficients \
+\
+2. For each response (y) value, create an empirical distribution from the simuations\
+\
+3. For each response, determine it's quantile from that empirical distribution\
+\
+4. The quantiles of all y values should be uniformly distributed
+      - QQ plot of a uniform distribution!\
+
+## Randomized quantile residuals: Visualize
+```{r rqr}
+library(ggplot2)
+z <- data.frame(vals=rpois(250, 20))
+zdist <- ecdf(z$vals)
+
+zplot <- ggplot() +
+  geom_histogram(data=z, mapping=aes(vals, ..density..), bins=40) + 
+  theme_bw(base_size=17) +
+  ylab("Density\n(point or cummulative)")+
+  xlim(c(0,35))
+
+zplot
+```
+
+## Randomized quantile residuals: Visualize
+```{r rqr1}
+z <- data.frame(vals=rpois(250, 20))
+zdist <- ecdf(z$vals)
+
+zplot <- zplot + 
+  stat_ecdf(data=z, mapping=aes(vals)) 
+
+zplot
+```
+
+## Randomized quantile residuals: Visualize
+```{r rqr2}
+v <- data.frame(x=25, y=0, quant = zdist(25))
+zplot <- zplot + 
+  geom_point(data = v, color = "red",size = 5, mapping=aes(x=x, y=y))
+zplot
+```
+
+
+## Randomized quantile residuals: Visualize
+```{r rqr3}
+zplot <- zplot + 
+  geom_segment(data=v, color="red", lty=2, mapping=aes(x=x, y=y, xend=x, yend=quant)) +
+  geom_point(data = v, color = "red",size = 5, mapping=aes(x=x, y=quant))
+zplot
+```
+
+## Randomized quantile residuals: Visualize
+```{r rqr4}
+zplot <- zplot + 
+  geom_segment(data=v, color="red", lty=2, mapping=aes(x=x, y=quant, xend=0, yend=quant))+
+  geom_point(data = v, color = "red",size = 5, mapping=aes(x=0, y=quant)) 
+zplot
+```
+
+
+## Quantile Residuals
+```{r quant_crypto}
+set.seed(2010)
+simulationOutput_crypto <- simulateResiduals(crypto_glm, 
+                                      n = 1000)
+plot(simulationOutput_crypto)
+```
+
+<span class="fragment">Possible overdispersion, use quasibinomial</span>
+
+## A Generalized Outline
+1. Logistic Regression Verus Linear Regression  
+\
+2. **Generalized Linear Models  **
+\
+3. Poisson Regression (Poisson Error, Long Link)  
+\
+4. Overdispersion
+
+## The General Linear Model is a Special Case
+
+$$\Large \boldsymbol{Y} = \boldsymbol{\beta X} + \boldsymbol{\epsilon}$$  
+\
+Implies that:
+$$\boldsymbol{\hat{Y}} = \boldsymbol{\beta X}$$ 
+\
+and
+\
+$$\boldsymbol{Y} \sim N(\boldsymbol{\hat{Y}})$$
+\
+<span class="fragment">But what if We don't want a Normal Distribution?
+
+## The Generalized Linear Model
+$$\boldsymbol{\eta_i} = \boldsymbol{\beta X}$$ 
+\
+$$\boldsymbol{f(\hat{Y_i})} = \boldsymbol{\eta_i}$$ \
+\
+\
+$$\boldsymbol{Y_i} = E(\boldsymbol{\hat{Y_i}}, \theta)$$ 
+\
+E is any distribution from the Exponential Family\
+$\theta$ is an error parameter, and can be a function of Y
+
+
+
+
+## Generalized Linear Models: Link Functions
+
+Basic Premise:
+
+1.  <span>We have a linear predictor, $\eta_i = a+Bx_i$</span>\
+    \
+
+2.  That predictor is linked to the fitted value of $Y_i$, $\hat{Y_i}$\
+    \
+
+3.  We call this a link function, such that $g(\hat{Y_i}) = \eta_i$\
+
+    -   For example, for a linear function, $\mu_i = \eta_i$\
+
+    -   For an exponential function, $log(\mu_i) = \eta_i$
+
+
+
+## Some Common Links
+
+-   Identity: $\hat{Y_i} = \eta_i$ - e.g. $\mu = a + bx$
+
+-   Log: $log(\hat{Y_i}) = \eta_i$ - e.g. $\mu = e^{a + bx}$
+
+-   Logit: $logit(\hat{Y_i}) = \eta_i$ - e.g.
+    $\hat{Y_i} = \frac{e^{a + bx}}{1+e^{a + bx}}$
+
+-   Inverse: $\frac{1}{\hat{Y_i}} = \eta_i$ - e.g. $\hat{Y_i} = (a + bx)^{-1}$
+
+
+
+## Generalized Linear Models: Error
+
+Basic Premise:
+
+1.  <span>The error distribution is from the <span>*exponential*</span>
+    family</span>
+
+    -   e.g., Normal, Poisson, Binomial, and more.
+
+    \
+    \
+
+2.  For these distributions, the variance is a funciton of the fitted
+    value on the curve: $var(Y_i) = \theta V(\hat{Y_i})$
+
+    -   For a normal distribution, $var(Y_i) = \theta*1$ as
+        $V(\hat{Y_i})=1$\
+
+    -   For a poisson distribution, $var(Y_i) = 1*\mu_i$ as
+        $V(\hat{Y_i})=\hat{Y_i}$
+
+
+
+## Distributions, Canonical Links, and Dispersion
+
+|Distribution | Canonical Link | Variance Function|
+|-------------|-------------|-------------|
+|Normal | identity | $\theta$|
+|Poisson | log | $\hat{Y_i}$|
+|Binomial | logit | $\hat{Y_i}(1-\hat{Y_i})$|
+|Negative Binomial | log | $\mu + \kappa\hat{Y_i}^2$|
+|Gamma | inverse | $\hat{Y_i}^2$|
+|Inverse Normal | $1/\hat{Y_i}^2$ | $\hat{Y_i}^3$|
+
+## The Generalized Linear Model
+$$\boldsymbol{\eta_i} = \boldsymbol{\beta X}$$ 
+\
+$$\boldsymbol{f(\hat{Y_i})} = \boldsymbol{\eta_i}$$ \
+\
+\
+$$\boldsymbol{Y_i} = E(\boldsymbol{\hat{Y_i}}, \theta)$$ 
+\
+E is any distribution from the Exponential Family\
+$\theta$ is an error parameter, and can be a function of Y
+
+## A Generalized Outline
+1. Logistic Regression Verus Linear Regression  
+\
+2. Generalized Linear Models  
+\
+3. **Poisson Regression (Poisson Error, Long Link)**  
+\
+4. Overdispersion
+
+## Poisson Regression with a Log Link
+$$\boldsymbol{\eta_i} = \boldsymbol{\beta X_i}$$ 
+\
+$$log(\boldsymbol{\hat{Y_i}}) = \boldsymbol{\eta_i}$$ \
+\
+\
+$$\boldsymbol{Y_i} \sim \mathcal{P}(\boldsymbol{\hat{Y_i}})$$ 
+
+## What is the relationship between kelp holdfast size and number of fronds?
+![](images/02/Giant_kelp_adult.jpeg)
+
+## What About Kelp Holdfasts?
+```{r kelp}
+kelp <- read.csv("data/02/kelp_holdfast.csv")
+
+kelp_plot <- qplot(HLD_DIAM, FRONDS, data=kelp) +
+  theme_bw(base_size=17) +
+  geom_point(size=2)
+kelp_plot
+```
+
+## How 'bout dem residuals?
+```{r fit_kelp, echo=TRUE}
+kelp_lm <- lm(FRONDS ~ HLD_DIAM, data=kelp)
+```
+
+```{r plot_lelp}
+plot(kelp_lm, which=2)
+```
+
+## What is our data and error generating process?
+```{r kelp}
+```
+
+## What is our data and error generating process?
+> - Data generating process should be exponential
+>       - No values less than 1  
+\
+> - Error generating process should be Poisson
+>       - Count data
+
+## What is our data and error generating process?
+\
+\
+```{r kelp glm, echo=TRUE}
+kelp_glm <- glm(FRONDS ~ HLD_DIAM, data=kelp,
+                family=poisson(link="log"))
+```
+
+
+## Kelp GLM Results
+LR Test
+```{r kelp_aov}
+knitr::kable(Anova(kelp_glm), digits=5)
+```
+
+\
+Coefficients:
+```{r kelp_summary}
+knitr::kable(broom::tidy(kelp_glm))
+```
+
+## Kelp GLM Results
+```{r kelpplot, eval=FALSE, echo=TRUE}
+kelp_plot +
+  stat_smooth(method="glm", 
+              method.args=list(family=poisson(link="log")))
+```
+
+## Kelp GLM Results
+```{r kelpplot2}
+kelp_plot_pois_fit <- kelp_plot +
+  stat_smooth(method="glm", 
+              method.args=list(family=poisson(link="log")))
+
+kelp_plot_pois_fit
+```
+
+ 
+## Kelp GLM Quantile Residuals
+```{r kelp_resid_dharma, echo=TRUE}
+library(DHARMa)
+set.seed(2017)
+simulationOutput <- simulateResiduals(kelp_glm, 
+                                      n = 1000)
+plot(simulationOutput)
+```
+
+## A Generalized Outline
+1. Logistic Regression Verus Linear Regression  
+\
+2. Generalized Linear Models  
+\
+3. Poisson Regression (Poisson Error, Long Link)  
+\
+4. **Overdispersion**
+
+## Estmation Error
+```{r kelpplot2}
+```
+
+## Prediction Error from Poisson GLM
+```{r kelpplot_pos_error}
+pred <- predict(kelp_glm, 
+                type="link",
+                newdata = data.frame(HLD_DIAM = 8:100),
+                se.fit=TRUE)
+
+pred_data <- data.frame(HLD_DIAM = 8:100,
+                        fit = kelp_glm$family$linkinv(pred$fit),
+                        lwr.ci = kelp_glm$family$linkinv(pred$fit - 1.96*pred$se.fit),
+                        upr.ci = kelp_glm$family$linkinv(pred$fit + 1.96*pred$se.fit)) %>%
+  mutate(upr.pred = qpois(0.975, lambda=round(upr.ci)),
+         lwr.pred = qpois(0.025, lambda=round(lwr.ci)))
+
+kelp_pred_interval <- kelp_plot_pois_fit +
+  geom_line(data=pred_data, mapping=aes(x=HLD_DIAM, y=upr.pred), col="red", lty=2)+
+  geom_line(data=pred_data, mapping=aes(x=HLD_DIAM, y=lwr.pred), col="red", lty=2)
+
+kelp_pred_interval
+```
+
+<span class="fragment">Well that doesn't cover 95% of the data!</span>
+
+## How We Got Prediction Intervals
+```{r echo=TRUE, eval=FALSE}
+pred <- predict(kelp_glm, 
+                type="link",
+                newdata = data.frame(HLD_DIAM = 8:100),
+                se.fit=TRUE)
+```
+
+## How We Got Prediction Intervals
+```{r echo=TRUE, eval=FALSE}
+pred_data <- data.frame(HLD_DIAM = 8:100,
+                        
+                        fit = kelp_glm$family$linkinv(pred$fit),
+                        
+                        lwr.ci = kelp_glm$family$linkinv(pred$fit - 1.96*pred$se.fit),
+                        upr.ci = kelp_glm$family$linkinv(pred$fit + 1.96*pred$se.fit)) %>%
+
+    mutate(upr.pred = qpois(0.975, lambda=round(upr.ci)),
+         lwr.pred = qpois(0.025, lambda=round(lwr.ci)))
+```
+
+## What is Overdispersion?
+
+>   - When the variance increases faster than the mean, our data is overdispersed  
+\
+>    - This can be solved with different distributions whose variance have different properties  
+\
+> - OR, we can fit a model, then scale it’s variance posthoc with a coefficient  
+\
+> -  The likelihood of these latter models is called a Quasi-likelihood, as it does not reflect the true spread of the data  
+
+## How do we test for Overdispersion?
+```{r kelp_resid_dharma}
+```
+
+## Solutions:
+1. Quasi-Poisson  
+        - Basically, Variance = $\theta\hat{Y}$  
+        - Posthoc estimation of $\theta$
+        - Also a similar quasibinomial
+        - Need to use QAIC for IC comparison  
+\
+2. Negative Binomial
+  - Variance = $\hat{Y_i}^2 + \kappa\hat{Y_i}^2$|$
+  - Increases with the square, not linearly
+
+## How to tell QP v. NB Apart
+- For bins of fitted values, get the average squared residual  
+\
+- Is that relationship linear or squared?  
+\
+- Ver Hoef and Boveng 2007
+
+## How to tell QP v. NB Apart
+```{r get_resid_bins, echo=TRUE}
+k <- data.frame(fit = fitted(kelp_glm),
+                resid = residuals(kelp_glm)) %>%
+  
+  mutate(fit_groups = cut_interval(fit, 8)) %>%
+  
+  group_by(fit_groups) %>%
+  summarize(sq_resid = mean(resid^2),
+            n = length(resid)) %>%
+  ungroup()
+
+```
+
+## How to tell QP v. NB Apart
+```{r resid_bins_plot}
+qplot(fit_groups, sq_resid, data=k, size=n)
+```
+
+<span class="fragment">Is is linear?</span>
+
+##Fits
+
+```{r qp, echo=TRUE}
+kelp_glm_qp <- glm(FRONDS ~ HLD_DIAM, data=kelp, 
+                 family=quasipoisson(link="log"))
+```
+
+OR
+
+```{r nb, echo=TRUE}
+library(MASS)
+kelp_glm_nb <- glm.nb(FRONDS ~ HLD_DIAM, data=kelp)
+```
+
+## QuasiPoisson Results
+```{r}
+summary(kelp_glm_qp)
+```
+
+
+## Negative Binomial Results
+```{r}
+summary(kelp_glm_nb)
+```
+
+## Prediction Interval for QP
+```{r howto_predict, echo=TRUE}
+pred_data <- pred_data %>%
+  
+  mutate(upr.pred.qp = qnorm(0.975, 
+                             mean = upr.ci, 
+                             sd = sqrt(upr.ci*summary(kelp_glm_qp)$dispersion)),
+         
+         lwr.pred.qp = qnorm(0.025, mean = lwr.ci,
+                             sd = sqrt(lwr.ci*summary(kelp_glm_qp)$dispersion)))
+```
+
+## Looks Good!
+```{r qp_plot}
+kelp_pred_interval_qp <- kelp_plot_pois_fit +
+  geom_line(data=pred_data, mapping=aes(x=HLD_DIAM, y=upr.pred.qp), col="red", lty=2)+
+  geom_line(data=pred_data, mapping=aes(x=HLD_DIAM, y=lwr.pred.qp), col="red", lty=2)
+
+kelp_pred_interval_qp
+```
+
+## You Try: Wolf Inbreeding and Litter Size
+```{r wolves}
+wolves <- read.csv("./data/02/16e2InbreedingWolves.csv")
+
+ggplot(data=wolves, mapping=aes(x=inbreeding.coefficient, y=pups)) +
+xlab("Inbreeding Coefficient") + ylab("# of Pups") +
+geom_point(size=3) +
+theme_bw(base_size=24)
+```

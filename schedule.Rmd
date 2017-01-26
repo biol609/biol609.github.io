@@ -6,6 +6,7 @@
     
       
 ### Week 1.  
-__Lecture:__ [Why Advanced Data Analysis?](lectures/01_intro.html)\
-__Etherpad:__ https://etherpad.wikimedia.org/p/609-intro
-  
+__Lecture:__ [Why Advanced Data Analysis?](lectures/01_intro.html), [GLM Review](lectures/02_generalized_linear_models.html)\
+__Etherpad:__ https://etherpad.wikimedia.org/p/609-intro  
+__Reading:__ [O'Hara 2009](http://byrneslab.net/classes/biol609/readings/O'Hara_2009_glmm.pdf) through section on GLMs, [O'Hara and Kotze 2010](http://byrneslab.net/classes/biol609/readings/o'hara_and_kotze_do_not_log_transform.pdf), [Wharton and Hui 2011](http://byrneslab.net/classes/biol609/readings/Wharton_Hui_2011_Ecology.pdf), [ver Hoef and Boveng 2007 on overdispersion](http://byrneslab.net/classes/biol609/readings/Ver_Hoef_and_Boveng_qp_neg binomial.pdf), [Hartig DHARMa vignette](https://cran.r-project.org/web/packages/DHARMa/vignettes/DHARMa.html)  
+__Files:__ [Data for GLM Lecture](lectures/02_data.zip)
