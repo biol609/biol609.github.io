@@ -1,0 +1,421 @@
+---
+title:
+output:
+  revealjs::revealjs_presentation:
+    reveal_options:
+      slideNumber: true
+      previewLinks: true
+    theme: white
+    center: false
+    transition: fade
+    self_contained: false
+    lib_dir: libs
+    css: style.css
+---
+
+##
+<h3>Bending Assumptions: Model II and Quantile Regression</h3>
+
+![](images/03/simple_regression.jpeg){width="40.00000%"}\
+
+
+
+```{r prep, echo=FALSE, cache=FALSE, message=FALSE, warning=FALSE}
+library(knitr)
+opts_chunk$set(fig.height=4.5, comment=NA, 
+               warning=FALSE, message=FALSE, 
+               dev="jpeg", echo=FALSE)
+
+library(smatr)
+library(ggplot2)
+
+library(dplyr)
+library(tidyr)
+library(broom)
+library(MASS)
+
+library(quantreg)
+data(engel)
+
+weight <- read.csv("./data/03/lewis_taylor_1969_weight_age.csv")
+eggs <- read.csv("data/03/cabezon_eggs.csv")
+```
+
+## First, a note
+
+- To see code, http://github.com/biol609/biol609.github.io/lectures  
+\
+- Useful during "lab" so you don't have to flip through slides \
+\
+- .Rmd files, so will have to view "raw"
+
+## Sometimes Things seem OK: Cabezon Spawning Data
+```{r cabezon_plot}
+cab_plot <- ggplot(data=eggs, mapping=aes(x=Mass, y=No_eggs)) +
+  geom_point() +
+  theme_bw(base_size=17)
+
+cab_plot
+```
+
+## But - Those Residuals are Wide
+```{r cab_resid}
+par(mfrow=c(1,2))
+
+plot(lm(No_eggs ~ Mass, data=eggs), which=c(1,2), add.smooth=FALSE)
+
+par(mfrow=c(1,1))
+```
+
+<div class="fragment">What if I told you there is Error in the Mass measurements, too?</div>
+
+## Food Expenditure by Income in Belgium
+```{r engel_plot}
+engel_plot <- ggplot(data=engel, aes(x=income, y=foodexp)) +
+  geom_point() +
+  theme_bw(base_size=17)
+
+engel_plot + stat_smooth(method="lm")
+```
+
+## But - THE TRUMPET!
+```{r engel_resid}
+plot(lm(foodexp ~ income, data=engel), which=1, add.smooth=FALSE)
+```
+
+## A Robust Outline
+- Model II regression  
+- Quantile Regression  
+\
+Thursday:  
+- Robust Regression  
+- Generalized Least Squares  
+
+
+## Cabezon Spawning Data
+```{r cabezon_plot}
+```
+
+## Linear Model Fit
+```{r cab_lm}
+cab_lm <- lm(No_eggs ~ Mass, data=eggs)
+cab_plot +
+  stat_smooth(method="lm")
+```
+
+## Assumption: Error Only in Y
+```{r err_y}
+ndf <- data.frame(x=runif(100, 0,100)) %>%
+  dplyr::mutate(y = rnorm(100, 5+10*x, 300)) %>%
+  dplyr::mutate(xobs = rnorm(100, x, 10)) %>%
+  dplyr::mutate(fit1 = fitted(lm(y~x, data=.))) %>%
+  dplyr::mutate(fit2 = predict(lm(y~x, data=.), newdata=data.frame(x=xobs), type="response")) 
+
+tmp_lm <- lm(y ~ x, data=ndf)
+ndf <- ndf %>%
+  dplyr::mutate(xfit = (y - coef(tmp_lm)[1]) / coef(tmp_lm)[2],
+                xhalf = (xobs + xfit)/2,
+                yhalf = predict(tmp_lm, newdata=data.frame(x=xhalf)))
+
+based_m2_plot <- ggplot(ndf) +
+  stat_smooth(method="lm", mapping=aes(x=x, y=y), fill=NA, fullrange=TRUE) +
+  geom_point(mapping=aes(x=xobs, y=y)) +
+  theme_bw(base_size=17)
+
+based_m2_plot +
+  geom_segment(mapping=aes(x=xobs, y=fit2, xend=xobs, yend=y), color="red")
+
+```
+
+## But What if There is Error in X?
+```{r err_x}
+
+
+based_m2_plot +
+  geom_segment(mapping=aes(x=xfit, y=y, xend=xobs, yend=y), color="red")
+```
+
+<div class="fragment">Can have big biasing effect on slope estimates</div>
+
+## Really, Error in Both
+```{r err_both}
+
+based_m2_plot +
+  geom_segment(mapping=aes(x=xhalf, y=yhalf, xend=xobs, yend=y), color="red")
+```
+
+## Really, Error in Both
+```{r err_both_ellipse}
+
+based_m2_plot +
+  stat_ellipse(mapping=aes(x=xobs, y=y), color="red")
+```
+
+## Model II Regression
+- Estimates best line(s) describing relationship between X and Y with Error In Variables  
+\
+- Assumes bivariate normal relationship  
+\
+- Not for prediction (use OLS)  
+\
+- But can compare slopes, intercepts between groups
+
+## Model II Regression: When?
+- Uncertainty in X and Natural Error  
+\
+- Common in Allometry  
+\
+- Common in Power Law estimation  
+\
+- But who doesn't have that misbehaving scale...
+
+
+## 
+![](./images/03/mod_2_techniques.jpg)
+
+
+
+## Major Axis Regression
+<div id="left">
+![](./images/03/ma.jpg){width="70.00000%"}
+</div>
+<div id="right">
+- Minimizes sums of squares beetween line and points\
+\
+- "Residuals" are perpendicular to fit line  
+\
+- Variables should be on same scale
+</div>
+
+## Standardized/Reduced Major Axis Regression
+<div id="left">
+![](./images/03/sma.jpg){width="70.00000%"}
+</div>
+<div id="right">
+- Minimizes are of triangles with points as right-angle corner
+\
+- Variables need not be same scale  
+\
+- So, think of it as doing an MA on rescaled variables  
+</div>
+
+## When to use what
+![](./images/03/which_to_use.jpg)
+\
+\
+Wharton et al. 2006
+
+## SMA v. MA
+![](./images/03/sma_v_ma.jpg)
+\
+\
+Wharton et al. 2006
+
+## Fit with smatr
+```{r cab_sma, echo=TRUE}
+library(smatr)
+cab_sma <- sma(No_eggs ~ Mass, data=eggs)
+```
+
+Additional arguments:
+```{r eval=FALSE, echo=TRUE}
+method: SMA, MA, or OLS
+type: for compring groups
+robust: if outliers present
+multcomp: TRUE to test multiple groups
+```
+
+Warton et al. 2012
+
+## Fit with smartr
+```{r sma_summary}
+summary(cab_sma)
+```
+
+## Checking Assumptions
+```{r}
+par(mfrow=c(1,2))
+plot(cab_sma, which=c("residual"), cex=1.3)
+plot(cab_sma, which=c("qq"), cex=1.3)
+par(mfrow=c(1,1))
+```
+
+## QQ Much Better Behaved
+```{r}
+par(mfrow=c(1,2))
+plot(cab_lm, which=2, cex=1.3, main="From OLS Fit")
+plot(cab_sma, which=c("qq"), cex=1.3, main="From SMA Fit")
+```
+
+## Comparison of Fits
+```{r fit_compare}
+fit_df <- data.frame(technique = "SMA", slope=coef(cab_sma)[2], intercept=coef(cab_sma)[1], stringsAsFactors=FALSE)
+fit_df <- rbind(fit_df, c("OLS", coef(cab_lm)[2], coef(cab_lm)[1]))
+cab_ma <- ma(No_eggs ~ Mass, data=eggs)
+fit_df <- rbind(fit_df, c("MA", coef(cab_ma)[2], coef(cab_ma)[1]))
+
+fit_df$slope <- as.numeric(fit_df$slope)
+fit_df$intercept <- as.numeric(fit_df$intercept)
+
+
+cab_plot +
+  geom_abline(data=fit_df, mapping=aes(slope=slope, intercept=intercept, color=technique))
+```
+
+
+## A Robust Outline
+- Model II regression  
+- **Quantile Regression**  
+\
+Thursday:  
+- Robust Regression  
+- Generalized Least Squares  
+
+
+## Food Expenditure by Income in Belgium
+```{r engel_plot}
+```
+
+
+## But - THE TRUMPET!
+```{r engel_resid}
+```
+
+## Regression Through the Mean
+<div id="left">
+```{r eng_lm_fit, fig.height=6, fig.width=6}
+engel_plot + stat_smooth(method="lm")
+```
+
+</div>
+<div id="right">
+- Traditionally, we fit a regression through a mean\
+\
+- $\hat{y_i} = \beta x_i$ implies the mean value of y at x
+      - E[y|x]
+\
+- We can fit through other parts of the distribution
+</div>
+
+## Regression Through a Quantile
+<div id="left">
+```{r eng_lm_09, fig.height=6, fig.width=6}
+engel_plot + stat_quantile(quantiles=0.9)
+```
+
+</div>
+<div id="right">
+- We can fit through other quantiles\
+        - This is the 0.9 quantile
+\
+- 90% of the values of y are under the line given X
+\
+- This is an optimization problem where residuals are weighted to estimate coefficients
+</div>
+
+## Regression Through Quantiles
+
+<center>Red: 0.1, 0.5, and 0.9 quantile</center>
+
+```{r eng_lm_quant}
+engel_plot + 
+  stat_quantile(quantiles=c(0.1, 0.5, 0.9), color="red", alpha=0.9)
+```
+
+
+## Regression Through Quantiles
+
+<center>Red: 0.1, 0.5, and 0.9 quantile, Blue: OLS Fit</center>
+
+```{r eng_lm_quant_lm}
+engel_plot + 
+  stat_smooth(method="lm", color="blue", fill=NA) +
+  stat_quantile(quantiles=c(0.1, 0.5, 0.9), color="red", alpha=0.9)
+```
+
+
+## Quantile Regression and Kiddos
+![](./images/03/quantile_growth_curve.jpg)
+
+## Application Very Flexible
+![](./images/03/nonlinear_plant_rq.jpg)
+<center class="fragment">Even GLMs are fitting through central tendancy - quantile approaches available</center>
+
+## Why Quantile Regression?
+- Unequal Variation (the trumpet) implies underlying unmeasured drivers & interactions\
+\
+- Allows us to see how a relationship varies within a population with no additional covariates\
+\
+- Allows us to look at constraints on a population\
+\
+- See Cade and Noon 2003
+
+
+## Why Quantile Regression?
+![](./images/03/why_quantreg.jpg)
+
+## Quantile Regression with Quantreg
+Tau = quantiles
+\
+```{r engel_ex, echo=TRUE}
+library(quantreg)
+data(engel)
+
+engel_rq <- rq(foodexp ~ income, data=engel,
+               tau = c(0.2, 0.5, 0.8))
+```
+
+## Quantile Regression with Quantreg
+```{r engel_summary, echo=TRUE, warning=FALSE}
+summary(engel_rq)
+```
+
+## Broom Summary
+```{r engel_tidy, echo=TRUE, warning=FALSE}
+broom::tidy(engel_rq)
+```
+
+## Plotting Lines
+```{r engel_rq_plot, eval=FALSE, echo=TRUE, warning=FALSE}
+engel_plot <- ggplot(data=engel, aes(x=income, y=foodexp)) +
+  geom_point() +
+  theme_bw(base_size=17)
+
+#STAT_QUANTILE
+engel_plot + 
+  stat_quantile(quantiles=c(0.2, 0.5, 0.8))
+```
+
+## Plotting Lines
+```{r engel_rq_plot, warning=FALSE}
+```
+
+## Plotting Coefficients
+```{r engel_coef, echo=TRUE}
+plot(summary(engel_rq))
+```
+
+## Lots of Coefficients
+```{r engel_all, echo=TRUE}
+plot(summary(rq(foodexp ~ income, data=engel,
+               tau = seq(0.05,0.95,.05))))
+```
+<center>(You can do this in ggplot2, but have to hand-code it)</center>
+
+## Are the Coefficients Equal?
+- We might want to know if there are differences between quantiles of the population.\
+\
+- F-Test
+```{r engel_anova, echo=TRUE}
+anova(engel_rq)
+```
+
+## Example Data for Today
+- ekk_from_dryad.csv from Brennan A, Cross PC, Creel S (2015) Managing more than the mean: using quantile regression to identify factors related to large elk groups. Journal of Applied Ecology\
+\
+- What if some of the population abundances have been measured with error? E.g. Wolves v. Elk population size?\
+\
+- Where does Quantile regression come in handy in asking what determines elk herd abundance?
+
+
+
