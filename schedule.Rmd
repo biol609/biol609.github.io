@@ -2,6 +2,9 @@
   title: "Course Schedule and Readings"  
 ---  
   While the topics covered are broad, each week will feature different examples from genetics, ecology, molecular, and evolutionary biology highlighting uses of each individual set of techniques. Each topic will have accompanying readings highlighting a general introduction to a technique (required), and one or more general references or examples. For access to blocked readings, biol609.   
+\
+To see the code of a lecture, load the slides, then change the file extension in your browser bar to .Rmd to get the code. Or go to http://github.com/biol609/biol609.github.io/lectures for all of the code.
+
   
     
       
