@@ -267,8 +267,8 @@ squid_plot
 ```
 
 ## Weighting by a Predictor
-- Need to choose determine in what direction variance increases  
-  - Weight by X or 1/X
+- Need to  determine the direction variance increases  
+  - Weight by X or 1/X  
 \
 - Is it a linear or nonlinear relationship between variance and X?  
 \
@@ -278,14 +278,17 @@ squid_plot
 \
 ```{r squid_wls, echo=TRUE}
 squid_wls <- lm(Testisweight ~ DML, data=squid,
-                weights = squid$DML)
+                weights = 1/squid$DML)
 ```
+
+\
+Variance increases with DML, so weight decreases
 
 ## LM is LiMiting
 - Need to hand-code the weights  
 \
 - Diagnostic plots will still look odd
-      - DHARMa can help
+      - DHARMa can help  
 \
 - Cannot easily combine weights from multiple predictors
 
@@ -294,18 +297,21 @@ squid_wls <- lm(Testisweight ~ DML, data=squid,
 \
 - We'll get to what that means  
 \
-- BUT - also has likelihood-based methods to git WLS and GLS  
+- BUT - also has likelihood-based methods to fit WLS and GLS  
 \
-- Flexible weighting specification
+- Flexible weighting specification  
 
 ## WLS via GLS in NLME
 \
 ```{r squid_nlme, echo=TRUE}
-squid_gls <- gls(Testisweight ~ DML, data=squid,
-                 weights = varFixed(~ 1/DML))
+squid_gls <- gls(Testisweight ~ DML, 
+                 
+                 data=squid,
+                 
+                 weights = varFixed(~ DML))
 ```
 
-Note: higher value = more weight, so, 1/DML
+Note: higher value = higher variance - opposite of `lm`
 
 ## Compare WLS and GLS
 WLS with `lm`
@@ -333,7 +339,7 @@ Let's add month! If it was another driver...
 ```{r squid_gls_2, echo=TRUE}
 squid_gls_month <- gls(Testisweight ~ DML, data=squid,
 
-                       weights = varComb(varFixed(~1/DML),
+                       weights = varComb(varFixed(~DML),
                                          
                                          varFixed(~MONTH)))
 ```
@@ -401,8 +407,15 @@ vMonth <- varIdent(form = ~ 1 | fMONTH)
 ##  Fit and Estimate SD
 
 ```{r varident_fit, echo=TRUE}
-squid_month_gls <- gls(Testisweight ~ fMONTH, data=squid, weights=vMonth)
+squid_month_gls <- gls(Testisweight ~ fMONTH, 
+                       
+                       data=squid, 
+                       
+                       weights=vMonth)
+```
 
+## Summary of results
+```{r gls_summary}
 summary(squid_month_gls)
 ```
 
@@ -416,6 +429,7 @@ anova(squid_lm, squid_month_gls)
 ## A Clammy Example
 <div style="text-align: left">
 1. Clams.txt has data on the length-AFDM relationship of Wedge clames in Argentina each month.  
+        - Use `read.delim` to read it in
 \
 2. Evaluate the length-biomass relationship  
         - Test for Heteroskedasticity  

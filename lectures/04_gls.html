@@ -426,9 +426,10 @@ BP = 0.086946, df = 1, p-value = 0.7681</code></pre>
 <section id="weighting-by-a-predictor" class="slide level2">
 <h1>Weighting by a Predictor</h1>
 <ul>
-<li>Need to choose determine in what direction variance increases<br />
+<li>Need to determine the direction variance increases<br />
 </li>
 <li>Weight by X or 1/X<br />
+<br />
 </li>
 <li>Is it a linear or nonlinear relationship between variance and X?<br />
 <br />
@@ -441,7 +442,9 @@ BP = 0.086946, df = 1, p-value = 0.7681</code></pre>
 <p><br />
 </p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">squid_wls &lt;-<span class="st"> </span><span class="kw">lm</span>(Testisweight ~<span class="st"> </span>DML, <span class="dt">data=</span>squid,
-                <span class="dt">weights =</span> squid$DML)</code></pre></div>
+                <span class="dt">weights =</span> <span class="dv">1</span>/squid$DML)</code></pre></div>
+<p><br />
+Variance increases with DML, so weight decreases</p>
 </section>
 <section id="lm-is-limiting" class="slide level2">
 <h1>LM is LiMiting</h1>
@@ -452,6 +455,7 @@ BP = 0.086946, df = 1, p-value = 0.7681</code></pre>
 <li>Diagnostic plots will still look odd
 <ul>
 <li>DHARMa can help<br />
+<br />
 </li>
 </ul></li>
 <li>Cannot easily combine weights from multiple predictors</li>
@@ -466,7 +470,7 @@ BP = 0.086946, df = 1, p-value = 0.7681</code></pre>
 <li>We’ll get to what that means<br />
 <br />
 </li>
-<li>BUT - also has likelihood-based methods to git WLS and GLS<br />
+<li>BUT - also has likelihood-based methods to fit WLS and GLS<br />
 <br />
 </li>
 <li>Flexible weighting specification</li>
@@ -476,9 +480,12 @@ BP = 0.086946, df = 1, p-value = 0.7681</code></pre>
 <h1>WLS via GLS in NLME</h1>
 <p><br />
 </p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">squid_gls &lt;-<span class="st"> </span><span class="kw">gls</span>(Testisweight ~<span class="st"> </span>DML, <span class="dt">data=</span>squid,
-                 <span class="dt">weights =</span> <span class="kw">varFixed</span>(~<span class="st"> </span><span class="dv">1</span>/DML))</code></pre></div>
-<p>Note: higher value = more weight, so, 1/DML</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">squid_gls &lt;-<span class="st"> </span><span class="kw">gls</span>(Testisweight ~<span class="st"> </span>DML, 
+                 
+                 <span class="dt">data=</span>squid,
+                 
+                 <span class="dt">weights =</span> <span class="kw">varFixed</span>(~<span class="st"> </span>DML))</code></pre></div>
+<p>Note: higher value = higher variance - opposite of <code>lm</code></p>
 </section>
 <section id="compare-wls-and-gls" class="slide level2">
 <h1>Compare WLS and GLS</h1>
@@ -487,8 +494,8 @@ BP = 0.086946, df = 1, p-value = 0.7681</code></pre>
 t test of coefficients:
 
               Estimate Std. Error t value  Pr(&gt;|t|)    
-(Intercept) -7.5091183  0.4596993 -16.335 &lt; 2.2e-16 ***
-DML          0.0501444  0.0015686  31.967 &lt; 2.2e-16 ***
+(Intercept) -5.6239370  0.3382932 -16.624 &lt; 2.2e-16 ***
+DML          0.0430654  0.0014061  30.627 &lt; 2.2e-16 ***
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <p>GLS with <code>gls</code></p>
@@ -496,8 +503,8 @@ Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&
 z test of coefficients:
 
               Estimate Std. Error z value  Pr(&gt;|z|)    
-(Intercept) -7.5091183  0.4596993 -16.335 &lt; 2.2e-16 ***
-DML          0.0501444  0.0015686  31.967 &lt; 2.2e-16 ***
+(Intercept) -5.6239370  0.3382932 -16.624 &lt; 2.2e-16 ***
+DML          0.0430654  0.0014061  30.627 &lt; 2.2e-16 ***
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 </section>
@@ -517,7 +524,7 @@ Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&
 <p>Let’s add month! If it was another driver…</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">squid_gls_month &lt;-<span class="st"> </span><span class="kw">gls</span>(Testisweight ~<span class="st"> </span>DML, <span class="dt">data=</span>squid,
 
-                       <span class="dt">weights =</span> <span class="kw">varComb</span>(<span class="kw">varFixed</span>(~<span class="dv">1</span>/DML),
+                       <span class="dt">weights =</span> <span class="kw">varComb</span>(<span class="kw">varFixed</span>(~DML),
                                          
                                          <span class="kw">varFixed</span>(~MONTH)))</code></pre></div>
 </section>
@@ -629,9 +636,14 @@ BP = 68.375, df = 11, p-value = 2.485e-10</code></pre>
 </section>
 <section id="fit-and-estimate-sd" class="slide level2">
 <h1>Fit and Estimate SD</h1>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">squid_month_gls &lt;-<span class="st"> </span><span class="kw">gls</span>(Testisweight ~<span class="st"> </span>fMONTH, <span class="dt">data=</span>squid, <span class="dt">weights=</span>vMonth)
-
-<span class="kw">summary</span>(squid_month_gls)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">squid_month_gls &lt;-<span class="st"> </span><span class="kw">gls</span>(Testisweight ~<span class="st"> </span>fMONTH, 
+                       
+                       <span class="dt">data=</span>squid, 
+                       
+                       <span class="dt">weights=</span>vMonth)</code></pre></div>
+</section>
+<section id="summary-of-results" class="slide level2">
+<h1>Summary of results</h1>
 <pre><code>Generalized least squares fit by REML
   Model: Testisweight ~ fMONTH 
   Data: squid 
@@ -712,7 +724,7 @@ squid_month_gls  &lt;.0001</code></pre>
 <div style="text-align: left">
 <ol type="1">
 <li>Clams.txt has data on the length-AFDM relationship of Wedge clames in Argentina each month.<br />
-<br />
+- Use <code>read.delim</code> to read it in<br />
 </li>
 <li>Evaluate the length-biomass relationship<br />
 - Test for Heteroskedasticity<br />
