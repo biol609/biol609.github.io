@@ -15,7 +15,14 @@ __Reading:__ [O'Hara 2009](http://byrneslab.net/classes/biol609/O'Hara_2009_glmm
 __Files:__ [Data for GLM Lecture](lectures/02_data.zip)
 
 ### Week 2.
-__Lecture:__ [Model II and Quantile Regression](./lectures/03_rma_quantile.html), [Robust Regression and Generalised Least Squares](./lectures/04_gls.html)\
+__Lecture:__ [Model II and Quantile Regression](./lectures/03_rma_quantile.html), [Generalised Least Squares](./lectures/04_gls.html)\
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-alt_regression  
-__Reading:__ [Warton et al. SMATR](http://byrneslab.net/classes/biol609/Warton_et_al_2012_MEE.pdf), [Warton et al. 2006 Model II Review](http://byrneslab.net/classes/biol609/Warton_et_al-2006-Biological_Reviews.pdf), [Cade and Noon 2003 on Quantile Regression](http://byrneslab.net/classes/biol609/Cade_and_Noon_2003_Quantile.pdf), [Brennen et al. 2015 quantile regression example](http://byrneslab.net/classes/biol609/Brennen_et_al_2015_quantile.pdf)\
+__Reading:__ [Warton et al. SMATR](http://byrneslab.net/classes/biol609/Warton_et_al_2012_MEE.pdf), [Warton et al. 2006 Model II Review](http://byrneslab.net/classes/biol609/Warton_et_al-2006-Biological_Reviews.pdf), [Cade and Noon 2003 on Quantile Regression](http://byrneslab.net/classes/biol609/Cade_and_Noon_2003_Quantile.pdf), [Brennen et al. 2015 quantile regression example](http://byrneslab.net/classes/biol609/Brennen_et_al_2015_quantile.pdf), [Colonescu Ch. 8 on Heteroskedasticity](https://bookdown.org/ccolonescu/RPoE4/heteroskedasticity.html)\
 __Files:__ [Elk data](./lectures/data/03/ekk_from_dryad.csv), [Clam data](./lectures/data/04/Clams.txt)
+
+
+### Week 3.
+__Lecture:__ [Temporal Autocorrelation](05_temporal_autocorrelation.html)\
+__Etherpad:__ https://etherpad.wikimedia.org/p/609-autocorrelation  
+__Reading:__ [Zuur et al. on temporal autocorrelation]((http://byrneslab.net/classes/biol609/Zuur_ch_6_temporal.pdf)\
+__Files:__ 
