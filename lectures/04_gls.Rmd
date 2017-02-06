@@ -429,7 +429,7 @@ anova(squid_lm, squid_month_gls)
 ## A Clammy Example
 <div style="text-align: left">
 1. Clams.txt has data on the length-AFDM relationship of Wedge clames in Argentina each month.  
-        - Use `read.delim` to read it in
+        - Use `read.delim` to read it in  
 \
 2. Evaluate the length-biomass relationship  
         - Test for Heteroskedasticity  
