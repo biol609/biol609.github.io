@@ -1,0 +1,628 @@
+---
+title:
+css: style.css
+output:
+  revealjs::revealjs_presentation:
+    reveal_options:
+      slideNumber: true
+      previewLinks: true
+    theme: white
+    center: false
+    transition: fade
+    self_contained: false
+    lib_dir: libs
+---
+  
+## 
+
+<h3>Temporal Autocorrelation with GLS</h3>
+\
+![](images/05/autocorrelation_future_meme.jpg)  
+  ```{r prep, echo=FALSE, cache=FALSE, message=FALSE, warning=FALSE}
+library(knitr)
+opts_chunk$set(fig.height=5, fig.width=7, comment=NA, 
+               warning=FALSE, message=FALSE, 
+               dev="jpeg", echo=FALSE)
+
+library(ggplot2)
+library(car)
+
+library(dplyr)
+library(tidyr)
+library(broom)
+
+library(nlme)
+```
+
+## A Sample Timeseries: BIRDS!
+```{r birds}
+allbirds <- read.csv("./data/05/allbirds.csv", stringsAsFactors=FALSE)
+
+oahu_data <- allbirds %>% filter(Site == "Coot.Oahu") %>%
+  arrange(Year) %>%
+  mutate(Birds_Lag = lag(Birds)) %>%
+  mutate(Detrended_Birds = c(NA, residuals(lm(Birds ~ Birds_Lag, data=.))))
+
+```
+
+```{r oahu_tsplot}
+oahu <- ggplot(oahu_data,
+       mapping=aes(x=Year, y=Birds)) +
+  geom_line() +
+  theme_bw(base_size=17) +
+  ylab("Birds")
+
+oahu
+```
+
+## Modeling Error Structures with Generalized Least Squares
+
+$$Y_i = \beta X_i + \epsilon_i$$
+$$\epsilon_i \sim \mathcal{N}(0, \sigma^2_i)$$
+\
+
+
+## Sigma as a Variance-Covariance Matrix
+
+$$ \epsilon_i \sim N(0, \large \sigma^2)$$ \
+\
+if n=3...\
+$$ \sigma^2 = \begin{pmatrix}
+\sigma^2 & 0 &0 \\ 
+0 &  \sigma^2& 0\\ 
+0 & 0 & \sigma^2
+\end{pmatrix} $$
+
+
+## What if varianace is not Constant?
+
+$$ \sigma^2 = \begin{pmatrix}
+\sigma^2 & 0 &0 \\ 
+0 &  \sigma^2& 0\\ 
+0 & 0 & \sigma^2
+\end{pmatrix} $$
+\
+
+-We weight by 1/SD of a response variable when we know
+something about measurement precision. 
+        - E.g. in R `lm(y ~ x,weights=1/sd(y))` 
+- Other options include modeling $\sigma^2$ explicitly as a response. 
+      -  `varFixed`, `varIdent`, etc. with `gls`
+
+## What if the off diagonals are not 0?
+
+$$ \sigma^2 = \begin{pmatrix}
+\sigma^2 & 0 &0 \\ 
+0 &  \sigma^2& 0\\ 
+0 & 0 & \sigma^2
+\end{pmatrix} $$
+
+-   Temporal or Physical distance between sampling points can induce
+    correlation between data points.\
+\
+-   If we have measured EVERY relevant variable, we may account for
+    this, but not always.\
+
+## Enter Time Series Analysis
+
+```{r oahu_tsplot}
+```
+
+Data from Zuur et al. 2009
+
+## Types of Timeseries
+- **Stationary**
+        - Centers on a mean value  
+        - Mean can be determined by a set of predictors  
+        - No temporal trend, unless due to predictors  
+        - E.g. Population dynamics in a system at carrying capacity
+\
+- **Non-Stationary**  
+      - Shows a trend
+      - E.g. Climate change
+      
+## Stationary v. Non-Stationary
+```{r types_of_ts}
+set.seed(2014)
+sdf <- data.frame(Year = 1985:2003,
+                  Stationary = rnorm(19, 50, 80),
+                  Nonstationary = rnorm(19, 50*1:19/5, 80)) %>%
+  gather(Type, Population, -Year) %>%
+  mutate(Type = factor(Type, levels=c("Stationary", "Nonstationary")))
+
+ggplot(sdf, aes(x=Year, y=Population)) +
+  geom_line() +
+  facet_wrap(~Type) +
+  theme_bw(base_size=17)
+```
+
+## It's Time
+1. Fitting a Non-Stationary Timeseries with GLS\
+\
+2. Other Correlation Structures\
+\
+3. Adding in Covariates\
+\
+4. Modeling with Many Timeseries
+
+## Can We Fit a Trend?
+```{r oahu_tsplot_trend}
+oahu + stat_smooth(method="lm")
+```
+
+Note: Time could have had a nonlinear effect, but we'll start simple
+
+BUT - Need to examine cor($X, X_t-\tau$) to be certain.
+
+
+
+## What could Falsely Generate a Trend?
+
+```{r bird_ts_fit_resid, echo=FALSE}
+ggplot(oahu_data, mapping=aes(x=Birds_Lag, y=Birds)) +
+  geom_point() +
+  theme_bw(base_size=17) +
+  xlab("Birds at Time T-1") +
+  ylab("Birds at Time T") +
+  stat_smooth(method="lm")
+```
+
+<div class="fragment">Correlation ($\rho$) Between T and T-1 = `r round(cor(oahu_data$Birds, oahu_data$Birds_Lag, use="pairwise.complete"), 3)`
+</div>
+
+## What if we take out signal of previous year?
+```{r oahu_detrend, warning=FALSE}
+oahu_detrend_scatter <- ggplot(oahu_data,
+       aes(x=Year, y=Detrended_Birds)) +
+  geom_line() +
+  theme_bw(base_size=17)
+
+oahu_detrend_scatter  + stat_smooth(method="lm", color="red") 
+
+```
+
+## Autocorrelation of Residuals
+
+```{r bird_ts_fit_acf, echo=TRUE}
+birds_lm <- gls(Birds ~ Year, data=oahu_data)
+acf(residuals(birds_lm))
+```
+
+
+## We Can Incorporate Autcorrelation into error
+
+$$cor(\epsilon) = \begin{pmatrix}
+1 & 0 &0 \\ 
+0 &  1& 0\\ 
+0 & 0 & 1
+\end{pmatrix}$$ \
+<div class="fragment">
+Alternatives?\
+</div><div class="fragment">
+$$ cor(\epsilon) = \begin{pmatrix}
+1 & \rho &\rho \\ 
+\rho &  1& \rho\\ 
+\rho & \rho & 1
+\end{pmatrix} $$ \
+
+Compound Symmetric Structure: All points are equally correlated
+</div>
+
+## But we see the dropoff
+
+```{r bird_ts_fit_acf, echo=FALSE}
+```
+
+## Autoregressive Error Structure - AR1
+
+$$ \epsilon_{t} = \rho \epsilon_{t-1} + \zeta_{t}$$ \
+\
+which produces\
+$$ cor(\epsilon) = \begin{pmatrix}
+1 & \rho &\rho^{2} \\ 
+\rho &  1& \rho\\ 
+\rho^{2} & \rho & 1
+\end{pmatrix}$$ \
+for n=3 time steps\
+
+- Dropoff of correlation with time
+
+## Advantages and Disadvantages with AR1 Structure
+
+- Assumes linear dropoff of correlation\
+\
+- Only a 1-year lag built in \
+\
+- Need discretely timed sampling intervals
+
+
+## Implementing an AR1 Structure with the Oahu Time Series
+
+```{r bird_ts_fit_AR1, echo=TRUE}
+
+#Correlation Structure
+birds_corAR <- corAR1 (form = ~ Year)
+
+#Model
+birds_ar1 <- gls(Birds ~ Year, data=oahu_data,
+                 correlation = birds_corAR)
+
+```
+
+## The Correlation
+```{r birds_ts_ar1}
+birds_ar1
+```
+
+
+## Does AR1 Fit Better?
+
+```{r bird_ts_fit_compare1}
+anova(birds_ar1, birds_lm)
+```
+
+
+## But no longer a linear trend
+Without correction
+
+```{r coefs_birds}
+knitr::kable(round(summary(birds_lm)$tTable,3))
+```
+
+With correction
+```{r tab2}
+knitr::kable(round(summary(birds_ar1)$tTable,3))
+```
+
+## Trends Look similar...
+```{r predict_plot}
+oahu +
+  geom_line(y=fitted(birds_lm), color="blue") +
+  geom_line(y=fitted(birds_ar1), color="red")
+```
+
+## But Big CI increase
+```{r predict_plot_error, warning=FALSE}
+
+#get fit values
+fit <- predict(birds_ar1)
+
+#Calculate SE of fit
+V <- vcov(birds_ar1)
+X <- model.matrix(~Year,data=oahu_data)
+se.fit <- sqrt(diag(X %*% V %*% t(X)))
+
+#predicted data frame
+pred_ar1 <- data.frame(fit = fit,
+                       lwr = fit-se.fit*1.96,
+                       upr = fit+se.fit*1.96, 
+                       Year = oahu_data$Year)
+
+oahu +
+  geom_line(y=fitted(birds_ar1), color="red") +
+  stat_smooth(method="lm", color="blue", fill="darkblue") +
+  geom_ribbon(pred_ar1, mapping=aes(y=fit, ymin=lwr,  ymax=upr), alpha=0.3) 
+  
+```
+
+
+## It's Time
+1. Fitting a Non-Stationary Timeseries with GLS\
+\
+2. **Other Correlation Structures**\
+\
+3. Adding in Covariates\
+\
+4. Modeling with Many Timeseries
+
+## Other Correlation Structures
+- Continuous Autoregressive Process  
+      - Uses continuous time  
+      - Easier on data sets with Gaps  
+\
+- Autoregressive Moving Average  
+      - Variable autoregressive order (AR1 = 1)  
+      - Incorporate moving average over time
+\
+
+## CAR Structure
+```{r boids_car, echo=TRUE}
+birds_corCAR <- corCAR1(form = ~ Year)
+```
+```{r car fit}
+oahu_car <- gls(Birds ~ Year, data=oahu_data,
+                correlation = birds_corCAR)
+```
+- Take continuous covariate  
+\
+- `corAR1` assumes 1 step between each value of covariate  
+\
+- Allows for things like missing time points, etc.  
+\
+- In our example, produces identical results
+
+## Autoregressive Moving Average Structure
+- Two parts:  
+\
+\
+1. $\epsilon_{t} = \phi_1 \epsilon_{t-1} + \phi_2 \epsilon_{t-2} + ... + \zeta_{t}$ \
+        - You can have a lag effect from more than 1 year
+\
+\
+2. $\epsilon_{t} = \theta_1 \zeta_{t-1} + \theta_2 \zeta_{t-2} + ... + \zeta_{t}$ \
+        - Deviation from 0 residual mean due to lagged effects  
+\
+\
+- Remember, these parameters all have to be estimated!
+
+## ARMA Structure
+Two Year AR Correlation
+```{r arma, echo=TRUE}
+arma_birds_2_ar <- corARMA(form = ~ Year, p = 2, q=0)
+```
+
+Two Year MA
+```{r arma2, echo=TRUE}
+arma_birds_2_ma <- corARMA(form = ~ Year, p = 0, q=2)
+```
+
+Two Year ARMA
+```{r arma3, echo=TRUE}
+arma_birds_2_arma <- corARMA(form = ~ Year, p = 2, q=2)
+```
+
+
+## Compare Fits
+```{r arma_mods}
+birds_ar2 <- gls(Birds ~ Year, data=oahu_data,
+                 correlation = arma_birds_2_ar)
+birds_ma2 <- gls(Birds ~ Year, data=oahu_data,
+                 correlation = arma_birds_2_ma)
+birds_arma2 <- gls(Birds ~ Year, data=oahu_data,
+                 correlation = arma_birds_2_arma)
+```
+```{r arma_ar}
+anova(birds_ar2, birds_arma2)
+cat("\n")
+anova(birds_ma2, birds_arma2)
+cat("\n")
+anova(birds_ma2, birds_ar2)
+```
+
+## What about AR1 v. AR2?
+```{r ar1_ar2, echo=TRUE}
+anova(birds_ar1, birds_ar2)
+```
+
+## How do I know if my lag is >1 time step
+- Autocorrelaiton plots show total correlation between a Y(t) and Y(t-s)  
+\
+- If we control for correlation at each timestep, we can get unique lag of s
+        - Partial Autocorrelation
+
+## PACF Plot
+```{r birds_pacf, echo=TRUE}
+pacf(residuals(birds_lm))
+```
+
+## Differentiating Between AR and MA processes
+- If ACF function shows long decay, and PACF shows a drop to 0 quickly, mostly an AR process\
+      - E.g., ACF doesn't drop to 0 until 10 years, but PACF drops to 0 after 2, AR3 Process  
+\
+\
+- If ACF function drops off quickly, but PACF shows a long decay, mostly an MA process
+
+
+## It's Time
+1. Fitting a Non-Stationary Timeseries with GLS\
+\
+2. Other Correlation Structures\
+\
+3. **Adding in Covariates**\
+\
+4. Modeling with Many Timeseries
+
+## Adding Predictors
+```{r rainfall_oahu}
+oahu +
+    geom_point(mapping=aes(color=Rainfall)) +
+  scale_color_gradient(low = "orange", high="blue")
+```
+
+## Why Might Predictors Change Autocorrelation Problems?
+- Often, correlation is caused by drivers correlated in space and time  
+\
+- For example, El Niño is followed by La Niña, leading to correlations between years in rainfall  
+\
+- BUT - if we model ENSO, this correlation might go away
+
+## Did rainfall do the trick?
+```{r rainfall_lm, echo=TRUE}
+birds_rain <- gls(Birds ~ Rainfall+Year, data=oahu_data)
+acf(residuals(birds_rain))
+```
+
+Still autocorrleation
+
+## Our Autocorrelation Structure Still Holds
+```{r rainfall_gls, echo=TRUE}
+birds_rain_ar <- gls(Birds ~ Rainfall+Year, 
+                     data=oahu_data,
+                     correlation = birds_corAR)
+```
+
+## Autocorrelation Reduces Sums of Squares
+
+No Correlation
+```{r bird_anova}
+anova(birds_rain, type="marginal")
+```
+
+Correlation
+```{r bird_anova2}
+anova(birds_rain_ar, type="marginal")
+```
+
+
+## It's Time
+1. Fitting a Non-Stationary Timeseries with GLS\
+\
+2. Other Correlation Structures\
+\
+3. Adding in Covariates\
+\
+4. **Modeling with Many Timeseries**
+
+## Adding Groups
+```{r all_birds_plot}
+allSites <- ggplot(allbirds,
+       mapping=aes(x=Year, y=Birds)) +
+  geom_line() +
+  theme_bw(base_size=14) + 
+  facet_wrap(~Site) +
+  ylab("Birds")
+
+allSites
+```
+
+## Adding Groups with Rain
+```{r bird_rain}
+allSites +
+    geom_point(mapping=aes(color=Rainfall)) +
+  scale_color_gradient(low = "orange", high="blue")
+```
+
+## Variable Relationship?
+```{r bird_rain_scatter}
+ggplot(data=allbirds,
+       mapping=aes(x=Rainfall, y=Birds, color=Site)) +
+  geom_point() +
+  theme_bw(base_size=17) +
+  stat_smooth(method="lm", fill=NA)
+```
+
+
+## Overall Temporal Trend?
+```{r bird_rain_scatter2}
+ggplot(data=allbirds,
+       mapping=aes(x=Year, y=Birds)) +
+  geom_point() +
+  theme_bw(base_size=17) +
+  stat_smooth(method="lm", fill=NA)
+```
+
+
+## Accomodating Between Site Heterogeneity
+```{r all_birds_plot}
+```
+
+Each site needs it's own $\sigma^2$
+
+## Variance By Group
+\
+\
+```{r heterosk, echo=TRUE}
+birds_var <- varIdent(form = ~ 1 | Site)
+```
+
+
+## No Autocorrelation GLS
+```{r rain_lm, echo=TRUE}
+all_rain <- gls(Birds ~ Rainfall*Site + Year, 
+                data=allbirds,
+                weights = birds_var)
+```
+
+## But...
+```{r all_acf, echo=TRUE}
+acf(residuals(all_rain))
+```
+
+## Fortunately, still AR1
+```{r all_pacf, echo=TRUE}
+pacf(residuals(all_rain))
+```
+
+## AR1 With Groups
+- Correlation Could Vary By Site  
+\
+- We use `|` to denote 'varies by'  
+\
+
+```{r cor_site, echo=TRUE}
+birds_corAR_site <- corAR1(form = ~ Year | Site)
+```
+
+## Build the Model
+\
+```{r site_model, echo=TRUE}
+all_rain_cor <- gls(Birds ~ Rainfall*Site + Year, 
+                    data=allbirds,
+                    weights = birds_var,
+                    correlation = birds_corAR_site)
+```
+
+## Evaluate
+\
+\
+
+```{r site_anova}
+knitr::kable(Anova(all_rain_cor))
+```
+
+## Did we need the autocorrelation?
+\
+\
+
+```{r bird_autocor_test}
+anova(all_rain, all_rain_cor)
+```
+
+## Show us Fit
+```{r fitplot, echo=TRUE, eval=FALSE}
+allbirds$fit <- predict(all_rain_cor)
+allSites +
+  geom_line(data=allbirds, 
+            mapping=aes(y=fit), 
+            color="red")
+```
+
+## Show us Fit
+```{r fitplot_nofit}
+allSites 
+```
+
+
+## Show us Fit
+```{r fitplot, echo=FALSE, eval=TRUE}
+```
+
+```{r}
+r2 <- 1-sum(residuals(all_rain_cor)^2)/sum((allbirds$Birds - mean(allbirds$Birds))^2)
+```
+
+$R^2$ = 1- RSS/TSS = `r round(r2)`
+
+## Exercise: Model CHLFa in the Plankton Data Set
+
+```{r plankton_plot, echo=FALSE}
+plankton <- read.csv("./data/05/planktonMeans.csv")
+ggplot(data=plankton, mapping=aes(x=Year, y=CHLFa)) +
+  geom_line() +
+  facet_wrap(~Station) +
+  theme_bw()
+```
+
+How well can you model the time series with the measurements at hand?  
+Data extrapolated from Zuur et al. 2009\
+
+## Exercise: Model CHLFa in the Plankton Data Set
+Suggested Order:
+
+1. Select one site, evaluate trend with and without correlaiton  
+\
+2. Include >2 predictors  
+\
+3. Add back in all of the sites  
+\
+4. Plot predicted timeseries

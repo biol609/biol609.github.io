@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <title></title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="libs/reveal.js-3.3.0/css/reveal.css"/>
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="libs/reveal.js-3.3.0/css/theme/white.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="style.css"/>
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'libs/reveal.js-3.3.0/css/print/pdf.css' : 'libs/reveal.js-3.3.0/css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+    <!--[if lt IE 9]>
+    <script src="libs/reveal.js-3.3.0/lib/js/html5shiv.js"></script>
+    <![endif]-->
+
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+
+<section id="section" class="slide level2">
+<h1></h1>
+<h3>
+Temporal Autocorrelation with GLS
+</h3>
+<p><br />
+<img src="images/05/autocorrelation_future_meme.jpg" /></p>
+</section>
+<section id="a-sample-timeseries-birds" class="slide level2">
+<h1>A Sample Timeseries: BIRDS!</h1>
+<p><img src="05_timeseries_files/figure-revealjs/oahu_tsplot-1.jpeg" width="672" /></p>
+</section>
+<section id="modeling-error-structures-with-generalized-least-squares" class="slide level2">
+<h1>Modeling Error Structures with Generalized Least Squares</h1>
+<p><span class="math display">\[Y_i = \beta X_i + \epsilon_i\]</span> <span class="math display">\[\epsilon_i \sim \mathcal{N}(0, \sigma^2_i)\]</span><br />
+</p>
+</section>
+<section id="sigma-as-a-variance-covariance-matrix" class="slide level2">
+<h1>Sigma as a Variance-Covariance Matrix</h1>
+<p><span class="math display">\[ \epsilon_i \sim N(0, \large \sigma^2)\]</span><br />
+<br />
+if n=3…<br />
+<span class="math display">\[ \sigma^2 = \begin{pmatrix}
+\sigma^2 &amp; 0 &amp;0 \\ 
+0 &amp;  \sigma^2&amp; 0\\ 
+0 &amp; 0 &amp; \sigma^2
+\end{pmatrix} \]</span></p>
+</section>
+<section id="what-if-varianace-is-not-constant" class="slide level2">
+<h1>What if varianace is not Constant?</h1>
+<p><span class="math display">\[ \sigma^2 = \begin{pmatrix}
+\sigma^2 &amp; 0 &amp;0 \\ 
+0 &amp;  \sigma^2&amp; 0\\ 
+0 &amp; 0 &amp; \sigma^2
+\end{pmatrix} \]</span><br />
+-We weight by 1/SD of a response variable when we know something about measurement precision. - E.g. in R <code>lm(y ~ x,weights=1/sd(y))</code> - Other options include modeling <span class="math inline">\(\sigma^2\)</span> explicitly as a response. - <code>varFixed</code>, <code>varIdent</code>, etc. with <code>gls</code></p>
+</section>
+<section id="what-if-the-off-diagonals-are-not-0" class="slide level2">
+<h1>What if the off diagonals are not 0?</h1>
+<p><span class="math display">\[ \sigma^2 = \begin{pmatrix}
+\sigma^2 &amp; 0 &amp;0 \\ 
+0 &amp;  \sigma^2&amp; 0\\ 
+0 &amp; 0 &amp; \sigma^2
+\end{pmatrix} \]</span></p>
+<ul>
+<li>Temporal or Physical distance between sampling points can induce correlation between data points.<br />
+<br />
+</li>
+<li>If we have measured EVERY relevant variable, we may account for this, but not always.<br />
+</li>
+</ul>
+</section>
+<section id="enter-time-series-analysis" class="slide level2">
+<h1>Enter Time Series Analysis</h1>
+<p><img src="05_timeseries_files/figure-revealjs/oahu_tsplot-1.jpeg" width="672" /></p>
+<p>Data from Zuur et al. 2009</p>
+</section>
+<section id="types-of-timeseries" class="slide level2">
+<h1>Types of Timeseries</h1>
+<ul>
+<li><strong>Stationary</strong> - Centers on a mean value<br />
+- Mean can be determined by a set of predictors<br />
+- No temporal trend, unless due to predictors<br />
+- E.g. Population dynamics in a system at carrying capacity<br />
+</li>
+<li><strong>Non-Stationary</strong>
+<ul>
+<li>Shows a trend</li>
+<li>E.g. Climate change</li>
+</ul></li>
+</ul>
+</section>
+<section id="stationary-v.-non-stationary" class="slide level2">
+<h1>Stationary v. Non-Stationary</h1>
+<p><img src="05_timeseries_files/figure-revealjs/types_of_ts-1.jpeg" width="672" /></p>
+</section>
+<section id="its-time" class="slide level2">
+<h1>It’s Time</h1>
+<ol type="1">
+<li>Fitting a Non-Stationary Timeseries with GLS<br />
+<br />
+</li>
+<li>Other Correlation Structures<br />
+<br />
+</li>
+<li>Adding in Covariates<br />
+<br />
+</li>
+<li>Modeling with Many Timeseries</li>
+</ol>
+</section>
+<section id="can-we-fit-a-trend" class="slide level2">
+<h1>Can We Fit a Trend?</h1>
+<p><img src="05_timeseries_files/figure-revealjs/oahu_tsplot_trend-1.jpeg" width="672" /></p>
+<p>Note: Time could have had a nonlinear effect, but we’ll start simple</p>
+<p>BUT - Need to examine cor(<span class="math inline">\(X, X_t-\tau\)</span>) to be certain.</p>
+</section>
+<section id="what-could-falsely-generate-a-trend" class="slide level2">
+<h1>What could Falsely Generate a Trend?</h1>
+<p><img src="05_timeseries_files/figure-revealjs/bird_ts_fit_resid-1.jpeg" width="672" /></p>
+<div class="fragment">
+<p>Correlation (<span class="math inline">\(\rho\)</span>) Between T and T-1 = 0.699</p>
+</div>
+</section>
+<section id="what-if-we-take-out-signal-of-previous-year" class="slide level2">
+<h1>What if we take out signal of previous year?</h1>
+<p><img src="05_timeseries_files/figure-revealjs/oahu_detrend-1.jpeg" width="672" /></p>
+</section>
+<section id="autocorrelation-of-residuals" class="slide level2">
+<h1>Autocorrelation of Residuals</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">birds_lm &lt;-<span class="st"> </span><span class="kw">gls</span>(Birds ~<span class="st"> </span>Year, <span class="dt">data=</span>oahu_data)
+<span class="kw">acf</span>(<span class="kw">residuals</span>(birds_lm))</code></pre></div>
+<p><img src="05_timeseries_files/figure-revealjs/bird_ts_fit_acf-1.jpeg" width="672" /></p>
+</section>
+<section id="we-can-incorporate-autcorrelation-into-error" class="slide level2">
+<h1>We Can Incorporate Autcorrelation into error</h1>
+<span class="math display">\[cor(\epsilon) = \begin{pmatrix}
+1 &amp; 0 &amp;0 \\ 
+0 &amp;  1&amp; 0\\ 
+0 &amp; 0 &amp; 1
+\end{pmatrix}\]</span><br />
+
+<div class="fragment">
+Alternatives?<br />
+
+</div>
+<div class="fragment">
+<p><span class="math display">\[ cor(\epsilon) = \begin{pmatrix}
+1 &amp; \rho &amp;\rho \\ 
+\rho &amp;  1&amp; \rho\\ 
+\rho &amp; \rho &amp; 1
+\end{pmatrix} \]</span><br />
+Compound Symmetric Structure: All points are equally correlated</p>
+</div>
+</section>
+<section id="but-we-see-the-dropoff" class="slide level2">
+<h1>But we see the dropoff</h1>
+<p><img src="05_timeseries_files/figure-revealjs/bird_ts_fit_acf-1.jpeg" width="672" /></p>
+</section>
+<section id="autoregressive-error-structure---ar1" class="slide level2">
+<h1>Autoregressive Error Structure - AR1</h1>
+<p><span class="math display">\[ \epsilon_{t} = \rho \epsilon_{t-1} + \zeta_{t}\]</span><br />
+<br />
+which produces<br />
+<span class="math display">\[ cor(\epsilon) = \begin{pmatrix}
+1 &amp; \rho &amp;\rho^{2} \\ 
+\rho &amp;  1&amp; \rho\\ 
+\rho^{2} &amp; \rho &amp; 1
+\end{pmatrix}\]</span><br />
+for n=3 time steps<br />
+- Dropoff of correlation with time</p>
+</section>
+<section id="advantages-and-disadvantages-with-ar1-structure" class="slide level2">
+<h1>Advantages and Disadvantages with AR1 Structure</h1>
+<ul>
+<li>Assumes linear dropoff of correlation<br />
+<br />
+</li>
+<li>Only a 1-year lag built in<br />
+<br />
+</li>
+<li>Need discretely timed sampling intervals</li>
+</ul>
+</section>
+<section id="implementing-an-ar1-structure-with-the-oahu-time-series" class="slide level2">
+<h1>Implementing an AR1 Structure with the Oahu Time Series</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Correlation Structure</span>
+birds_corAR &lt;-<span class="st"> </span><span class="kw">corAR1</span> (<span class="dt">form =</span> ~<span class="st"> </span>Year)
+
+<span class="co">#Model</span>
+birds_ar1 &lt;-<span class="st"> </span><span class="kw">gls</span>(Birds ~<span class="st"> </span>Year, <span class="dt">data=</span>oahu_data,
+                 <span class="dt">correlation =</span> birds_corAR)</code></pre></div>
+</section>
+<section id="the-correlation" class="slide level2">
+<h1>The Correlation</h1>
+<pre><code>Generalized least squares fit by REML
+  Model: Birds ~ Year 
+  Data: oahu_data 
+  Log-restricted-likelihood: -285.7658
+
+Coefficients:
+  (Intercept)          Year 
+-14947.690329      7.763806 
+
+Correlation Structure: ARMA(1,0)
+ Formula: ~Year 
+ Parameter estimate(s):
+     Phi1 
+0.7356643 
+Degrees of freedom: 43 total; 41 residual
+Residual standard error: 332.2233 </code></pre>
+</section>
+<section id="does-ar1-fit-better" class="slide level2">
+<h1>Does AR1 Fit Better?</h1>
+<pre><code>          Model df      AIC      BIC    logLik   Test  L.Ratio p-value
+birds_ar1     1  4 579.5315 586.3858 -285.7658                        
+birds_lm      2  3 599.5628 604.7035 -296.7814 1 vs 2 22.03122  &lt;.0001</code></pre>
+</section>
+<section id="but-no-longer-a-linear-trend" class="slide level2">
+<h1>But no longer a linear trend</h1>
+<p>Without correction</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th style="text-align: right;">Value</th>
+<th style="text-align: right;">Std.Error</th>
+<th style="text-align: right;">t-value</th>
+<th style="text-align: right;">p-value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>(Intercept)</td>
+<td style="text-align: right;">-18806.203</td>
+<td style="text-align: right;">6472.241</td>
+<td style="text-align: right;">-2.906</td>
+<td style="text-align: right;">0.006</td>
+</tr>
+<tr class="even">
+<td>Year</td>
+<td style="text-align: right;">9.693</td>
+<td style="text-align: right;">3.268</td>
+<td style="text-align: right;">2.966</td>
+<td style="text-align: right;">0.005</td>
+</tr>
+</tbody>
+</table>
+<p>With correction</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th style="text-align: right;">Value</th>
+<th style="text-align: right;">Std.Error</th>
+<th style="text-align: right;">t-value</th>
+<th style="text-align: right;">p-value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>(Intercept)</td>
+<td style="text-align: right;">-14947.690</td>
+<td style="text-align: right;">14943.052</td>
+<td style="text-align: right;">-1.000</td>
+<td style="text-align: right;">0.323</td>
+</tr>
+<tr class="even">
+<td>Year</td>
+<td style="text-align: right;">7.764</td>
+<td style="text-align: right;">7.549</td>
+<td style="text-align: right;">1.029</td>
+<td style="text-align: right;">0.310</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="trends-look-similar" class="slide level2">
+<h1>Trends Look similar…</h1>
+<p><img src="05_timeseries_files/figure-revealjs/predict_plot-1.jpeg" width="672" /></p>
+</section>
+<section id="but-big-ci-increase" class="slide level2">
+<h1>But Big CI increase</h1>
+<p><img src="05_timeseries_files/figure-revealjs/predict_plot_error-1.jpeg" width="672" /></p>
+</section>
+<section id="its-time-1" class="slide level2">
+<h1>It’s Time</h1>
+<ol type="1">
+<li>Fitting a Non-Stationary Timeseries with GLS<br />
+<br />
+</li>
+<li><strong>Other Correlation Structures</strong><br />
+<br />
+</li>
+<li>Adding in Covariates<br />
+<br />
+</li>
+<li>Modeling with Many Timeseries</li>
+</ol>
+</section>
+<section id="other-correlation-structures" class="slide level2">
+<h1>Other Correlation Structures</h1>
+<ul>
+<li>Continuous Autoregressive Process
+<ul>
+<li>Uses continuous time<br />
+</li>
+<li>Easier on data sets with Gaps<br />
+<br />
+</li>
+</ul></li>
+<li>Autoregressive Moving Average
+<ul>
+<li>Variable autoregressive order (AR1 = 1)<br />
+</li>
+<li>Incorporate moving average over time<br />
+</li>
+</ul></li>
+</ul>
+</section>
+<section id="car-structure" class="slide level2">
+<h1>CAR Structure</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">birds_corCAR &lt;-<span class="st"> </span><span class="kw">corCAR1</span>(<span class="dt">form =</span> ~<span class="st"> </span>Year)</code></pre></div>
+<ul>
+<li>Take continuous covariate<br />
+<br />
+</li>
+<li><code>corAR1</code> assumes 1 step between each value of covariate<br />
+<br />
+</li>
+<li>Allows for things like missing time points, etc.<br />
+<br />
+</li>
+<li>In our example, produces identical results</li>
+</ul>
+</section>
+<section id="autoregressive-moving-average-structure" class="slide level2">
+<h1>Autoregressive Moving Average Structure</h1>
+<ul>
+<li>Two parts:<br />
+<br />
+<br />
+</li>
+</ul>
+<ol type="1">
+<li><span class="math inline">\(\epsilon_{t} = \phi_1 \epsilon_{t-1} + \phi_2 \epsilon_{t-2} + ... + \zeta_{t}\)</span><br />
+- You can have a lag effect from more than 1 year<br />
+<br />
+</li>
+<li><span class="math inline">\(\epsilon_{t} = \theta_1 \zeta_{t-1} + \theta_2 \zeta_{t-2} + ... + \zeta_{t}\)</span><br />
+- Deviation from 0 residual mean due to lagged effects<br />
+<br />
+<br />
+</li>
+</ol>
+<ul>
+<li>Remember, these parameters all have to be estimated!</li>
+</ul>
+</section>
+<section id="arma-structure" class="slide level2">
+<h1>ARMA Structure</h1>
+<p>Two Year AR Correlation</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">arma_birds_2_ar &lt;-<span class="st"> </span><span class="kw">corARMA</span>(<span class="dt">form =</span> ~<span class="st"> </span>Year, <span class="dt">p =</span> <span class="dv">2</span>, <span class="dt">q=</span><span class="dv">0</span>)</code></pre></div>
+<p>Two Year MA</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">arma_birds_2_ma &lt;-<span class="st"> </span><span class="kw">corARMA</span>(<span class="dt">form =</span> ~<span class="st"> </span>Year, <span class="dt">p =</span> <span class="dv">0</span>, <span class="dt">q=</span><span class="dv">2</span>)</code></pre></div>
+<p>Two Year ARMA</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">arma_birds_2_arma &lt;-<span class="st"> </span><span class="kw">corARMA</span>(<span class="dt">form =</span> ~<span class="st"> </span>Year, <span class="dt">p =</span> <span class="dv">2</span>, <span class="dt">q=</span><span class="dv">2</span>)</code></pre></div>
+</section>
+<section id="compare-fits" class="slide level2">
+<h1>Compare Fits</h1>
+<pre><code>            Model df      AIC      BIC    logLik   Test    L.Ratio p-value
+birds_ar2       1  5 581.3772 589.9451 -285.6886                          
+birds_arma2     2  7 585.3404 597.3354 -285.6702 1 vs 2 0.03681297  0.9818</code></pre>
+<pre><code>            Model df      AIC      BIC    logLik   Test  L.Ratio p-value
+birds_ma2       1  5 584.6792 593.2470 -287.3396                        
+birds_arma2     2  7 585.3404 597.3354 -285.6702 1 vs 2 3.338772  0.1884</code></pre>
+<pre><code>          Model df      AIC      BIC    logLik
+birds_ma2     1  5 584.6792 593.2470 -287.3396
+birds_ar2     2  5 581.3772 589.9451 -285.6886</code></pre>
+</section>
+<section id="what-about-ar1-v.-ar2" class="slide level2">
+<h1>What about AR1 v. AR2?</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">anova</span>(birds_ar1, birds_ar2)</code></pre></div>
+<pre><code>          Model df      AIC      BIC    logLik   Test   L.Ratio p-value
+birds_ar1     1  4 579.5315 586.3858 -285.7658                         
+birds_ar2     2  5 581.3772 589.9451 -285.6886 1 vs 2 0.1543411  0.6944</code></pre>
+</section>
+<section id="how-do-i-know-if-my-lag-is-1-time-step" class="slide level2">
+<h1>How do I know if my lag is &gt;1 time step</h1>
+<ul>
+<li>Autocorrelaiton plots show total correlation between a Y(t) and Y(t-s)<br />
+<br />
+</li>
+<li>If we control for correlation at each timestep, we can get unique lag of s - Partial Autocorrelation</li>
+</ul>
+</section>
+<section id="pacf-plot" class="slide level2">
+<h1>PACF Plot</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pacf</span>(<span class="kw">residuals</span>(birds_lm))</code></pre></div>
+<p><img src="05_timeseries_files/figure-revealjs/birds_pacf-1.jpeg" width="672" /></p>
+</section>
+<section id="differentiating-between-ar-and-ma-processes" class="slide level2">
+<h1>Differentiating Between AR and MA processes</h1>
+<ul>
+<li>If ACF function shows long decay, and PACF shows a drop to 0 quickly, mostly an AR process<br />
+- E.g., ACF doesn’t drop to 0 until 10 years, but PACF drops to 0 after 2, AR3 Process<br />
+<br />
+<br />
+</li>
+<li>If ACF function drops off quickly, but PACF shows a long decay, mostly an MA process</li>
+</ul>
+</section>
+<section id="its-time-2" class="slide level2">
+<h1>It’s Time</h1>
+<ol type="1">
+<li>Fitting a Non-Stationary Timeseries with GLS<br />
+<br />
+</li>
+<li>Other Correlation Structures<br />
+<br />
+</li>
+<li><strong>Adding in Covariates</strong><br />
+<br />
+</li>
+<li>Modeling with Many Timeseries</li>
+</ol>
+</section>
+<section id="adding-predictors" class="slide level2">
+<h1>Adding Predictors</h1>
+<p><img src="05_timeseries_files/figure-revealjs/rainfall_oahu-1.jpeg" width="672" /></p>
+</section>
+<section id="why-might-predictors-change-autocorrelation-problems" class="slide level2">
+<h1>Why Might Predictors Change Autocorrelation Problems?</h1>
+<ul>
+<li>Often, correlation is caused by drivers correlated in space and time<br />
+<br />
+</li>
+<li>For example, El Niño is followed by La Niña, leading to correlations between years in rainfall<br />
+<br />
+</li>
+<li>BUT - if we model ENSO, this correlation might go away</li>
+</ul>
+</section>
+<section id="did-rainfall-do-the-trick" class="slide level2">
+<h1>Did rainfall do the trick?</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">birds_rain &lt;-<span class="st"> </span><span class="kw">gls</span>(Birds ~<span class="st"> </span>Rainfall+Year, <span class="dt">data=</span>oahu_data)
+<span class="kw">acf</span>(<span class="kw">residuals</span>(birds_rain))</code></pre></div>
+<p><img src="05_timeseries_files/figure-revealjs/rainfall_lm-1.jpeg" width="672" /></p>
+<p>Still autocorrleation</p>
+</section>
+<section id="our-autocorrelation-structure-still-holds" class="slide level2">
+<h1>Our Autocorrelation Structure Still Holds</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">birds_rain_ar &lt;-<span class="st"> </span><span class="kw">gls</span>(Birds ~<span class="st"> </span>Rainfall+Year, 
+                     <span class="dt">data=</span>oahu_data,
+                     <span class="dt">correlation =</span> birds_corAR)</code></pre></div>
+</section>
+<section id="autocorrelation-reduces-sums-of-squares" class="slide level2">
+<h1>Autocorrelation Reduces Sums of Squares</h1>
+<p>No Correlation</p>
+<pre><code>Denom. DF: 40 
+            numDF  F-value p-value
+(Intercept)     1 8.132235  0.0068
+Rainfall        1 1.813967  0.1856
+Year            1 8.623939  0.0055</code></pre>
+<p>Correlation</p>
+<pre><code>Denom. DF: 40 
+            numDF   F-value p-value
+(Intercept)     1 1.0344877  0.3152
+Rainfall        1 0.4183154  0.5215
+Year            1 1.1009574  0.3004</code></pre>
+</section>
+<section id="its-time-3" class="slide level2">
+<h1>It’s Time</h1>
+<ol type="1">
+<li>Fitting a Non-Stationary Timeseries with GLS<br />
+<br />
+</li>
+<li>Other Correlation Structures<br />
+<br />
+</li>
+<li>Adding in Covariates<br />
+<br />
+</li>
+<li><strong>Modeling with Many Timeseries</strong></li>
+</ol>
+</section>
+<section id="adding-groups" class="slide level2">
+<h1>Adding Groups</h1>
+<p><img src="05_timeseries_files/figure-revealjs/all_birds_plot-1.jpeg" width="672" /></p>
+</section>
+<section id="adding-groups-with-rain" class="slide level2">
+<h1>Adding Groups with Rain</h1>
+<p><img src="05_timeseries_files/figure-revealjs/bird_rain-1.jpeg" width="672" /></p>
+</section>
+<section id="variable-relationship" class="slide level2">
+<h1>Variable Relationship?</h1>
+<p><img src="05_timeseries_files/figure-revealjs/bird_rain_scatter-1.jpeg" width="672" /></p>
+</section>
+<section id="overall-temporal-trend" class="slide level2">
+<h1>Overall Temporal Trend?</h1>
+<p><img src="05_timeseries_files/figure-revealjs/bird_rain_scatter2-1.jpeg" width="672" /></p>
+</section>
+<section id="accomodating-between-site-heterogeneity" class="slide level2">
+<h1>Accomodating Between Site Heterogeneity</h1>
+<p><img src="05_timeseries_files/figure-revealjs/all_birds_plot-1.jpeg" width="672" /></p>
+<p>Each site needs it’s own <span class="math inline">\(\sigma^2\)</span></p>
+</section>
+<section id="variance-by-group" class="slide level2">
+<h1>Variance By Group</h1>
+<p><br />
+<br />
+</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">birds_var &lt;-<span class="st"> </span><span class="kw">varIdent</span>(<span class="dt">form =</span> ~<span class="st"> </span><span class="dv">1</span> |<span class="st"> </span>Site)</code></pre></div>
+</section>
+<section id="no-autocorrelation-gls" class="slide level2">
+<h1>No Autocorrelation GLS</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">all_rain &lt;-<span class="st"> </span><span class="kw">gls</span>(Birds ~<span class="st"> </span>Rainfall*Site +<span class="st"> </span>Year, 
+                <span class="dt">data=</span>allbirds,
+                <span class="dt">weights =</span> birds_var)</code></pre></div>
+</section>
+<section id="but" class="slide level2">
+<h1>But…</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">acf</span>(<span class="kw">residuals</span>(all_rain))</code></pre></div>
+<p><img src="05_timeseries_files/figure-revealjs/all_acf-1.jpeg" width="672" /></p>
+</section>
+<section id="fortunately-still-ar1" class="slide level2">
+<h1>Fortunately, still AR1</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pacf</span>(<span class="kw">residuals</span>(all_rain))</code></pre></div>
+<p><img src="05_timeseries_files/figure-revealjs/all_pacf-1.jpeg" width="672" /></p>
+</section>
+<section id="ar1-with-groups" class="slide level2">
+<h1>AR1 With Groups</h1>
+<ul>
+<li>Correlation Could Vary By Site<br />
+<br />
+</li>
+<li>We use <code>|</code> to denote ‘varies by’<br />
+<br />
+</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">birds_corAR_site &lt;-<span class="st"> </span><span class="kw">corAR1</span>(<span class="dt">form =</span> ~<span class="st"> </span>Year |<span class="st"> </span>Site)</code></pre></div>
+</section>
+<section id="build-the-model" class="slide level2">
+<h1>Build the Model</h1>
+<p><br />
+</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">all_rain_cor &lt;-<span class="st"> </span><span class="kw">gls</span>(Birds ~<span class="st"> </span>Rainfall*Site +<span class="st"> </span>Year, 
+                    <span class="dt">data=</span>allbirds,
+                    <span class="dt">weights =</span> birds_var,
+                    <span class="dt">correlation =</span> birds_corAR_site)</code></pre></div>
+</section>
+<section id="evaluate" class="slide level2">
+<h1>Evaluate</h1>
+<p><br />
+<br />
+</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th style="text-align: right;">Df</th>
+<th style="text-align: right;">Chisq</th>
+<th style="text-align: right;">Pr(&gt;Chisq)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Rainfall</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4.249472</td>
+<td style="text-align: right;">0.0392625</td>
+</tr>
+<tr class="even">
+<td>Site</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">75.580590</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+<tr class="odd">
+<td>Year</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">19.326067</td>
+<td style="text-align: right;">0.0000110</td>
+</tr>
+<tr class="even">
+<td>Rainfall:Site</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">12.404620</td>
+<td style="text-align: right;">0.0145829</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="did-we-need-the-autocorrelation" class="slide level2">
+<h1>Did we need the autocorrelation?</h1>
+<p><br />
+<br />
+</p>
+<pre><code>             Model df      AIC      BIC    logLik   Test L.Ratio p-value
+all_rain         1 16 2676.617 2730.171 -1322.308                       
+all_rain_cor     2 17 2613.632 2670.533 -1289.816 1 vs 2 64.9849  &lt;.0001</code></pre>
+</section>
+<section id="show-us-fit" class="slide level2">
+<h1>Show us Fit</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">allbirds$fit &lt;-<span class="st"> </span><span class="kw">predict</span>(all_rain_cor)
+allSites +
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">data=</span>allbirds, 
+            <span class="dt">mapping=</span><span class="kw">aes</span>(<span class="dt">y=</span>fit), 
+            <span class="dt">color=</span><span class="st">&quot;red&quot;</span>)</code></pre></div>
+</section>
+<section id="show-us-fit-1" class="slide level2">
+<h1>Show us Fit</h1>
+<p><img src="05_timeseries_files/figure-revealjs/fitplot_nofit-1.jpeg" width="672" /></p>
+</section>
+<section id="show-us-fit-2" class="slide level2">
+<h1>Show us Fit</h1>
+<p><img src="05_timeseries_files/figure-revealjs/fitplot-1.jpeg" width="672" /></p>
+<p><span class="math inline">\(R^2\)</span> = 1- RSS/TSS = 0</p>
+</section>
+<section id="exercise-model-chlfa-in-the-plankton-data-set" class="slide level2">
+<h1>Exercise: Model CHLFa in the Plankton Data Set</h1>
+<p><img src="05_timeseries_files/figure-revealjs/plankton_plot-1.jpeg" width="672" /></p>
+<p>How well can you model the time series with the measurements at hand?<br />
+Data extrapolated from Zuur et al. 2009<br />
+## Exercise: Model CHLFa in the Plankton Data Set Suggested Order:</p>
+<ol type="1">
+<li>Select one site, evaluate trend with and without correlaiton<br />
+<br />
+</li>
+<li>Include &gt;2 predictors<br />
+<br />
+</li>
+<li>Add back in all of the sites<br />
+<br />
+</li>
+<li>Plot predicted timeseries</li>
+</ol>
+</section>
+    </div>
+  </div>
+
+  <script src="libs/reveal.js-3.3.0/lib/js/head.min.js"></script>
+  <script src="libs/reveal.js-3.3.0/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display the page number of the current slide
+        slideNumber: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: false,
+        // Opens links in an iframe preview overlay
+        previewLinks: true,
+        // Transition style
+        transition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>
