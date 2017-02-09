@@ -119,6 +119,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h3>
 Spatial Autocorrelation with GLS
 </h3>
+<p><img src="images/06/why-are-plots.jpg" /></p>
 </section>
 <section id="much-of-our-data-is-spatial" class="slide level2">
 <h1>Much of our data is spatial</h1>
@@ -297,6 +298,106 @@ boreal_vg_dir &lt;-<span class="st"> </span><span class="kw">variogram</span>(r~
 <section id="problem-is-now-much-less-severe-1" class="slide level2">
 <h1>Problem is now much less severe</h1>
 <p><img src="06_spatial_files/figure-revealjs/variog_gls-1.jpeg" width="672" /></p>
+</section>
+<section id="range-and-nugget-are-estimate" class="slide level2">
+<h1>Range and nugget are estimate</h1>
+<pre><code>Generalized least squares fit by REML
+  Model: NDVI ~ Wet 
+  Data: boreal 
+  Log-restricted-likelihood: 984.1436
+
+Coefficients:
+(Intercept)         Wet 
+   0.379634   -3.302215 
+
+Correlation Structure: Exponential spatial correlation
+ Formula: ~x + y 
+ Parameter estimate(s):
+      range      nugget 
+454.8220361   0.1342511 
+Degrees of freedom: 533 total; 531 residual
+Residual standard error: 0.05819316 </code></pre>
+</section>
+<section id="comparison-of-models" class="slide level2">
+<h1>Comparison of Models</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">AIC</span>(bor_gls, bor_gls_space)</code></pre></div>
+<pre><code>              df       AIC
+bor_gls        3 -1646.583
+bor_gls_space  5 -1958.287</code></pre>
+</section>
+<section id="difference-in-se-and-coefficients" class="slide level2">
+<h1>Difference in SE and Coefficients</h1>
+<p>No Correction</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th style="text-align: right;">Value</th>
+<th style="text-align: right;">Std.Error</th>
+<th style="text-align: right;">t-value</th>
+<th style="text-align: right;">p-value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>(Intercept)</td>
+<td style="text-align: right;">0.3273056</td>
+<td style="text-align: right;">0.0055172</td>
+<td style="text-align: right;">59.32491</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td>Wet</td>
+<td style="text-align: right;">-4.8843829</td>
+<td style="text-align: right;">0.1544074</td>
+<td style="text-align: right;">-31.63308</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p>Correction</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th style="text-align: right;">Value</th>
+<th style="text-align: right;">Std.Error</th>
+<th style="text-align: right;">t-value</th>
+<th style="text-align: right;">p-value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>(Intercept)</td>
+<td style="text-align: right;">0.379634</td>
+<td style="text-align: right;">0.0141639</td>
+<td style="text-align: right;">26.80288</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td>Wet</td>
+<td style="text-align: right;">-3.302215</td>
+<td style="text-align: right;">0.1690031</td>
+<td style="text-align: right;">-19.53937</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="a-note-on-time" class="slide level2">
+<h1>A note on Time</h1>
+<ul>
+<li>We are specifying 2D spatial correlations<br />
+<br />
+</li>
+<li>But, we can use these for 1D temporal correlations<br />
+<br />
+</li>
+<li>Can use different functional forms of shape of temporal correlation<br />
+<br />
+</li>
+<li>Not typical, but potentially useful depending on biology</li>
+</ul>
 </section>
 <section id="example" class="slide level2">
 <h1>Example</h1>

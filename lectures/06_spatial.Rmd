@@ -16,7 +16,7 @@ output:
 ## 
 
 <h3>Spatial Autocorrelation with GLS</h3>
-
+![](./images/06/why-are-plots.jpg)
 
   ```{r prep, echo=FALSE, cache=FALSE, message=FALSE, warning=FALSE}
 library(knitr)
