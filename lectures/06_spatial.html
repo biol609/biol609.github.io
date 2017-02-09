@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <title></title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="libs/reveal.js-3.3.0/css/reveal.css"/>
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="libs/reveal.js-3.3.0/css/theme/white.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="style.css"/>
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'libs/reveal.js-3.3.0/css/print/pdf.css' : 'libs/reveal.js-3.3.0/css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+    <!--[if lt IE 9]>
+    <script src="libs/reveal.js-3.3.0/lib/js/html5shiv.js"></script>
+    <![endif]-->
+
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+
+<section id="section" class="slide level2">
+<h1></h1>
+<h3>
+Spatial Autocorrelation with GLS
+</h3>
+</section>
+<section id="much-of-our-data-is-spatial" class="slide level2">
+<h1>Much of our data is spatial</h1>
+<p><img src="06_spatial_files/figure-revealjs/plot_boreal_raw-1.jpeg" width="672" /></p>
+</section>
+<section id="initial-non-spatial-model" class="slide level2">
+<h1>Initial Non-Spatial Model</h1>
+<p><br />
+<br />
+</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">bor_gls &lt;-<span class="st"> </span><span class="kw">gls</span>(NDVI ~<span class="st"> </span>Wet, 
+               <span class="dt">data=</span>boreal)</code></pre></div>
+</section>
+<section id="spatial-autocorrelation-in-residuals-can-be-clear" class="slide level2">
+<h1>Spatial Autocorrelation in Residuals Can Be Clear</h1>
+<p><img src="06_spatial_files/figure-revealjs/boreal_bad-1.jpeg" width="672" /></p>
+</section>
+<section id="how-do-we-assess-spatial-autocorrelation-variograms" class="slide level2">
+<h1>How do we assess spatial autocorrelation: Variograms</h1>
+<p><img src="06_spatial_files/figure-revealjs/boreal_variogram-1.jpeg" width="672" /></p>
+</section>
+<section id="how-do-we-diagnose-spatial-autocorrelation" class="slide level2">
+<h1>How do we diagnose spatial autocorrelation</h1>
+<ol type="1">
+<li>Moran’s I
+<ul>
+<li>Quantitative measure of spatial autocorrelation</li>
+<li>Can use it to correct SE<br />
+<br />
+</li>
+</ul></li>
+<li>Variograms
+<ul>
+<li>Show nature of autocorrelation<br />
+</li>
+<li>Show how to adjust correlation matrix in GLS</li>
+</ul></li>
+</ol>
+</section>
+<section id="spatial-dependence" class="slide level2">
+<h1>Spatial Dependence</h1>
+<span class="math display">\[\gamma(x_1, x_2) = \frac{1}{2}\bar{(Z(x_1) - Z(x_2))^2}\]</span><br />
+
+<div style="text-align:left">
+<ul>
+<li>Describes spatial dependence between two points<br />
+</li>
+<li>Z is some function - could be residuals, etc<br />
+</li>
+<li>If no spatial autocorrelation, average value is 0<br />
+</li>
+<li>But - this is for points that are all equidistant</li>
+</ul>
+</div>
+</section>
+<section id="dependence-for-points-distance-h-away-from-each-other" class="slide level2">
+<h1>Dependence for points distance h away from each other</h1>
+<span class="math display">\[\gamma(h) = \frac{1}{2}Var(Z(x+h) - Z(x))\]</span><br />
+
+<div style="text-align:left">
+<ul>
+<li>Looks at all points a distance h away from focal point<br />
+</li>
+<li>Looks at variance in similarity</li>
+<li>Software puts a range around h, as in real data, few points <em>exactly</em> h away</li>
+</ul>
+</div>
+</section>
+<section id="anatomy-of-a-variogram" class="slide level2">
+<h1>Anatomy of a Variogram</h1>
+<p><img src="images/06/variogram.jpg" /></p>
+</section>
+<section id="the-variogram-of-our-data" class="slide level2">
+<h1>The Variogram of Our data</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">boreal_vg &lt;-<span class="st"> </span><span class="kw">Variogram</span>(bor_gls, 
+                       <span class="dt">form =</span>~<span class="st"> </span>x +<span class="st"> </span>y, 
+                       <span class="dt">robust=</span>T, 
+                       <span class="dt">nint=</span><span class="dv">50</span>)</code></pre></div>
+<div style="text-align:left">
+<ul>
+<li><code>form</code> defines spatial variables<br />
+</li>
+<li><code>robust</code> aids fitting</li>
+<li><code>nint</code> is number of h values</li>
+</ul>
+</section>
+<section id="the-variogram-of-our-data-1" class="slide level2">
+<h1>The Variogram of Our Data</h1>
+<p><img src="06_spatial_files/figure-revealjs/plot_vg1-1.jpeg" width="672" /></p>
+</section>
+<section id="adding-a-max-distance-between-points" class="slide level2">
+<h1>Adding a max distance between points</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">boreal_vg &lt;-<span class="st"> </span><span class="kw">Variogram</span>(bor_gls, 
+                       <span class="dt">form =</span>~<span class="st"> </span>x +<span class="st"> </span>y, 
+                       <span class="dt">robust=</span>T, 
+                       <span class="dt">maxDist=</span><span class="dv">2000</span>,
+                       <span class="dt">nint=</span><span class="dv">50</span>)</code></pre></div>
+</section>
+<section id="the-variogram-of-our-data-2" class="slide level2">
+<h1>The Variogram of Our Data</h1>
+<p><img src="06_spatial_files/figure-revealjs/plot_vg2-1.jpeg" width="672" /></p>
+</section>
+<section id="should-evaluate-directionality" class="slide level2">
+<h1>Should evaluate directionality</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(gstat)
+newdata &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">r =</span> <span class="kw">residuals</span>(bor_gls),
+                      <span class="dt">x=</span>boreal$x, <span class="dt">y=</span>boreal$y)
+
+boreal_vg_dir &lt;-<span class="st"> </span><span class="kw">variogram</span>(r~<span class="dv">1</span>, 
+                           <span class="dt">locations =</span> ~<span class="st"> </span>x +<span class="st"> </span>y,
+                       <span class="dt">data=</span>newdata,
+                       <span class="dt">alpha=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">45</span>,<span class="dv">90</span>, <span class="dv">135</span>))</code></pre></div>
+</section>
+<section id="we-are-all-good" class="slide level2">
+<h1>We are all good</h1>
+<p><img src="06_spatial_files/figure-revealjs/boreal_dir_plot-1.jpeg" width="672" /></p>
+</section>
+<section id="so---correlation-structures" class="slide level2">
+<h1>So - correlation structures</h1>
+<ul>
+<li>Exponential correlation using the function <code>corExp</code><br />
+<br />
+</li>
+<li>Gaussian correlation using the function <code>corGaus</code><br />
+<br />
+</li>
+<li>Linear correlation using the function <code>corLin</code><br />
+<br />
+</li>
+<li>Rational quadratic correlation using the function <code>corRatio</code><br />
+<br />
+</li>
+<li>Spherical correlation using the function <code>corSpher</code></li>
+</ul>
+</section>
+<section id="how-do-you-tell-the-difference" class="slide level2">
+<h1>How do you tell the difference?</h1>
+<ol type="1">
+<li>Biology<br />
+<br />
+</li>
+<li>Fit all structures and evaluate<br />
+<br />
+</li>
+<li>Visual examination of variogram shape</li>
+</ol>
+</section>
+<section id="different-shapes-of-autocorrelation" class="slide level2">
+<h1>Different Shapes of Autocorrelation</h1>
+<p><img src="images/06/autocor_shape.jpg" /></p>
+</section>
+<section id="so-which-is-it" class="slide level2">
+<h1>So, which is it?</h1>
+<p><img src="06_spatial_files/figure-revealjs/plot_vg2-1.jpeg" width="672" /></p>
+</section>
+<section id="a-simple-exponential-correlation" class="slide level2">
+<h1>A Simple Exponential Correlation</h1>
+<p><br />
+<br />
+</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">spaceCor &lt;-<span class="st"> </span><span class="kw">corExp</span>(<span class="dt">form =</span>~<span class="st"> </span>x+y, <span class="dt">nugget=</span>T)</code></pre></div>
+</section>
+<section id="model-fit" class="slide level2">
+<h1>Model Fit</h1>
+<p><br />
+<br />
+</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">bor_gls_space &lt;-<span class="st"> </span><span class="kw">gls</span>(NDVI ~<span class="st"> </span>Wet, 
+                     <span class="dt">data=</span>boreal, 
+                     <span class="dt">correlation=</span>spaceCor)</code></pre></div>
+</section>
+<section id="problem-is-now-much-less-severe" class="slide level2">
+<h1>Problem is now much less severe</h1>
+<p><img src="06_spatial_files/figure-revealjs/gls_resid-1.jpeg" width="672" /></p>
+</section>
+<section id="problem-is-now-much-less-severe-1" class="slide level2">
+<h1>Problem is now much less severe</h1>
+<p><img src="06_spatial_files/figure-revealjs/variog_gls-1.jpeg" width="672" /></p>
+</section>
+<section id="example" class="slide level2">
+<h1>Example</h1>
+<ol type="1">
+<li>Irish forest data<br />
+<br />
+</li>
+<li>Goal is to model lake Ph<br />
+<br />
+</li>
+<li>Possible influences:
+<ul>
+<li>Sodium Dominance Index (SDI)<br />
+</li>
+<li>Status as forested or not</li>
+<li>Altitude<br />
+<br />
+</li>
+</ul></li>
+<li>Spatial autocorrelation possible</li>
+</ol>
+</section>
+    </div>
+  </div>
+
+  <script src="libs/reveal.js-3.3.0/lib/js/head.min.js"></script>
+  <script src="libs/reveal.js-3.3.0/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display the page number of the current slide
+        slideNumber: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: false,
+        // Opens links in an iframe preview overlay
+        previewLinks: true,
+        // Transition style
+        transition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>
