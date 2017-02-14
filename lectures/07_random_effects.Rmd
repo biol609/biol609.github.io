@@ -192,7 +192,7 @@ $$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
 <span id="left">Random:</span>\
 $$Y_{ij} =  \beta_{j} + \epsilon_i$$
 \
-$$\beta_{j} \sim \mathcal(N)(\beta, \sigma^2_{site})$$
+$$\beta_{j} \sim \mathcal{N}(\beta, \sigma^2_{site})$$
 \
 $$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
 </div>
@@ -218,7 +218,7 @@ mussel_scatter +
 
 $$Y_{ij} =  \beta_{j} + \epsilon_i$$
 \
-$$\beta_{j} \sim \mathcal(N)(\alpha, \sigma^2_{site})$$
+$$\beta_{j} \sim \mathcal{N}(\alpha, \sigma^2_{site})$$
 \
 $$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
 \
@@ -226,7 +226,7 @@ $$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
 <div class="fragment">
 $$Y_{ij} =  \alpha + \beta_{j} + \epsilon_i$$
 \
-$$\beta_{j} \sim \mathcal(N)(0, \sigma^2_{site})$$
+$$\beta_{j} \sim \mathcal{N}(0, \sigma^2_{site})$$
 \
 $$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
 </div>
