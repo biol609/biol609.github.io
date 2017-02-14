@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <title></title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="libs/reveal.js-3.3.0/css/reveal.css"/>
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="libs/reveal.js-3.3.0/css/theme/white.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="style.css"/>
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'libs/reveal.js-3.3.0/css/print/pdf.css' : 'libs/reveal.js-3.3.0/css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+    <!--[if lt IE 9]>
+    <script src="libs/reveal.js-3.3.0/lib/js/html5shiv.js"></script>
+    <![endif]-->
+
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+
+<section id="section" class="slide level2">
+<h1></h1>
+<br />
+<br />
+<br />
+
+<h2>
+Random Effects
+</h2>
+<p><br />
+<img src="images/07/pseudorep_walken.jpg" /></p>
+</section>
+<section id="the-problem-of-independence" class="slide level2">
+<h1>The Problem of Independence</h1>
+<div id="left">
+<p><img src="images/07/300px-Isles_of_Shoals_Map.png" /></p>
+</div>
+<div id="right">
+<ul>
+<li class="fragment">Let’s say you are sampling juvenile mussel lengths<br />
+<br />
+</li>
+<li class="fragment">You sample at 10 sites around each island<br />
+<br />
+</li>
+<li class="fragment">Can you just take the mean of all sites?<br />
+<br />
+</li>
+<li class="fragment">Is it OK to pull out an “Island” effect?</li>
+</ul>
+</div>
+</section>
+<section id="how-would-you-handle-measuring-the-same-subjects-in-an-experiment-over-time" class="slide level2">
+<h1>How would you handle measuring the same subjects in an experiment over time?</h1>
+<p><img src="./images/07/cats_repeated_measures.jpg" /></p>
+</section>
+<section id="what-is-the-sample-size" class="slide level2">
+<h1>What is the Sample Size?</h1>
+<p><img src="images/07/plants.jpg" /></p>
+</section>
+<section id="what-is-the-sample-size-1" class="slide level2">
+<h1>What is the Sample Size?</h1>
+<p><img src="images/07/plants_leaves.jpg" /></p>
+</section>
+<section id="is-there-a-problem-with-using-slr-to-determine-effect-of-temperature-here" class="slide level2">
+<h1>Is there a problem with using SLR to determine effect of temperature here?</h1>
+<p><img src="images/07/states_temp.jpg" /></p>
+</section>
+<section id="pseudoreplication" class="slide level2">
+<h1>Pseudoreplication</h1>
+<p><img src="images/07/kinds_of_pseudoreplication.jpg" /></p>
+<p>Hurlbert 1985</p>
+</section>
+<section id="what-is-the-problem-with-pseudoreplication" class="slide level2">
+<h1>What is the problem with Pseudoreplication?</h1>
+<p><span class="math display">\[Y_i = \beta X_i + \epsilon_i\]</span> <span class="math display">\[\epsilon \sim \mathcal{N}(0, \sigma^2)\]</span><br />
+<br />
+This assumes that all replicates are independent and identically distributed</p>
+</section>
+<section id="how-to-deal-with-violation-of-independence" class="slide level2">
+<h1>How to deal with violation of Independence</h1>
+<ul>
+<li class="fragment">Average at group level
+<ul>
+<li class="fragment">Big hit to sample size/power<br />
+<br />
+</li>
+</ul></li>
+<li class="fragment">Model correlation matrix
+<ul>
+<li class="fragment">Limited number of ways to deal with correlation<br />
+</li>
+<li class="fragment">Multiple levels of nesting tricky<br />
+<br />
+</li>
+</ul></li>
+<li class="fragment">Model hierarchy explicitly
+<ul>
+<li class="fragment">Random effects, mixed models</li>
+</ul></li>
+</ul>
+</section>
+<section id="section-1" class="slide level2">
+<h1></h1>
+<br />
+<br />
+<br />
+<br />
+
+<h1>
+What is a random effect?
+</h1>
+</section>
+<section id="lets-say-youre-sampling-mussel-lengths" class="slide level2">
+<h1>Let’s Say You’re Sampling Mussel Lengths…</h1>
+<p><img src="07_random_effects_files/figure-revealjs/mussel_hist-1.jpeg" width="672" /></p>
+</section>
+<section id="but-they-come-from-different-islands" class="slide level2">
+<h1>But, They come from different islands…</h1>
+<p><img src="07_random_effects_files/figure-revealjs/mussel_hist2-1.jpeg" width="672" /></p>
+</section>
+<section id="are-different-islands-that-different" class="slide level2">
+<h1>Are different islands that different?</h1>
+<p><img src="07_random_effects_files/figure-revealjs/mussel_plot_2-1.jpeg" width="672" /></p>
+</section>
+<section id="are-different-islands-that-different-1" class="slide level2">
+<h1>Are different islands that different?</h1>
+<p><img src="07_random_effects_files/figure-revealjs/mussel_plot_mean-1.jpeg" width="672" /></p>
+</section>
+<section id="are-different-islands-that-different-2" class="slide level2">
+<h1>Are different islands that different?</h1>
+<p><img src="07_random_effects_files/figure-revealjs/mussel_site_mean_plot-1.jpeg" width="672" /></p>
+</section>
+<section id="you-might-think" class="slide level2">
+<h1>You Might think…</h1>
+<br />
+<br />
+<span class="math display">\[Y_{ij} = \beta_{j} + \epsilon_i\]</span><br />
+<span class="math display">\[\epsilon \sim \mathcal{N}(0, \sigma^2)\]</span><br />
+
+<div class="fragment">
+And you’d be close…
+</div>
+</section>
+<section id="what-is-the-distribution-of-site-means" class="slide level2">
+<h1>What is the distribution of site means?</h1>
+<p><img src="07_random_effects_files/figure-revealjs/site_hist-1.jpeg" width="672" /></p>
+<div class="fragment">
+A nice normal distribution
+</div>
+</section>
+<section id="random-effects" class="slide level2">
+<h1>Random Effects</h1>
+<ul>
+<li>A <em>random effect</em> is a parameter that varies across groups following a normal distribution<br />
+<br />
+</li>
+<li>Implies that, while there is a grand mean <em>fixed</em> effect, each group deviates randomly<br />
+<br />
+</li>
+<li>Implies that there is no one <em>true</em> value of a parameter in the world<br />
+<br />
+</li>
+<li>We pull apart <em>variance components</em> driving our response</li>
+</ul>
+</section>
+<section id="fixed-versus-random-effects-model" class="slide level2">
+<h1>Fixed Versus Random Effects Model</h1>
+<span id="left">Fixed:</span><br />
+<span class="math display">\[Y_{ij} =  \beta_{j} + \epsilon_i\]</span><br />
+<span class="math display">\[\epsilon \sim \mathcal{N}(0, \sigma^2)\]</span><br />
+<br />
+
+<div class="fragment">
+<p><span id="left">Random:</span><br />
+<span class="math display">\[Y_{ij} =  \beta_{j} + \epsilon_i\]</span><br />
+<span class="math display">\[\beta_{j} \sim \mathcal(N)(\beta, \sigma^2_{site})\]</span><br />
+<span class="math display">\[\epsilon \sim \mathcal{N}(0, \sigma^2)\]</span></p>
+</div>
+</section>
+<section id="wait-but-what-about-good-old-blocks" class="slide level2">
+<h1>Wait, but what about good old blocks?</h1>
+<ul>
+<li class="fragment">We used to model blocks via estimation of means/parameters within a block<br />
+<br />
+</li>
+<li class="fragment">But - there was no distribution of parameters assumed<br />
+<br />
+</li>
+<li class="fragment">Assumed blocks could take any value
+<ul>
+<li class="fragment">Is this biologically plausible?<br />
+</li>
+<li class="fragment">What are blocks but collections of nuissance parameters?</li>
+</ul></li>
+</ul>
+</section>
+<section id="what-difference-does-this-make" class="slide level2">
+<h1>What difference does this make?</h1>
+<p><img src="07_random_effects_files/figure-revealjs/show_ranef-1.jpeg" width="672" /></p>
+</section>
+<section id="consider-what-random-effects-mean---1-model-2-ways" class="slide level2">
+<h1>Consider what random effects mean - 1 model, 2 ways</h1>
+<span class="math display">\[Y_{ij} =  \beta_{j} + \epsilon_i\]</span><br />
+<span class="math display">\[\beta_{j} \sim \mathcal(N)(\alpha, \sigma^2_{site})\]</span><br />
+<span class="math display">\[\epsilon \sim \mathcal{N}(0, \sigma^2)\]</span><br />
+<br />
+
+<div class="fragment">
+<p><span class="math display">\[Y_{ij} =  \alpha + \beta_{j} + \epsilon_i\]</span><br />
+<span class="math display">\[\beta_{j} \sim \mathcal(N)(0, \sigma^2_{site})\]</span><br />
+<span class="math display">\[\epsilon \sim \mathcal{N}(0, \sigma^2)\]</span></p>
+</div>
+</section>
+<section id="shrinkage" class="slide level2">
+<h1>Shrinkage</h1>
+<ul>
+<li>Random effects assume each observation is drawn from a grand mean<br />
+<br />
+</li>
+<li>This we can <strong>draw strength</strong> from samples in other groups to estimate a group mean<br />
+<br />
+</li>
+<li>It <strong>reduces variance</strong> between groups by biasing results towards grand mean<br />
+<br />
+</li>
+<li>Philosophically, group means are always likely to be incorrect due to sampling</li>
+</ul>
+</section>
+<section id="shrunken-group-mean---note-influence-of-sample-size" class="slide level2">
+<h1>Shrunken Group Mean - Note influence of sample size</h1>
+<span class="math display">\[\hat{Y_j} = \rho_j\bar{y_j} + (1-\rho_j)\bar{y}\]</span><br />
+where <span class="math inline">\(\rho_j\)</span> is the shrinkage coefficient<br />
+<br />
+<br />
+
+<div class="fragment">
+<p><span class="math display">\[\rho_j = \frac{\tau^2}{\tau^2 + \frac{\sigma^2}{n_j}}\]</span><br />
+Where <span class="math inline">\(\tau^2\)</span> is the variance of the random effect, and <span class="math inline">\(n_j\)</span> is the group sample size</p>
+</div>
+</section>
+<section id="for-example-unbalanced-sample-sizes" class="slide level2">
+<h1>For example, unbalanced sample sizes</h1>
+<p><img src="07_random_effects_files/figure-revealjs/unbalanced-1.jpeg" width="672" /></p>
+</section>
+<section id="for-example-unbalanced-sample-sizes-1" class="slide level2">
+<h1>For example, unbalanced sample sizes</h1>
+<p><img src="07_random_effects_files/figure-revealjs/unbalanced_2-1.jpeg" width="672" /></p>
+</section>
+<section id="its-effects-more-than-means" class="slide level2">
+<h1>It’s effects more than means</h1>
+<p><img src="07_random_effects_files/figure-revealjs/showShirnk-1.jpeg" width="672" /></p>
+</section>
+<section id="fixed-versus-random-effects" class="slide level2">
+<h1>Fixed versus Random Effects</h1>
+<div style="text-align:left">
+<div class="fragment">
+<strong>Fixed Effect:</strong> Effects that are constant across populations.<br />
+<strong>Random Effect:</strong> Effects that vary are random outcomes of underlying processes.<br />
+
+</div>
+<br />
+
+<div class="fragment">
+Gelman and Hill (2007) see the distinction as artificial. Fixed effects are special cases of random effects where the variance is infinite. The model is what you should focus on.<br />
+
+</div>
+<br />
+
+<div class="fragment">
+<p>You will also hear that ’random effects’ are effects with many levels, but that you have not sampled all of them, wheras with fixed effects, you have sampled across the entire range of variation. This is subtly different, and artificial.</p>
+</div>
+</div>
+</section>
+<section id="is-my-effect-fixed-or-random" class="slide level2">
+<h1>Is my effect fixed or random?</h1>
+<ol type="1">
+<li class="fragment">Do you have &lt;4 blocks? <strong>Fixed</strong><br />
+<br />
+</li>
+<li class="fragment">Do you have &lt;3 points per block? <strong>Fixed</strong><br />
+<br />
+</li>
+<li class="fragment">Is your ‘blocking’ variable continuous? <strong>Fixed</strong><br />
+- But slope can vary by discrete blocks - wait for it!<br />
+</li>
+<li class="fragment">Do you have lots of blocks, but few/variable points per block? <strong>Random</strong><br />
+- Save DF as you only estimate <span class="math inline">\(\sigma^2\)</span><br />
+</li>
+</ol>
+</section>
+<section id="other-ways-to-avoid-random-effects" class="slide level2">
+<h1>Other Ways to Avoid Random Effects</h1>
+<ul>
+<li class="fragment">Are you not interested in within subjects variability?<br />
+- AVERAGE at the block level<br />
+<br />
+</li>
+<li class="fragment">Is block level correlation simple?<br />
+- GLS with compound symmetry varying by block<br />
+- <code>corCompSym(form = ~ 1|block)</code></li>
+</ul>
+</section>
+<section id="section-2" class="slide level2">
+<h1></h1>
+<br />
+<br />
+<br />
+
+<h1>
+Estimating Random Effects
+</h1>
+</section>
+<section id="restricted-maximum-likelihood" class="slide level2">
+<h1>Restricted Maximum Likelihood</h1>
+<ul>
+<li>We typically estimate a <span class="math inline">\(sigma^2\)</span> of random effects, not the effect of each block
+<ul>
+<li>But later can derive Best Least Unbiased Predictors of each block (BLUPs)<br />
+ <br />
+</li>
+</ul></li>
+<li>ML estimation can underestimate random effects variation (<span class="math inline">\(\sigma^2_{block}\)</span>)<br />
+</li>
+<li>REML seeks to decompose out fixed effects to estimate random effects<br />
+<br />
+</li>
+<li>Works iteratively - estimates random effects, then fixed, and converges<br />
+- Lots of algorithms, computationally expensive ## In R….<br />
+<br />
+<img src="./images/07/lmer_lemur_tim_doherty.jpg" />
+<div style="text-align:left">
+Thank you Tim Doherty
+</div></li>
+</ul>
+</section>
+<section id="nlme-and-lmer" class="slide level2">
+<h1>NLME and LMER</h1>
+<ul>
+<li><code>nlme</code> was created by Pinhero and Bates for linear and nonlinear mixed models<br />
+- Also fits <code>gls</code> models with REML<br />
+- Enables very flexible correlation structures<br />
+- Uses Satterthwaite corrected DF<br />
+</li>
+<li><code>lme4</code> started by Bates, many developers - Much faster for complex models - Can fit generalized linear mixed models - Simpler syntax adapted by many other packages - Does not allow you to model correlation structure - Does not allow you to model variance structure</li>
+</ul>
+</section>
+<section id="dont-you-forget-about-bayes" class="slide level2">
+<h1>Don’t you… Forget about Bayes</h1>
+<ul>
+<li><code>rstanarm</code> uses <code>lme4</code> syntax<br />
+<br />
+</li>
+<li><code>brms</code> uses <code>lme4</code> syntax and more<br />
+<br />
+</li>
+<li>Once a mixed model gets to sufficient complexity, it’s Bayes, baby!</li>
+</ul>
+</section>
+<section id="fitting-a-mixed-model-with-lme4" class="slide level2">
+<h1>Fitting a Mixed Model with lme4</h1>
+<p><br />
+</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(lme4)
+
+mussels_mer &lt;-<span class="st"> </span><span class="kw">lmer</span>(mussel_length ~<span class="st"> </span>(<span class="dv">1</span> |site), 
+                    
+                    <span class="dt">data =</span> mussels)</code></pre></div>
+<div class="fragment" style="text-align:left">
+Note <code>1 | group</code> syntax!
+</div>
+</section>
+<section id="fitting-a-mixed-model-with-nlme" class="slide level2">
+<h1>Fitting a Mixed Model with nlme</h1>
+<p><br />
+</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(nlme)
+
+mussels_lme &lt;-<span class="st"> </span><span class="kw">lme</span>(mussel_length ~<span class="st"> </span><span class="dv">1</span>,
+                   
+                   <span class="dt">random =</span>~<span class="st"> </span><span class="dv">1</span> |site, 
+                    
+                    <span class="dt">data =</span> mussels)</code></pre></div>
+<div class="fragment" style="text-align:left">
+We could include correlations, etc.
+</div>
+</section>
+<section id="evaluating" class="slide level2">
+<h1>Evaluating…</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(mussels_mer)</code></pre></div>
+<p><img src="07_random_effects_files/figure-revealjs/lmer%20resid-1.jpeg" width="672" /></p>
+</section>
+<section id="evaluating-1" class="slide level2">
+<h1>Evaluating…</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">lattice::<span class="kw">qqmath</span>(mussels_mer)</code></pre></div>
+<p><img src="07_random_effects_files/figure-revealjs/lmer_resid_qq-1.jpeg" width="672" /></p>
+</section>
+<section id="evaluating-groups" class="slide level2">
+<h1>Evaluating Groups</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(<span class="kw">ranef</span>(mussels_mer))</code></pre></div>
+<pre><code>$site</code></pre>
+<p><img src="07_random_effects_files/figure-revealjs/lmer_group_qq-1.jpeg" width="672" /></p>
+</section>
+<section id="evaluating-groups-1" class="slide level2">
+<h1>Evaluating Groups</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">lattice::<span class="kw">qqmath</span>(<span class="kw">ranef</span>(mussels_mer, <span class="dt">condVar=</span><span class="ot">TRUE</span>))</code></pre></div>
+<pre><code>$site</code></pre>
+<p><img src="07_random_effects_files/figure-revealjs/lmer_group-1.jpeg" width="672" /></p>
+</section>
+<section id="evaluating-coefficients" class="slide level2">
+<h1>Evaluating Coefficients</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knitr::<span class="kw">kable</span>(broom::<span class="kw">tidy</span>(mussels_mer))</code></pre></div>
+term estimate std.error statistic group<br />
+———————— ———- ———- ———- ——— (Intercept) 23.971873 1.034508 23.17224 fixed<br />
+sd_(Intercept).site 3.291326 NA NA site<br />
+sd_Observation.Residual 7.225154 NA NA Residual
+<div class="fragment" style="text-align:left">
+Note the lack of p-values
+</div>
+</section>
+<section id="why-no-p-values" class="slide level2">
+<h1>Why no p-values</h1>
+<ul>
+<li>The issue of DF in a mixed model is tricky<br />
+<br />
+</li>
+<li>There are many possible solutions to calculating corrected DF<br />
+<br />
+</li>
+<li>All depend on assumptions of ‘effective sample size’<br />
+<br />
+</li>
+<li>Requires knowing distribution of variability around random effects<br />
+<br />
+</li>
+<li>This is only ‘natural’ in Bayes</li>
+</ul>
+</section>
+<section id="enter-lmertest" class="slide level2">
+<h1>Enter lmerTest</h1>
+<ul>
+<li>Uses Satterthwaite corrected DF</li>
+</ul>
+<pre><code>            Estimate Std. Error df  t value     Pr(&gt;|t|)
+(Intercept) 23.97187   1.034508 14 23.17224 1.449063e-12</code></pre>
+</section>
+<section id="the-random-effects" class="slide level2">
+<h1>The Random effects</h1>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">term</th>
+<th style="text-align: right;">estimate</th>
+<th style="text-align: right;">std.error</th>
+<th style="text-align: right;">statistic</th>
+<th style="text-align: left;">group</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">23.971873</td>
+<td style="text-align: right;">1.034508</td>
+<td style="text-align: right;">23.17224</td>
+<td style="text-align: left;">fixed</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sd_(Intercept).site</td>
+<td style="text-align: right;">3.291326</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">site</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">sd_Observation.Residual</td>
+<td style="text-align: right;">7.225154</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">Residual</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="seeing-the-fixed-effects" class="slide level2">
+<h1>Seeing the Fixed Effects</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">fixef</span>(mussels_mer)</code></pre></div>
+<pre><code>(Intercept) 
+   23.97187 </code></pre>
+</section>
+<section id="seeing-the-random-effects" class="slide level2">
+<h1>Seeing the Random Effects</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ranef</span>(mussels_mer)</code></pre></div>
+<pre><code>$site
+  (Intercept)
+a -4.33497614
+b -4.34924331
+c -1.68011011
+d -1.20584109
+e -1.54561002
+f -3.04522008
+g  0.25130706
+h  0.03927292
+i  0.78803340
+j  1.48409865
+k  4.72979282
+l  2.42732357
+m  0.83801263
+n  3.55773499
+o  2.04542473</code></pre>
+</section>
+<section id="combined-effects" class="slide level2">
+<h1>Combined Effects</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">coef</span>(mussels_mer)</code></pre></div>
+<pre><code>$site
+  (Intercept)
+a    19.63690
+b    19.62263
+c    22.29176
+d    22.76603
+e    22.42626
+f    20.92665
+g    24.22318
+h    24.01115
+i    24.75991
+j    25.45597
+k    28.70167
+l    26.39920
+m    24.80989
+n    27.52961
+o    26.01730
+
+attr(,&quot;class&quot;)
+[1] &quot;coef.mer&quot;</code></pre>
+</section>
+<section id="visualizing" class="slide level2">
+<h1>Visualizing</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(sjPlot)
+<span class="kw">sjp.lmer</span>(mussels_mer, <span class="dt">type=</span><span class="st">&quot;coef&quot;</span>,
+         <span class="dt">show.values=</span><span class="ot">FALSE</span>)</code></pre></div>
+<p><img src="07_random_effects_files/figure-revealjs/sjp-1.jpeg" width="672" /></p>
+</section>
+<section id="visualizing-random-effects" class="slide level2">
+<h1>Visualizing Random Effects</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sjp.lmer</span>(mussels_mer, <span class="dt">type=</span><span class="st">&quot;re&quot;</span>,
+         <span class="dt">show.values=</span><span class="ot">FALSE</span>)</code></pre></div>
+<p><img src="07_random_effects_files/figure-revealjs/sjp_re-1.jpeg" width="672" /></p>
+</section>
+<section id="example" class="slide level2">
+<h1>Example</h1>
+<ul>
+<li>Look at unequal sample size mussel file<br />
+<br />
+</li>
+<li>Analyze using <code>lm</code><br />
+<br />
+</li>
+<li>Analyze using <code>lm</code> on site averages<br />
+<br />
+</li>
+<li>Analyze using <code>lmer</code><br />
+<br />
+</li>
+<li>Compare outputs, visualize coefficients</li>
+</ul>
+</section>
+    </div>
+  </div>
+
+  <script src="libs/reveal.js-3.3.0/lib/js/head.min.js"></script>
+  <script src="libs/reveal.js-3.3.0/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display the page number of the current slide
+        slideNumber: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: false,
+        // Opens links in an iframe preview overlay
+        previewLinks: true,
+        // Transition style
+        transition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>

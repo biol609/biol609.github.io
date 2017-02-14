@@ -1,0 +1,505 @@
+---
+title:
+css: style.css
+output:
+  revealjs::revealjs_presentation:
+    reveal_options:
+      slideNumber: true
+      previewLinks: true
+    theme: white
+    center: false
+    transition: fade
+    self_contained: false
+    lib_dir: libs
+---
+  
+## 
+\
+\
+\
+<h2>Random Effects</h2>
+\
+![](./images/07/pseudorep_walken.jpg)
+
+  ```{r prep, echo=FALSE, cache=FALSE, message=FALSE, warning=FALSE}
+library(knitr)
+opts_chunk$set(fig.height=5, fig.width=7, comment=NA, 
+               warning=FALSE, message=FALSE, 
+               dev="jpeg", echo=FALSE)
+
+library(ggplot2)
+library(car)
+
+library(dplyr)
+library(tidyr)
+library(broom)
+
+library(lme4)
+library(sjPlot)
+
+```
+
+## The Problem of Independence
+<div id="left">
+![](./images/07/300px-Isles_of_Shoals_Map.png)
+</div>
+<div id="right">
+>* Let's say you are sampling juvenile mussel lengths  
+\
+>* You sample at 10 sites around each island  
+\
+>* Can you just take the mean of all sites?  
+\
+>* Is it OK to pull out an "Island" effect?
+</div>
+
+## How would you handle measuring the same subjects in an experiment over time?
+![](./images/07/cats_repeated_measures.jpg)
+
+## What is the Sample Size?
+![](./images/07/plants.jpg)
+
+## What is the Sample Size?
+![](./images/07/plants_leaves.jpg)
+
+## Is there a problem with using SLR to determine effect of temperature here?
+![](./images/07/states_temp.jpg)
+
+## Pseudoreplication
+![](./images/07/kinds_of_pseudoreplication.jpg)
+
+Hurlbert 1985
+
+## What is the problem with Pseudoreplication?
+
+$$Y_i = \beta X_i + \epsilon_i$$
+$$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
+\
+\
+This assumes that all replicates are independent and identically distributed
+
+## How to deal with violation of Independence
+> - Average at group level  
+>       - Big hit to sample size/power  
+\
+> - Model correlation matrix  
+>       - Limited number of ways to deal with correlation  
+>       - Multiple levels of nesting tricky  
+\
+> - Model hierarchy explicitly
+>       - Random effects, mixed models
+
+## 
+\
+\
+\
+\
+<h1>What is a random effect?</h1>
+
+## Let's Say You're Sampling Mussel Lengths...
+```{r mussel_hist}
+mussels <- read.csv("./data/07/mussels.csv")
+
+mussel_ggplot <- ggplot(data=mussels, 
+                        mapping=aes(mussel_length, ..count..))
+
+mussel_ggplot +
+  geom_histogram(bins=25)
+```
+
+
+## But, They come from different islands...
+```{r mussel_hist2}
+mussel_ggplot +
+  geom_histogram(bins=5, mapping=aes(fill=site)) + 
+  facet_wrap(~site)
+```
+
+## Are different islands that different?
+```{r mussel_plot_2}
+mussel_scatter <- ggplot(data=mussels,
+                         mapping=aes(x=site, y=mussel_length)) +
+                           geom_point() +
+  theme_bw(base_size=17)
+
+mussel_scatter
+```
+
+
+## Are different islands that different?
+```{r mussel_plot_mean}
+mussel_scatter <- mussel_scatter +
+  geom_hline(yintercept=mean(mussels$mussel_length), color="blue", lty=2)
+
+mussel_scatter
+```
+
+## Are different islands that different?
+```{r mussel_site_mean_plot, warning=FALSE}
+mussels_summary <- mussels %>%
+  group_by(site) %>%
+  summarize(mussel_length = mean(mussel_length)) %>%
+  ungroup()
+
+mussels_mer <- lmer(mussel_length ~ 1|site, data=mussels)
+
+mussels_summary$ranef <- ranef(mussels_mer)$site + fixef(mussels_mer)[1]
+
+mussel_scatter <- mussel_scatter +
+  stat_summary(color="red", fun.y="mean", size=4, geom="point")
+
+mussel_scatter
+```
+
+## You Might think...
+\
+\
+$$Y_{ij} = \beta_{j} + \epsilon_i$$
+\
+$$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
+\
+<div class="fragment">And you'd be close...</div>
+
+## What is the distribution of site means?
+```{r site_hist}
+ggplot(data=mussels_summary,
+       mapping=aes(mussel_length, ..count..)) +
+  geom_histogram(bins=5) +
+  theme_bw(base_size=17)
+```
+
+<div class="fragment">A nice normal distribution</div>
+
+## Random Effects
+- A *random effect* is a parameter that varies across groups following a normal distribution  
+\
+- Implies that, while there is a grand mean *fixed* effect, each group deviates randomly  
+\
+- Implies that there is no one *true* value of a parameter in the world  
+\
+- We pull apart *variance components* driving our response
+
+
+## Fixed Versus Random Effects Model
+
+<span id="left">Fixed:</span>\
+$$Y_{ij} =  \beta_{j} + \epsilon_i$$
+\
+$$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
+\
+\
+<div class="fragment">
+<span id="left">Random:</span>\
+$$Y_{ij} =  \beta_{j} + \epsilon_i$$
+\
+$$\beta_{j} \sim \mathcal(N)(\beta, \sigma^2_{site})$$
+\
+$$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
+</div>
+
+
+## Wait, but what about good old blocks?
+> - We used to model blocks via estimation of means/parameters within a block  
+\
+> - But - there was no distribution of parameters assumed  
+\
+> - Assumed blocks could take any value  
+>       - Is this biologically plausible?  
+>       - What are blocks but collections of nuissance parameters?  
+
+## What difference does this make?
+```{r show_ranef}
+mussel_scatter +
+  geom_point(data=mussels_summary, mapping=aes(x=site, y=ranef),
+             color="darkorange", size=4)
+```
+
+## Consider what random effects mean - 1 model, 2 ways
+
+$$Y_{ij} =  \beta_{j} + \epsilon_i$$
+\
+$$\beta_{j} \sim \mathcal(N)(\alpha, \sigma^2_{site})$$
+\
+$$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
+\
+\
+<div class="fragment">
+$$Y_{ij} =  \alpha + \beta_{j} + \epsilon_i$$
+\
+$$\beta_{j} \sim \mathcal(N)(0, \sigma^2_{site})$$
+\
+$$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
+</div>
+
+## Shrinkage
+- Random effects assume each observation is drawn from a grand mean  
+\
+- This we can **draw strength** from samples in other groups to estimate a group mean  
+\
+- It **reduces variance** between groups by biasing results towards grand mean  
+\
+- Philosophically, group means are always likely to be incorrect due to sampling
+
+## Shrunken Group Mean - Note influence of sample size
+
+$$\hat{Y_j} = \rho_j\bar{y_j} + (1-\rho_j)\bar{y}$$
+\
+where $\rho_j$ is the shrinkage coefficient  
+\
+\
+<div class="fragment">
+$$\rho_j = \frac{\tau^2}{\tau^2 + \frac{\sigma^2}{n_j}}$$
+\
+Where $\tau^2$ is the variance of the random effect, and $n_j$ is the group sample size
+</div>
+
+## For example, unbalanced sample sizes
+```{r unbalanced}
+mussels_ragged <- read.csv("./data/07/mussels_ragged.csv")
+mussels_ragged_mer <- lmer(mussel_length ~ (1|site)-1, data=mussels_ragged)
+
+adf <- data.frame(site = levels(mussels_ragged$site),
+                  mussel_length = ranef(mussels_ragged_mer)$site[,1] + fixef(mussels_ragged_mer)[1])
+
+mussel_unbal <- ggplot(data=mussels_ragged, mapping=aes(x=site, y=mussel_length)) +
+  geom_point() +
+  geom_hline(yintercept=fixef(mussels_ragged_mer), color="blue", lty=2)
+
+mussel_unbal
+```
+
+## For example, unbalanced sample sizes
+```{r unbalanced_2}
+mussel_unbal+
+  stat_summary(color="red", fun.y="mean", size=4, geom="point") +
+  geom_point(data=adf,
+             color="darkorange", size=4) +
+  theme_bw(base_size=17)
+```
+
+## It's effects more than means
+```{r showShirnk}
+shrunk <- sjp.lmer(mussels_ragged_mer, type="coef", show.values=FALSE, 
+                   prnt.plot=FALSE)$plot +
+  theme_bw(base_size=17) +
+  ggtitle("Random Effects Model")+ 
+ theme(strip.background = element_blank(),
+       strip.text.x = element_blank())+ ylim(c(9,40))
+
+mussels_ragged_lm <- glm(mussel_length ~ site, data=mussels_ragged,
+                         family=gaussian(link="identity"))
+mussels_ragged_lm <- lm(mussel_length ~ site-1, data=mussels_ragged)
+
+
+not_shrunk <- sjp.lm(mussels_ragged_lm, show.values=FALSE, 
+                     prnt.plot=FALSE, show.p=FALSE, sort.est=FALSE)$plot +
+  theme_bw(base_size=17) +
+  ggtitle("Fixed Effects Model") + ylim(c(9,40)) +
+  ylab("")
+
+library(gridExtra)
+grid.arrange(not_shrunk, shrunk, ncol=2)
+
+
+```
+
+## Fixed versus Random Effects
+<div style="text-align:left">
+<div class="fragment">**Fixed Effect:** Effects that are constant across
+populations.  
+**Random Effect:** Effects that vary are
+random outcomes of underlying processes.\
+</div>
+\
+<div class="fragment">Gelman and Hill (2007) see the distinction as artificial. Fixed effects
+are special cases of random effects where the variance is infinite. The
+model is what you should focus on.\
+</div>
+\
+<div class="fragment">You will also hear that ’random effects’ are effects with many levels,
+but that you have not sampled all of them, wheras with fixed effects,
+you have sampled across the entire range of variation. This is subtly
+different, and artificial.
+</div>
+</div>
+
+## Is my effect fixed or random?
+> 1. Do you have <4 blocks? **Fixed**  
+\
+> 2. Do you have <3 points per block? **Fixed**\
+\
+> 3. Is your 'blocking' variable continuous? **Fixed**\
+>     - But slope can vary by discrete blocks - wait for it!
+\
+> 4. Do you have lots of blocks, but few/variable points per block? **Random**\
+>     - Save DF as you only estimate $\sigma^2$
+\
+
+## Other Ways to Avoid Random Effects
+> - Are you not interested in within subjects variability?\
+>       - AVERAGE at the block level  
+\
+> - Is block level correlation simple?\
+>       - GLS with compound symmetry varying by block\
+>       - `corCompSym(form = ~ 1|block)`
+
+## 
+\
+\
+\
+<h1>Estimating Random Effects</h1>
+
+## Restricted Maximum Likelihood
+- We typically estimate a $sigma^2$ of random effects, not the effect of each block  
+      - But later can derive Best Least Unbiased Predictors of each block (BLUPs)  
+\      
+- ML estimation can underestimate random effects variation ($\sigma^2_{block}$)
+\
+- REML seeks to decompose out fixed effects to estimate random effects \
+\
+- Works iteratively - estimates random effects, then fixed, and converges \
+        - Lots of algorithms, computationally expensive
+## In R....
+\
+\
+![](./images/07/lmer_lemur_tim_doherty.jpg)
+<div style="text-align:left">Thank you Tim Doherty</div>
+
+## NLME and LMER
+- `nlme` was created by Pinhero and Bates for linear and nonlinear mixed models  
+        - Also fits `gls` models with REML  
+        - Enables very flexible correlation structures  
+        - Uses Satterthwaite corrected DF
+\
+- `lme4` started by Bates, many developers
+        - Much faster for complex models
+        - Can fit generalized linear mixed models
+        - Simpler syntax adapted by many other packages
+        - Does not allow you to model correlation structure
+        - Does not allow you to model variance structure
+        
+## Don't you... Forget about Bayes
+- `rstanarm` uses `lme4` syntax  
+\
+- `brms` uses `lme4` syntax and more  
+\
+- Once a mixed model gets to sufficient complexity, it's Bayes, baby!
+
+## Fitting a Mixed Model with lme4
+\
+```{r lme4_start, echo=TRUE}
+library(lme4)
+
+mussels_mer <- lmer(mussel_length ~ (1 |site), 
+                    
+                    data = mussels)
+```
+<div class="fragment" style="text-align:left">Note `1 | group` syntax!</div>
+
+## Fitting a Mixed Model with nlme
+\
+```{r nlme_start, eval=FALSE, echo=TRUE}
+library(nlme)
+
+mussels_lme <- lme(mussel_length ~ 1,
+                   
+                   random =~ 1 |site, 
+                    
+                    data = mussels)
+```
+<div class="fragment" style="text-align:left">We could include correlations, etc.</div>
+
+
+## Evaluating...
+```{r lmer resid, echo=TRUE}
+plot(mussels_mer)
+```
+
+## Evaluating...
+```{r lmer_resid_qq, echo=TRUE}
+lattice::qqmath(mussels_mer)
+```
+
+## Evaluating Groups
+```{r lmer_group_qq, echo=TRUE}
+plot(ranef(mussels_mer))
+```
+
+## Evaluating Groups
+```{r lmer_group, echo=TRUE}
+lattice::qqmath(ranef(mussels_mer, condVar=TRUE))
+```
+
+## Evaluating Coefficients
+```{r broom_mod, echo=TRUE}
+knitr::kable(broom::tidy(mussels_mer))
+```
+<div class="fragment" style="text-align:left">Note the lack of p-values</div>
+
+
+## Why no p-values
+- The issue of DF in a mixed model is tricky  
+\
+- There are many possible solutions to calculating corrected DF  
+\
+- All depend on assumptions of 'effective sample size'  
+\
+- Requires knowing distribution of variability around random effects  
+\
+- This is only 'natural' in Bayes
+
+
+## Enter lmerTest
+- Uses Satterthwaite corrected DF
+
+```{r mer_test}
+library(lmerTest)
+mussels_mer <- lmer(mussel_length ~ (1|site), data=mussels)
+
+summary(mussels_mer)$coefficients
+```
+
+## The Random effects
+```{r broom_mod}
+```
+
+## Seeing the Fixed Effects
+```{r fixef_effects, echo=TRUE}
+fixef(mussels_mer)
+```
+
+## Seeing the Random Effects
+```{r ranef_effects, echo=TRUE}
+ranef(mussels_mer)
+```
+
+## Combined Effects
+```{r coef_effects, echo=TRUE}
+coef(mussels_mer)
+```
+
+
+## Visualizing 
+```{r sjp, echo=TRUE}
+library(sjPlot)
+sjp.lmer(mussels_mer, type="coef",
+         show.values=FALSE)
+```
+
+
+## Visualizing Random Effects
+```{r sjp_re, echo=TRUE}
+sjp.lmer(mussels_mer, type="re",
+         show.values=FALSE)
+```
+
+## Example
+- Look at unequal sample size mussel file  
+\
+- Analyze using `lm`  
+\
+- Analyze using `lm` on site averages  
+\
+- Analyze using `lmer`  
+\
+- Compare outputs, visualize coefficients
