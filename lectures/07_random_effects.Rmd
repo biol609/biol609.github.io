@@ -54,7 +54,7 @@ library(sjPlot)
 </div>
 
 ## How would you handle measuring the same subjects in an experiment over time?
-![](./images/07/cats_repeated_measures.jpg)
+![](./images/07/cats_repeated_measurs.jpg)
 
 ## What is the Sample Size?
 ![](./images/07/plants.jpg)
@@ -359,6 +359,7 @@ different, and artificial.
 \
 - Works iteratively - estimates random effects, then fixed, and converges \
         - Lots of algorithms, computationally expensive
+        
 ## In R....
 \
 \
@@ -371,12 +372,13 @@ different, and artificial.
         - Enables very flexible correlation structures  
         - Uses Satterthwaite corrected DF
 \
-- `lme4` started by Bates, many developers
-        - Much faster for complex models
-        - Can fit generalized linear mixed models
-        - Simpler syntax adapted by many other packages
-        - Does not allow you to model correlation structure
-        - Does not allow you to model variance structure
+\
+- `lme4` started by Bates, many developers  
+        - Much faster for complex models  
+        - Can fit generalized linear mixed models  
+        - Simpler syntax adapted by many other packages  
+        - Does not allow you to model correlation structure  
+        - Does not allow you to model variance structure  
         
 ## Don't you... Forget about Bayes
 - `rstanarm` uses `lme4` syntax  
@@ -434,6 +436,7 @@ lattice::qqmath(ranef(mussels_mer, condVar=TRUE))
 ```{r broom_mod, echo=TRUE}
 knitr::kable(broom::tidy(mussels_mer))
 ```
+
 <div class="fragment" style="text-align:left">Note the lack of p-values</div>
 
 

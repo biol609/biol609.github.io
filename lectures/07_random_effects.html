@@ -148,7 +148,7 @@ Random Effects
 </section>
 <section id="how-would-you-handle-measuring-the-same-subjects-in-an-experiment-over-time" class="slide level2">
 <h1>How would you handle measuring the same subjects in an experiment over time?</h1>
-<p><img src="./images/07/cats_repeated_measures.jpg" /></p>
+<p><img src="images/07/cats_repeated_measurs.jpg" /></p>
 </section>
 <section id="what-is-the-sample-size" class="slide level2">
 <h1>What is the Sample Size?</h1>
@@ -422,13 +422,17 @@ Estimating Random Effects
 <br />
 </li>
 <li>Works iteratively - estimates random effects, then fixed, and converges<br />
-- Lots of algorithms, computationally expensive ## In R….<br />
+- Lots of algorithms, computationally expensive</li>
+</ul>
+</section>
+<section id="in-r." class="slide level2">
+<h1>In R….</h1>
+<br />
 <br />
 <img src="./images/07/lmer_lemur_tim_doherty.jpg" />
 <div style="text-align:left">
 Thank you Tim Doherty
-</div></li>
-</ul>
+</div>
 </section>
 <section id="nlme-and-lmer" class="slide level2">
 <h1>NLME and LMER</h1>
@@ -437,8 +441,14 @@ Thank you Tim Doherty
 - Also fits <code>gls</code> models with REML<br />
 - Enables very flexible correlation structures<br />
 - Uses Satterthwaite corrected DF<br />
+<br />
 </li>
-<li><code>lme4</code> started by Bates, many developers - Much faster for complex models - Can fit generalized linear mixed models - Simpler syntax adapted by many other packages - Does not allow you to model correlation structure - Does not allow you to model variance structure</li>
+<li><code>lme4</code> started by Bates, many developers<br />
+- Much faster for complex models<br />
+- Can fit generalized linear mixed models<br />
+- Simpler syntax adapted by many other packages<br />
+- Does not allow you to model correlation structure<br />
+- Does not allow you to model variance structure</li>
 </ul>
 </section>
 <section id="dont-you-forget-about-bayes" class="slide level2">
@@ -506,10 +516,40 @@ We could include correlations, etc.
 <section id="evaluating-coefficients" class="slide level2">
 <h1>Evaluating Coefficients</h1>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knitr::<span class="kw">kable</span>(broom::<span class="kw">tidy</span>(mussels_mer))</code></pre></div>
-term estimate std.error statistic group<br />
-———————— ———- ———- ———- ——— (Intercept) 23.971873 1.034508 23.17224 fixed<br />
-sd_(Intercept).site 3.291326 NA NA site<br />
-sd_Observation.Residual 7.225154 NA NA Residual
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">term</th>
+<th style="text-align: right;">estimate</th>
+<th style="text-align: right;">std.error</th>
+<th style="text-align: right;">statistic</th>
+<th style="text-align: left;">group</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">23.971873</td>
+<td style="text-align: right;">1.034508</td>
+<td style="text-align: right;">23.17224</td>
+<td style="text-align: left;">fixed</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sd_(Intercept).site</td>
+<td style="text-align: right;">3.291326</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">site</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">sd_Observation.Residual</td>
+<td style="text-align: right;">7.225154</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">Residual</td>
+</tr>
+</tbody>
+</table>
 <div class="fragment" style="text-align:left">
 Note the lack of p-values
 </div>

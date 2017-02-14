@@ -614,7 +614,7 @@ ggplot(data=plankton, mapping=aes(x=Year, y=CHLFa)) +
 ```
 
 How well can you model the time series with the measurements at hand?  
-Data extrapolated from Zuur et al. 2009\
+Data extrapolated from Zuur et al. 2009
 
 ## Exercise: Model CHLFa in the Plankton Data Set
 Suggested Order:
