@@ -283,6 +283,11 @@ The design is as follows:<br />
 <p><br />
 <br />
 </p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">plants_mer &lt;-<span class="st"> </span><span class="kw">lmer</span>(Growth ~<span class="st"> </span>Treatment +
+<span class="st">                     </span>
+<span class="st">                  </span>(<span class="dv">1</span>|Pot) +<span class="st"> </span>(<span class="dv">1</span>|Chamber),
+                   
+                   <span class="dt">data=</span> plants)</code></pre></div>
 </section>
 <section id="a-quick-note-in-nesting-code" class="slide level2">
 <h1>A Quick Note in Nesting Code</h1>
@@ -359,7 +364,7 @@ plants_mer_only_chamber &lt;-<span class="st"> </span><span class="kw">update</s
     (p-value based on 10000 simulated values)
 
 data:  
-RLRT = 0.12832, p-value = 0.2779</code></pre>
+RLRT = 0.12832, p-value = 0.282</code></pre>
 </section>
 <section id="testing-fixed-effects" class="slide level2">
 <h1>Testing fixed effects</h1>
@@ -425,13 +430,13 @@ Treatment 82.792  41.396     2     6   10.17 0.01182 *
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <p>Note that DenDF are 6. Were 8 with Satterthwaite.</p>
 </section>
-<section id="kr-approximation-with-lmertest-1" class="slide level2">
-<h1>KR Approximation with lmerTest</h1>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(plants_mer_testme, <span class="dt">ddf=</span><span class="st">&quot;Kenward-Roger&quot;</span>)$coef</code></pre></div>
-<pre><code>                  Estimate Std. Error  t value
-(Intercept)       9.102532   1.512905 6.016593
-TreatmentAdd N   10.432122   2.003305 5.207457
-TreatmentControl  5.301297   2.003305 2.646276</code></pre>
+<section id="wald-tests-with-lmertest" class="slide level2">
+<h1>Wald Tests with lmerTest</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(plants_mer_testme)$coef</code></pre></div>
+<pre><code>                  Estimate Std. Error        df  t value     Pr(&gt;|t|)
+(Intercept)       9.102532   1.512905 11.645781 6.016593 6.870908e-05
+TreatmentAdd N   10.432122   2.003305  7.999999 5.207457 8.149522e-04
+TreatmentControl  5.301297   2.003305  7.999999 2.646276 2.942533e-02</code></pre>
 </section>
 <section id="aic" class="slide level2">
 <h1>AIC</h1>
@@ -462,7 +467,7 @@ TreatmentControl  5.301297   2.003305 2.646276</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cAIC</span>(plants_mer)$caic</code></pre></div>
 <pre><code>[1] 166.6196</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cAIC</span>(plants_mer, <span class="dt">method=</span><span class="st">&quot;conditionalBootstrap&quot;</span>)$caic</code></pre></div>
-<pre><code>[1] 162.2052</code></pre>
+<pre><code>[1] 164.1169</code></pre>
 </section>
 <section id="caic-in-action" class="slide level2">
 <h1>cAIC in Action</h1>
@@ -568,6 +573,12 @@ Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&
 </section>
 <section id="weve-seen-a-variable-intercept-model-already" class="slide level2">
 <h1>We’ve seen a Variable Intercept Model Already</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rikz &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;./data/08/rikz.csv&quot;</span>)
+rikz$Beach &lt;-<span class="st"> </span><span class="kw">factor</span>(rikz$Beach) <span class="co">#it was continuous</span>
+
+
+rikz_varint &lt;-<span class="st"> </span><span class="kw">lmer</span>(Richness ~<span class="st"> </span>NAP +<span class="st"> </span>(<span class="dv">1</span>|Beach), 
+                    <span class="dt">data=</span>rikz)</code></pre></div>
 </section>
 <section id="how-to-plot" class="slide level2">
 <h1>How to Plot?</h1>
@@ -836,11 +847,12 @@ fit_unc_df &lt;-<span class="st"> </span><span class="kw">cbind</span>(uncDF, pr
 <br />
 </li>
 <li>Look at both exposure and NAP<br />
+<br />
 </li>
 <li>Test fixed and random effects<br />
 <br />
 </li>
-<li>Visulize results</li>
+<li>Visualize results</li>
 </ul>
 </section>
 <section id="general-protocol-for-model-fitting-1" class="slide level2">

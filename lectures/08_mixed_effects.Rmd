@@ -182,7 +182,7 @@ base_plants
 ## Our Model
 \
 \
-```{r plants_mer}
+```{r plants_mer, echo=TRUE}
 plants_mer <- lmer(Growth ~ Treatment +
                      
                   (1|Pot) + (1|Chamber),
@@ -290,9 +290,9 @@ anova(plants_mer_testme, ddf="Kenward-Roger", type=2)
 
 Note that DenDF are 6. Were 8 with Satterthwaite.
 
-## KR Approximation with lmerTest
+## Wald Tests with lmerTest
 ```{r wald_me_krr, echo=TRUE}
-summary(plants_mer_testme, ddf="Kenward-Roger")$coef
+summary(plants_mer_testme)$coef
 ```
 
 ## AIC
@@ -399,7 +399,7 @@ par(mfrow=c(1,1))
 
 
 ## We've seen a Variable Intercept Model Already
-```{r rikz_start}
+```{r rikz_start, echo=TRUE}
 rikz <- read.csv("./data/08/rikz.csv")
 rikz$Beach <- factor(rikz$Beach) #it was continuous
 
@@ -648,11 +648,11 @@ Need all three for extrapolation
 ## Example
 - Load up the RIKZ data  
 \
-- Look at both exposure and NAP
+- Look at both exposure and NAP  
 \
 - Test fixed and random effects  
 \
-- Visulize results
+- Visualize results
 
 ## General Protocol for Model Fitting
 
