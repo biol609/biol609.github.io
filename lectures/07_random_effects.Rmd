@@ -21,7 +21,7 @@ output:
 \
 ![](./images/07/pseudorep_walken.jpg)
 
-  ```{r prep, echo=FALSE, cache=FALSE, message=FALSE, warning=FALSE}
+```{r prep, echo=FALSE, cache=FALSE, message=FALSE, warning=FALSE}
 library(knitr)
 opts_chunk$set(fig.height=5, fig.width=7, comment=NA, 
                warning=FALSE, message=FALSE, 
@@ -286,8 +286,6 @@ shrunk <- sjp.lmer(mussels_ragged_mer, type="coef", show.values=FALSE,
  theme(strip.background = element_blank(),
        strip.text.x = element_blank())+ ylim(c(9,40))
 
-mussels_ragged_lm <- glm(mussel_length ~ site, data=mussels_ragged,
-                         family=gaussian(link="identity"))
 mussels_ragged_lm <- lm(mussel_length ~ site-1, data=mussels_ragged)
 
 
