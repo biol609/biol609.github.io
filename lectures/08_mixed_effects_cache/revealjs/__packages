@@ -1,0 +1,17 @@
+base
+knitr
+ggplot2
+car
+dplyr
+tidyr
+broom
+Matrix
+lme4
+RLRsim
+sjPlot
+lmerTest
+cAIC4
+piecewiseSEM
+MASS
+arm
+merTools

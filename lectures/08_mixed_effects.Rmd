@@ -1,0 +1,667 @@
+---
+title:
+css: style.css
+output:
+  revealjs::revealjs_presentation:
+    reveal_options:
+      slideNumber: true
+      previewLinks: true
+    theme: white
+    center: false
+    transition: fade
+    self_contained: false
+    lib_dir: libs
+---
+##
+<h2>Mixed Models</h2>
+
+![](./images/07/lmer_lemur_tim_doherty.jpg)
+<div style="text-align:left; font-size:8pt">Thank you Tim Doherty</div>
+
+
+```{r prep, echo=FALSE, cache=FALSE, message=FALSE, warning=FALSE}
+library(knitr)
+opts_chunk$set(fig.height=5, fig.width=7, comment=NA, 
+               warning=FALSE, message=FALSE, 
+               dev="jpeg", echo=FALSE)
+
+library(ggplot2)
+library(car)
+
+library(dplyr)
+library(tidyr)
+library(broom)
+
+library(lme4)
+library(RLRsim)
+library(sjPlot)
+```
+
+## Today
+1. Brief review  
+\
+2. Evaluating models  
+\
+3. Visualizing different types of mixed models  
+\
+4. Uncertainty
+
+## Random Effects Model
+\
+\
+$$Y_{ij} =  \alpha_{j} + \epsilon_i$$
+\
+$$\alpha_{j} \sim \mathcal{N}(\mu_{\alpha}, \sigma^2_{\alpha})$$
+\
+$$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
+
+## Now add predictors: Mixed Models with Variable Intercepts
+\
+\
+$$Y_{ij} =  \alpha_{j} + \beta X_i + \epsilon_i$$
+\
+$$\alpha_{j} \sim \mathcal{N}(\mu_{\alpha}, \sigma^2_{\alpha})$$
+\
+$$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
+
+## Now add predictors: Mixed Models with Variable Slopes
+\
+\
+$$Y_{ij} =  \alpha + \beta_j X_{ij} + \epsilon_i$$
+\
+$$\beta_{j} \sim \mathcal{N}(\mu_{\beta}, \sigma^2_{\beta})$$
+\
+$$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
+
+## Now add predictors: Mixed Models with Variable Slopes and Intercepts
+\
+<!-- \
+$$Y_{ij} =  \alpha_{j} + \beta_j X_{ij} + \epsilon_i$$
+\
+$$\alpha_{j} \sim \mathcal{N}(\mu_{\alpha}, \sigma^2_{\alpha})$$
+\
+$$\beta_{j} \sim \mathcal{N}(\mu_{\beta}, \sigma^2_{\beta})$$
+\ -->
+
+$$Y_{ij} = \alpha_{ij} + \beta_{j}X_{ij} + \epsilon_{ij}$$\
+\
+$$\begin{pmatrix}
+\alpha_{ij}  \\  \beta_{ij}  \end{pmatrix} \sim \mathcal{MVN}\left ( \begin{pmatrix} \mu_{\alpha}  \\  \mu_{\beta}  \end{pmatrix} ,  \begin{pmatrix}  \sigma_{\alpha}^{2}& \rho\sigma_{\alpha}\sigma_{\beta}\\ \rho\sigma_{\alpha}\sigma_{\beta} & \sigma_{\beta}^{2} \end{pmatrix}  \right )$$
+\
+$$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
+
+## Today
+1. Brief review  
+\
+2. **Evaluating models**  
+\
+3. Visualizing different types of mixed models  
+\
+4. Uncertainty
+
+## A Greenhouse Experiment testing C:N Ratios
+<div style="text-align:left; font-size:0.75em">
+Sam was testing how changing the C:N Ratio of soil affected plant leaf
+growth. Sam had 3 treatments. A control, a C addition, and a N addition.
+To ensure that any one measurement of one leaf wasn’t a fluke, Sam
+measured 3 leaves per plant. Sam also put these plants in multiple 
+growth chambers, such that there was one of each treatment per growth chamber.\
+\
+The design is as follows:\
+\
+3 Treatments (Control, C, N)\
+4 Pots of Plants per Treatment\
+4 Growth Chambers with n=1\
+3 Leaves Measured Per Pot\
+\
+</div>
+
+## Nesting and Hierarchies
+<div style="text-align:left">Here we have two levels of nesting:  
+\
+1. Leaves in a pot  
+\
+2. Pot in a chamber
+</div>
+
+## Now add predictors: Mixed Models with Variable Intercepts
+\
+\
+$$Y_{ijk} =  \alpha_{jk} + \beta X_i + \epsilon_i$$
+\
+$$\alpha_{jk} \sim \mathcal{N}(\mu_{\alpha_k}, \sigma^2_{\alpha_j})$$
+\
+$$\alpha_{k} \sim \mathcal{N}(\mu_{\alpha}, \sigma^2_{\alpha_k})$$
+\
+$$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
+
+## Visualizing Our Plant Experiment
+```{r nested_data_viz}
+plants <- read.csv("./data/08/nestedGrowth.csv")
+
+base_plants <- ggplot(plants,
+       aes(x=Pot, y=Growth, color=Treatment)) +
+  geom_point(size=3, alpha=0.6) +
+  theme_bw(base_size=17)
+
+base_plants +
+  facet_wrap(~Chamber, scale="free_x")
+```
+
+## But how variable are things between growth chambers?
+```{r nested_chambers}
+base_plants 
+```
+
+## Questions
+1. Does treatment matter?  
+\
+2. Do we need to account for growth chamber?  
+      - Note, we at least need to account for non-independence of pot
+      
+## What random effects do I need to use?
+1. Is there a clear and obvious source of non-independence due to a group?  
+    - Yes, include it!  
+\
+\
+2. Is there a possible, but, eh, possibly non-problematic source of non-independence?  
+      - Put it to the test!  
+\
+
+## Evaluating Random Effects
+
+-   Do this first, as random effect structure alters fixed effects
+    outcomes  
+\
+-   Use $\chi^2$ tests for random effects - for a REML fit without any
+    random effects, use <span>gls</span> OR  
+\
+-   If variance components small, need simulation approaches - see
+    <span>RLRsim</span>
+
+## Our Model
+\
+\
+```{r plants_mer}
+plants_mer <- lmer(Growth ~ Treatment +
+                     
+                  (1|Pot) + (1|Chamber),
+                   
+                   data= plants)
+```
+
+## A Quick Note in Nesting Code
+- We did not specify nesting  
+\
+- `lme4` automagically notes nested structure, calculates random effects appropriately  
+\
+- This is not so for `nlme` - special syntax
+      - `1 | Toplevel / Lowerlevel`  
+      - or `1 | Lowerlevel %in% Toplevel`  
+\
+- Will work in `lme4`, but why?
+
+## Nesting: These produce equvalent results to plants_mer
+`
+```{r nesting, echo=TRUE, eval=FALSE}
+## LME4
+plants_mer2 <- lmer(Growth ~ Treatment +
+                     
+                  (1|Chamber/Pot) ,
+                   
+                   data= plants)
+
+## NLME
+plants_lme<- lme(Growth ~ Treatment,
+                 
+                     random = ~ 1|Chamber/Pot,
+                 
+                     data=plants)
+```
+
+## A Test of Random Effects with RLRT
+```{r rlrt_mer, echo=TRUE}
+plants_mer_nochamber <- update(plants_mer, . ~ . - (1|Chamber))
+
+anova(plants_mer, plants_mer_nochamber)
+```
+
+
+## A Test of Random Effects via Simulation
+Need to include a model with ONLY the random effect being tested
+```{r rlrt_mer_sum, echo=TRUE, eval=FALSE}
+#No Pot, Only Chamber
+plants_mer_only_chamber <- update(plants_mer, . ~ . - (1|Pot))
+
+#The Simulation Test
+exactRLRT(m0 = plants_mer_nochamber,
+          
+          m = plants_mer_only_chamber, 
+          
+          mA = plants_mer)
+```
+
+## A Test of Random Effects via Simulation
+Need to include a model with ONLY the random effect being tested
+```{r rlrt_mer_sum, echo=FALSE}
+```
+
+## Testing fixed effects
+- RLRT tests for fixed effects are conservative  
+\
+- Provide more weight of Deviance to Random Effects  
+\
+- Need to refit models using ML  
+      - set `REML=FALSE`
+      
+## DF for Fixed Effect Testing
+- Satterthwaite approximation
+        - Based on sample sizes and variances within groups  
+\
+- Kenward-Roger's approximation  
+        - Based on estimate of variance-covariance matrix of fixed effects and a scaling factor
+
+
+## With no Correction
+```{r anova_mer, echo=TRUE}
+plants_mer_ml <- lmer(Growth ~ Treatment +
+                  (1|Pot) + (1|Chamber),
+                   data= plants, REML=FALSE)
+
+anova(plants_mer, type=2)
+```
+
+## Satterhwaite Approximation with lmerTest
+```{r anova_mer_ws, echo=TRUE}
+library(lmerTest)
+
+#have to refit
+plants_mer_testme <- lmer(Growth ~ Treatment +
+                  (1|Pot) + (1|Chamber),
+                   data= plants, REML=FALSE)
+  
+anova(plants_mer_testme, type=2)
+```
+
+## KR Approximation with lmerTest
+```{r anova_me_krr, echo=TRUE}
+anova(plants_mer_testme, ddf="Kenward-Roger", type=2)
+```
+
+Note that DenDF are 6. Were 8 with Satterthwaite.
+
+## KR Approximation with lmerTest
+```{r wald_me_krr, echo=TRUE}
+summary(plants_mer_testme, ddf="Kenward-Roger")$coef
+```
+
+## AIC
+- Yes, you can use AIC...carefully  
+\
+
+- Comparison of models with varying fixed effects (marginal AIC) is fine  
+\
+- Varying random effects structure...not as much  
+\
+- Conditional AIC (cAIC) *sensu* Vaida and Blanchard 2005
+          - Uses conditional likelihood and effective DF  
+          - Based on fit v. observed responses  
+          - This is an evolving area of research  
+\
+- Still gotta do a lot by hand (e.g. cAICc)
+
+
+## cAIC
+```{r caic, echo=TRUE}
+library(cAIC4)
+
+AIC(plants_mer)
+cAIC(plants_mer)$caic
+cAIC(plants_mer, method="conditionalBootstrap")$caic
+```
+
+## cAIC in Action
+```{r caic_eval, echo=TRUE}
+cAIC(plants_mer)$caic
+cAIC(plants_mer)$df
+
+cAIC(plants_mer_nochamber)$caic
+cAIC(plants_mer_nochamber)$df
+
+#delta
+cAIC(plants_mer_nochamber)$caic - cAIC(plants_mer)$caic
+```
+
+## R2
+- What does R<sup>2</sup> mean in the context of mixed models?  
+\
+- We are often interested in the explanatory power of fixed effects  
+\
+- But random components explain variability in the data  
+\
+- We need to decompose these into **marginal** and **conditional** R<sup>2</sup> values
+      - e.g., from fixed and random sources  
+\
+- See Schielzeth and Nakagawa 2013 MEE and `piecewiseSEM`'s implementation
+
+## Getting Fit
+```{r r2, echo=TRUE}
+library(piecewiseSEM)
+
+rsquared(plants_mer)
+
+rsquared(plants_mer_nochamber)
+
+```
+
+## Posthocs from lmerTest
+
+```{r posthoc, echo=TRUE}
+lsmeans(plants_mer_nochamber)
+```
+
+
+## General Protocol for Model Fitting
+
+1.  Start with model with all fixed and random effects that may be important. Evaluate with diagnostics.  
+\
+2.  Evaluate random effects with full model of all fixed effects using REML($\chi^2$, RLRT, cAIC, etc.)  
+\
+3.  Evaluate fixed effects with reduced random effects (F Tests using ML fit)  
+\
+4.  Model diagnostics again...  
+\
+5.  Draw inference from model using Wald tests, lsmeans, visualization, etc.
+
+## Today
+1. Brief review  
+\
+2. Evaluating models  
+\
+3. **Visualizing different types of mixed models**  
+\
+4. Uncertainty
+
+## Types of Mixed Models
+```{r show_hlm_types}
+
+set.seed(607)
+a<-rnorm(10)
+par(mfrow=c(1,3), cex.main=2, cex.lab=1.5, cex.axis=1.5)
+matplot(rbind(a, a+1), type="l", xlab="x", ylab="y", main="Variable Intercept")
+matplot(rbind(rep(0,10), a), type="l", xlab="x", ylab="y", main="Variable Slope")
+matplot(rbind(a, a+rnorm(10)*1), type="l", xlab="x", ylab="y", main="Variable Slope &Intercept")
+par(mfrow=c(1,1))
+```
+
+## Let's take this to the beach with Tide Height
+![image](./images/08/denmark-lightsbeach.jpeg){width="80.00000%"}
+
+
+## We've seen a Variable Intercept Model Already
+```{r rikz_start}
+rikz <- read.csv("./data/08/rikz.csv")
+rikz$Beach <- factor(rikz$Beach) #it was continuous
+
+
+rikz_varint <- lmer(Richness ~ NAP + (1|Beach), 
+                    data=rikz)
+```
+
+## How to Plot?
+```{r plot_varint}
+rikz_plot_base <- ggplot(rikz, aes(x=NAP, y=Richness, color=Beach)) +
+  geom_point(size=3) +
+  theme_bw(base_size=17)
+
+rikz_plot_base
+```
+
+## Adding Variable Intercepts
+```{r plot_varint_2, echo=TRUE, eval=FALSE}
+rikz_varint_lines <- coef(rikz_varint)$Beach
+rikz_varint_lines$Beach <- levels(rikz$Beach)
+
+rikz_plot <- rikz_plot_base +
+  geom_abline(data=rikz_varint_lines,
+              aes(slope = NAP, intercept=`(Intercept)`, 
+                  color=Beach),
+              alpha=0.5)
+
+rikz_plot
+```
+
+## Adding Variable Intercepts
+```{r plot_varint_2, echo=FALSE, eval=TRUE}
+```
+
+## Adding the fixed effect
+\
+\
+```{r plot_varint_3, echo=TRUE, eval=FALSE}
+rikz_plot +
+  geom_abline(slope=fixef(rikz_varint)[2],
+              intercept=fixef(rikz_varint)[1],
+              size=3)
+```
+
+## Adding the fixed effect
+```{r plot_varint_3, echo=FALSE, eval=TRUE}
+```
+
+
+## Variable Slope Model
+\
+\
+$$Y_{ij} =  \alpha + \beta_j X_{ij} + \epsilon_i$$
+\
+$$\beta_{j} \sim \mathcal{N}(\mu_{\beta}, \sigma^2_{\beta})$$
+\
+$$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
+
+## Variable Slope Model
+\
+\
+```{r varslope, echo=TRUE}
+
+rikz_varslope <- lmer(Richness ~ NAP + 
+                        
+                        (NAP - 1|Beach), 
+                      
+                      
+                    data=rikz)
+```
+
+Note the - 1 to denote only the slope is varying
+
+## Variable Slope-Intercept Model
+$$Y_{ij} = \alpha_{ij} + \beta_{j}X_{ij} + \epsilon_{ij}$$\
+\
+$$\begin{pmatrix}
+\alpha_{ij}  \\  \beta_{ij}  \end{pmatrix} \sim \mathcal{MVN}\left ( \begin{pmatrix} \mu_{\alpha}  \\  \mu_{\beta}  \end{pmatrix} ,  \begin{pmatrix}  \sigma_{\alpha}^{2}& \rho\sigma_{\alpha}\sigma_{\beta}\\ \rho\sigma_{\alpha}\sigma_{\beta} & \sigma_{\beta}^{2} \end{pmatrix}  \right )$$
+\
+$$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
+
+## Variable Slope-Intercept Model
+\
+\
+```{r rikz_varslopeint, echo=TRUE}
+rikz_varslopeint <- lmer(Richness ~ NAP + 
+                           
+                           (NAP + 1|Beach), 
+                         
+                    data=rikz)
+```
+
+## Variable Slope Intercept Model
+```{r plot_varslope_int}
+rikz_varslopeint_lines <- coef(rikz_varslopeint)$Beach
+rikz_varslopeint_lines$Beach <- levels(rikz$Beach)
+rikz_plot_base +
+  geom_abline(data=rikz_varslopeint_lines,
+              aes(slope = NAP, intercept=`(Intercept)`, 
+                  color=Beach),
+              alpha=0.5) +
+  geom_abline(slope=fixef(rikz_varslopeint)[2],
+              intercept=fixef(rikz_varslopeint)[1],
+              size=2.5)
+```
+
+## Variable Slope-Intercept Model with No Covariance
+\
+\
+```{r rikz_varslopeint_nocov, echo=TRUE}
+rikz_varslopeint_nocov <- lmer(Richness ~ NAP + 
+                                 
+                                 (NAP-1|Beach) + 
+                                 
+                                 (1|Beach),
+                               
+                               data=rikz)
+```
+
+## Testing the vcov assumption
+```{r test_vcov, echo=TRUE}
+anova(rikz_varslopeint, rikz_varslopeint_nocov, refit=FALSE)
+```
+
+## Look at al of those variances
+```{r show_varint}
+knitr::kable(broom::tidy(rikz_varslopeint))
+```
+
+## Testing Variable Intercept assumption
+```{r test_varint, echo=TRUE}
+anova(rikz_varslopeint, rikz_varslope, refit=FALSE)
+```
+
+
+## Testing Variable Slope assumption
+```{r test_varslope, echo=TRUE}
+anova(rikz_varslopeint, rikz_varint, refit=FALSE)
+```
+
+## Today
+1. Brief review  
+\
+2. Evaluating models  
+\
+3. Visualizing different types of mixed models  
+\
+4. **Uncertainty**
+
+## Plotting Uncertainty via Simulation
+```{r uncertain, echo=TRUE, eval=TRUE}
+library(merTools)
+#The fit values
+predDF <- predictInterval(rikz_varslopeint,
+                          newdata=rikz,
+                          which="fixed",
+                          include.resid.var = FALSE)
+predDF$NAP <- rikz$NAP
+```
+
+## Plotting Uncertainty via Simulation
+```{r uncertain_plot, echo=TRUE, eval=FALSE}
+
+#The Plot
+rikz_plot_base +
+  geom_abline(slope=fixef(rikz_varslopeint)[2],
+              intercept=fixef(rikz_varslopeint)[1],
+              size=2.5, color="blue") +
+  geom_ribbon(data=predDF, mapping=aes(y = fit, ymin=lwr, ymax=upr), 
+              alpha=0.3, color="grey")
+
+```
+
+## Plotting Uncertainty via Simulation
+```{r uncertain_plot, echo=FALSE, eval=TRUE}
+```
+
+## Showing Fixed Prediction Uncertainty: include.resid.var=TRUE
+```{r uncertain_pred}
+#The fit values
+predDF_pred <- predictInterval(rikz_varslopeint,
+                          newdata=rikz,
+                          which="fixed",
+                          include.resid.var = TRUE)
+predDF_pred$NAP <- rikz$NAP
+
+#The Plot
+rikz_plot_base +
+  geom_abline(slope=fixef(rikz_varslopeint)[2],
+              intercept=fixef(rikz_varslopeint)[1],
+              size=2.5, color="blue") +
+  geom_ribbon(data=predDF_pred, mapping=aes(y = fit, ymin=lwr, ymax=upr), 
+              alpha=0.3, color="grey")
+
+```
+
+## Getting the Full Range of Uncertainty
+```{r all_uncertain, echo=TRUE, eval=TRUE, cache=TRUE}
+#new data for all beaches
+uncDF <- data.frame(expand.grid(Beach = levels(rikz$Beach),
+                    NAP = seq(min(rikz$NAP), max(rikz$NAP), 
+                                                 length.out=200)))
+
+#fit values
+pred_unc_df <- predictInterval(rikz_varslopeint,
+                          newdata=uncDF,
+                          which="full",
+                          include.resid.var = TRUE)
+
+#get the wide range
+fit_unc_df <- cbind(uncDF, pred_unc_df) %>%
+  group_by(NAP) %>%
+  summarize(fit=mean(fit), lwr = min(lwr), upr = max(upr)) %>%
+  ungroup()
+  
+```
+
+## Getting the Full Range of Uncertainty
+```{r plot_all_unc}
+rikz_plot_base +
+  geom_abline(slope=fixef(rikz_varslopeint)[2],
+              intercept=fixef(rikz_varslopeint)[1],
+              size=2.5, color="blue") +
+  geom_ribbon(data=fit_unc_df, mapping=aes(y = fit, ymin=lwr, ymax=upr), 
+              alpha=0.3, color="grey")
+```
+
+## Here be Uncertainty
+```{r plot_all_types_unc}
+
+rikz_plot_base +
+  geom_abline(slope=fixef(rikz_varslopeint)[2],
+              intercept=fixef(rikz_varslopeint)[1],
+              size=2.5, color="blue") +
+  geom_ribbon(data=predDF, mapping=aes(y = fit, ymin=lwr, ymax=upr), 
+              alpha=0.3, color="blue", fill="blue")+
+  geom_ribbon(data=predDF_pred, mapping=aes(y = fit, ymin=lwr, ymax=upr), 
+              alpha=0.3, color="grey")+
+  geom_ribbon(data=fit_unc_df, mapping=aes(y = fit, ymin=lwr, ymax=upr), 
+              alpha=0.3, color="grey")
+```
+
+Need all three for extrapolation
+
+## Example
+- Load up the RIKZ data  
+\
+- Look at both exposure and NAP
+\
+- Test fixed and random effects  
+\
+- Visulize results
+
+## General Protocol for Model Fitting
+
+1.  Start with model with all fixed and random effects that may be important. Evaluate with diagnostics.  
+\
+2.  Evaluate random effects with full model of all fixed effects using REML($\chi^2$, RLRT, cAIC, etc.)  
+\
+3.  Evaluate fixed effects with reduced random effects (F Tests using ML fit)  
+\
+4.  Model diagnostics again...  
+\
+5.  Draw inference from model using Wald tests, lsmeans, visualization, etc.

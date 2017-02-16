@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <title></title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="libs/reveal.js-3.3.0/css/reveal.css"/>
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="libs/reveal.js-3.3.0/css/theme/white.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="style.css"/>
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'libs/reveal.js-3.3.0/css/print/pdf.css' : 'libs/reveal.js-3.3.0/css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+    <!--[if lt IE 9]>
+    <script src="libs/reveal.js-3.3.0/lib/js/html5shiv.js"></script>
+    <![endif]-->
+
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+
+<section id="section" class="slide level2">
+<h1></h1>
+<h2>
+Mixed Models
+</h2>
+<img src="images/07/lmer_lemur_tim_doherty.jpg" />
+<div style="text-align:left; font-size:8pt">
+Thank you Tim Doherty
+</div>
+</section>
+<section id="today" class="slide level2">
+<h1>Today</h1>
+<ol type="1">
+<li>Brief review<br />
+<br />
+</li>
+<li>Evaluating models<br />
+<br />
+</li>
+<li>Visualizing different types of mixed models<br />
+<br />
+</li>
+<li>Uncertainty</li>
+</ol>
+</section>
+<section id="random-effects-model" class="slide level2">
+<h1>Random Effects Model</h1>
+<p><br />
+<br />
+<span class="math display">\[Y_{ij} =  \alpha_{j} + \epsilon_i\]</span><br />
+<span class="math display">\[\alpha_{j} \sim \mathcal{N}(\mu_{\alpha}, \sigma^2_{\alpha})\]</span><br />
+<span class="math display">\[\epsilon \sim \mathcal{N}(0, \sigma^2)\]</span></p>
+</section>
+<section id="now-add-predictors-mixed-models-with-variable-intercepts" class="slide level2">
+<h1>Now add predictors: Mixed Models with Variable Intercepts</h1>
+<p><br />
+<br />
+<span class="math display">\[Y_{ij} =  \alpha_{j} + \beta X_i + \epsilon_i\]</span><br />
+<span class="math display">\[\alpha_{j} \sim \mathcal{N}(\mu_{\alpha}, \sigma^2_{\alpha})\]</span><br />
+<span class="math display">\[\epsilon \sim \mathcal{N}(0, \sigma^2)\]</span></p>
+</section>
+<section id="now-add-predictors-mixed-models-with-variable-slopes" class="slide level2">
+<h1>Now add predictors: Mixed Models with Variable Slopes</h1>
+<p><br />
+<br />
+<span class="math display">\[Y_{ij} =  \alpha + \beta_j X_{ij} + \epsilon_i\]</span><br />
+<span class="math display">\[\beta_{j} \sim \mathcal{N}(\mu_{\beta}, \sigma^2_{\beta})\]</span><br />
+<span class="math display">\[\epsilon \sim \mathcal{N}(0, \sigma^2)\]</span></p>
+</section>
+<section id="now-add-predictors-mixed-models-with-variable-slopes-and-intercepts" class="slide level2">
+<h1>Now add predictors: Mixed Models with Variable Slopes and Intercepts</h1>
+<p><br />
+<!-- \
+$$Y_{ij} =  \alpha_{j} + \beta_j X_{ij} + \epsilon_i$$
+\
+$$\alpha_{j} \sim \mathcal{N}(\mu_{\alpha}, \sigma^2_{\alpha})$$
+\
+$$\beta_{j} \sim \mathcal{N}(\mu_{\beta}, \sigma^2_{\beta})$$
+\ --></p>
+<p><span class="math display">\[Y_{ij} = \alpha_{ij} + \beta_{j}X_{ij} + \epsilon_{ij}\]</span><br />
+<br />
+<span class="math display">\[\begin{pmatrix}
+\alpha_{ij}  \\  \beta_{ij}  \end{pmatrix} \sim \mathcal{MVN}\left ( \begin{pmatrix} \mu_{\alpha}  \\  \mu_{\beta}  \end{pmatrix} ,  \begin{pmatrix}  \sigma_{\alpha}^{2}&amp; \rho\sigma_{\alpha}\sigma_{\beta}\\ \rho\sigma_{\alpha}\sigma_{\beta} &amp; \sigma_{\beta}^{2} \end{pmatrix}  \right )\]</span><br />
+<span class="math display">\[\epsilon \sim \mathcal{N}(0, \sigma^2)\]</span></p>
+</section>
+<section id="today-1" class="slide level2">
+<h1>Today</h1>
+<ol type="1">
+<li>Brief review<br />
+<br />
+</li>
+<li><strong>Evaluating models</strong><br />
+<br />
+</li>
+<li>Visualizing different types of mixed models<br />
+<br />
+</li>
+<li>Uncertainty</li>
+</ol>
+</section>
+<section id="a-greenhouse-experiment-testing-cn-ratios" class="slide level2">
+<h1>A Greenhouse Experiment testing C:N Ratios</h1>
+<div style="text-align:left; font-size:0.75em">
+Sam was testing how changing the C:N Ratio of soil affected plant leaf growth. Sam had 3 treatments. A control, a C addition, and a N addition. To ensure that any one measurement of one leaf wasn’t a fluke, Sam measured 3 leaves per plant. Sam also put these plants in multiple growth chambers, such that there was one of each treatment per growth chamber.<br />
+<br />
+The design is as follows:<br />
+<br />
+3 Treatments (Control, C, N)<br />
+4 Pots of Plants per Treatment<br />
+4 Growth Chambers with n=1<br />
+3 Leaves Measured Per Pot<br />
+<br />
+
+</div>
+</section>
+<section id="nesting-and-hierarchies" class="slide level2">
+<h1>Nesting and Hierarchies</h1>
+<div style="text-align:left">
+<p>Here we have two levels of nesting:<br />
+<br />
+1. Leaves in a pot<br />
+<br />
+2. Pot in a chamber</p>
+</div>
+</section>
+<section id="now-add-predictors-mixed-models-with-variable-intercepts-1" class="slide level2">
+<h1>Now add predictors: Mixed Models with Variable Intercepts</h1>
+<p><br />
+<br />
+<span class="math display">\[Y_{ijk} =  \alpha_{jk} + \beta X_i + \epsilon_i\]</span><br />
+<span class="math display">\[\alpha_{jk} \sim \mathcal{N}(\mu_{\alpha_k}, \sigma^2_{\alpha_j})\]</span><br />
+<span class="math display">\[\alpha_{k} \sim \mathcal{N}(\mu_{\alpha}, \sigma^2_{\alpha_k})\]</span><br />
+<span class="math display">\[\epsilon \sim \mathcal{N}(0, \sigma^2)\]</span></p>
+</section>
+<section id="visualizing-our-plant-experiment" class="slide level2">
+<h1>Visualizing Our Plant Experiment</h1>
+<p><img src="08_mixed_effects_files/figure-revealjs/nested_data_viz-1.jpeg" width="672" /></p>
+</section>
+<section id="but-how-variable-are-things-between-growth-chambers" class="slide level2">
+<h1>But how variable are things between growth chambers?</h1>
+<p><img src="08_mixed_effects_files/figure-revealjs/nested_chambers-1.jpeg" width="672" /></p>
+</section>
+<section id="questions" class="slide level2">
+<h1>Questions</h1>
+<ol type="1">
+<li>Does treatment matter?<br />
+<br />
+</li>
+<li>Do we need to account for growth chamber?
+<ul>
+<li>Note, we at least need to account for non-independence of pot</li>
+</ul></li>
+</ol>
+</section>
+<section id="what-random-effects-do-i-need-to-use" class="slide level2">
+<h1>What random effects do I need to use?</h1>
+<ol type="1">
+<li>Is there a clear and obvious source of non-independence due to a group?
+<ul>
+<li>Yes, include it!<br />
+<br />
+<br />
+</li>
+</ul></li>
+<li>Is there a possible, but, eh, possibly non-problematic source of non-independence?
+<ul>
+<li>Put it to the test!<br />
+<br />
+</li>
+</ul></li>
+</ol>
+</section>
+<section id="evaluating-random-effects" class="slide level2">
+<h1>Evaluating Random Effects</h1>
+<ul>
+<li>Do this first, as random effect structure alters fixed effects outcomes<br />
+<br />
+</li>
+<li>Use <span class="math inline">\(\chi^2\)</span> tests for random effects - for a REML fit without any random effects, use <span>gls</span> OR<br />
+<br />
+</li>
+<li>If variance components small, need simulation approaches - see <span>RLRsim</span></li>
+</ul>
+</section>
+<section id="our-model" class="slide level2">
+<h1>Our Model</h1>
+<p><br />
+<br />
+</p>
+</section>
+<section id="a-quick-note-in-nesting-code" class="slide level2">
+<h1>A Quick Note in Nesting Code</h1>
+<ul>
+<li>We did not specify nesting<br />
+<br />
+</li>
+<li><code>lme4</code> automagically notes nested structure, calculates random effects appropriately<br />
+<br />
+</li>
+<li>This is not so for <code>nlme</code> - special syntax
+<ul>
+<li><code>1 | Toplevel / Lowerlevel</code><br />
+</li>
+<li>or <code>1 | Lowerlevel %in% Toplevel</code><br />
+<br />
+</li>
+</ul></li>
+<li>Will work in <code>lme4</code>, but why?</li>
+</ul>
+</section>
+<section id="nesting-these-produce-equvalent-results-to-plants_mer" class="slide level2">
+<h1>Nesting: These produce equvalent results to plants_mer</h1>
+<p>`</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## LME4
+plants_mer2 &lt;-<span class="st"> </span><span class="kw">lmer</span>(Growth ~<span class="st"> </span>Treatment +
+<span class="st">                     </span>
+<span class="st">                  </span>(<span class="dv">1</span>|Chamber/Pot) ,
+                   
+                   <span class="dt">data=</span> plants)
+
+## NLME
+plants_lme&lt;-<span class="st"> </span><span class="kw">lme</span>(Growth ~<span class="st"> </span>Treatment,
+                 
+                     <span class="dt">random =</span> ~<span class="st"> </span><span class="dv">1</span>|Chamber/Pot,
+                 
+                     <span class="dt">data=</span>plants)</code></pre></div>
+</section>
+<section id="a-test-of-random-effects-with-rlrt" class="slide level2">
+<h1>A Test of Random Effects with RLRT</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">plants_mer_nochamber &lt;-<span class="st"> </span><span class="kw">update</span>(plants_mer, . ~<span class="st"> </span>. -<span class="st"> </span>(<span class="dv">1</span>|Chamber))
+
+<span class="kw">anova</span>(plants_mer, plants_mer_nochamber)</code></pre></div>
+<pre><code>Data: plants
+Models:
+plants_mer_nochamber: Growth ~ Treatment + (1 | Pot)
+plants_mer: Growth ~ Treatment + (1 | Pot) + (1 | Chamber)
+                     Df    AIC    BIC  logLik deviance  Chisq Chi Df
+plants_mer_nochamber  5 185.61 193.53 -87.805   175.61              
+plants_mer            6 187.44 196.94 -87.719   175.44 0.1711      1
+                     Pr(&gt;Chisq)
+plants_mer_nochamber           
+plants_mer               0.6791</code></pre>
+</section>
+<section id="a-test-of-random-effects-via-simulation" class="slide level2">
+<h1>A Test of Random Effects via Simulation</h1>
+<p>Need to include a model with ONLY the random effect being tested</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#No Pot, Only Chamber</span>
+plants_mer_only_chamber &lt;-<span class="st"> </span><span class="kw">update</span>(plants_mer, . ~<span class="st"> </span>. -<span class="st"> </span>(<span class="dv">1</span>|Pot))
+
+<span class="co">#The Simulation Test</span>
+<span class="kw">exactRLRT</span>(<span class="dt">m0 =</span> plants_mer_nochamber,
+          
+          <span class="dt">m =</span> plants_mer_only_chamber, 
+          
+          <span class="dt">mA =</span> plants_mer)</code></pre></div>
+</section>
+<section id="a-test-of-random-effects-via-simulation-1" class="slide level2">
+<h1>A Test of Random Effects via Simulation</h1>
+<p>Need to include a model with ONLY the random effect being tested</p>
+<pre><code>
+    simulated finite sample distribution of RLRT.
+    
+    (p-value based on 10000 simulated values)
+
+data:  
+RLRT = 0.12832, p-value = 0.2779</code></pre>
+</section>
+<section id="testing-fixed-effects" class="slide level2">
+<h1>Testing fixed effects</h1>
+<ul>
+<li>RLRT tests for fixed effects are conservative<br />
+<br />
+</li>
+<li>Provide more weight of Deviance to Random Effects<br />
+<br />
+</li>
+<li>Need to refit models using ML
+<ul>
+<li>set <code>REML=FALSE</code></li>
+</ul></li>
+</ul>
+</section>
+<section id="df-for-fixed-effect-testing" class="slide level2">
+<h1>DF for Fixed Effect Testing</h1>
+<ul>
+<li>Satterthwaite approximation - Based on sample sizes and variances within groups<br />
+<br />
+</li>
+<li>Kenward-Roger’s approximation<br />
+- Based on estimate of variance-covariance matrix of fixed effects and a scaling factor</li>
+</ul>
+</section>
+<section id="with-no-correction" class="slide level2">
+<h1>With no Correction</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">plants_mer_ml &lt;-<span class="st"> </span><span class="kw">lmer</span>(Growth ~<span class="st"> </span>Treatment +
+<span class="st">                  </span>(<span class="dv">1</span>|Pot) +<span class="st"> </span>(<span class="dv">1</span>|Chamber),
+                   <span class="dt">data=</span> plants, <span class="dt">REML=</span><span class="ot">FALSE</span>)
+
+<span class="kw">anova</span>(plants_mer, <span class="dt">type=</span><span class="dv">2</span>)</code></pre></div>
+<pre><code>Analysis of Variance Table
+          Df Sum Sq Mean Sq F value
+Treatment  2 82.792  41.396   10.17</code></pre>
+</section>
+<section id="satterhwaite-approximation-with-lmertest" class="slide level2">
+<h1>Satterhwaite Approximation with lmerTest</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(lmerTest)
+
+<span class="co">#have to refit</span>
+plants_mer_testme &lt;-<span class="st"> </span><span class="kw">lmer</span>(Growth ~<span class="st"> </span>Treatment +
+<span class="st">                  </span>(<span class="dv">1</span>|Pot) +<span class="st"> </span>(<span class="dv">1</span>|Chamber),
+                   <span class="dt">data=</span> plants, <span class="dt">REML=</span><span class="ot">FALSE</span>)
+  
+<span class="kw">anova</span>(plants_mer_testme, <span class="dt">type=</span><span class="dv">2</span>)</code></pre></div>
+<pre><code>Analysis of Variance Table of type II  with  Satterthwaite 
+approximation for degrees of freedom
+          Sum Sq Mean Sq NumDF DenDF F.value   Pr(&gt;F)   
+Treatment 110.39  55.195     2     8   13.56 0.002692 **
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</section>
+<section id="kr-approximation-with-lmertest" class="slide level2">
+<h1>KR Approximation with lmerTest</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">anova</span>(plants_mer_testme, <span class="dt">ddf=</span><span class="st">&quot;Kenward-Roger&quot;</span>, <span class="dt">type=</span><span class="dv">2</span>)</code></pre></div>
+<pre><code>Analysis of Variance Table of type II  with  Kenward-Roger 
+approximation for degrees of freedom
+          Sum Sq Mean Sq NumDF DenDF F.value  Pr(&gt;F)  
+Treatment 82.792  41.396     2     6   10.17 0.01182 *
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>Note that DenDF are 6. Were 8 with Satterthwaite.</p>
+</section>
+<section id="kr-approximation-with-lmertest-1" class="slide level2">
+<h1>KR Approximation with lmerTest</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(plants_mer_testme, <span class="dt">ddf=</span><span class="st">&quot;Kenward-Roger&quot;</span>)$coef</code></pre></div>
+<pre><code>                  Estimate Std. Error  t value
+(Intercept)       9.102532   1.512905 6.016593
+TreatmentAdd N   10.432122   2.003305 5.207457
+TreatmentControl  5.301297   2.003305 2.646276</code></pre>
+</section>
+<section id="aic" class="slide level2">
+<h1>AIC</h1>
+<ul>
+<li>Yes, you can use AIC…carefully<br />
+<br />
+</li>
+<li>Comparison of models with varying fixed effects (marginal AIC) is fine<br />
+<br />
+</li>
+<li>Varying random effects structure…not as much<br />
+<br />
+</li>
+<li>Conditional AIC (cAIC) <em>sensu</em> Vaida and Blanchard 2005 - Uses conditional likelihood and effective DF<br />
+- Based on fit v. observed responses<br />
+- This is an evolving area of research<br />
+<br />
+</li>
+<li>Still gotta do a lot by hand (e.g. cAICc)</li>
+</ul>
+</section>
+<section id="caic" class="slide level2">
+<h1>cAIC</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(cAIC4)
+
+<span class="kw">AIC</span>(plants_mer)</code></pre></div>
+<pre><code>[1] 179.072</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cAIC</span>(plants_mer)$caic</code></pre></div>
+<pre><code>[1] 166.6196</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cAIC</span>(plants_mer, <span class="dt">method=</span><span class="st">&quot;conditionalBootstrap&quot;</span>)$caic</code></pre></div>
+<pre><code>[1] 162.2052</code></pre>
+</section>
+<section id="caic-in-action" class="slide level2">
+<h1>cAIC in Action</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cAIC</span>(plants_mer)$caic</code></pre></div>
+<pre><code>[1] 166.6196</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cAIC</span>(plants_mer)$df</code></pre></div>
+<pre><code>[1] 12.44656</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cAIC</span>(plants_mer_nochamber)$caic</code></pre></div>
+<pre><code>[1] 166.2259</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cAIC</span>(plants_mer_nochamber)$df</code></pre></div>
+<pre><code>[1] 12.26366</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#delta</span>
+<span class="kw">cAIC</span>(plants_mer_nochamber)$caic -<span class="st"> </span><span class="kw">cAIC</span>(plants_mer)$caic</code></pre></div>
+<pre><code>[1] -0.3936457</code></pre>
+</section>
+<section id="r2" class="slide level2">
+<h1>R2</h1>
+<ul>
+<li>What does R<sup>2</sup> mean in the context of mixed models?<br />
+<br />
+</li>
+<li>We are often interested in the explanatory power of fixed effects<br />
+<br />
+</li>
+<li>But random components explain variability in the data<br />
+<br />
+</li>
+<li>We need to decompose these into <strong>marginal</strong> and <strong>conditional</strong> R<sup>2</sup> values
+<ul>
+<li>e.g., from fixed and random sources<br />
+<br />
+</li>
+</ul></li>
+<li>See Schielzeth and Nakagawa 2013 MEE and <code>piecewiseSEM</code>’s implementation</li>
+</ul>
+</section>
+<section id="getting-fit" class="slide level2">
+<h1>Getting Fit</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(piecewiseSEM)
+
+<span class="kw">rsquared</span>(plants_mer)</code></pre></div>
+<pre><code>    Class   Family     Link  n  Marginal Conditional
+1 lmerMod gaussian identity 36 0.5556466   0.8787815</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rsquared</span>(plants_mer_nochamber)</code></pre></div>
+<pre><code>    Class   Family     Link  n  Marginal Conditional
+1 lmerMod gaussian identity 36 0.5556466   0.8787815</code></pre>
+</section>
+<section id="posthocs-from-lmertest" class="slide level2">
+<h1>Posthocs from lmerTest</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">lsmeans</span>(plants_mer_nochamber)</code></pre></div>
+<pre><code>Least Squares Means table:
+                   Treatment Estimate Standard Error DF t-value Lower CI
+Treatment  Add C           1     9.10           1.75  9    5.21     5.15
+Treatment  Add N           2    19.53           1.75  9   11.18    15.58
+Treatment  Control         3    14.40           1.75  9    8.25    10.45
+                   Upper CI p-value    
+Treatment  Add C       13.1   6e-04 ***
+Treatment  Add N       23.5  &lt;2e-16 ***
+Treatment  Control     18.4  &lt;2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</section>
+<section id="general-protocol-for-model-fitting" class="slide level2">
+<h1>General Protocol for Model Fitting</h1>
+<ol type="1">
+<li>Start with model with all fixed and random effects that may be important. Evaluate with diagnostics.<br />
+<br />
+</li>
+<li>Evaluate random effects with full model of all fixed effects using REML(<span class="math inline">\(\chi^2\)</span>, RLRT, cAIC, etc.)<br />
+<br />
+</li>
+<li>Evaluate fixed effects with reduced random effects (F Tests using ML fit)<br />
+<br />
+</li>
+<li>Model diagnostics again…<br />
+<br />
+</li>
+<li>Draw inference from model using Wald tests, lsmeans, visualization, etc.</li>
+</ol>
+</section>
+<section id="today-2" class="slide level2">
+<h1>Today</h1>
+<ol type="1">
+<li>Brief review<br />
+<br />
+</li>
+<li>Evaluating models<br />
+<br />
+</li>
+<li><strong>Visualizing different types of mixed models</strong><br />
+<br />
+</li>
+<li>Uncertainty</li>
+</ol>
+</section>
+<section id="types-of-mixed-models" class="slide level2">
+<h1>Types of Mixed Models</h1>
+<p><img src="08_mixed_effects_files/figure-revealjs/show_hlm_types-1.jpeg" width="672" /></p>
+</section>
+<section id="lets-take-this-to-the-beach-with-tide-height" class="slide level2">
+<h1>Let’s take this to the beach with Tide Height</h1>
+<p><img src="images/08/denmark-lightsbeach.jpeg" alt="image" style="width:80.0%" /></p>
+</section>
+<section id="weve-seen-a-variable-intercept-model-already" class="slide level2">
+<h1>We’ve seen a Variable Intercept Model Already</h1>
+</section>
+<section id="how-to-plot" class="slide level2">
+<h1>How to Plot?</h1>
+<p><img src="08_mixed_effects_files/figure-revealjs/plot_varint-1.jpeg" width="672" /></p>
+</section>
+<section id="adding-variable-intercepts" class="slide level2">
+<h1>Adding Variable Intercepts</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rikz_varint_lines &lt;-<span class="st"> </span><span class="kw">coef</span>(rikz_varint)$Beach
+rikz_varint_lines$Beach &lt;-<span class="st"> </span><span class="kw">levels</span>(rikz$Beach)
+
+rikz_plot &lt;-<span class="st"> </span>rikz_plot_base +
+<span class="st">  </span><span class="kw">geom_abline</span>(<span class="dt">data=</span>rikz_varint_lines,
+              <span class="kw">aes</span>(<span class="dt">slope =</span> NAP, <span class="dt">intercept=</span><span class="st">`</span><span class="dt">(Intercept)</span><span class="st">`</span>, 
+                  <span class="dt">color=</span>Beach),
+              <span class="dt">alpha=</span><span class="fl">0.5</span>)
+
+rikz_plot</code></pre></div>
+</section>
+<section id="adding-variable-intercepts-1" class="slide level2">
+<h1>Adding Variable Intercepts</h1>
+<p><img src="08_mixed_effects_files/figure-revealjs/plot_varint_2-1.jpeg" width="672" /></p>
+</section>
+<section id="adding-the-fixed-effect" class="slide level2">
+<h1>Adding the fixed effect</h1>
+<p><br />
+<br />
+</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rikz_plot +
+<span class="st">  </span><span class="kw">geom_abline</span>(<span class="dt">slope=</span><span class="kw">fixef</span>(rikz_varint)[<span class="dv">2</span>],
+              <span class="dt">intercept=</span><span class="kw">fixef</span>(rikz_varint)[<span class="dv">1</span>],
+              <span class="dt">size=</span><span class="dv">3</span>)</code></pre></div>
+</section>
+<section id="adding-the-fixed-effect-1" class="slide level2">
+<h1>Adding the fixed effect</h1>
+<p><img src="08_mixed_effects_files/figure-revealjs/plot_varint_3-1.jpeg" width="672" /></p>
+</section>
+<section id="variable-slope-model" class="slide level2">
+<h1>Variable Slope Model</h1>
+<p><br />
+<br />
+<span class="math display">\[Y_{ij} =  \alpha + \beta_j X_{ij} + \epsilon_i\]</span><br />
+<span class="math display">\[\beta_{j} \sim \mathcal{N}(\mu_{\beta}, \sigma^2_{\beta})\]</span><br />
+<span class="math display">\[\epsilon \sim \mathcal{N}(0, \sigma^2)\]</span></p>
+</section>
+<section id="variable-slope-model-1" class="slide level2">
+<h1>Variable Slope Model</h1>
+<p><br />
+<br />
+</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rikz_varslope &lt;-<span class="st"> </span><span class="kw">lmer</span>(Richness ~<span class="st"> </span>NAP +<span class="st"> </span>
+<span class="st">                        </span>
+<span class="st">                        </span>(NAP -<span class="st"> </span><span class="dv">1</span>|Beach), 
+                      
+                      
+                    <span class="dt">data=</span>rikz)</code></pre></div>
+<p>Note the - 1 to denote only the slope is varying</p>
+</section>
+<section id="variable-slope-intercept-model" class="slide level2">
+<h1>Variable Slope-Intercept Model</h1>
+<p><span class="math display">\[Y_{ij} = \alpha_{ij} + \beta_{j}X_{ij} + \epsilon_{ij}\]</span><br />
+<br />
+<span class="math display">\[\begin{pmatrix}
+\alpha_{ij}  \\  \beta_{ij}  \end{pmatrix} \sim \mathcal{MVN}\left ( \begin{pmatrix} \mu_{\alpha}  \\  \mu_{\beta}  \end{pmatrix} ,  \begin{pmatrix}  \sigma_{\alpha}^{2}&amp; \rho\sigma_{\alpha}\sigma_{\beta}\\ \rho\sigma_{\alpha}\sigma_{\beta} &amp; \sigma_{\beta}^{2} \end{pmatrix}  \right )\]</span><br />
+<span class="math display">\[\epsilon \sim \mathcal{N}(0, \sigma^2)\]</span></p>
+</section>
+<section id="variable-slope-intercept-model-1" class="slide level2">
+<h1>Variable Slope-Intercept Model</h1>
+<p><br />
+<br />
+</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rikz_varslopeint &lt;-<span class="st"> </span><span class="kw">lmer</span>(Richness ~<span class="st"> </span>NAP +<span class="st"> </span>
+<span class="st">                           </span>
+<span class="st">                           </span>(NAP +<span class="st"> </span><span class="dv">1</span>|Beach), 
+                         
+                    <span class="dt">data=</span>rikz)</code></pre></div>
+</section>
+<section id="variable-slope-intercept-model-2" class="slide level2">
+<h1>Variable Slope Intercept Model</h1>
+<p><img src="08_mixed_effects_files/figure-revealjs/plot_varslope_int-1.jpeg" width="672" /></p>
+</section>
+<section id="variable-slope-intercept-model-with-no-covariance" class="slide level2">
+<h1>Variable Slope-Intercept Model with No Covariance</h1>
+<p><br />
+<br />
+</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rikz_varslopeint_nocov &lt;-<span class="st"> </span><span class="kw">lmer</span>(Richness ~<span class="st"> </span>NAP +<span class="st"> </span>
+<span class="st">                                 </span>
+<span class="st">                                 </span>(NAP<span class="dv">-1</span>|Beach) +<span class="st"> </span>
+<span class="st">                                 </span>
+<span class="st">                                 </span>(<span class="dv">1</span>|Beach),
+                               
+                               <span class="dt">data=</span>rikz)</code></pre></div>
+</section>
+<section id="testing-the-vcov-assumption" class="slide level2">
+<h1>Testing the vcov assumption</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">anova</span>(rikz_varslopeint, rikz_varslopeint_nocov, <span class="dt">refit=</span><span class="ot">FALSE</span>)</code></pre></div>
+<pre><code>Data: rikz
+Models:
+..1: Richness ~ NAP + (NAP - 1 | Beach) + (1 | Beach)
+object: Richness ~ NAP + (NAP + 1 | Beach)
+       Df    AIC    BIC  logLik deviance Chisq Chi Df Pr(&gt;Chisq)  
+..1     5 248.00 257.03 -119.00   238.00                          
+object  6 244.38 255.22 -116.19   232.38 5.616      1     0.0178 *
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</section>
+<section id="look-at-al-of-those-variances" class="slide level2">
+<h1>Look at al of those variances</h1>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">term</th>
+<th style="text-align: right;">estimate</th>
+<th style="text-align: right;">std.error</th>
+<th style="text-align: right;">statistic</th>
+<th style="text-align: left;">group</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">6.5887028</td>
+<td style="text-align: right;">1.2647632</td>
+<td style="text-align: right;">5.209436</td>
+<td style="text-align: left;">fixed</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NAP</td>
+<td style="text-align: right;">-2.8300264</td>
+<td style="text-align: right;">0.7229382</td>
+<td style="text-align: right;">-3.914617</td>
+<td style="text-align: left;">fixed</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">sd_(Intercept).Beach</td>
+<td style="text-align: right;">3.5490711</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">Beach</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sd_NAP.Beach</td>
+<td style="text-align: right;">1.7149557</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">Beach</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">cor_(Intercept).NAP.Beach</td>
+<td style="text-align: right;">-0.9901979</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">Beach</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sd_Observation.Residual</td>
+<td style="text-align: right;">2.7028237</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">Residual</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="testing-variable-intercept-assumption" class="slide level2">
+<h1>Testing Variable Intercept assumption</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">anova</span>(rikz_varslopeint, rikz_varslope, <span class="dt">refit=</span><span class="ot">FALSE</span>)</code></pre></div>
+<pre><code>Data: rikz
+Models:
+..1: Richness ~ NAP + (NAP - 1 | Beach)
+object: Richness ~ NAP + (NAP + 1 | Beach)
+       Df    AIC    BIC  logLik deviance  Chisq Chi Df Pr(&gt;Chisq)    
+..1     4 260.20 267.43 -126.10   252.20                             
+object  6 244.38 255.22 -116.19   232.38 19.817      2  4.975e-05 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</section>
+<section id="testing-variable-slope-assumption" class="slide level2">
+<h1>Testing Variable Slope assumption</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">anova</span>(rikz_varslopeint, rikz_varint, <span class="dt">refit=</span><span class="ot">FALSE</span>)</code></pre></div>
+<pre><code>Data: rikz
+Models:
+..1: Richness ~ NAP + (1 | Beach)
+object: Richness ~ NAP + (NAP + 1 | Beach)
+       Df    AIC    BIC  logLik deviance  Chisq Chi Df Pr(&gt;Chisq)  
+..1     4 247.48 254.71 -119.74   239.48                           
+object  6 244.38 255.22 -116.19   232.38 7.0964      2    0.02878 *
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</section>
+<section id="today-3" class="slide level2">
+<h1>Today</h1>
+<ol type="1">
+<li>Brief review<br />
+<br />
+</li>
+<li>Evaluating models<br />
+<br />
+</li>
+<li>Visualizing different types of mixed models<br />
+<br />
+</li>
+<li><strong>Uncertainty</strong></li>
+</ol>
+</section>
+<section id="plotting-uncertainty-via-simulation" class="slide level2">
+<h1>Plotting Uncertainty via Simulation</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(merTools)
+<span class="co">#The fit values</span>
+predDF &lt;-<span class="st"> </span><span class="kw">predictInterval</span>(rikz_varslopeint,
+                          <span class="dt">newdata=</span>rikz,
+                          <span class="dt">which=</span><span class="st">&quot;fixed&quot;</span>,
+                          <span class="dt">include.resid.var =</span> <span class="ot">FALSE</span>)
+predDF$NAP &lt;-<span class="st"> </span>rikz$NAP</code></pre></div>
+</section>
+<section id="plotting-uncertainty-via-simulation-1" class="slide level2">
+<h1>Plotting Uncertainty via Simulation</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#The Plot</span>
+rikz_plot_base +
+<span class="st">  </span><span class="kw">geom_abline</span>(<span class="dt">slope=</span><span class="kw">fixef</span>(rikz_varslopeint)[<span class="dv">2</span>],
+              <span class="dt">intercept=</span><span class="kw">fixef</span>(rikz_varslopeint)[<span class="dv">1</span>],
+              <span class="dt">size=</span><span class="fl">2.5</span>, <span class="dt">color=</span><span class="st">&quot;blue&quot;</span>) +
+<span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="dt">data=</span>predDF, <span class="dt">mapping=</span><span class="kw">aes</span>(<span class="dt">y =</span> fit, <span class="dt">ymin=</span>lwr, <span class="dt">ymax=</span>upr), 
+              <span class="dt">alpha=</span><span class="fl">0.3</span>, <span class="dt">color=</span><span class="st">&quot;grey&quot;</span>)</code></pre></div>
+</section>
+<section id="plotting-uncertainty-via-simulation-2" class="slide level2">
+<h1>Plotting Uncertainty via Simulation</h1>
+<p><img src="08_mixed_effects_files/figure-revealjs/uncertain_plot-1.jpeg" width="672" /></p>
+</section>
+<section id="showing-fixed-prediction-uncertainty-include.resid.vartrue" class="slide level2">
+<h1>Showing Fixed Prediction Uncertainty: include.resid.var=TRUE</h1>
+<p><img src="08_mixed_effects_files/figure-revealjs/uncertain_pred-1.jpeg" width="672" /></p>
+</section>
+<section id="getting-the-full-range-of-uncertainty" class="slide level2">
+<h1>Getting the Full Range of Uncertainty</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#new data for all beaches</span>
+uncDF &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">expand.grid</span>(<span class="dt">Beach =</span> <span class="kw">levels</span>(rikz$Beach),
+                    <span class="dt">NAP =</span> <span class="kw">seq</span>(<span class="kw">min</span>(rikz$NAP), <span class="kw">max</span>(rikz$NAP), 
+                                                 <span class="dt">length.out=</span><span class="dv">200</span>)))
+
+<span class="co">#fit values</span>
+pred_unc_df &lt;-<span class="st"> </span><span class="kw">predictInterval</span>(rikz_varslopeint,
+                          <span class="dt">newdata=</span>uncDF,
+                          <span class="dt">which=</span><span class="st">&quot;full&quot;</span>,
+                          <span class="dt">include.resid.var =</span> <span class="ot">TRUE</span>)
+
+<span class="co">#get the wide range</span>
+fit_unc_df &lt;-<span class="st"> </span><span class="kw">cbind</span>(uncDF, pred_unc_df) %&gt;%
+<span class="st">  </span><span class="kw">group_by</span>(NAP) %&gt;%
+<span class="st">  </span><span class="kw">summarize</span>(<span class="dt">fit=</span><span class="kw">mean</span>(fit), <span class="dt">lwr =</span> <span class="kw">min</span>(lwr), <span class="dt">upr =</span> <span class="kw">max</span>(upr)) %&gt;%
+<span class="st">  </span><span class="kw">ungroup</span>()</code></pre></div>
+</section>
+<section id="getting-the-full-range-of-uncertainty-1" class="slide level2">
+<h1>Getting the Full Range of Uncertainty</h1>
+<p><img src="08_mixed_effects_files/figure-revealjs/plot_all_unc-1.jpeg" width="672" /></p>
+</section>
+<section id="here-be-uncertainty" class="slide level2">
+<h1>Here be Uncertainty</h1>
+<p><img src="08_mixed_effects_files/figure-revealjs/plot_all_types_unc-1.jpeg" width="672" /></p>
+<p>Need all three for extrapolation</p>
+</section>
+<section id="example" class="slide level2">
+<h1>Example</h1>
+<ul>
+<li>Load up the RIKZ data<br />
+<br />
+</li>
+<li>Look at both exposure and NAP<br />
+</li>
+<li>Test fixed and random effects<br />
+<br />
+</li>
+<li>Visulize results</li>
+</ul>
+</section>
+<section id="general-protocol-for-model-fitting-1" class="slide level2">
+<h1>General Protocol for Model Fitting</h1>
+<ol type="1">
+<li>Start with model with all fixed and random effects that may be important. Evaluate with diagnostics.<br />
+<br />
+</li>
+<li>Evaluate random effects with full model of all fixed effects using REML(<span class="math inline">\(\chi^2\)</span>, RLRT, cAIC, etc.)<br />
+<br />
+</li>
+<li>Evaluate fixed effects with reduced random effects (F Tests using ML fit)<br />
+<br />
+</li>
+<li>Model diagnostics again…<br />
+<br />
+</li>
+<li>Draw inference from model using Wald tests, lsmeans, visualization, etc.</li>
+</ol>
+</section>
+    </div>
+  </div>
+
+  <script src="libs/reveal.js-3.3.0/lib/js/head.min.js"></script>
+  <script src="libs/reveal.js-3.3.0/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display the page number of the current slide
+        slideNumber: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: false,
+        // Opens links in an iframe preview overlay
+        previewLinks: true,
+        // Transition style
+        transition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>
