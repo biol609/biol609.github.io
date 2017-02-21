@@ -41,7 +41,9 @@ __R Packages:__ lme4, lmerTest, [merTools](https://github.com/jknowles/merTools)
 ### Week 5.
 __Lecture:__ [Intro to Structural Equation Models](https://1drv.ms/p/s!AvOIsObbweOroNIqHiVxra6SIrp4gw)  
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-sem  
-  
+__Reading:__ [Grace et al 2012 Ecosphere](http://byrneslab.net/classes/biol609/Grace_et_al-2012-Ecosphere.pdf)  
+__R packages:__ piecewiseSEM  
+
 ### Week 6. 
 __Lecture__: Re-Introduction to Bayesian Techniques  
 __Reading:__ McElreath Ch. 1-3
