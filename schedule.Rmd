@@ -39,7 +39,7 @@ __Files:__ [Mussels](./lectures/data/07/mussels.csv), [Uneven  Mussels](./lectur
 __R Packages:__ lme4, lmerTest, [merTools](https://github.com/jknowles/merTools), sjplot, RLRsim, cAIC4  
 
 ### Week 5.
-__Lecture:__ [Intro to Structural Equation Models](https://1drv.ms/p/s!AvOIsObbweOroNIqHiVxra6SIrp4gw)  
+__Lecture:__ [Intro to Structural Equation Models](https://1drv.ms/p/s!AvOIsObbweOroNIqHiVxra6SIrp4gw), [Implementing Piecewise SEM](https://1drv.ms/f/s!AvOIsObbweOroNIitg7KpsLhgffJrw)  
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-sem  
 __Reading:__ [Grace et al 2012 Ecosphere](http://byrneslab.net/classes/biol609/Grace_et_al-2012-Ecosphere.pdf)  
 __R packages:__ piecewiseSEM  
