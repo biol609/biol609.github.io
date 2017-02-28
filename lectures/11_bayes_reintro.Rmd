@@ -1,0 +1,94 @@
+---
+title: "Re-introduction to Bayesian Methods"
+author: "Biol 607"
+date: "2/28/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Discussion: Key Points from Chapter 1
+### All models are wrong, some are useful!  
+
+So, how do you see modeling data? Is it:
+![](./images/11/many_paths.jpg)
+
+or is it building a model by using science to think about a data generating process, an error generating processing, and going from there?  
+\
+What is the difference between these two approaches?  
+\
+\
+One set of hypotheses does not imply one model. One model is not derived from a single hypothesis. What is a case in your own research where you have encountered this conflict? How can or would you resolve it?  
+![](./images/11/multiple_models.jpg)
+\
+\
+OK, so given this, why are we using a Bayesian approach?  
+    - What advantages or disadvantages does it have relative to a frequentist approach?
+    - Compare drawing counting the number of ways things can happen based on our information versus comparing current counts to how things might have been with a large number of samples  
+\
+
+
+## Let's see how Bayes works
+\
+I have a bag. It has 6 stones in it. Some are black. Some are white.  
+\
+I'm going to draw stones, one at a time, with replacement, and let's see the number of ways that the draw could have been produced.  
+\
+After 4 draws, let's calculate the probability of W white stones and B black stones. Let's formalize how we made this calculation. This leads to conditional versus marginal probabilities.  
+\
+Now, I will look at the stones, and introduce a prior or some sort for W.  
+\
+Let's do a new set of draws, but this time, on the board, update our posterior.  
+\
+And finally, relate this to the definition of Bayes theorem in 2.3.4 pg 36.  
+
+
+## Now, let's do this in R with Grid Sampling!  
+
+Let's use `dplyr` and mutate for the following. You chosee what fraction of stones is white or black in a bag of infinite size:  
+\
+1. Define a grid of possible values from 0 to 1.  A column in a new data frame.
+\
+2. Define a prior. Your choice as to its distribution!  This is the second column of your new data frame.  
+\
+3. Now, what is your posterior after 1 random draw using your chosen fraction of white stones?  
+    - Remember, posterior = likelihood*prior/sum(all posterior values)
+\
+4. Use this updated posterior to do a second draw. And a third. And a fourth.  
+\
+5. Plot each posterior with updating.  
+\
+6. Now, instead of doing it step by step, assume you've made 100 draws given your initial prior. What does your posterior look like?  
+
+
+## Introducing rethinking  
+This is from the Rcode on page 42, box 2.6. Assume 100 draws.  
+\
+```{r rethinking, eval=FALSE}
+library(rethinking)
+
+#alist is a list for used to define a model
+draws_mod <- alist(
+  #our likelihood
+  w ~ dbinom(100, p)
+  
+  #our prior - can be something else if you want!
+  p ~ dunif(0,1)
+)
+
+#define the data - you fill in the probability
+draws_data <- list(w = XXX)
+
+#We will use map - maximum a posteriori sampling
+draws_fit <- map(draws_mod, 
+                 data = draws_data)
+```
+
+Now let's explore our output
+```{r explore, eval=FALSE}
+precis(draws_fit)
+
+summary(draws_fit)
+```
