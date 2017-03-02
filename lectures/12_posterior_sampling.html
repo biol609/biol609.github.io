@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <title></title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="libs/reveal.js-3.3.0/css/reveal.css"/>
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="libs/reveal.js-3.3.0/css/theme/white.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="style.css"/>
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'libs/reveal.js-3.3.0/css/print/pdf.css' : 'libs/reveal.js-3.3.0/css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+    <!--[if lt IE 9]>
+    <script src="libs/reveal.js-3.3.0/lib/js/html5shiv.js"></script>
+    <![endif]-->
+
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+
+<section id="section" class="slide level2">
+<h1></h1>
+<h2>
+Sampling Your Posterior
+</h2>
+<p><img src="images/12/coolest_bayesian.jpg" style="width:60.0%" /></p>
+</section>
+<section id="the-data" class="slide level2">
+<h1>The data</h1>
+<p>So, we’ve flipped the globe 6 times, and drawn W,L,W,W,W,L,W,L,W<br />
+</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">water &lt;-<span class="st"> </span><span class="dv">6</span></code></pre></div>
+<p><img src="images/12/rcLnp89bi.jpg" style="width:50.0%" /></p>
+</section>
+<section id="and-weve-made-a-grid-sample" class="slide level2">
+<h1>And we’ve made a grid sample</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(dplyr)
+
+grid &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">prob =</span> <span class="kw">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>,.<span class="dv">01</span>), <span class="dt">prior=</span><span class="dv">1</span>) %&gt;%
+<span class="st">  </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">likelihood =</span> 
+           <span class="kw">dbinom</span>(water, <span class="dt">size =</span> <span class="dv">9</span>, <span class="dt">prob =</span> prob)) %&gt;%
+<span class="st">  </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">posterior =</span> likelihood*prob)</code></pre></div>
+</section>
+<section id="sampling-from-your-posterior" class="slide level2">
+<h1>Sampling from your Posterior</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">samp &lt;-<span class="st"> </span><span class="kw">sample</span>(grid$prob, 
+               
+               <span class="dt">size =</span> <span class="fl">1e4</span>,
+               
+               <span class="dt">replace=</span><span class="ot">TRUE</span>,
+               
+               <span class="dt">prob =</span> grid$posterior)</code></pre></div>
+</section>
+<section id="sampling-from-your-posterior-1" class="slide level2">
+<h1>Sampling from your Posterior</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(samp)</code></pre></div>
+<p><img src="12_posterior_sampling_files/figure-revealjs/plot_samp-1.jpeg" width="672" /></p>
+</section>
+<section id="what-can-we-do-with-this-histogram" class="slide level2">
+<h1>What can we do with this: histogram</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hist</span>(samp)</code></pre></div>
+<p><img src="12_posterior_sampling_files/figure-revealjs/hist_samp-1.jpeg" width="672" /></p>
+</section>
+<section id="what-can-we-do-with-this-density" class="slide level2">
+<h1>What can we do with this: density</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(<span class="kw">density</span>(samp))</code></pre></div>
+<p><img src="12_posterior_sampling_files/figure-revealjs/density_samp-1.jpeg" width="672" /></p>
+</section>
+<section id="section-1" class="slide level2">
+<h1></h1>
+<br />
+<br />
+<br />
+
+<h3>
+Summarizing a Parameter with a Sample
+</h3>
+</section>
+<section id="how-do-we-describe-a-parameter" class="slide level2">
+<h1>How do we describe a parameter</h1>
+<ul>
+<li>Typically we want to know a parameter estimate and incormation about uncertainty<br />
+<br />
+</li>
+<li>Uncertainty can be summarized via the distribution of a large sample
+<ul>
+<li>We can look at credible intervals based on mass of sample<br />
+<br />
+</li>
+</ul></li>
+<li>We have a few point estimates we can also draw from a sample
+<ul>
+<li>Mean, median, mode</li>
+</ul></li>
+</ul>
+</section>
+<section id="summarizing-uncertainty-50th-percentile-interval" class="slide level2">
+<h1>Summarizing Uncertainty: 50th Percentile Interval</h1>
+<div style="text-align:left">
+<p>We often look at the 95% interval</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">quantile</span>(samp, <span class="kw">c</span>(<span class="fl">0.025</span>, <span class="fl">0.975</span>))</code></pre></div>
+<pre><code> 2.5% 97.5% 
+ 0.39  0.89 </code></pre>
+<p>But this is arbitrary (thanks, Fisher), and unstable. Lower intervals are more stable</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">quantile</span>(samp, <span class="kw">c</span>(<span class="fl">0.25</span>, <span class="fl">0.75</span>))</code></pre></div>
+<pre><code> 25%  75% 
+0.58 0.76 </code></pre>
+</div>
+</section>
+<section id="summarizing-uncertainty-50th-percentile-interval-1" class="slide level2">
+<h1>Summarizing Uncertainty: 50th Percentile Interval</h1>
+<p>So, let’s see it! <img src="12_posterior_sampling_files/figure-revealjs/quant-1.jpeg" width="672" /></p>
+</section>
+<section id="pi-v.-hpdi" class="slide level2">
+<h1>PI v. HPDI</h1>
+<ul>
+<li>Percentile Intervals get interval around median that covers X% of the distribution<br />
+<br />
+</li>
+<li>Highest Posteriod Density Interval gets interval with highest density containing 50% of mass of distribution</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">PI</span>(samp, <span class="fl">0.5</span>)</code></pre></div>
+<pre><code> 25%  75% 
+0.58 0.76 </code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">HPDI</span>(samp, <span class="fl">0.5</span>)</code></pre></div>
+<pre><code>|0.5 0.5| 
+0.56 0.74 </code></pre>
+</section>
+<section id="pi-v.-hpdi-for-a-skewed-distribution" class="slide level2">
+<h1>PI v. HPDI for a Skewed Distribution</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">samp_bad &lt;-<span class="st"> </span><span class="kw">rbeta</span>(<span class="fl">1e4</span>, <span class="dv">2</span>,<span class="dv">3</span>)
+
+<span class="kw">PI</span>(samp_bad, <span class="fl">0.5</span>)</code></pre></div>
+<pre><code>      25%       75% 
+0.2396864 0.5410283 </code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">HPDI</span>(samp_bad, <span class="fl">0.5</span>)</code></pre></div>
+<pre><code>     |0.5      0.5| 
+0.1796986 0.4711888 </code></pre>
+</section>
+<section id="pi-v.-hpdi-1" class="slide level2">
+<h1>PI v. HPDI</h1>
+<p><img src="12_posterior_sampling_files/figure-revealjs/hpdi_pi_plot-1.jpeg" width="672" /></p>
+</section>
+<section id="so-which-interval-to-use" class="slide level2">
+<h1>So which interval to use?</h1>
+<ul>
+<li>Usually, they are quite similar<br />
+<br />
+</li>
+<li>PI communicates distirbution shape for parameter<br />
+<br />
+</li>
+<li>HPDI matches more with the mass of the parameter that is consistent with the data<br />
+<br />
+</li>
+<li>BUT - computationally intensive and sensitive to # of posterior draws<br />
+<br />
+</li>
+<li>If the two are <em>very</em> different, the problem is <em>not</em> which interval type to use<br />
+- It’s in your model/data! Buyer beware!</li>
+</ul>
+</section>
+<section id="which-point-estimate-mean-median-mode" class="slide level2">
+<h1>Which Point Estimate: Mean, Median, Mode?</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mean</span>(samp)</code></pre></div>
+<pre><code>[1] 0.665593</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">median</span>(samp)</code></pre></div>
+<pre><code>[1] 0.67</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#mode</span>
+samp[<span class="kw">which.max</span>(grid$posterior)]</code></pre></div>
+<pre><code>[1] 0.79</code></pre>
+</section>
+<section id="applying-a-loss-function" class="slide level2">
+<h1>Applying a Loss Function!</h1>
+<ul>
+<li>Well, let’s think about the cost of getting it wrong!<br />
+<br />
+</li>
+<li>Assume a point estimate of d<br />
+<br />
+</li>
+<li>The cost of being wrong if using d is:<br />
+<span class="math inline">\(\sum{posterior * \left |(d-p)\right |}\)</span><br />
+<br />
+</li>
+<li>Could have also squared or done other things depending on cost of being wrong<br />
+<br />
+</li>
+<li>Can apply this to chosing <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> in frequentist stats!</li>
+</ul>
+</section>
+<section id="linear-loss-function-says-median-its-close" class="slide level2">
+<h1>Linear Loss Function Says Median (it’s close)!</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">loss_fun &lt;-<span class="st"> </span>function(d) <span class="kw">sum</span>(grid$posterior *<span class="st"> </span><span class="kw">abs</span>(d -<span class="st"> </span>grid$prob))
+
+loss &lt;-<span class="st"> </span><span class="kw">sapply</span>(grid$prob, loss_fun)
+
+grid$prob[<span class="kw">which.min</span>(loss)]</code></pre></div>
+<pre><code>[1] 0.68</code></pre>
+</section>
+<section id="choosing-a-loss-function" class="slide level2">
+<h1>Choosing a loss function</h1>
+<ul>
+<li>Usually the mean and median will agree<br />
+<br />
+</li>
+<li>If the cost of being wrong is higher, go with the mean<br />
+<br />
+</li>
+<li>If this is a big problem, or big discrepancy, problem might be deeper</li>
+</ul>
+</section>
+<section id="section-2" class="slide level2">
+<h1></h1>
+<br />
+<br />
+<br />
+
+<h3>
+Using your samples for model checking
+</h3>
+</section>
+<section id="model-checking---why" class="slide level2">
+<h1>Model Checking - Why?</h1>
+<ul>
+<li>We’re in Simulation land<br />
+<br />
+</li>
+<li>A lot can go wrong do to small errors in our model<br />
+<br />
+</li>
+<li>A lot can go wrong because of big errors in our model<br />
+<br />
+</li>
+<li>Maybe our software failed (i.e., convergence)<br />
+<br />
+</li>
+<li>Maybe our sampling design cannot produce valid estimates</li>
+</ul>
+</section>
+<section id="how-do-you-check-models" class="slide level2">
+<h1>How do you check models?</h1>
+<ul>
+<li>Did you reproduce your observed summarized data?<br />
+<br />
+</li>
+<li>Did you reproduce patterns in your raw data?</li>
+</ul>
+</section>
+<section id="simulating-from-your-posterior-sample" class="slide level2">
+<h1>Simulating from your Posterior Sample</h1>
+<ul>
+<li>Make random draws using your sampled parameters</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">w &lt;-<span class="st"> </span><span class="kw">rbinom</span>(<span class="fl">1e4</span>, <span class="dt">size=</span><span class="dv">9</span>, <span class="dt">prob =</span> samp)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">table</span>(w)</code></pre></div>
+<pre><code>w
+   0    1    2    3    4    5    6    7    8    9 
+  12   78  254  606 1093 1650 2113 2018 1539  637 </code></pre>
+</section>
+<section id="simulating-from-your-posterior-sample-1" class="slide level2">
+<h1>Simulating from your Posterior Sample</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">simplehist</span>(w)</code></pre></div>
+<p><img src="12_posterior_sampling_files/figure-revealjs/sim_hist-1.jpeg" width="672" /></p>
+<p>Note that 6 is the peak, and our draw was w=6!</p>
+</section>
+<section id="getting-fancier-with-checking" class="slide level2">
+<h1>Getting Fancier with Checking</h1>
+<ul>
+<li>We drew W,L,W,W,W,L,W,L,W<br />
+<br />
+</li>
+<li>Can we reproduce 3 Ws as the most common run?<br />
+<br />
+</li>
+<li>This will require fancier use of the posterior to simulate order of observations<br />
+<br />
+</li>
+<li>See slide code - but, this empahsized the subjective nature of model checking!</li>
+</ul>
+</section>
+<section id="so-reproducing-runs-of-w" class="slide level2">
+<h1>So, reproducing runs of W</h1>
+<p><img src="12_posterior_sampling_files/figure-revealjs/runs-1.jpeg" width="672" /></p>
+<p>We had a run of 3 - not bad, not spot on - is this a good model or check?</p>
+</section>
+<section id="exercise" class="slide level2">
+<h1>Exercise</h1>
+<ul>
+<li>Choose a # of observations and # of tosses that land on W<br />
+<br />
+</li>
+<li>Use grid sampling to get a posterior with your choice of prior<br />
+<br />
+</li>
+<li>Derive point estimates and uncertainty<br />
+<br />
+</li>
+<li>Did your model checks show you were all good?</li>
+</ul>
+</section>
+    </div>
+  </div>
+
+  <script src="libs/reveal.js-3.3.0/lib/js/head.min.js"></script>
+  <script src="libs/reveal.js-3.3.0/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display the page number of the current slide
+        slideNumber: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: false,
+        // Opens links in an iframe preview overlay
+        previewLinks: true,
+        // Transition style
+        transition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>
