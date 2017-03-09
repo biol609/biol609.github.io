@@ -35,6 +35,20 @@ water <- 6
 
 ![](./images/12/rcLnp89bi.jpg){width="50%"}
 
+## Grid Sampling
+<div style="text-align:left">
+In a data frame:  
+1. Use `seq` to come up with a set of possible probability values\
+\
+2. Add a column of priors. Make it flat, so they're all 1, or get fancy.\
+\
+3. Calculate your likelihoods for each probability with size=9 and W=6\
+\
+4. Calculate your prior * likelihood\
+\
+5. Calculate your posterior, as the previous value divided by the sum of all prior*likelihoods
+</div>
+
 ## And we've made a grid sample
 ```{r make_grid, echo=TRUE}
 library(dplyr)
@@ -44,7 +58,9 @@ grid <- data.frame(prob = seq(0,1,.01), prior=1) %>%
   mutate(likelihood = 
            dbinom(water, size = 9, prob = prob)) %>%
   
-  mutate(posterior = likelihood*prob)
+  mutate(posterior = likelihood*prior) %>%
+  
+  mutate(posterior = posterior/sum(posterior))
 ```
 
 ## Sampling from your Posterior

@@ -128,6 +128,21 @@ Sampling Your Posterior
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">water &lt;-<span class="st"> </span><span class="dv">6</span></code></pre></div>
 <p><img src="images/12/rcLnp89bi.jpg" style="width:50.0%" /></p>
 </section>
+<section id="grid-sampling" class="slide level2">
+<h1>Grid Sampling</h1>
+<div style="text-align:left">
+<p>In a data frame:<br />
+1. Use <code>seq</code> to come up with a set of possible probability values<br />
+<br />
+2. Add a column of priors. Make it flat, so they’re all 1, or get fancy.<br />
+<br />
+3. Calculate your likelihoods for each probability with size=9 and W=6<br />
+<br />
+4. Calculate your prior * likelihood<br />
+<br />
+5. Calculate your posterior, as the previous value divided by the sum of all prior*likelihoods</p>
+</div>
+</section>
 <section id="and-weve-made-a-grid-sample" class="slide level2">
 <h1>And we’ve made a grid sample</h1>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(dplyr)
@@ -137,7 +152,9 @@ grid &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span clas
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">likelihood =</span> 
            <span class="kw">dbinom</span>(water, <span class="dt">size =</span> <span class="dv">9</span>, <span class="dt">prob =</span> prob)) %&gt;%
 <span class="st">  </span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">posterior =</span> likelihood*prob)</code></pre></div>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">posterior =</span> likelihood*prior) %&gt;%
+<span class="st">  </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">posterior =</span> posterior/<span class="kw">sum</span>(posterior))</code></pre></div>
 </section>
 <section id="sampling-from-your-posterior" class="slide level2">
 <h1>Sampling from your Posterior</h1>
@@ -198,11 +215,11 @@ Summarizing a Parameter with a Sample
 <p>We often look at the 95% interval</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">quantile</span>(samp, <span class="kw">c</span>(<span class="fl">0.025</span>, <span class="fl">0.975</span>))</code></pre></div>
 <pre><code> 2.5% 97.5% 
- 0.39  0.89 </code></pre>
+ 0.35  0.87 </code></pre>
 <p>But this is arbitrary (thanks, Fisher), and unstable. Lower intervals are more stable</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">quantile</span>(samp, <span class="kw">c</span>(<span class="fl">0.25</span>, <span class="fl">0.75</span>))</code></pre></div>
 <pre><code> 25%  75% 
-0.58 0.76 </code></pre>
+0.54 0.74 </code></pre>
 </div>
 </section>
 <section id="summarizing-uncertainty-50th-percentile-interval-1" class="slide level2">
@@ -219,10 +236,10 @@ Summarizing a Parameter with a Sample
 </ul>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">PI</span>(samp, <span class="fl">0.5</span>)</code></pre></div>
 <pre><code> 25%  75% 
-0.58 0.76 </code></pre>
+0.54 0.74 </code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">HPDI</span>(samp, <span class="fl">0.5</span>)</code></pre></div>
 <pre><code>|0.5 0.5| 
-0.56 0.74 </code></pre>
+0.53 0.72 </code></pre>
 </section>
 <section id="pi-v.-hpdi-for-a-skewed-distribution" class="slide level2">
 <h1>PI v. HPDI for a Skewed Distribution</h1>
@@ -230,10 +247,10 @@ Summarizing a Parameter with a Sample
 
 <span class="kw">PI</span>(samp_bad, <span class="fl">0.5</span>)</code></pre></div>
 <pre><code>      25%       75% 
-0.2396864 0.5410283 </code></pre>
+0.2438442 0.5469281 </code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">HPDI</span>(samp_bad, <span class="fl">0.5</span>)</code></pre></div>
 <pre><code>     |0.5      0.5| 
-0.1796986 0.4711888 </code></pre>
+0.2056297 0.5068549 </code></pre>
 </section>
 <section id="pi-v.-hpdi-1" class="slide level2">
 <h1>PI v. HPDI</h1>
@@ -261,12 +278,12 @@ Summarizing a Parameter with a Sample
 <section id="which-point-estimate-mean-median-mode" class="slide level2">
 <h1>Which Point Estimate: Mean, Median, Mode?</h1>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mean</span>(samp)</code></pre></div>
-<pre><code>[1] 0.665593</code></pre>
+<pre><code>[1] 0.635969</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">median</span>(samp)</code></pre></div>
-<pre><code>[1] 0.67</code></pre>
+<pre><code>[1] 0.64</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#mode</span>
 samp[<span class="kw">which.max</span>(grid$posterior)]</code></pre></div>
-<pre><code>[1] 0.79</code></pre>
+<pre><code>[1] 0.33</code></pre>
 </section>
 <section id="applying-a-loss-function" class="slide level2">
 <h1>Applying a Loss Function!</h1>
@@ -294,7 +311,7 @@ samp[<span class="kw">which.max</span>(grid$posterior)]</code></pre></div>
 loss &lt;-<span class="st"> </span><span class="kw">sapply</span>(grid$prob, loss_fun)
 
 grid$prob[<span class="kw">which.min</span>(loss)]</code></pre></div>
-<pre><code>[1] 0.68</code></pre>
+<pre><code>[1] 0.64</code></pre>
 </section>
 <section id="choosing-a-loss-function" class="slide level2">
 <h1>Choosing a loss function</h1>
@@ -354,7 +371,7 @@ Using your samples for model checking
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">table</span>(w)</code></pre></div>
 <pre><code>w
    0    1    2    3    4    5    6    7    8    9 
-  12   78  254  606 1093 1650 2113 2018 1539  637 </code></pre>
+  25  126  335  806 1265 1737 2051 1833 1305  517 </code></pre>
 </section>
 <section id="simulating-from-your-posterior-sample-1" class="slide level2">
 <h1>Simulating from your Posterior Sample</h1>
