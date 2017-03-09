@@ -1,0 +1,583 @@
+---
+title:
+css: style.css
+output:
+  revealjs::revealjs_presentation:
+    reveal_options:
+      slideNumber: true
+      previewLinks: true
+    theme: white
+    center: false
+    transition: fade
+    self_contained: false
+    lib_dir: libs
+---
+##
+<center>
+<h2>Bayesian Linear Regression</h2>
+</center>
+\
+![](./images/13/regression_cat_noclue.jpg){width="40%"}
+
+
+```{r prep, echo=FALSE, cache=FALSE, message=FALSE, warning=FALSE}
+library(knitr)
+opts_chunk$set(fig.height=5, fig.width=7, comment=NA, 
+               warning=FALSE, message=FALSE, 
+               dev="jpeg", echo=FALSE)
+
+library(rethinking)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+data(Howell1)
+Howell1_Adult <- Howell1 %>% filter(age >= 18)
+```
+
+## Why Linear Regression: A Simple Statistical Golem
+```{r fig, fig.height=3, fig.width=5}
+qplot(height, weight, data=Howell1_Adult) + stat_smooth(method="lm") +
+  theme_bw(base_size=17)
+```
+
+- Describes association between predictor and response  
+- Response is additive combination of predictor(s)  
+- Constant variance  
+
+
+## Why should we be wary of linear regression?
+```{r fig, fig.height=3, fig.width=5}
+```
+
+- Approximate  
+- Not mechanistic   
+- Often deployed without thought  
+- But, often very accurate
+
+## Why a Normal Error Distribution
+- Good descriptor of sum of many small errors  
+- True for many different distributions
+
+```{r norm_sum}
+set.seed(100)
+z <- replicate(100, cumsum(rnorm(100)))
+matplot(z, type="l", col="grey")
+```
+
+## Why a Normal Error Distribution
+```{r norm_sum2}
+par(mfrow=c(1,2))
+set.seed(100)
+z <- replicate(100, cumsum(rnorm(100)))
+matplot(z, type="l", col="grey")
+simplehist(replicate(1000, sum(rnorm(100))))
+par(mfrow=c(1,1))
+```
+
+## Flexible to Many distributions
+```{r binom_sum2}
+par(mfrow=c(1,2))
+set.seed(100)
+z <- replicate(100, cumsum(rbinom(100,10,.5)))
+matplot(z, type="l", col="grey", main="Binomial Walk")
+simplehist(replicate(1000, sum(rbinom(100,10,.5))))
+par(mfrow=c(1,1))
+```
+
+## Try it: the Central Limit Theorem
+```{r walk, echo=TRUE}
+library(rethinking)
+simplehist(replicate(10000, sum(rbeta(100,1,1))))
+```
+
+
+## So, how do we build models?
+1. Identify response  
+\
+2. Determine likelihood (distribution of error of response)  
+\
+3. Write equation(s) describing generation of predicted values  
+\
+4. Assign priors to parameters
+
+## Our Previous Model
+
+Likelihood:  
+$w \sim Binomial(6, size=9, prob = prob)$  
+\
+<div class="fragment">
+Prior:  
+$prob \sim Uniform(0,1)$
+</div>
+
+## A Normal Model
+Likelihood:  
+$y_i \sim Normal(\mu, \sigma)$  
+\
+<div class="fragment">
+Prior:  
+$\mu \sim Normal(0,1000)$  
+$prob \sim U(0,50)$
+</div>
+
+## A Model of a Mean
+```{r load_data, echo=TRUE}
+data(Howell1)
+Howell1_Adult <- Howell1 %>% 
+  filter(age >= 18)
+```
+
+Height-Weight relationships of the !Kung San
+
+
+## Our Model
+Likelihood:  
+$h_i \sim Normal(\mu, \sigma)$  
+\
+<div class="fragment">
+Prior:  
+$\mu \sim Normal(150, 20)$  From the data  
+$\sigma \sim U(0,50)$ Wide range of possibilities
+</div>
+
+## Priors
+```{r plot_prior}
+par(mfrow=c(1,2))
+curve(dnorm(x, 150, 20), from=100, to=200, main="Mu Prior")
+curve(dunif(x, 0,50), from=-10, to=80, main="Sigma Prior")
+par(mfrow=c(1,1))
+```
+
+## Grid Sampling
+```{r grid, echo=TRUE}
+# Make the grid
+grid <- crossing(mu = seq(140, 160, length.out=200),
+                 sigma = seq(4, 9, length.out=200)) %>%
+
+#Calculate the log-likelihoods for each row  
+  group_by(1:n()) %>%
+  mutate(log_lik = sum(dnorm(Howell1_Adult$height, mu, sigma, log=TRUE))) %>%
+  ungroup() %>%
+
+# Use these and our posteriors to get the numerator
+# of Bayes theorem
+  mutate(numerator = log_lik + 
+           dnorm(mu, 150, 20, log=TRUE) +
+           dunif(sigma, 0,50, log=TRUE)) %>%
+
+#Now calculate the posterior (approximate)  
+  mutate(posterior = exp(numerator - max(numerator)))
+```
+
+## Posterior
+```{r grid_posterior}
+qplot(mu, sigma, data=grid, alpha=posterior, color=posterior) + 
+  scale_alpha_continuous(range=c(0,1)) +
+  theme_bw(base_size=17)
+```
+
+## Posterior from a Sample
+```{r grid_posterior_saple}
+samp <- grid[sample(1:nrow(grid), size=1e4, replace=TRUE, prob=grid$posterior),1:2]
+
+qplot(mu, sigma, data=samp, alpha=I(0.15), color=I("blue")) + 
+  theme_bw()
+```
+
+## Or, let's Reconceptualize With a Model
+Likelihood:  
+$h_i \sim Normal(\mu, \sigma)$  &nbsp;&nbsp; <span class="fragment">`height ~ dnorm(mu, sigma)`</span>  
+\
+<div class="fragment">
+Prior:  
+$\mu \sim Normal(150, 20)$  &nbsp;&nbsp; <span class="fragment">`mu ~ dnorm(150, 200)`</span>  
+$\sigma \sim U(0,50)$ &nbsp;&nbsp; <span class="fragment">`sigma ~ dunif(0,50)`</span>
+</div>
+
+## Feed the Model to  Maximum A Posterior Approximation
+```{r map_1, echo=TRUE}
+mean_mod <- alist(
+  #likelihood
+  height ~ dnorm(mu, sigma),
+  
+  #priors
+  mu ~ dnorm(150, 20),
+  sigma ~ dunif(0,50)
+)
+
+mean_fit <- map(mean_mod,
+                data = Howell1_Adult)
+```
+
+
+## Compare map to grid
+```{r comp}
+samp_map <- extract.samples(mean_fit, 1e4)
+
+samps <- rbind(cbind(Type = "Grid", samp),
+  cbind(Type = "MAP", samp_map)) %>%
+  gather(Variable, Value, -Type)
+
+ggplot(data=samps, mapping=aes(Value, ..scaled.., color=Type, fill=Type)) +
+  geom_density(alpha=0.5) +
+  facet_wrap(~Variable, scale="free_x") +
+  theme_bw(base_size=17)
+```
+
+
+## Adding a Predictor
+
+1. Identify response  
+\
+2. Determine likelihood (distribution of error of response)  
+\
+3. Write equation(s) describing generation of predicted values  
+\
+4. Assign priors to parameters
+
+## Now Mean Changes with predictor
+Likelihood:  
+$h_i \sim Normal(\mu_i, \sigma)$  
+\
+Data Generating Process  
+$\mu_i = \alpha + \beta x_i$  
+\
+Prior:  
+$\alpha \sim Normal(178, 100)$  &nbsp; <span class="fragment">Reasonable Range from data</span>  
+$\beta \sim Normal(0, 10)$ &nbsp; <span class="fragment">Weakly Informative</span>  
+$\sigma \sim U(0,50)$ &nbsp;<span class="fragment">Wide range of possibilities</span>
+
+## Our Linear Model
+```{r map_weight, echo=TRUE,  size="small-code"}
+weight_mod <- alist(
+  #likelihood
+  height ~ dnorm(mu, sigma),
+  
+  #Data generating process
+  mu <- alpha + beta * weight,
+  
+  #priors
+  alpha ~ dnorm(178, 100),
+  beta ~ dnorm(0, 10),
+  sigma ~ dunif(0,50)
+)
+
+weight_fit <- map(weight_mod,
+                data = Howell1_Adult)
+```
+
+## The fit
+```{r hw_plot}
+base_plot <- ggplot(data=Howell1_Adult,
+                    mapping=aes(x=weight, y=height)) +
+  geom_point() +
+  theme_bw(base_size=17)
+
+base_plot+
+  geom_abline(slope=coef(weight_fit)[2], intercept=coef(weight_fit)[1],
+              color="blue", lwd=1.4)
+```
+
+## So, what do we do with a fit model?
+1. Evaluate model assumptions  
+\
+2. Evaluate model estimates and meaning  
+\
+3. Assess encertainty in fit  
+\
+4. Assess uncertainty in prediction  
+\
+
+## Sampling from the Posterior Predictions
+We use `link` to extract from the link (prediction) function:  
+
+```{r fitted, echo=TRUE, message=FALSE, cache=TRUE}
+fit_vals_sim <- link(weight_fit, n = 1e4, refresh=0)
+
+dim(fit_vals_sim)
+```
+
+<div class="fragment">
+```{r fitted2, echo=TRUE}
+fit_vals <- apply(fit_vals_sim, 2, median)
+fit_pi <- apply(fit_vals_sim, 2, HPDI, prob=0.8)
+```
+</div>
+
+## QQ, etc...
+```{r qq, echo=TRUE}
+res_vals <- Howell1_Adult$height - fit_vals
+
+qqnorm(res_vals); qqline(res_vals)
+```
+
+## Fit-Pred
+```{r fit_pred}
+res_rng <-  apply(fit_pi, 1, function(x) Howell1_Adult$height - x)
+
+Howell1_Adult <- Howell1_Adult %>%
+  mutate(res_vals = res_vals, fit_vals = fit_vals,
+         lwr = fit_pi[1,], upr = fit_pi[2,],
+         lwr_res = res_rng[,1], upr_res = res_rng[,2])
+
+ggplot(Howell1_Adult, aes(x=height, y=fit_vals, ymin=lwr, ymax=upr)) +
+  theme_bw(base_size=17) +
+  geom_point(size=1.5) +
+  geom_linerange(size=0.5)
+```
+
+## Fit-Residual
+```{r obs_res}
+ggplot(Howell1_Adult, aes(x=fit_vals, y=res_vals, ymin=lwr_res, ymax=upr_res)) +
+  theme_bw(base_size=17) +
+  geom_point(size=1.3)  +
+  geom_linerange(size=0.5)
+```
+
+## Model Results
+```{r precis_res, echo=TRUE}
+precis(weight_fit, cor=TRUE)
+```
+> - Are these meaningful?  
+> - Should you standardize predictors for a meaningful intercept?
+> - Is this the right interval?
+
+## Model Results
+```{r plot_precis_res}
+plot(precis(weight_fit))
+```
+
+## Sampling from the Posterior Distribution
+
+```{r posterior, echo=TRUE}
+post <- extract.samples(weight_fit, 1e4)
+
+head(post)
+```
+
+
+## Posterior!
+```{r plot_post_coefs}
+qplot(alpha, beta, data=post, alpha=I(0.2), color=I("blue")) +
+  theme_bw(base_size=17)
+```
+
+## Posterior!
+```{r plot_post_coefs2}
+qplot(alpha, sigma, data=post, alpha=I(0.2), color=I("blue")) +
+  theme_bw(base_size=17)
+```
+
+## How Well Have we Fit the Data?
+```{r plot_pred, echo=TRUE, eval=FALSE}
+ggplot() +
+  
+  #the data
+  geom_point(data=Howell1_Adult, 
+             mapping=aes(x=weight, y=height), pch=1) +
+  
+  #simulated fits from the posterior
+  geom_abline(data=post[1:50,], 
+              mapping=aes(slope=beta, intercept=alpha), alpha=0.2) +
+  
+  theme_bw(base_size=17)
+```
+
+## How Well Have we Fit the Data?
+```{r plot_pred, echo=FALSE, eval=TRUE}
+```
+
+## What about with fit intervals?
+```{r fit_interval_data, echo=TRUE, eval=TRUE}
+#1) Make a fake data frame over the relevant range
+pred_df <- data.frame(weight=seq(30,65, length.out=200))
+
+#2) Get the fit values & interval
+pred <- link(weight_fit, data=pred_df, refresh=0)
+pred_hpdi <-  apply(pred, 2, HPDI)
+
+#3) Put it all back together and plot
+pred_df <- mutate(pred_df, 
+                  height = apply(pred, 2, mean),
+                  lwr_fit = pred_hpdi[1,],
+                  upr_fit = pred_hpdi[2,])
+```
+
+## What about with fit intervals?
+`geom_line` and `geom_ribbon` for plotting
+
+```{r plot_fit_int}
+ggplot() +
+  
+  #the data
+  geom_point(data=Howell1_Adult, 
+             mapping=aes(x=weight, y=height), pch=1)  +
+  
+  #the interval
+  geom_ribbon(data = pred_df, mapping=aes(x = weight,
+                                         ymin=lwr_fit, 
+                                         ymax=upr_fit), alpha=0.8) +
+  
+  #the fit
+  geom_line(data = pred_df, mapping=aes(x=weight, y=height),  col="red") +
+
+  
+  theme_bw(base_size=17)
+```
+
+
+## What about prediction intervals?
+```{r pred_interval_data, echo=TRUE, eval=TRUE}
+#1) Get the posterior prediction interval
+pred_full <- sim(weight_fit, data=pred_df, refresh=0)
+full_hpdi <-  apply(pred_full, 2, HPDI)
+
+#2) Put it all back together and plot
+pred_df <- mutate(pred_df, 
+                  lwr_pred = full_hpdi[1,],
+                  upr_pred = full_hpdi[2,])
+```
+
+## Prediction Interval
+```{r plot_pred_int}
+ggplot() +
+  
+  #the data
+  geom_point(data=Howell1_Adult, 
+             mapping=aes(x=weight, y=height), pch=1)  +
+  
+  #the fit interval
+  geom_ribbon(data = pred_df, mapping=aes(x = weight,
+                                         ymin=lwr_fit, 
+                                         ymax=upr_fit), alpha=0.8) +
+
+  #the pred interval
+  geom_ribbon(data = pred_df, mapping=aes(x = weight,
+                                         ymin=lwr_pred, 
+                                         ymax=upr_pred), alpha=0.4) +
+    
+  #the fit
+  geom_line(data = pred_df, mapping=aes(x=weight, y=height),  col="red") +
+
+  
+  theme_bw(base_size=17)
+```
+
+
+## 
+\
+\
+\
+<center>
+<h2>Polynomial Regression and Standardization</h2>
+</center>
+
+## The Actual Data
+```{r all_data}
+qplot(weight, height, data=Howell1)
+```
+
+This is not linear
+
+## A nonlinear Model
+Likelihood:  
+$h_i \sim Normal(\mu_i, \sigma)$  
+\
+Data Generating Process  
+$\mu_i = \alpha + \beta_1 x_i + \beta_2 x_i^2 + \beta_3 x_i^3$  
+\
+Prior:  
+$\alpha \sim Normal(178, 100)$  
+$\beta_j \sim Normal(0, 10)$    
+$\sigma \sim U(0,50)$  
+
+## Before fitting this, Standardize!
+- Standardizing a predictor aids in fitting  
+    - Scale issues of different variables  
+\
+- Standardizing yields comparable coefficients  
+\
+- You don't have to  
+    - But if you encounter problems, it's a good fallback
+
+
+## Our Model
+```{r nonlinear_mod, echo=TRUE}
+full_height_mod <- alist(
+  #likelihood
+  height ~ dnorm(mu, sigma),
+  
+  #Data generating process
+  mu <- alpha + 
+    beta1 * weight.s + 
+    beta2 * weight.s2 +
+    beta3 * weight.s3,
+  
+  #priors
+  alpha ~ dnorm(178, 100),
+  beta1 ~ dnorm(0, 10),
+  beta2 ~ dnorm(0, 10),
+  beta3 ~ dnorm(0, 10),
+  sigma ~ dunif(0,50)
+)
+```
+
+## Making variables and Fitting
+```{r nonlinear_fit, echo=TRUE}
+Howell1 <- mutate(Howell1,
+                  weight.s = (weight-mean(weight))/sd(weight),
+                  weight.s2 = weight.s^2,
+                  weight.s3 = weight.s^3)
+
+full_height_fit <- map(full_height_mod,
+                       data = Howell1)
+```
+
+## Exercise
+1. Fit this nonlinear model  
+\
+2. Assess it  
+\
+3. Plot the fit and error  
+    - Feel free to use `link` or the posterior to plot fit error
+
+## Solution
+```{r all_the_things, cache=TRUE, message=FALSE}
+full_pred_df <- data.frame(weight.s = 
+                             (seq(0,70, length.out=500) - 
+                                mean(Howell1$weight))/sd(Howell1$weight)) %>%
+  mutate(weight.s2 = weight.s^2, weight.s3 = weight.s^3)
+
+full_posterior <- extract.samples(full_height_fit, 1e4)
+
+full_fitted <- link(full_height_fit, full_pred_df, refresh=0)
+full_fitted_hpdi <- apply(full_fitted, 2, HPDI)
+
+full_predicted <- sim(full_height_fit, full_pred_df, refresh=0)
+full_predicted_hpdi <- apply(full_predicted, 2, HPDI)
+
+full_pred_df <- mutate(full_pred_df,
+                       height = apply(full_fitted, 2, mean),
+                       lwr_fit = full_fitted_hpdi[1,],
+                       upr_fit = full_fitted_hpdi[2,],
+                       lwr_pred = full_predicted_hpdi[1,],
+                       upr_pred = full_predicted_hpdi[2,])
+
+pred_plot <- ggplot(data=full_pred_df, mapping=aes(x=weight.s, y=height)) +
+  geom_point(data=Howell1) +
+  geom_ribbon(data = full_pred_df, mapping=aes(ymin=lwr_fit, ymax=upr_fit), fill="blue", alpha=0.5) +
+  geom_ribbon(data = full_pred_df, mapping=aes(ymin=lwr_pred, ymax=upr_pred), alpha=0.5) +
+  geom_line(color="red") +
+  theme_bw(base_size=17)
+
+pred_plot
+
+```
+
+## I hate that x axis
+```{r axis, echo=TRUE}
+pred_plot +
+  scale_x_continuous(label = function(x) 
+    round(x*sd(Howell1$weight) + mean(Howell1$weight),1)) +
+  xlab("Weight")
+```

@@ -51,9 +51,10 @@ __Etherpad:__ https://etherpad.wikimedia.org/p/609-bayes
 
   
 ### Week 7. 
-__Lecture:__ Linear and multivariate Bayesian Models  
-__Reading:__ McElreath Chapter 4-5
-  
+__Lecture:__ [Linear Bayesian Models](./lectures/13_linear_models.html)  
+__Reading:__ McElreath Chapter 4-5  
+__Etherpad:__ https://etherpad.wikimedia.org/p/609-linreg    
+
 ### Week 8. 
 __Lecture:__ Interaction Effects and Bayesian Model Selection  
 __Reading:__ McElreath Chapter 6-7

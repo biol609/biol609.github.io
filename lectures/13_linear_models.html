@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <title></title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="libs/reveal.js-3.3.0/css/reveal.css"/>
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="libs/reveal.js-3.3.0/css/theme/white.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="style.css"/>
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'libs/reveal.js-3.3.0/css/print/pdf.css' : 'libs/reveal.js-3.3.0/css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+    <!--[if lt IE 9]>
+    <script src="libs/reveal.js-3.3.0/lib/js/html5shiv.js"></script>
+    <![endif]-->
+
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+
+<section id="section" class="slide level2">
+<h1></h1>
+<center>
+<h2>
+Bayesian Linear Regression
+</h2>
+</center>
+<p><br />
+<img src="images/13/regression_cat_noclue.jpg" style="width:40.0%" /></p>
+</section>
+<section id="why-linear-regression-a-simple-statistical-golem" class="slide level2">
+<h1>Why Linear Regression: A Simple Statistical Golem</h1>
+<p><img src="13_linear_models_files/figure-revealjs/fig-1.jpeg" width="480" /></p>
+<ul>
+<li>Describes association between predictor and response<br />
+</li>
+<li>Response is additive combination of predictor(s)<br />
+</li>
+<li>Constant variance</li>
+</ul>
+</section>
+<section id="why-should-we-be-wary-of-linear-regression" class="slide level2">
+<h1>Why should we be wary of linear regression?</h1>
+<p><img src="13_linear_models_files/figure-revealjs/fig-1.jpeg" width="480" /></p>
+<ul>
+<li>Approximate<br />
+</li>
+<li>Not mechanistic<br />
+</li>
+<li>Often deployed without thought<br />
+</li>
+<li>But, often very accurate</li>
+</ul>
+</section>
+<section id="why-a-normal-error-distribution" class="slide level2">
+<h1>Why a Normal Error Distribution</h1>
+<ul>
+<li>Good descriptor of sum of many small errors<br />
+</li>
+<li>True for many different distributions</li>
+</ul>
+<p><img src="13_linear_models_files/figure-revealjs/norm_sum-1.jpeg" width="672" /></p>
+</section>
+<section id="why-a-normal-error-distribution-1" class="slide level2">
+<h1>Why a Normal Error Distribution</h1>
+<p><img src="13_linear_models_files/figure-revealjs/norm_sum2-1.jpeg" width="672" /></p>
+</section>
+<section id="flexible-to-many-distributions" class="slide level2">
+<h1>Flexible to Many distributions</h1>
+<p><img src="13_linear_models_files/figure-revealjs/binom_sum2-1.jpeg" width="672" /></p>
+</section>
+<section id="try-it-the-central-limit-theorem" class="slide level2">
+<h1>Try it: the Central Limit Theorem</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rethinking)
+<span class="kw">simplehist</span>(<span class="kw">replicate</span>(<span class="dv">10000</span>, <span class="kw">sum</span>(<span class="kw">rbeta</span>(<span class="dv">100</span>,<span class="dv">1</span>,<span class="dv">1</span>))))</code></pre></div>
+<p><img src="13_linear_models_files/figure-revealjs/walk-1.jpeg" width="672" /></p>
+</section>
+<section id="so-how-do-we-build-models" class="slide level2">
+<h1>So, how do we build models?</h1>
+<ol type="1">
+<li>Identify response<br />
+<br />
+</li>
+<li>Determine likelihood (distribution of error of response)<br />
+<br />
+</li>
+<li>Write equation(s) describing generation of predicted values<br />
+<br />
+</li>
+<li>Assign priors to parameters</li>
+</ol>
+</section>
+<section id="our-previous-model" class="slide level2">
+<h1>Our Previous Model</h1>
+Likelihood:<br />
+<span class="math inline">\(w \sim Binomial(6, size=9, prob = prob)\)</span><br />
+<br />
+
+<div class="fragment">
+<p>Prior:<br />
+<span class="math inline">\(prob \sim Uniform(0,1)\)</span></p>
+</div>
+</section>
+<section id="a-normal-model" class="slide level2">
+<h1>A Normal Model</h1>
+Likelihood:<br />
+<span class="math inline">\(y_i \sim Normal(\mu, \sigma)\)</span><br />
+<br />
+
+<div class="fragment">
+<p>Prior:<br />
+<span class="math inline">\(\mu \sim Normal(0,1000)\)</span><br />
+<span class="math inline">\(prob \sim U(0,50)\)</span></p>
+</div>
+</section>
+<section id="a-model-of-a-mean" class="slide level2">
+<h1>A Model of a Mean</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(Howell1)
+Howell1_Adult &lt;-<span class="st"> </span>Howell1 %&gt;%<span class="st"> </span>
+<span class="st">  </span><span class="kw">filter</span>(age &gt;=<span class="st"> </span><span class="dv">18</span>)</code></pre></div>
+<p>Height-Weight relationships of the !Kung San</p>
+</section>
+<section id="our-model" class="slide level2">
+<h1>Our Model</h1>
+Likelihood:<br />
+<span class="math inline">\(h_i \sim Normal(\mu, \sigma)\)</span><br />
+<br />
+
+<div class="fragment">
+<p>Prior:<br />
+<span class="math inline">\(\mu \sim Normal(150, 20)\)</span> From the data<br />
+<span class="math inline">\(\sigma \sim U(0,50)\)</span> Wide range of possibilities</p>
+</div>
+</section>
+<section id="priors" class="slide level2">
+<h1>Priors</h1>
+<p><img src="13_linear_models_files/figure-revealjs/plot_prior-1.jpeg" width="672" /></p>
+</section>
+<section id="grid-sampling" class="slide level2">
+<h1>Grid Sampling</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Make the grid</span>
+grid &lt;-<span class="st"> </span><span class="kw">crossing</span>(<span class="dt">mu =</span> <span class="kw">seq</span>(<span class="dv">140</span>, <span class="dv">160</span>, <span class="dt">length.out=</span><span class="dv">200</span>),
+                 <span class="dt">sigma =</span> <span class="kw">seq</span>(<span class="dv">4</span>, <span class="dv">9</span>, <span class="dt">length.out=</span><span class="dv">200</span>)) %&gt;%
+
+<span class="co">#Calculate the log-likelihoods for each row  </span>
+<span class="st">  </span><span class="kw">group_by</span>(<span class="dv">1</span>:<span class="kw">n</span>()) %&gt;%
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">log_lik =</span> <span class="kw">sum</span>(<span class="kw">dnorm</span>(Howell1_Adult$height, mu, sigma, <span class="dt">log=</span><span class="ot">TRUE</span>))) %&gt;%
+<span class="st">  </span><span class="kw">ungroup</span>() %&gt;%
+
+<span class="co"># Use these and our posteriors to get the numerator</span>
+<span class="co"># of Bayes theorem</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">numerator =</span> log_lik +<span class="st"> </span>
+<span class="st">           </span><span class="kw">dnorm</span>(mu, <span class="dv">150</span>, <span class="dv">20</span>, <span class="dt">log=</span><span class="ot">TRUE</span>) +
+<span class="st">           </span><span class="kw">dunif</span>(sigma, <span class="dv">0</span>,<span class="dv">50</span>, <span class="dt">log=</span><span class="ot">TRUE</span>)) %&gt;%
+
+<span class="co">#Now calculate the posterior (approximate)  </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">posterior =</span> <span class="kw">exp</span>(numerator -<span class="st"> </span><span class="kw">max</span>(numerator)))</code></pre></div>
+</section>
+<section id="posterior" class="slide level2">
+<h1>Posterior</h1>
+<p><img src="13_linear_models_files/figure-revealjs/grid_posterior-1.jpeg" width="672" /></p>
+</section>
+<section id="posterior-from-a-sample" class="slide level2">
+<h1>Posterior from a Sample</h1>
+<p><img src="13_linear_models_files/figure-revealjs/grid_posterior_saple-1.jpeg" width="672" /></p>
+</section>
+<section id="or-lets-reconceptualize-with-a-model" class="slide level2">
+<h1>Or, let’s Reconceptualize With a Model</h1>
+Likelihood:<br />
+<span class="math inline">\(h_i \sim Normal(\mu, \sigma)\)</span>    <span class="fragment"><code>height ~ dnorm(mu, sigma)</code></span><br />
+<br />
+
+<div class="fragment">
+<p>Prior:<br />
+<span class="math inline">\(\mu \sim Normal(150, 20)\)</span>    <span class="fragment"><code>mu ~ dnorm(150, 200)</code></span><br />
+<span class="math inline">\(\sigma \sim U(0,50)\)</span>    <span class="fragment"><code>sigma ~ dunif(0,50)</code></span></p>
+</div>
+</section>
+<section id="feed-the-model-to-maximum-a-posterior-approximation" class="slide level2">
+<h1>Feed the Model to Maximum A Posterior Approximation</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mean_mod &lt;-<span class="st"> </span><span class="kw">alist</span>(
+  <span class="co">#likelihood</span>
+  height ~<span class="st"> </span><span class="kw">dnorm</span>(mu, sigma),
+  
+  <span class="co">#priors</span>
+  mu ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">150</span>, <span class="dv">20</span>),
+  sigma ~<span class="st"> </span><span class="kw">dunif</span>(<span class="dv">0</span>,<span class="dv">50</span>)
+)
+
+mean_fit &lt;-<span class="st"> </span><span class="kw">map</span>(mean_mod,
+                <span class="dt">data =</span> Howell1_Adult)</code></pre></div>
+</section>
+<section id="compare-map-to-grid" class="slide level2">
+<h1>Compare map to grid</h1>
+<p><img src="13_linear_models_files/figure-revealjs/comp-1.jpeg" width="672" /></p>
+</section>
+<section id="adding-a-predictor" class="slide level2">
+<h1>Adding a Predictor</h1>
+<ol type="1">
+<li>Identify response<br />
+<br />
+</li>
+<li>Determine likelihood (distribution of error of response)<br />
+<br />
+</li>
+<li>Write equation(s) describing generation of predicted values<br />
+<br />
+</li>
+<li>Assign priors to parameters</li>
+</ol>
+</section>
+<section id="now-mean-changes-with-predictor" class="slide level2">
+<h1>Now Mean Changes with predictor</h1>
+<p>Likelihood:<br />
+<span class="math inline">\(h_i \sim Normal(\mu_i, \sigma)\)</span><br />
+<br />
+Data Generating Process<br />
+<span class="math inline">\(\mu_i = \alpha + \beta x_i\)</span><br />
+<br />
+Prior:<br />
+<span class="math inline">\(\alpha \sim Normal(178, 100)\)</span>   <span class="fragment">Reasonable Range from data</span><br />
+<span class="math inline">\(\beta \sim Normal(0, 10)\)</span>   <span class="fragment">Weakly Informative</span><br />
+<span class="math inline">\(\sigma \sim U(0,50)\)</span>  <span class="fragment">Wide range of possibilities</span></p>
+</section>
+<section id="our-linear-model" class="slide level2">
+<h1>Our Linear Model</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">weight_mod &lt;-<span class="st"> </span><span class="kw">alist</span>(
+  <span class="co">#likelihood</span>
+  height ~<span class="st"> </span><span class="kw">dnorm</span>(mu, sigma),
+  
+  <span class="co">#Data generating process</span>
+  mu &lt;-<span class="st"> </span>alpha +<span class="st"> </span>beta *<span class="st"> </span>weight,
+  
+  <span class="co">#priors</span>
+  alpha ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">178</span>, <span class="dv">100</span>),
+  beta ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>, <span class="dv">10</span>),
+  sigma ~<span class="st"> </span><span class="kw">dunif</span>(<span class="dv">0</span>,<span class="dv">50</span>)
+)
+
+weight_fit &lt;-<span class="st"> </span><span class="kw">map</span>(weight_mod,
+                <span class="dt">data =</span> Howell1_Adult)</code></pre></div>
+</section>
+<section id="the-fit" class="slide level2">
+<h1>The fit</h1>
+<p><img src="13_linear_models_files/figure-revealjs/hw_plot-1.jpeg" width="672" /></p>
+</section>
+<section id="so-what-do-we-do-with-a-fit-model" class="slide level2">
+<h1>So, what do we do with a fit model?</h1>
+<ol type="1">
+<li>Evaluate model assumptions<br />
+<br />
+</li>
+<li>Evaluate model estimates and meaning<br />
+<br />
+</li>
+<li>Assess encertainty in fit<br />
+<br />
+</li>
+<li>Assess uncertainty in prediction<br />
+<br />
+</li>
+</ol>
+</section>
+<section id="sampling-from-the-posterior-predictions" class="slide level2">
+<h1>Sampling from the Posterior Predictions</h1>
+<p>We use <code>link</code> to extract from the link (prediction) function:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit_vals_sim &lt;-<span class="st"> </span><span class="kw">link</span>(weight_fit, <span class="dt">n =</span> <span class="fl">1e4</span>, <span class="dt">refresh=</span><span class="dv">0</span>)
+
+<span class="kw">dim</span>(fit_vals_sim)</code></pre></div>
+<pre><code>[1] 10000   352</code></pre>
+<div class="fragment">
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit_vals &lt;-<span class="st"> </span><span class="kw">apply</span>(fit_vals_sim, <span class="dv">2</span>, median)
+fit_pi &lt;-<span class="st"> </span><span class="kw">apply</span>(fit_vals_sim, <span class="dv">2</span>, HPDI, <span class="dt">prob=</span><span class="fl">0.8</span>)</code></pre></div>
+</div>
+</section>
+<section id="qq-etc" class="slide level2">
+<h1>QQ, etc…</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res_vals &lt;-<span class="st"> </span>Howell1_Adult$height -<span class="st"> </span>fit_vals
+
+<span class="kw">qqnorm</span>(res_vals); <span class="kw">qqline</span>(res_vals)</code></pre></div>
+<p><img src="13_linear_models_files/figure-revealjs/qq-1.jpeg" width="672" /></p>
+</section>
+<section id="fit-pred" class="slide level2">
+<h1>Fit-Pred</h1>
+<p><img src="13_linear_models_files/figure-revealjs/fit_pred-1.jpeg" width="672" /></p>
+</section>
+<section id="fit-residual" class="slide level2">
+<h1>Fit-Residual</h1>
+<p><img src="13_linear_models_files/figure-revealjs/obs_res-1.jpeg" width="672" /></p>
+</section>
+<section id="model-results" class="slide level2">
+<h1>Model Results</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">precis</span>(weight_fit, <span class="dt">cor=</span><span class="ot">TRUE</span>)</code></pre></div>
+<pre><code>        Mean StdDev   5.5%  94.5% alpha  beta sigma
+alpha 113.90   1.91 110.86 116.95  1.00 -0.99     0
+beta    0.90   0.04   0.84   0.97 -0.99  1.00     0
+sigma   5.07   0.19   4.77   5.38  0.00  0.00     1</code></pre>
+<ul>
+<li class="fragment">Are these meaningful?<br />
+</li>
+<li class="fragment">Should you standardize predictors for a meaningful intercept?</li>
+<li class="fragment">Is this the right interval?</li>
+</ul>
+</section>
+<section id="model-results-1" class="slide level2">
+<h1>Model Results</h1>
+<p><img src="13_linear_models_files/figure-revealjs/plot_precis_res-1.jpeg" width="672" /></p>
+</section>
+<section id="sampling-from-the-posterior-distribution" class="slide level2">
+<h1>Sampling from the Posterior Distribution</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">post &lt;-<span class="st"> </span><span class="kw">extract.samples</span>(weight_fit, <span class="fl">1e4</span>)
+
+<span class="kw">head</span>(post)</code></pre></div>
+<pre><code>     alpha      beta    sigma
+1 115.2085 0.8735581 5.466552
+2 109.6589 0.9952665 5.091604
+3 115.8158 0.8565583 5.063665
+4 112.9260 0.9288220 5.235847
+5 112.9272 0.9191604 5.057091
+6 114.7322 0.8861771 5.331461</code></pre>
+</section>
+<section id="posterior-1" class="slide level2">
+<h1>Posterior!</h1>
+<p><img src="13_linear_models_files/figure-revealjs/plot_post_coefs-1.jpeg" width="672" /></p>
+</section>
+<section id="posterior-2" class="slide level2">
+<h1>Posterior!</h1>
+<p><img src="13_linear_models_files/figure-revealjs/plot_post_coefs2-1.jpeg" width="672" /></p>
+</section>
+<section id="how-well-have-we-fit-the-data" class="slide level2">
+<h1>How Well Have we Fit the Data?</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>() +
+<span class="st">  </span>
+<span class="st">  </span><span class="co">#the data</span>
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data=</span>Howell1_Adult, 
+             <span class="dt">mapping=</span><span class="kw">aes</span>(<span class="dt">x=</span>weight, <span class="dt">y=</span>height), <span class="dt">pch=</span><span class="dv">1</span>) +
+<span class="st">  </span>
+<span class="st">  </span><span class="co">#simulated fits from the posterior</span>
+<span class="st">  </span><span class="kw">geom_abline</span>(<span class="dt">data=</span>post[<span class="dv">1</span>:<span class="dv">50</span>,], 
+              <span class="dt">mapping=</span><span class="kw">aes</span>(<span class="dt">slope=</span>beta, <span class="dt">intercept=</span>alpha), <span class="dt">alpha=</span><span class="fl">0.2</span>) +
+<span class="st">  </span>
+<span class="st">  </span><span class="kw">theme_bw</span>(<span class="dt">base_size=</span><span class="dv">17</span>)</code></pre></div>
+</section>
+<section id="how-well-have-we-fit-the-data-1" class="slide level2">
+<h1>How Well Have we Fit the Data?</h1>
+<p><img src="13_linear_models_files/figure-revealjs/plot_pred-1.jpeg" width="672" /></p>
+</section>
+<section id="what-about-with-fit-intervals" class="slide level2">
+<h1>What about with fit intervals?</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#1) Make a fake data frame over the relevant range</span>
+pred_df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">weight=</span><span class="kw">seq</span>(<span class="dv">30</span>,<span class="dv">65</span>, <span class="dt">length.out=</span><span class="dv">200</span>))
+
+<span class="co">#2) Get the fit values &amp; interval</span>
+pred &lt;-<span class="st"> </span><span class="kw">link</span>(weight_fit, <span class="dt">data=</span>pred_df, <span class="dt">refresh=</span><span class="dv">0</span>)
+pred_hpdi &lt;-<span class="st">  </span><span class="kw">apply</span>(pred, <span class="dv">2</span>, HPDI)
+
+<span class="co">#3) Put it all back together and plot</span>
+pred_df &lt;-<span class="st"> </span><span class="kw">mutate</span>(pred_df, 
+                  <span class="dt">height =</span> <span class="kw">apply</span>(pred, <span class="dv">2</span>, mean),
+                  <span class="dt">lwr_fit =</span> pred_hpdi[<span class="dv">1</span>,],
+                  <span class="dt">upr_fit =</span> pred_hpdi[<span class="dv">2</span>,])</code></pre></div>
+</section>
+<section id="what-about-with-fit-intervals-1" class="slide level2">
+<h1>What about with fit intervals?</h1>
+<p><code>geom_line</code> and <code>geom_ribbon</code> for plotting</p>
+<p><img src="13_linear_models_files/figure-revealjs/plot_fit_int-1.jpeg" width="672" /></p>
+</section>
+<section id="what-about-prediction-intervals" class="slide level2">
+<h1>What about prediction intervals?</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#1) Get the posterior prediction interval</span>
+pred_full &lt;-<span class="st"> </span><span class="kw">sim</span>(weight_fit, <span class="dt">data=</span>pred_df, <span class="dt">refresh=</span><span class="dv">0</span>)
+full_hpdi &lt;-<span class="st">  </span><span class="kw">apply</span>(pred_full, <span class="dv">2</span>, HPDI)
+
+<span class="co">#2) Put it all back together and plot</span>
+pred_df &lt;-<span class="st"> </span><span class="kw">mutate</span>(pred_df, 
+                  <span class="dt">lwr_pred =</span> full_hpdi[<span class="dv">1</span>,],
+                  <span class="dt">upr_pred =</span> full_hpdi[<span class="dv">2</span>,])</code></pre></div>
+</section>
+<section id="prediction-interval" class="slide level2">
+<h1>Prediction Interval</h1>
+<p><img src="13_linear_models_files/figure-revealjs/plot_pred_int-1.jpeg" width="672" /></p>
+</section>
+<section id="section-1" class="slide level2">
+<h1></h1>
+<br />
+<br />
+<br />
+
+<center>
+<h2>
+Polynomial Regression and Standardization
+</h2>
+</center>
+</section>
+<section id="the-actual-data" class="slide level2">
+<h1>The Actual Data</h1>
+<p><img src="13_linear_models_files/figure-revealjs/all_data-1.jpeg" width="672" /></p>
+<p>This is not linear</p>
+</section>
+<section id="a-nonlinear-model" class="slide level2">
+<h1>A nonlinear Model</h1>
+<p>Likelihood:<br />
+<span class="math inline">\(h_i \sim Normal(\mu_i, \sigma)\)</span><br />
+<br />
+Data Generating Process<br />
+<span class="math inline">\(\mu_i = \alpha + \beta_1 x_i + \beta_2 x_i^2 + \beta_3 x_i^3\)</span><br />
+<br />
+Prior:<br />
+<span class="math inline">\(\alpha \sim Normal(178, 100)\)</span><br />
+<span class="math inline">\(\beta_j \sim Normal(0, 10)\)</span><br />
+<span class="math inline">\(\sigma \sim U(0,50)\)</span></p>
+</section>
+<section id="before-fitting-this-standardize" class="slide level2">
+<h1>Before fitting this, Standardize!</h1>
+<ul>
+<li>Standardizing a predictor aids in fitting
+<ul>
+<li>Scale issues of different variables<br />
+<br />
+</li>
+</ul></li>
+<li>Standardizing yields comparable coefficients<br />
+<br />
+</li>
+<li>You don’t have to
+<ul>
+<li>But if you encounter problems, it’s a good fallback</li>
+</ul></li>
+</ul>
+</section>
+<section id="our-model-1" class="slide level2">
+<h1>Our Model</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">full_height_mod &lt;-<span class="st"> </span><span class="kw">alist</span>(
+  <span class="co">#likelihood</span>
+  height ~<span class="st"> </span><span class="kw">dnorm</span>(mu, sigma),
+  
+  <span class="co">#Data generating process</span>
+  mu &lt;-<span class="st"> </span>alpha +<span class="st"> </span>
+<span class="st">    </span>beta1 *<span class="st"> </span>weight.s +<span class="st"> </span>
+<span class="st">    </span>beta2 *<span class="st"> </span>weight.s2 +
+<span class="st">    </span>beta3 *<span class="st"> </span>weight.s3,
+  
+  <span class="co">#priors</span>
+  alpha ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">178</span>, <span class="dv">100</span>),
+  beta1 ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>, <span class="dv">10</span>),
+  beta2 ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>, <span class="dv">10</span>),
+  beta3 ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>, <span class="dv">10</span>),
+  sigma ~<span class="st"> </span><span class="kw">dunif</span>(<span class="dv">0</span>,<span class="dv">50</span>)
+)</code></pre></div>
+</section>
+<section id="making-variables-and-fitting" class="slide level2">
+<h1>Making variables and Fitting</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Howell1 &lt;-<span class="st"> </span><span class="kw">mutate</span>(Howell1,
+                  <span class="dt">weight.s =</span> (weight-<span class="kw">mean</span>(weight))/<span class="kw">sd</span>(weight),
+                  <span class="dt">weight.s2 =</span> weight.s^<span class="dv">2</span>,
+                  <span class="dt">weight.s3 =</span> weight.s^<span class="dv">3</span>)
+
+full_height_fit &lt;-<span class="st"> </span><span class="kw">map</span>(full_height_mod,
+                       <span class="dt">data =</span> Howell1)</code></pre></div>
+</section>
+<section id="exercise" class="slide level2">
+<h1>Exercise</h1>
+<ol type="1">
+<li>Fit this nonlinear model<br />
+<br />
+</li>
+<li>Assess it<br />
+<br />
+</li>
+<li>Plot the fit and error
+<ul>
+<li>Feel free to use <code>link</code> or the posterior to plot fit error</li>
+</ul></li>
+</ol>
+</section>
+<section id="solution" class="slide level2">
+<h1>Solution</h1>
+<p><img src="13_linear_models_files/figure-revealjs/all_the_things-1.jpeg" width="672" /></p>
+</section>
+<section id="i-hate-that-x-axis" class="slide level2">
+<h1>I hate that x axis</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pred_plot +
+<span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">label =</span> function(x) 
+    <span class="kw">round</span>(x*<span class="kw">sd</span>(Howell1$weight) +<span class="st"> </span><span class="kw">mean</span>(Howell1$weight),<span class="dv">1</span>)) +
+<span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;Weight&quot;</span>)</code></pre></div>
+<p><img src="13_linear_models_files/figure-revealjs/axis-1.jpeg" width="672" /></p>
+</section>
+    </div>
+  </div>
+
+  <script src="libs/reveal.js-3.3.0/lib/js/head.min.js"></script>
+  <script src="libs/reveal.js-3.3.0/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display the page number of the current slide
+        slideNumber: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: false,
+        // Opens links in an iframe preview overlay
+        previewLinks: true,
+        // Transition style
+        transition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>
