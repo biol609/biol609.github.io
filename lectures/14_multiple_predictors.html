@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <title></title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="libs/reveal.js-3.3.0/css/reveal.css"/>
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="libs/reveal.js-3.3.0/css/theme/white.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="style.css"/>
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'libs/reveal.js-3.3.0/css/print/pdf.css' : 'libs/reveal.js-3.3.0/css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+    <!--[if lt IE 9]>
+    <script src="libs/reveal.js-3.3.0/lib/js/html5shiv.js"></script>
+    <![endif]-->
+
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+
+<section id="section" class="slide level2">
+<h1></h1>
+<center>
+<h2>
+Bayesian Analysis with Multiple Predictors
+</h2>
+</center>
+<p><br />
+<img src="images/14/mult_reg_dog.jpg" style="width:50.0%" /></p>
+</section>
+<section id="why-linear-regression-a-simple-statistical-golem" class="slide level2">
+<h1>Why Linear Regression: A Simple Statistical Golem</h1>
+<p><img src="14_multiple_predictors_files/figure-revealjs/fig-1.jpeg" width="480" /></p>
+<ul>
+<li>Describes association between predictor and response<br />
+</li>
+<li>Response is additive combination of predictor(s)<br />
+</li>
+<li>Constant variance</li>
+</ul>
+</section>
+<section id="why-should-we-be-wary-of-linear-regression" class="slide level2">
+<h1>Why should we be wary of linear regression?</h1>
+<p><img src="14_multiple_predictors_files/figure-revealjs/fig-1.jpeg" width="480" /></p>
+<ul>
+<li>Approximate<br />
+</li>
+<li>Not mechanistic<br />
+</li>
+<li>Often deployed without thought<br />
+</li>
+<li>But, often very accurate</li>
+</ul>
+</section>
+<section id="section-1" class="slide level2" data-background="images/14/wafflehouse.jpg">
+<h1></h1>
+</section>
+<section id="section-2" class="slide level2" data-background="images/14/2014-05-15-map1Nik.jpg">
+<h1></h1>
+<!-- from http://www.huffingtonpost.com/nik-freeman/waffle-house-locations_b_5332044.html -->
+</section>
+<section id="waffle-house-does-it-lead-to-perdition" class="slide level2">
+<h1>Waffle House: Does it Lead to Perdition?</h1>
+<p><img src="14_multiple_predictors_files/figure-revealjs/waffle_data-1.jpeg" width="672" /></p>
+</section>
+<section id="so-many-possibilities" class="slide level2">
+<h1>So many possibilities</h1>
+<p><img src="14_multiple_predictors_files/figure-revealjs/waffle_pairs-1.jpeg" width="672" /></p>
+</section>
+<section id="todays-outline" class="slide level2">
+<h1>Today’s Outline</h1>
+<ol type="1">
+<li>Multiple Predictors in a Bayesian Framework
+<ul>
+<li>How multiple predictors tease apart spurious and masked relationships<br />
+<br />
+</li>
+</ul></li>
+<li>Evaluating a Model with Multiple Predictors<br />
+<br />
+</li>
+<li>Problems With Too Many Predictors<br />
+<br />
+</li>
+<li>Categorical Variables</li>
+</ol>
+</section>
+<section id="why-use-multiple-predictors" class="slide level2">
+<h1>Why use multiple predictors</h1>
+<div id="right">
+<ol type="1">
+<li>Controlling for confounds
+<ul>
+<li>Disentangle spurious relationships</li>
+<li>Reveal masked relationships<br />
+<br />
+</li>
+</ul></li>
+<li>Dealing with multiple causation<br />
+<br />
+</li>
+<li>Interactions (soon)</li>
+</ol>
+</div>
+<div id="left">
+<p><img src="14_multiple_predictors_files/figure-revealjs/waffle_pairs2-1.jpeg" width="672" /></p>
+</div>
+</section>
+<section id="why-not-use-multiple-predictors" class="slide level2">
+<h1>Why <em>NOT</em> use multiple predictors</h1>
+<div id="right">
+<ol type="1">
+<li>Multicollinearity<br />
+<br />
+</li>
+<li>Overfitting<br />
+<br />
+</li>
+<li>Loss of precision in estimates<br />
+<br />
+</li>
+<li>Interpretability</li>
+</ol>
+</div>
+<div id="left">
+<p><img src="14_multiple_predictors_files/figure-revealjs/waffle_pairs2-1.jpeg" width="672" /></p>
+</div>
+</section>
+<section id="how-to-build-a-model-with-multiple-predictors" class="slide level2">
+<h1>How to Build a Model with Multiple Predictors</h1>
+<p>Likelihood:<br />
+<span class="math inline">\(h_i \sim Normal(\mu_i, \sigma)\)</span><br />
+<br />
+Data Generating Process<br />
+<span class="math inline">\(\mu_i = \alpha + \beta_1 x1_i + \beta_2 x2_i + ...\)</span><br />
+<br />
+Prior:<br />
+<span class="math inline">\(\alpha \sim Normal(0, 100)\)</span><br />
+<span class="math inline">\(\beta_j \sim Normal(0, 100)\)</span><br />
+<span class="math inline">\(\sigma \sim U(0,50)\)</span></p>
+</section>
+<section id="our-data" class="slide level2">
+<h1>Our Data</h1>
+<p><img src="14_multiple_predictors_files/figure-revealjs/waffle_pairs2-1.jpeg" width="672" /></p>
+</section>
+<section id="lets-start-with-standardization" class="slide level2">
+<h1>Let’s start with standardization</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">WaffleDivorce &lt;-<span class="st"> </span>WaffleDivorce %&gt;%
+
+<span class="st">  </span><span class="co">#using scale to center and divide by SD</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Marriage.s =</span> (Marriage-<span class="kw">mean</span>(Marriage))/<span class="kw">sd</span>(Marriage),
+         <span class="dt">MedianAgeMarriage.s =</span> <span class="kw">as.vector</span>(<span class="kw">scale</span>(MedianAgeMarriage)))</code></pre></div>
+</section>
+<section id="can-we-trust-this" class="slide level2">
+<h1>Can we Trust This?</h1>
+<p><img src="14_multiple_predictors_files/figure-revealjs/waffle_marraige-1.jpeg" width="672" /></p>
+</section>
+<section id="can-we-trust-this-1" class="slide level2">
+<h1>Can we Trust This?</h1>
+<p><img src="14_multiple_predictors_files/figure-revealjs/waffle_median-1.jpeg" width="672" /></p>
+</section>
+<section id="if-these-are-correlated-which-is-the-driver" class="slide level2">
+<h1>If these are correlated, which is the driver?</h1>
+<p><img src="14_multiple_predictors_files/figure-revealjs/marraige_median-1.jpeg" width="672" /></p>
+</section>
+<section id="what-does-a-multiple-regression-coefficient-mean" class="slide level2">
+<h1>What does a Multiple Regression Coefficient Mean?</h1>
+<ul>
+<li>What is the predictive value of one variable once all others have been accounted for?<br />
+<br />
+</li>
+<li>We want a coefficient that explains the unique contribution of a predictor<br />
+<br />
+</li>
+<li>What is the effect of x1 on y after we take out the effect of x2 on x1?</li>
+</ul>
+</section>
+<section id="our-model" class="slide level2">
+<h1>Our Model</h1>
+<p>Likelihood:<br />
+<span class="math inline">\(D_i \sim Normal(\mu_i, \sigma)\)</span><br />
+<br />
+Data Generating Process<br />
+<span class="math inline">\(\mu_i = \alpha + \beta_R R_i + \beta_A A_i\)</span><br />
+<br />
+Prior:<br />
+<span class="math inline">\(\alpha \sim Normal(10, 10)\)</span>     <span class="fragment">Guess from data</span><br />
+<span class="math inline">\(\beta_R \sim Normal(0, 1)\)</span>     <span class="fragment">Because standardized</span><br />
+<span class="math inline">\(\beta_A \sim Normal(0, 1)\)</span>     <span class="fragment">Because standardized</span><br />
+<span class="math inline">\(\sigma \sim U(0,10)\)</span>     <span class="fragment">Guess from data</span></p>
+</section>
+<section id="our-model-1" class="slide level2">
+<h1>Our Model</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod &lt;-<span class="st"> </span><span class="kw">alist</span>(
+  <span class="co">#likelihood</span>
+  Divorce ~<span class="st"> </span><span class="kw">dnorm</span>(mu, sigma),
+  
+  <span class="co">#data generating process</span>
+  mu &lt;-<span class="st"> </span>a +<span class="st"> </span>bR*Marriage.s +<span class="st"> </span>bA *<span class="st"> </span>MedianAgeMarriage.s,
+  
+  <span class="co"># Priors</span>
+  a ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">10</span>,<span class="dv">10</span>),
+  bR ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">1</span>),
+  bA ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">1</span>),
+  sigma ~<span class="st"> </span><span class="kw">dunif</span>(<span class="dv">0</span>,<span class="dv">10</span>)
+)
+
+fit &lt;-<span class="st"> </span><span class="kw">map</span>(mod, <span class="dt">data=</span>WaffleDivorce)</code></pre></div>
+</section>
+<section id="results-we-only-need-median-age" class="slide level2">
+<h1>Results: We Only Need Median Age</h1>
+<pre><code>       Mean StdDev  5.5% 94.5%
+a      9.69   0.20  9.36 10.01
+bR    -0.13   0.28 -0.58  0.31
+bA    -1.13   0.28 -1.58 -0.69
+sigma  1.44   0.14  1.21  1.67</code></pre>
+<p><img src="14_multiple_predictors_files/figure-revealjs/waffleRes-1.jpeg" width="672" /></p>
+</section>
+<section id="todays-outline-1" class="slide level2">
+<h1>Today’s Outline</h1>
+<ol type="1">
+<li>Multiple Predictors in a Bayesian Framework
+<ul>
+<li>How multiple predictors tease apart spurious and masked relationships<br />
+<br />
+</li>
+</ul></li>
+<li><strong>Evaluating a Model with Multiple Predictors</strong><br />
+<br />
+</li>
+<li>Problems With Too Many Predictors<br />
+<br />
+</li>
+<li>Categorical Variables</li>
+</ol>
+</section>
+<section id="how-to-understand-posteriors" class="slide level2">
+<h1>How to Understand Posteriors</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pairs</span>(fit)</code></pre></div>
+<p><img src="14_multiple_predictors_files/figure-revealjs/wafflesPostPair-1.jpeg" width="672" /></p>
+</section>
+<section id="how-to-understand-posteriors-1" class="slide level2">
+<h1>How to Understand Posteriors</h1>
+<ol type="1">
+<li>Predictor-residual plots
+<ul>
+<li>What if you remove the effect of other predictors?<br />
+<br />
+</li>
+</ul></li>
+<li>Counterfactual plots
+<ul>
+<li>What if something else had happened?<br />
+<br />
+</li>
+</ul></li>
+<li>Posterior Predictions
+<ul>
+<li>How close are model predictions to the data</li>
+</ul></li>
+</ol>
+</section>
+<section id="predictor-residual-plots" class="slide level2">
+<h1>Predictor-Residual Plots</h1>
+<ul>
+<li>The <code>cr.plots</code> from the <code>car</code> package
+<ul>
+<li>Component-residual<br />
+<br />
+</li>
+</ul></li>
+<li>Take the residual of a predictor, assess it’s predictive power<br />
+<br />
+</li>
+</ul>
+</section>
+<section id="steps-to-make-predictor-residual-plots" class="slide level2">
+<h1>Steps to Make Predictor-Residual Plots</h1>
+<ol type="1">
+<li>Compute predictor 1 ~ all other predictors<br />
+<br />
+</li>
+<li>Take residual of predictor 1<br />
+<br />
+</li>
+<li>Regress predictor 1 on response</li>
+</ol>
+</section>
+<section id="pr-model-part-1" class="slide level2">
+<h1>PR Model Part 1</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">m_mod &lt;-<span class="st"> </span><span class="kw">alist</span>(
+  <span class="co">#model</span>
+  Marriage.s ~<span class="st"> </span><span class="kw">dnorm</span>(mu, sigma),
+  mu &lt;-<span class="st"> </span>a +<span class="st"> </span>b*MedianAgeMarriage.s,
+  
+  <span class="co">#priors</span>
+  a ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">10</span>),
+  b ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">10</span>),
+  sigma ~<span class="st"> </span><span class="kw">dunif</span>(<span class="dv">0</span>,<span class="dv">10</span>))
+
+m_fit &lt;-<span class="st"> </span><span class="kw">map</span>(m_mod, <span class="dt">data=</span>WaffleDivorce)</code></pre></div>
+</section>
+<section id="pr-model-part-2" class="slide level2">
+<h1>PR Model Part 2</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">WaffleDivorce &lt;-<span class="st"> </span>WaffleDivorce %&gt;%
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Marriage_resid =</span> Marriage.s -<span class="st"> </span>
+<span class="st">           </span>(<span class="kw">coef</span>(m_fit)[<span class="dv">1</span>] +<span class="st"> </span><span class="kw">coef</span>(m_fit)[<span class="dv">2</span>]*MedianAgeMarriage.s)
+)</code></pre></div>
+</section>
+<section id="the-predictor-residual-plot" class="slide level2">
+<h1>The Predictor-Residual Plot</h1>
+<p><img src="14_multiple_predictors_files/figure-revealjs/waf_cr-1.jpeg" width="672" /></p>
+<div class="fragment">
+What have we learned after accounting for median age?
+</div>
+</section>
+<section id="counterfactual-plots" class="slide level2">
+<h1>Counterfactual Plots</h1>
+<ul>
+<li>Counterfactual: A conditional statement of “if this, then …”<br />
+<br />
+</li>
+<li>Powerful way of assessing models - “If we had seen Marraige Rate as x, then the effect of Median age on divorce rate would be…”<br />
+<br />
+</li>
+<li>Shows model implied predictions, often at levels nor observed</li>
+</ul>
+</section>
+<section id="counterfactual-plots-code" class="slide level2">
+<h1>Counterfactual Plots: Code</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cf_data &lt;-<span class="st"> </span><span class="kw">crossing</span>(<span class="dt">Marriage.s =</span> -<span class="dv">2</span>:<span class="dv">2</span>, 
+                    <span class="dt">MedianAgeMarriage.s =</span> <span class="kw">seq</span>(-<span class="dv">2</span>,<span class="dv">2</span>,<span class="dt">length.out=</span><span class="dv">300</span>))
+<span class="co">#get the data</span>
+cf_mu &lt;-<span class="st"> </span><span class="kw">link</span>(fit, <span class="dt">data =</span> cf_data, <span class="dt">refresh=</span><span class="dv">0</span>)
+cf_pred &lt;-<span class="st"> </span><span class="kw">sim</span>(fit, <span class="dt">data=</span>cf_data, <span class="dt">refresh=</span><span class="dv">0</span>)
+
+<span class="co">#Get the mean trend</span>
+cf_data$Divorce =<span class="st"> </span><span class="kw">apply</span>(cf_mu, <span class="dv">2</span>, median)
+
+<span class="co">#get the intervals</span>
+cf_mu_pi &lt;-<span class="st"> </span><span class="kw">apply</span>(cf_mu, <span class="dv">2</span>, HPDI)
+cf_pred_pi &lt;-<span class="kw">apply</span>(cf_pred, <span class="dv">2</span>, HPDI)
+
+<span class="co">#add back to the data</span>
+cf_data &lt;-<span class="st"> </span>cf_data %&gt;%<span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">mu_lwr =</span> cf_mu_pi[<span class="dv">1</span>,], <span class="dt">mu_upr =</span> cf_mu_pi[<span class="dv">2</span>,],
+         <span class="dt">pred_lwr =</span> cf_pred_pi[<span class="dv">1</span>,], <span class="dt">pred_upr =</span> cf_pred_pi[<span class="dv">2</span>,])</code></pre></div>
+</section>
+<section id="what-do-we-learn-about-the-effects-of-median-marriage-age" class="slide level2">
+<h1>What do we learn about the effects of Median Marriage Age?</h1>
+<p><img src="14_multiple_predictors_files/figure-revealjs/cf_plot-1.jpeg" width="672" /></p>
+</section>
+<section id="what-do-we-learn-about-the-effects-of-median-age-and-marriage-rate" class="slide level2">
+<h1>What do we learn about the effects of Median Age and Marriage Rate?</h1>
+<p><img src="14_multiple_predictors_files/figure-revealjs/cf_plot2-1.jpeg" width="672" /></p>
+</section>
+<section id="posterior-prediction-assessing-fit" class="slide level2">
+<h1>Posterior Prediction: Assessing Fit</h1>
+<ul>
+<li>Good ole’ Observed v. Residual, but now with moar error!<br />
+<br />
+</li>
+<li>Residuals by groups<br />
+<br />
+</li>
+<li>Residuals by other candidate predictors</li>
+</ul>
+</section>
+<section id="getting-residuals" class="slide level2">
+<h1>Getting Residuals</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mu &lt;-<span class="st"> </span><span class="kw">link</span>(fit, <span class="dt">refresh=</span><span class="dv">0</span>)
+
+<span class="co">#Get residual info</span>
+WaffleDivorce &lt;-<span class="st"> </span>WaffleDivorce %&gt;%
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Divorce_mu =</span>  <span class="kw">apply</span>(mu, <span class="dv">2</span>, mean),
+         
+         <span class="dt">Divorce_mu_lwr =</span> <span class="kw">apply</span>(mu, <span class="dv">2</span>, HPDI)[<span class="dv">1</span>,],
+         <span class="dt">Divorce_mu_upr =</span> <span class="kw">apply</span>(mu, <span class="dv">2</span>, HPDI)[<span class="dv">2</span>,],
+         
+         <span class="co">#residuals</span>
+         <span class="dt">Divorce_res =</span> Divorce -<span class="st"> </span>Divorce_mu,
+         <span class="dt">Divorce_res_lwr =</span> Divorce -<span class="st"> </span>Divorce_mu_lwr,
+         <span class="dt">Divorce_res_upr =</span> Divorce -<span class="st"> </span>Divorce_mu_upr)</code></pre></div>
+</section>
+<section id="what-do-we-learn-here" class="slide level2">
+<h1>What do we learn here?</h1>
+<p><img src="14_multiple_predictors_files/figure-revealjs/plot_res-1.jpeg" width="672" /></p>
+<div class="fragment">
+What is up with those outlying points?
+</div>
+</section>
+<section id="posterior-prediction-where-did-things-go-wrong" class="slide level2">
+<h1>Posterior Prediction: Where did things go wrong?</h1>
+<p><code>postcheck</code> to see estimate, data, &amp; fit and prediction error <img src="14_multiple_predictors_files/figure-revealjs/postValid-1.jpeg" width="672" /></p>
+</section>
+<section id="other-predictors" class="slide level2">
+<h1>Other Predictors?</h1>
+<p><img src="14_multiple_predictors_files/figure-revealjs/waffleError-1.jpeg" width="672" /></p>
+</section>
+<section id="todays-outline-2" class="slide level2">
+<h1>Today’s Outline</h1>
+<ol type="1">
+<li>Multiple Predictors in a Bayesian Framework
+<ul>
+<li>How multiple predictors tease apart spurious and masked relationships<br />
+<br />
+</li>
+</ul></li>
+<li>Evaluating a Model with Multiple Predictors<br />
+<br />
+</li>
+<li><strong>Problems With Too Many Predictors</strong><br />
+<br />
+</li>
+<li>Categorical Variables</li>
+</ol>
+</section>
+<section id="why-not-add-everything" class="slide level2">
+<h1>Why not add everything?</h1>
+<div id="right">
+<pre><code>alist(
+    Divorce ~ dnorm( mu , sigma ),
+    mu &lt;- Intercept +
+        b_MedianAgeMarriage_s*MedianAgeMarriage_s +
+        b_Marriage_s*Marriage_s +
+        b_South*South +
+        b_Population*Population,
+    Intercept ~ dnorm(0,10),
+    b_MedianAgeMarriage_s ~ dnorm(0,10),
+    b_Marriage_s ~ dnorm(0,10),
+    b_South ~ dnorm(0,10),
+    b_Population ~ dnorm(0,10),
+    sigma ~ dcauchy(0,2)
+)</code></pre>
+</div>
+<div id="left">
+<ul>
+<li>Loss of precision</li>
+<li>Multicollinearity</li>
+<li>Loss of Interpretability</li>
+<li>Overfitting</li>
+</ul>
+</div>
+</section>
+<section id="loss-of-precision" class="slide level2">
+<h1>Loss of precision</h1>
+<p><img src="14_multiple_predictors_files/figure-revealjs/moar_coefs-1.jpeg" width="672" /></p>
+</section>
+<section id="bias-variance-tradeoff" class="slide level2">
+<h1>Bias-Variance Tradeoff</h1>
+<p><img src="images/14/parameter_bias_tradeoff.jpg" /></p>
+</section>
+<section id="multicollinearity-and-crabs" class="slide level2">
+<h1>Multicollinearity and Crabs</h1>
+<p><img src="images/14/Florida-Stone-Crab.jpg" /></p>
+<p><img src="14_multiple_predictors_files/figure-revealjs/mvn-1.jpeg" width="672" /> <span style="font-size=0.1em; top=100%">TreasureCoast.com</span></p>
+</section>
+<section id="what-did-coefficeints-for-each-claw-size-mean" class="slide level2">
+<h1>What did coefficeints for each claw size mean?</h1>
+<div class="fragment">
+<br><br>
+<center>
+What do you gain by knowing one claw size after knowing the other claw size?
+</center>
+</div>
+</section>
+<section id="do-crabs-really-not-have-an-effect" class="slide level2">
+<h1>Do Crabs really not have an effect?</h1>
+<p><img src="14_multiple_predictors_files/figure-revealjs/crab_eff-1.jpeg" width="672" /></p>
+</section>
+<section id="the-problem-of-correlated-coefficients" class="slide level2">
+<h1>The Problem of Correlated Coefficients</h1>
+<p><img src="14_multiple_predictors_files/figure-revealjs/crab_pairs-1.jpeg" width="672" /></p>
+</section>
+<section id="the-information-is-there-if-you-sum-claw-effects" class="slide level2">
+<h1>The Information is there if you sum claw effects</h1>
+<p><img src="14_multiple_predictors_files/figure-revealjs/post_plots-1.jpeg" width="864" /></p>
+</section>
+<section id="todays-outline-3" class="slide level2">
+<h1>Today’s Outline</h1>
+<ol type="1">
+<li>Multiple Predictors in a Bayesian Framework
+<ul>
+<li>How multiple predictors tease apart spurious and masked relationships<br />
+<br />
+</li>
+</ul></li>
+<li>Evaluating a Model with Multiple Predictors<br />
+<br />
+</li>
+<li>Problems With Too Many Predictors<br />
+<br />
+</li>
+<li><strong>Categorical Variables</strong></li>
+</ol>
+</section>
+<section id="categorical-variables" class="slide level2">
+<h1>Categorical Variables</h1>
+<ul>
+<li>Lots of ways to write models with categorical variables<br />
+<br />
+</li>
+<li>We all hate R’s treatment contrasts<br />
+<br />
+</li>
+<li>Two main ways to write a model</li>
+</ul>
+</section>
+<section id="categorical-model-construction" class="slide level2">
+<h1>Categorical Model Construction</h1>
+<ol type="1">
+<li>Code each level as 1 or 0 if present/absent
+<ul>
+<li>Need to have one baseline level<br />
+</li>
+<li>Treatment contrasts!<br />
+</li>
+<li><code>predation &lt;- a + b * is_crab</code></li>
+</ul></li>
+</ol>
+<p><br />
+2. Index your categories<br />
+- Need to convert factors to levels with <code>as.numeric()</code><br />
+- <code>predaion &lt;- a[species]</code></p>
+</section>
+<section id="monkies-and-milk" class="slide level2">
+<h1>Monkies and Milk</h1>
+<p><img src="images/14/monkies_milk.jpg" /></p>
+</section>
+<section id="monkies-and-milk-production" class="slide level2">
+<h1>Monkies and Milk Production</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(milk)
+<span class="kw">head</span>(milk)</code></pre></div>
+<pre><code>             clade            species kcal.per.g perc.fat perc.protein
+1    Strepsirrhine     Eulemur fulvus       0.49    16.60        15.42
+2    Strepsirrhine           E macaco       0.51    19.27        16.91
+3    Strepsirrhine           E mongoz       0.46    14.11        16.85
+4    Strepsirrhine      E rubriventer       0.48    14.91        13.18
+5    Strepsirrhine        Lemur catta       0.60    27.28        19.50
+6 New World Monkey Alouatta seniculus       0.47    21.22        23.58
+  perc.lactose mass neocortex.perc
+1        67.98 1.95          55.16
+2        63.82 2.09             NA
+3        69.04 2.51             NA
+4        71.91 1.62             NA
+5        53.22 2.19             NA
+6        55.20 5.25          64.54</code></pre>
+</section>
+<section id="to-easily-make-variables" class="slide level2">
+<h1>To easily make Variables</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mmat &lt;-<span class="st"> </span><span class="kw">model.matrix.default</span>(mass ~<span class="st"> </span>clade, <span class="dt">data=</span>milk)
+<span class="kw">colnames</span>(mmat) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Ape&quot;</span>, <span class="st">&quot;New_World_Monkey&quot;</span>, <span class="st">&quot;Old_World_Monkey&quot;</span>, <span class="st">&quot;Strepsirrhine&quot;</span>)
+milk &lt;-<span class="st"> </span><span class="kw">cbind</span>(milk, mmat)
+
+<span class="kw">head</span>(mmat)</code></pre></div>
+<pre><code>  Ape New_World_Monkey Old_World_Monkey Strepsirrhine
+1   1                0                0             1
+2   1                0                0             1
+3   1                0                0             1
+4   1                0                0             1
+5   1                0                0             1
+6   1                1                0             0</code></pre>
+</section>
+<section id="original-milk-model" class="slide level2">
+<h1>Original Milk Model</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">milk_mod_1 &lt;-<span class="st"> </span><span class="kw">alist</span>(
+  kcal.per.g ~<span class="st"> </span><span class="kw">dnorm</span>(mu, sigma),
+  
+  mu &lt;-<span class="st"> </span>a*Ape +<span class="st"> </span>b1*New_World_Monkey +
+<span class="st">    </span>b2*Old_World_Monkey +<span class="st"> </span>b3*Strepsirrhine,
+  
+  a ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="fl">0.6</span>, <span class="dv">10</span>),
+  b1 ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">1</span>),
+  b2 ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">1</span>),
+  b3 ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">1</span>),
+  sigma ~<span class="st"> </span><span class="kw">dunif</span>(<span class="dv">0</span>,<span class="dv">10</span>)
+)
+
+milk_fit_1 &lt;-<span class="st"> </span><span class="kw">map</span>(milk_mod_1, <span class="dt">data=</span>milk)</code></pre></div>
+</section>
+<section id="milk-coefs-what-does-a-and-b-mean" class="slide level2">
+<h1>Milk Coefs: What does a and b mean?</h1>
+<p><img src="14_multiple_predictors_files/figure-revealjs/plot_ape_1-1.jpeg" width="672" /></p>
+</section>
+<section id="to-get-the-new-world-mean" class="slide level2">
+<h1>To get the New World mean…</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">samp_milk &lt;-<span class="st"> </span><span class="kw">extract.samples</span>(milk_fit_1)
+
+new_world &lt;-<span class="st"> </span>samp_milk$a +<span class="st"> </span>samp_milk$b1
+
+<span class="co">#Deviation from Ape</span>
+<span class="kw">HPDI</span>(samp_milk$b1)</code></pre></div>
+<pre><code>     |0.89      0.89| 
+0.08590751 0.25427773 </code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#New World Monkies</span>
+<span class="kw">HPDI</span>(new_world)</code></pre></div>
+<pre><code>    |0.89     0.89| 
+0.6522314 0.7725283 </code></pre>
+</section>
+<section id="a-better-way" class="slide level2">
+<h1>A Better Way</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">milk$clade_idx &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(milk$clade)
+
+<span class="co">#A new model</span>
+milk_mod_2 &lt;-<span class="st"> </span><span class="kw">alist</span>(
+  kcal.per.g ~<span class="st"> </span><span class="kw">dnorm</span>(mu, sigma),
+  
+  <span class="co">#note the indexing!</span>
+  mu &lt;-<span class="st"> </span>a[clade_idx],
+  
+  <span class="co">#four priors with one line!</span>
+  a[clade_idx] ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="fl">0.6</span>, <span class="dv">10</span>),
+  sigma ~<span class="st"> </span><span class="kw">dunif</span>(<span class="dv">0</span>,<span class="dv">10</span>)
+  
+)
+
+milk_fit_2 &lt;-<span class="st"> </span><span class="kw">map</span>(milk_mod_2, <span class="dt">data=</span>milk)</code></pre></div>
+</section>
+<section id="compare-results" class="slide level2">
+<h1>Compare Results</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#New World Monkies</span>
+<span class="co">#From Mod1</span>
+<span class="kw">HPDI</span>(new_world)</code></pre></div>
+<pre><code>    |0.89     0.89| 
+0.6522314 0.7725283 </code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#From Mod2 - note indexing</span>
+samp_fit2 &lt;-<span class="st"> </span><span class="kw">extract.samples</span>(milk_fit_2)
+<span class="kw">HPDI</span>(samp_fit2$a[,<span class="dv">2</span>])</code></pre></div>
+<pre><code>    |0.89     0.89| 
+0.6510912 0.7728139 </code></pre>
+</section>
+<section id="todays-exercise" class="slide level2">
+<h1>Today’s Exercise</h1>
+<ol type="1">
+<li>Build a model explaiing the <code>kcal.per.g</code> of milk<br />
+<br />
+</li>
+<li>First try 2 continuous predictors<br />
+<br />
+</li>
+<li>Add species<br />
+<br />
+</li>
+<li>Bonus: Can you make an interaction (try this <em>last</em>)</li>
+</ol>
+</section>
+    </div>
+  </div>
+
+  <script src="libs/reveal.js-3.3.0/lib/js/head.min.js"></script>
+  <script src="libs/reveal.js-3.3.0/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display the page number of the current slide
+        slideNumber: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: false,
+        // Opens links in an iframe preview overlay
+        previewLinks: true,
+        // Transition style
+        transition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>

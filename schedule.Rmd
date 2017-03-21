@@ -51,7 +51,7 @@ __Etherpad:__ https://etherpad.wikimedia.org/p/609-bayes
 
   
 ### Week 7. 
-__Lecture:__ [Linear Bayesian Models](./lectures/13_linear_models.html)  
+__Lecture:__ [Linear Bayesian Models](./lectures/13_linear_models.html), [Multiple Predictor Variables (including Categoricals)](./lectures/14_multiple_predictors.html)  
 __Reading:__ McElreath Chapter 4-5  
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-linreg    
 
