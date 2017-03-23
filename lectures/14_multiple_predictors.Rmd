@@ -620,10 +620,10 @@ HPDI(samp_fit2$a[,2])
 ```
 
 ## Today's Exercise
-1. Build a model explaiing the `kcal.per.g` of milk  
+1. Build a model explaing the `kcal.per.g` of milk  
 \
 2. First try 2 continuous predictors  
 \
-3. Add species  
+3. Add clade  
 \
 4. Bonus: Can you make an interaction (try this *last*)
