@@ -1,0 +1,506 @@
+---
+title:
+css: style.css
+output:
+  revealjs::revealjs_presentation:
+    reveal_options:
+      slideNumber: true
+      previewLinks: true
+    theme: white
+    center: false
+    transition: fade
+    self_contained: false
+    lib_dir: libs
+---
+##
+<center>
+<h2>Information Theory and a Multimodel World</h2>
+</center>
+\
+![](./images/15/angry-bjork-and-if-you-overfit-once-more-youll-me-an-army-of-aic.jpg){width="60%"}
+
+
+```{r prep, echo=FALSE, cache=FALSE, message=FALSE, warning=FALSE}
+library(knitr)
+
+opts_chunk$set(fig.height=5, fig.width=7, comment=NA, 
+               warning=FALSE, message=FALSE, 
+               dev="jpeg", echo=FALSE)
+
+library(rethinking)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+```
+
+## How complex a model do you need to be useful?
+![](./images/15/matter-model.jpg)
+
+## Some models are simple but good enough
+![](./images/15/turtles.jpg)
+
+## More Complex Models are Not Always Better or Right
+![](./images/15/helio_geo.jpg)
+
+## Consider this data...
+```{r, echo=TRUE}
+
+sppnames <- c( "afarensis","africanus",
+               "habilis","boisei",
+               "rudolfensis","ergaster","sapiens")
+
+brainvolcc <- c( 438 , 452 , 612, 521, 752, 871, 1350 )
+masskg <- c( 37.0 , 35.5 , 34.5 , 41.5 , 55.5 , 61.0 , 53.5 )
+
+d <- data.frame( species=sppnames, 
+                 brain=brainvolcc, 
+                 mass=masskg )
+```
+
+## Underfitting
+```{r underfit}
+baseplot <- ggplot(data = d, mapping=aes(y=brainvolcc, x=masskg)) +
+  geom_point(shape=1, size=2) +
+  theme_bw(base_size=18)
+
+baseplot +
+  stat_smooth(method="lm", formula = "y ~ 1") +
+  ggtitle("k=0") 
+```
+
+We have explained nothing!
+
+## Overfitting
+```{r overfit}
+baseplot +
+  stat_smooth(method="glm", formula = "y ~ poly(x,6)")  +
+  ggtitle("k=6")
+```
+
+We have perfectly explained this sample
+
+## What is the right fit?
+```{r medfit}
+library(gridExtra)
+
+grid.arrange(
+baseplot +
+  stat_smooth(method="lm", formula = "y ~ poly(x,1)") +
+  ggtitle("k=1"),
+
+baseplot +
+  stat_smooth(method="lm", formula = "y ~ poly(x,2)") +
+  ggtitle("k=2"), nrow=1 )
+```
+
+## {data-background="images/15/GillrayBritannia.jpg"}
+
+## How do we Navigate?
+1. Regularization  
+    - Penalize parameters with weak support
+\
+2. Optimization for Prediction  
+    - Information Theory  
+    - Draws from comparison of information loss
+
+## In and Out of Sample Deviance
+```{r dev_plot1}
+linplot <- baseplot +
+  stat_smooth(method="lm", formula = "y ~ poly(x,1)") 
+
+linplot
+
+lmreg <- lm(brainvolcc ~ masskg, data=d)
+```
+<div class="fragment">Deviance = -2 * log(dnorm($y_i | \mu_i$))  </div>
+<div class="fragment">The deviance of this linear regression is `r deviance(lmreg)`</div>
+
+## In and Out of Sample Deviance
+```{r dev_plot2}
+linplot +
+  geom_point(size=2, x=50, y=515, color="red")
+```
+
+Prediction: `r predict(lmreg, newdata=data.frame(masskg=50))`, Observe: 515  
+Deviance: `r -2*dnorm(807, 515, log=TRUE)`
+
+## In and Out of Sample Deviance
+```{r simtrain, cache=TRUE, results="hide"}
+stt <- function(n=1e3, k=1, b_sigma=100, ...){
+ # print(k)
+  set.seed(2002)
+  ret <- mcreplicate(n, sim.train.test(k=k, ...), mc.cores=4)
+  ret <- as.data.frame(ret)
+  ret$type <- c("Train", "Test")
+  ret %>% gather(v, dev, -type)
+}
+
+simdf <- data.frame(r=1:5) %>%
+  group_by(k=1:5) %>%
+  nest() %>%
+  mutate(var = purrr::map(data, ~stt(k=.$r[1]))) %>%
+  unnest(var) %>%
+  group_by(type, k) %>%
+  summarize(mean_deviance = mean(dev),
+            deviance_lwr = mean_deviance-sd(dev),
+            deviance_upr = mean_deviance+sd(dev)
+  ) %>%
+  ungroup()
+```
+
+```{r simtrainplot}
+base_simplot <- ggplot(simdf, mapping=aes(x=k, y=mean_deviance, 
+                          ymin=deviance_lwr, ymax=deviance_upr,
+                          color=type, shape=type)) +
+  geom_point(size=2) +
+  geom_line() +
+  theme_bw(base_size=17)+
+  scale_shape_manual(values=c(1,2,3)) +
+  scale_color_manual(values=c("black", "blue"))
+
+
+base_simplot
+```
+
+## Our Goal for Judging Models
+- Can we minimize the out of sample deviance  
+\
+- So, fit a model, and evaluate how different the deviance is for a training versus test data set is  
+\
+- What can we use to minimize the difference?
+
+## Regularlization
+<div id="left">
+```{r priors, fig.height=6, fig.width=6}
+dens_df <- crossing(sigma = c(1,0.2,0.5), val = seq(-3,3, length.out=200)) %>%
+  mutate(dens = dnorm(val, 0, sigma))
+
+qplot(val, dens, color=factor(sigma), geom="line", data=dens_df) +
+  ylab("density") +
+  theme_bw(base_size=17)
+```
+
+</div>
+<div id="right">
+\
+- Regularization means shrinking the prior towards 0  
+\
+- Means data has to work harder to overcome prior  
+\
+- Good way to shrink weak effects with little data, which are often spurious  
+\
+- But, requires significant tuning
+</div>
+
+## Regularization and Train-Test Deviance
+```{r regular, results="hide", cache=TRUE}
+
+regulardf <- crossing(k=1:5, sigma=c(1, 0.5, 0.2)) %>%
+  group_by(a=1:15) %>%
+  nest() %>%
+  mutate(var = purrr::map(data, ~stt(k=.$k[1], b_sigma=.$b_sigma[1]))) %>%
+  mutate(var = purrr::map2(data, var, crossing)) %>%
+  unnest(var) %>%
+  group_by(type, k, sigma) %>%
+  summarize(mean_deviance = mean(dev),
+            deviance_lwr = mean_deviance-sd(dev),
+            deviance_upr = mean_deviance+sd(dev)
+  ) %>%
+  ungroup()
+```
+
+```{r regularplot}
+qplot(k, mean_deviance, shape=factor(sigma), lty=factor(sigma), color=type, 
+      geom="blank", data=regulardf) +
+  geom_point(size=2) +
+  geom_line() +
+  theme_bw(base_size=17) +
+  scale_shape_manual(values=c(1,2,3)) +
+  scale_color_manual(values=c("black", "blue"))
+
+```
+
+## A Criteria Estimating Test Sample Deviance
+- What if we could estimate out of sample deviance?  
+\
+- The difference between training and testing deviance shows overfitting  
+\
+
+## A Criteria Estimating Test Sample Deviance
+```{r diff}
+diff_df <- regulardf %>% 
+  select(-deviance_lwr, -deviance_upr) %>%
+  spread(type, mean_deviance) %>%
+  group_by(sigma, k) %>%
+  summarize(difference = Test - Train)
+qplot(k, difference, data=diff_df) +
+  stat_smooth(method="lm")
+```
+Slope here of `r round(coef(lm(difference ~ k, data=diff_df))[2], 2)`
+
+## AIC
+<div id="right">
+![](./images/15/hirotugu_akaike.jpg)
+</div>
+<div id="left">
+- So, $E[D_{test}] = D_{train} + 2K$  
+\
+- This is Akaike's Information Criteria (AIC)  
+\
+</div>
+
+$$AIC = Deviance + 2K$$
+
+
+## AIC
+- AIC optimized for forecasting (out of sample deviance)  
+\
+- Requires flat priors  
+\
+- Assumes large N relative to K  
+    - AICc for a correction  
+\
+- Difficult to define in a mixed model context
+
+## What about IC in Bayes?
+- We *do* estimate the posterior distribution of the deviance  
+\
+- Average of the posterior, $\bar{D}$ is our $D_{train}$  
+\
+- But what about # of parameters?  
+    - For a non-mixed model, this is not a concern - just the AIC  
+    - For a mixed model...trickier
+
+## Effective number of Parameters
+- In addition to $\bar{D}$, there is also $\hat{D}$  
+    - The value of the posterior at the posterior mean  
+\
+- Given Bayesian logic: 
+    - $\bar{D}$ is our estimate of the out of sample deviance
+    - $\hat{D}$ is our $D_{train}$ 
+    - So, $\bar{D} - \hat{D}$ = number of parameters\
+\
+- We term this $p_D$ for effective number of parameters
+
+## DIC
+![](./images/15/Sir-David-Spiegelhalter_I0A0548.jpg)
+\
+$$DIC = 2 \bar{D} - 2 p_D$$  
+\
+## DIC
+$$DIC = 2 \bar{D} - 2 p_D$$  
+
+- Works well for multivariate normal posteriors  
+- Handles mixed models  
+- Reduces to AIC with flat priors  
+- But does not require flat priors - which does interesting things to $p_D$!
+- But... fails with anything non-normal, and hot debate on even mixed effects
+
+## And so we pause...
+- Our goal is to maximize prediction  
+\
+- Why not look at the pieces that make up the deviance  
+    - The pointwise predictive power of the posterior  
+\
+- We can define the Pr(y<sub>i</sub> | posterior simulations)  
+  - This tells us the distribution of the predictive power of our posterior for each point  
+  - $llpd = \sum log Pr(y_i | \theta)$
+  
+## But what about Parameters?
+- We know that as k increases, our uncertainty in coefficients increases  
+\
+- As uncertainty increases, Pr(y<sub>i</sub> | simulations) widens  
+\
+- Thus, this variance gives us an effective penalty term  
+\
+- $p_{waic} = \sum Var(log Pr(y_i | \theta))$
+
+## Widely Applicable IC
+$$WAIC = -2 \sum log Pr(y_i | \theta) + 2 \sum Var(log Pr(y_i | \theta))$$  
+\
+$$= -2 llpd + 2 p_{waic}$$
+\
+\
+<li> Wantanabe's Information Criteria  
+\
+<li> Advantage in being pointwise is that we also get an estimate of uncertainty  
+\
+<li> Disadvantage that inaprporpiate to use with lagged (spatial or temporal) predictors
+
+## Which should I use?
+- AIC for flat priors, fixed effects is fine\
+\
+- Adding priors, mixed models, DIC or WAIC  
+\
+- Non-gaussian posterior? WAIC  
+\
+- Lagged predictors? DIC
+
+## How do I use my IC?
+We can calculate:  
+\
+$$w_{i} = \frac{e^{\Delta_{i}/2 }}{\displaystyle \sum^R_{r=1} e^{\Delta_{i}/2 }}$$\
+Where $w_{i}$ is the *relative support* for model i making the best prediction
+compared to other models in the set being considered.\
+\
+Model weights summed together = 1
+
+## Monkies and Milk
+![](./images/14/monkies_milk.jpg)
+
+```{r monkey_load, echo=TRUE}
+data(milk)
+d <- milk[ complete.cases(milk) , ]
+d$neocortex <- d$neocortex.perc / 100
+```
+
+## A lotta Models
+```{r mods, echo=TRUE}
+a.start <- mean(d$kcal.per.g)
+sigma.start <- log(sd(d$kcal.per.g))
+
+#null
+m6.11 <- map(
+    alist(
+        kcal.per.g ~ dnorm( a , exp(log.sigma) )
+    ) ,
+    data=d , start=list(a=a.start,log.sigma=sigma.start) )
+
+#neocortex only
+m6.12 <- map(
+    alist(
+        kcal.per.g ~ dnorm( mu , exp(log.sigma) ) ,
+        mu <- a + bn*neocortex
+    ) ,
+    data=d , start=list(a=a.start,bn=0,log.sigma=sigma.start) )
+```
+
+## A lotta Models
+```{r moar_mods, echo=TRUE}
+# log(mass) only
+m6.13 <- map(
+    alist(
+        kcal.per.g ~ dnorm( mu , exp(log.sigma) ) ,
+        mu <- a + bm*log(mass)
+    ) ,
+    data=d , start=list(a=a.start,bm=0,log.sigma=sigma.start) )
+
+# neocortex + log(mass)
+m6.14 <- map(
+    alist(
+        kcal.per.g ~ dnorm( mu , exp(log.sigma) ) ,
+        mu <- a + bn*neocortex + bm*log(mass)
+    ) ,
+    data=d , start=list(a=a.start,bn=0,bm=0,log.sigma=sigma.start) )
+```
+
+## A WAIC
+```{r waic, echo=TRUE, refresh=0}
+WAIC( m6.14 )
+```
+
+## Comparing Models
+```{r waic_compare, echo=TRUE}
+milk.models <- compare( m6.11 , m6.12 , m6.13 , m6.14 )
+milk.models
+```
+
+## Comparing Models
+```{r waic_compare_fig, echo=TRUE}
+plot(milk.models, cex=1.5)
+```
+
+<Center>solid = deviance, circle=WAIC, triangle = $\Delta$WAIC</center>
+
+
+## {data-background-color="black"}
+\
+\
+![](./images/15/chorus_line_model_selection.jpg)
+
+## Death to model selection
+- While sometimes the model you should use is clear, more often it is *not*  
+\
+- Further, you made those models for a reason: you suspect those terms are important  
+\
+- Better to look at coefficients across models  
+\
+- For actual predictions, ensemble predictions provide real uncertainty
+
+## {data-background-color="black"}
+\
+![](./images/15/bjork-on-phone-yes-i-am-all-about-the-deviance-let-us-make-it-shrink-our-parameters.jpg)
+
+## Coefficients
+Remember, `m6.14` has a 97% WAIC model weight  
+\
+```{r coeftab, echo=TRUE}
+ctab <- coeftab( m6.11 , m6.12 , m6.13 , m6.14)
+ctab
+```
+
+## Coefficients
+Remember, `m6.14` has a 97% WAIC model weight  
+\
+```{r coeftab_plot, echo=TRUE}
+plot(ctab)
+```
+
+## Ensemble Prediction
+- Ensemble prediction gives us better uncertainty estimates  
+\
+- Takes relative weights of predictions into account  
+\
+- Takes weights of coefficients into account  
+\
+- Basicaly, get simulated predicted values, multiply them by model weight
+
+## Making an Ensemble
+```{r base_predict, results="hide", cache=TRUE}
+nc.seq <- seq(from=0.5,to=0.8,length.out=30)
+d.predict <- data.frame(
+    kcal.per.g = rep(0,30), # empty outcome
+    neocortex = nc.seq,     # sequence of neocortex
+    mass = rep(4.5,30)      # average mass
+)
+
+pred.m6.14 <- link( m6.14 , data=d.predict )
+mu <- apply( pred.m6.14 , 2 , mean )
+mu.PI <- apply( pred.m6.14 , 2 , PI )
+```
+
+```{r ensemble, echo=TRUE, results="hide", cache=TRUE}
+milk.ensemble <- ensemble( m6.11, m6.12, 
+                           m6.13 ,m6.14 , data=d.predict )
+
+mu_ensemble <- apply( milk.ensemble$link , 2 , mean )
+mu.PI_fit <- apply( milk.ensemble$link , 2 , PI )
+```
+
+## Making an Ensemble
+```{r plot_ensemble}
+d_plot <- rbind(d.predict, d.predict) %>%
+  mutate(kcal.per.g = c(mu, mu_ensemble),
+         lwr = c(mu.PI[1,], mu.PI_fit[1,]),
+         upr = c(mu.PI[2,], mu.PI_fit[2,]),
+         type=c(rep("best fit", length(mu)), rep("ensemble", length(mu_ensemble))))
+
+ggplot(d_plot, mapping=aes(x=neocortex, y=kcal.per.g, 
+                           ymin=lwr, ymax=upr, 
+                           color=type, fill=type, lty=type, size=type)) +
+    geom_ribbon(alpha=0.3, lty=1, color=NA) +
+  geom_line() +
+  scale_fill_manual(values=c("red", "blue"))+
+  scale_color_manual(values=c("red", "blue")) +
+  scale_linetype_manual(values=c(3,1)) +
+  scale_size_manual(values=c(1, 1.5)) +
+  theme_bw(base_size=17)
+
+```
+
+## Exercise
+- Take your milk multiple predictor models with clade, milk components, both, and neither  
+\
+- Compare via WAIC  
+\
+- Get ensemble predictions for each clade

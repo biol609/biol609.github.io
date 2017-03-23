@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <title></title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="libs/reveal.js-3.3.0/css/reveal.css"/>
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="libs/reveal.js-3.3.0/css/theme/white.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="style.css"/>
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'libs/reveal.js-3.3.0/css/print/pdf.css' : 'libs/reveal.js-3.3.0/css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+    <!--[if lt IE 9]>
+    <script src="libs/reveal.js-3.3.0/lib/js/html5shiv.js"></script>
+    <![endif]-->
+
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+
+<section id="section" class="slide level2">
+<h1></h1>
+<center>
+<h2>
+Information Theory and a Multimodel World
+</h2>
+</center>
+<p><br />
+<img src="images/15/angry-bjork-and-if-you-overfit-once-more-youll-me-an-army-of-aic.jpg" style="width:60.0%" /></p>
+</section>
+<section id="how-complex-a-model-do-you-need-to-be-useful" class="slide level2">
+<h1>How complex a model do you need to be useful?</h1>
+<p><img src="images/15/matter-model.jpg" /></p>
+</section>
+<section id="some-models-are-simple-but-good-enough" class="slide level2">
+<h1>Some models are simple but good enough</h1>
+<p><img src="images/15/turtles.jpg" /></p>
+</section>
+<section id="more-complex-models-are-not-always-better-or-right" class="slide level2">
+<h1>More Complex Models are Not Always Better or Right</h1>
+<p><img src="images/15/helio_geo.jpg" /></p>
+</section>
+<section id="consider-this-data" class="slide level2">
+<h1>Consider this data…</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sppnames &lt;-<span class="st"> </span><span class="kw">c</span>( <span class="st">&quot;afarensis&quot;</span>,<span class="st">&quot;africanus&quot;</span>,
+               <span class="st">&quot;habilis&quot;</span>,<span class="st">&quot;boisei&quot;</span>,
+               <span class="st">&quot;rudolfensis&quot;</span>,<span class="st">&quot;ergaster&quot;</span>,<span class="st">&quot;sapiens&quot;</span>)
+
+brainvolcc &lt;-<span class="st"> </span><span class="kw">c</span>( <span class="dv">438</span> , <span class="dv">452</span> , <span class="dv">612</span>, <span class="dv">521</span>, <span class="dv">752</span>, <span class="dv">871</span>, <span class="dv">1350</span> )
+masskg &lt;-<span class="st"> </span><span class="kw">c</span>( <span class="fl">37.0</span> , <span class="fl">35.5</span> , <span class="fl">34.5</span> , <span class="fl">41.5</span> , <span class="fl">55.5</span> , <span class="fl">61.0</span> , <span class="fl">53.5</span> )
+
+d &lt;-<span class="st"> </span><span class="kw">data.frame</span>( <span class="dt">species=</span>sppnames, 
+                 <span class="dt">brain=</span>brainvolcc, 
+                 <span class="dt">mass=</span>masskg )</code></pre></div>
+</section>
+<section id="underfitting" class="slide level2">
+<h1>Underfitting</h1>
+<p><img src="15_mmi_files/figure-revealjs/underfit-1.jpeg" width="672" /></p>
+<p>We have explained nothing!</p>
+</section>
+<section id="overfitting" class="slide level2">
+<h1>Overfitting</h1>
+<p><img src="15_mmi_files/figure-revealjs/overfit-1.jpeg" width="672" /></p>
+<p>We have perfectly explained this sample</p>
+</section>
+<section id="what-is-the-right-fit" class="slide level2">
+<h1>What is the right fit?</h1>
+<p><img src="15_mmi_files/figure-revealjs/medfit-1.jpeg" width="672" /></p>
+</section>
+<section id="section-1" class="slide level2" data-background="images/15/GillrayBritannia.jpg">
+<h1></h1>
+</section>
+<section id="how-do-we-navigate" class="slide level2">
+<h1>How do we Navigate?</h1>
+<ol type="1">
+<li>Regularization
+<ul>
+<li>Penalize parameters with weak support<br />
+</li>
+</ul></li>
+<li>Optimization for Prediction
+<ul>
+<li>Information Theory<br />
+</li>
+<li>Draws from comparison of information loss</li>
+</ul></li>
+</ol>
+</section>
+<section id="in-and-out-of-sample-deviance" class="slide level2">
+<h1>In and Out of Sample Deviance</h1>
+<img src="15_mmi_files/figure-revealjs/dev_plot1-1.jpeg" width="672" />
+<div class="fragment">
+Deviance = -2 * log(dnorm(<span class="math inline">\(y_i | \mu_i\)</span>))
+</div>
+<div class="fragment">
+The deviance of this linear regression is 3.176628510^{5}
+</div>
+</section>
+<section id="in-and-out-of-sample-deviance-1" class="slide level2">
+<h1>In and Out of Sample Deviance</h1>
+<p><img src="15_mmi_files/figure-revealjs/dev_plot2-1.jpeg" width="672" /></p>
+<p>Prediction: 806.8141456, Observe: 515<br />
+Deviance: 8.526583810^{4}</p>
+</section>
+<section id="in-and-out-of-sample-deviance-2" class="slide level2">
+<h1>In and Out of Sample Deviance</h1>
+<p><img src="15_mmi_files/figure-revealjs/simtrainplot-1.jpeg" width="672" /></p>
+</section>
+<section id="our-goal-for-judging-models" class="slide level2">
+<h1>Our Goal for Judging Models</h1>
+<ul>
+<li>Can we minimize the out of sample deviance<br />
+<br />
+</li>
+<li>So, fit a model, and evaluate how different the deviance is for a training versus test data set is<br />
+<br />
+</li>
+<li>What can we use to minimize the difference?</li>
+</ul>
+</section>
+<section id="regularlization" class="slide level2">
+<h1>Regularlization</h1>
+<div id="left">
+<p><img src="15_mmi_files/figure-revealjs/priors-1.jpeg" width="576" /></p>
+</div>
+<div id="right">
+<p><br />
+- Regularization means shrinking the prior towards 0<br />
+<br />
+- Means data has to work harder to overcome prior<br />
+<br />
+- Good way to shrink weak effects with little data, which are often spurious<br />
+<br />
+- But, requires significant tuning</p>
+</div>
+</section>
+<section id="regularization-and-train-test-deviance" class="slide level2">
+<h1>Regularization and Train-Test Deviance</h1>
+<p><img src="15_mmi_files/figure-revealjs/regularplot-1.jpeg" width="672" /></p>
+</section>
+<section id="a-criteria-estimating-test-sample-deviance" class="slide level2">
+<h1>A Criteria Estimating Test Sample Deviance</h1>
+<ul>
+<li>What if we could estimate out of sample deviance?<br />
+<br />
+</li>
+<li>The difference between training and testing deviance shows overfitting<br />
+<br />
+</li>
+</ul>
+</section>
+<section id="a-criteria-estimating-test-sample-deviance-1" class="slide level2">
+<h1>A Criteria Estimating Test Sample Deviance</h1>
+<p><img src="15_mmi_files/figure-revealjs/diff-1.jpeg" width="672" /> Slope here of 1.95</p>
+</section>
+<section id="aic" class="slide level2">
+<h1>AIC</h1>
+<div id="right">
+<p><img src="images/15/hirotugu_akaike.jpg" /></p>
+</div>
+<div id="left">
+<ul>
+<li>So, <span class="math inline">\(E[D_{test}] = D_{train} + 2K\)</span><br />
+<br />
+</li>
+<li>This is Akaike’s Information Criteria (AIC)<br />
+<br />
+</li>
+</ul>
+</div>
+<p><span class="math display">\[AIC = Deviance + 2K\]</span></p>
+</section>
+<section id="aic-1" class="slide level2">
+<h1>AIC</h1>
+<ul>
+<li>AIC optimized for forecasting (out of sample deviance)<br />
+<br />
+</li>
+<li>Requires flat priors<br />
+<br />
+</li>
+<li>Assumes large N relative to K
+<ul>
+<li>AICc for a correction<br />
+<br />
+</li>
+</ul></li>
+<li>Difficult to define in a mixed model context</li>
+</ul>
+</section>
+<section id="what-about-ic-in-bayes" class="slide level2">
+<h1>What about IC in Bayes?</h1>
+<ul>
+<li>We <em>do</em> estimate the posterior distribution of the deviance<br />
+<br />
+</li>
+<li>Average of the posterior, <span class="math inline">\(\bar{D}\)</span> is our <span class="math inline">\(D_{train}\)</span><br />
+<br />
+</li>
+<li>But what about # of parameters?
+<ul>
+<li>For a non-mixed model, this is not a concern - just the AIC<br />
+</li>
+<li>For a mixed model…trickier</li>
+</ul></li>
+</ul>
+</section>
+<section id="effective-number-of-parameters" class="slide level2">
+<h1>Effective number of Parameters</h1>
+<ul>
+<li>In addition to <span class="math inline">\(\bar{D}\)</span>, there is also <span class="math inline">\(\hat{D}\)</span>
+<ul>
+<li>The value of the posterior at the posterior mean<br />
+<br />
+</li>
+</ul></li>
+<li>Given Bayesian logic:
+<ul>
+<li><span class="math inline">\(\bar{D}\)</span> is our estimate of the out of sample deviance</li>
+<li><span class="math inline">\(\hat{D}\)</span> is our <span class="math inline">\(D_{train}\)</span></li>
+<li>So, <span class="math inline">\(\bar{D} - \hat{D}\)</span> = number of parameters<br />
+<br />
+</li>
+</ul></li>
+<li>We term this <span class="math inline">\(p_D\)</span> for effective number of parameters</li>
+</ul>
+</section>
+<section id="dic" class="slide level2">
+<h1>DIC</h1>
+<p><img src="images/15/Sir-David-Spiegelhalter_I0A0548.jpg" /><br />
+<span class="math display">\[DIC = 2 \bar{D} - 2 p_D\]</span><br />
+<br />
+## DIC <span class="math display">\[DIC = 2 \bar{D} - 2 p_D\]</span></p>
+<ul>
+<li>Works well for multivariate normal posteriors<br />
+</li>
+<li>Handles mixed models<br />
+</li>
+<li>Reduces to AIC with flat priors<br />
+</li>
+<li>But does not require flat priors - which does interesting things to <span class="math inline">\(p_D\)</span>!</li>
+<li>But… fails with anything non-normal, and hot debate on even mixed effects</li>
+</ul>
+</section>
+<section id="and-so-we-pause" class="slide level2">
+<h1>And so we pause…</h1>
+<ul>
+<li>Our goal is to maximize prediction<br />
+<br />
+</li>
+<li>Why not look at the pieces that make up the deviance
+<ul>
+<li>The pointwise predictive power of the posterior<br />
+<br />
+</li>
+</ul></li>
+<li>We can define the Pr(y<sub>i</sub> | posterior simulations)<br />
+</li>
+<li>This tells us the distribution of the predictive power of our posterior for each point<br />
+</li>
+<li><span class="math inline">\(llpd = \sum log Pr(y_i | \theta)\)</span></li>
+</ul>
+</section>
+<section id="but-what-about-parameters" class="slide level2">
+<h1>But what about Parameters?</h1>
+<ul>
+<li>We know that as k increases, our uncertainty in coefficients increases<br />
+<br />
+</li>
+<li>As uncertainty increases, Pr(y<sub>i</sub> | simulations) widens<br />
+<br />
+</li>
+<li>Thus, this variance gives us an effective penalty term<br />
+<br />
+</li>
+<li><span class="math inline">\(p_{waic} = \sum Var(log Pr(y_i | \theta))\)</span></li>
+</ul>
+</section>
+<section id="widely-applicable-ic" class="slide level2">
+<h1>Widely Applicable IC</h1>
+<span class="math display">\[WAIC = -2 \sum log Pr(y_i | \theta) + 2 \sum Var(log Pr(y_i | \theta))\]</span><br />
+<br />
+<span class="math display">\[= -2 llpd + 2 p_{waic}\]</span><br />
+<br />
+
+<li>
+Wantanabe’s Information Criteria<br />
+<br />
+
+<li>
+Advantage in being pointwise is that we also get an estimate of uncertainty<br />
+<br />
+
+<li>
+<p>Disadvantage that inaprporpiate to use with lagged (spatial or temporal) predictors</p>
+</section>
+<section id="which-should-i-use" class="slide level2">
+<h1>Which should I use?</h1>
+<ul>
+<li>AIC for flat priors, fixed effects is fine<br />
+<br />
+</li>
+<li>Adding priors, mixed models, DIC or WAIC<br />
+<br />
+</li>
+<li>Non-gaussian posterior? WAIC<br />
+<br />
+</li>
+<li>Lagged predictors? DIC</li>
+</ul>
+</section>
+<section id="how-do-i-use-my-ic" class="slide level2">
+<h1>How do I use my IC?</h1>
+<p>We can calculate:<br />
+<br />
+<span class="math display">\[w_{i} = \frac{e^{\Delta_{i}/2 }}{\displaystyle \sum^R_{r=1} e^{\Delta_{i}/2 }}\]</span><br />
+Where <span class="math inline">\(w_{i}\)</span> is the <em>relative support</em> for model i making the best prediction compared to other models in the set being considered.<br />
+<br />
+Model weights summed together = 1</p>
+</section>
+<section id="monkies-and-milk" class="slide level2">
+<h1>Monkies and Milk</h1>
+<p><img src="images/14/monkies_milk.jpg" /></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(milk)
+d &lt;-<span class="st"> </span>milk[ <span class="kw">complete.cases</span>(milk) , ]
+d$neocortex &lt;-<span class="st"> </span>d$neocortex.perc /<span class="st"> </span><span class="dv">100</span></code></pre></div>
+</section>
+<section id="a-lotta-models" class="slide level2">
+<h1>A lotta Models</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">a.start &lt;-<span class="st"> </span><span class="kw">mean</span>(d$kcal.per.g)
+sigma.start &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">sd</span>(d$kcal.per.g))
+
+<span class="co">#null</span>
+m6<span class="fl">.11</span> &lt;-<span class="st"> </span><span class="kw">map</span>(
+    <span class="kw">alist</span>(
+        kcal.per.g ~<span class="st"> </span><span class="kw">dnorm</span>( a , <span class="kw">exp</span>(log.sigma) )
+    ) ,
+    <span class="dt">data=</span>d , <span class="dt">start=</span><span class="kw">list</span>(<span class="dt">a=</span>a.start,<span class="dt">log.sigma=</span>sigma.start) )
+
+<span class="co">#neocortex only</span>
+m6<span class="fl">.12</span> &lt;-<span class="st"> </span><span class="kw">map</span>(
+    <span class="kw">alist</span>(
+        kcal.per.g ~<span class="st"> </span><span class="kw">dnorm</span>( mu , <span class="kw">exp</span>(log.sigma) ) ,
+        mu &lt;-<span class="st"> </span>a +<span class="st"> </span>bn*neocortex
+    ) ,
+    <span class="dt">data=</span>d , <span class="dt">start=</span><span class="kw">list</span>(<span class="dt">a=</span>a.start,<span class="dt">bn=</span><span class="dv">0</span>,<span class="dt">log.sigma=</span>sigma.start) )</code></pre></div>
+</section>
+<section id="a-lotta-models-1" class="slide level2">
+<h1>A lotta Models</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># log(mass) only</span>
+m6<span class="fl">.13</span> &lt;-<span class="st"> </span><span class="kw">map</span>(
+    <span class="kw">alist</span>(
+        kcal.per.g ~<span class="st"> </span><span class="kw">dnorm</span>( mu , <span class="kw">exp</span>(log.sigma) ) ,
+        mu &lt;-<span class="st"> </span>a +<span class="st"> </span>bm*<span class="kw">log</span>(mass)
+    ) ,
+    <span class="dt">data=</span>d , <span class="dt">start=</span><span class="kw">list</span>(<span class="dt">a=</span>a.start,<span class="dt">bm=</span><span class="dv">0</span>,<span class="dt">log.sigma=</span>sigma.start) )
+
+<span class="co"># neocortex + log(mass)</span>
+m6<span class="fl">.14</span> &lt;-<span class="st"> </span><span class="kw">map</span>(
+    <span class="kw">alist</span>(
+        kcal.per.g ~<span class="st"> </span><span class="kw">dnorm</span>( mu , <span class="kw">exp</span>(log.sigma) ) ,
+        mu &lt;-<span class="st"> </span>a +<span class="st"> </span>bn*neocortex +<span class="st"> </span>bm*<span class="kw">log</span>(mass)
+    ) ,
+    <span class="dt">data=</span>d , <span class="dt">start=</span><span class="kw">list</span>(<span class="dt">a=</span>a.start,<span class="dt">bn=</span><span class="dv">0</span>,<span class="dt">bm=</span><span class="dv">0</span>,<span class="dt">log.sigma=</span>sigma.start) )</code></pre></div>
+</section>
+<section id="a-waic" class="slide level2">
+<h1>A WAIC</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">WAIC</span>( m6<span class="fl">.14</span> )</code></pre></div>
+<pre><code>[ 100 / 1000 ]
+[ 200 / 1000 ]
+[ 300 / 1000 ]
+[ 400 / 1000 ]
+[ 500 / 1000 ]
+[ 600 / 1000 ]
+[ 700 / 1000 ]
+[ 800 / 1000 ]
+[ 900 / 1000 ]
+[ 1000 / 1000 ]</code></pre>
+<pre><code>[1] -15.08076
+attr(,&quot;lppd&quot;)
+[1] 12.33633
+attr(,&quot;pWAIC&quot;)
+[1] 4.795952
+attr(,&quot;se&quot;)
+[1] 7.68153</code></pre>
+</section>
+<section id="comparing-models" class="slide level2">
+<h1>Comparing Models</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">milk.models &lt;-<span class="st"> </span><span class="kw">compare</span>( m6<span class="fl">.11</span> , m6<span class="fl">.12</span> , m6<span class="fl">.13</span> , m6<span class="fl">.14</span> )
+milk.models</code></pre></div>
+<pre><code>       WAIC pWAIC dWAIC weight   SE  dSE
+m6.14 -14.5   5.1   0.0   0.91 7.61   NA
+m6.13  -8.3   2.8   6.2   0.04 5.53 5.34
+m6.11  -8.0   1.9   6.5   0.04 4.68 7.24
+m6.12  -6.0   3.0   8.5   0.01 4.28 7.51</code></pre>
+</section>
+<section id="comparing-models-1" class="slide level2">
+<h1>Comparing Models</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(milk.models, <span class="dt">cex=</span><span class="fl">1.5</span>)</code></pre></div>
+<p><img src="15_mmi_files/figure-revealjs/waic_compare_fig-1.jpeg" width="672" /></p>
+<Center>
+solid = deviance, circle=WAIC, triangle = <span class="math inline">\(\Delta\)</span>WAIC
+</center>
+</section>
+<section id="section-2" class="slide level2" data-background-color="black">
+<h1></h1>
+<p><br />
+<br />
+<img src="images/15/chorus_line_model_selection.jpg" /></p>
+</section>
+<section id="death-to-model-selection" class="slide level2">
+<h1>Death to model selection</h1>
+<ul>
+<li>While sometimes the model you should use is clear, more often it is <em>not</em><br />
+<br />
+</li>
+<li>Further, you made those models for a reason: you suspect those terms are important<br />
+<br />
+</li>
+<li>Better to look at coefficients across models<br />
+<br />
+</li>
+<li>For actual predictions, ensemble predictions provide real uncertainty</li>
+</ul>
+</section>
+<section id="section-3" class="slide level2" data-background-color="black">
+<h1></h1>
+<p><br />
+<img src="images/15/bjork-on-phone-yes-i-am-all-about-the-deviance-let-us-make-it-shrink-our-parameters.jpg" /></p>
+</section>
+<section id="coefficients" class="slide level2">
+<h1>Coefficients</h1>
+<p>Remember, <code>m6.14</code> has a 97% WAIC model weight<br />
+<br />
+</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ctab &lt;-<span class="st"> </span><span class="kw">coeftab</span>( m6<span class="fl">.11</span> , m6<span class="fl">.12</span> , m6<span class="fl">.13</span> , m6<span class="fl">.14</span>)
+ctab</code></pre></div>
+<pre><code>          m6.11   m6.12   m6.13   m6.14  
+a            0.66    0.35    0.71   -1.09
+log.sigma   -1.79   -1.80   -1.85   -2.16
+bn             NA    0.45      NA    2.79
+bm             NA      NA   -0.03   -0.10
+nobs           17      17      17      17</code></pre>
+</section>
+<section id="coefficients-1" class="slide level2">
+<h1>Coefficients</h1>
+<p>Remember, <code>m6.14</code> has a 97% WAIC model weight<br />
+<br />
+</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(ctab)</code></pre></div>
+<p><img src="15_mmi_files/figure-revealjs/coeftab_plot-1.jpeg" width="672" /></p>
+</section>
+<section id="ensemble-prediction" class="slide level2">
+<h1>Ensemble Prediction</h1>
+<ul>
+<li>Ensemble prediction gives us better uncertainty estimates<br />
+<br />
+</li>
+<li>Takes relative weights of predictions into account<br />
+<br />
+</li>
+<li>Takes weights of coefficients into account<br />
+<br />
+</li>
+<li>Basicaly, get simulated predicted values, multiply them by model weight</li>
+</ul>
+</section>
+<section id="making-an-ensemble" class="slide level2">
+<h1>Making an Ensemble</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">milk.ensemble &lt;-<span class="st"> </span><span class="kw">ensemble</span>( m6<span class="fl">.11</span>, m6<span class="fl">.12</span>, 
+                           m6<span class="fl">.13</span> ,m6<span class="fl">.14</span> , <span class="dt">data=</span>d.predict )
+
+mu_ensemble &lt;-<span class="st"> </span><span class="kw">apply</span>( milk.ensemble$link , <span class="dv">2</span> , mean )
+mu.PI_fit &lt;-<span class="st"> </span><span class="kw">apply</span>( milk.ensemble$link , <span class="dv">2</span> , PI )</code></pre></div>
+</section>
+<section id="making-an-ensemble-1" class="slide level2">
+<h1>Making an Ensemble</h1>
+<p><img src="15_mmi_files/figure-revealjs/plot_ensemble-1.jpeg" width="672" /></p>
+</section>
+<section id="exercise" class="slide level2">
+<h1>Exercise</h1>
+<ul>
+<li>Take your milk multiple predictor models with clade, milk components, both, and neither<br />
+<br />
+</li>
+<li>Compare via WAIC<br />
+<br />
+</li>
+<li>Get ensemble predictions for each clade</li>
+</ul>
+</section>
+    </div>
+  </div>
+
+  <script src="libs/reveal.js-3.3.0/lib/js/head.min.js"></script>
+  <script src="libs/reveal.js-3.3.0/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display the page number of the current slide
+        slideNumber: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: false,
+        // Opens links in an iframe preview overlay
+        previewLinks: true,
+        // Transition style
+        transition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>
