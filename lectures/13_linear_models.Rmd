@@ -283,7 +283,7 @@ base_plot+
 \
 2. Evaluate model estimates and meaning  
 \
-3. Assess encertainty in fit  
+3. Assess uncertainty in fit  
 \
 4. Assess uncertainty in prediction  
 \
@@ -311,7 +311,7 @@ res_vals <- Howell1_Adult$height - fit_vals
 qqnorm(res_vals); qqline(res_vals)
 ```
 
-## Fit-Pred
+## Observed - Fitted
 ```{r fit_pred}
 res_rng <-  apply(fit_pi, 1, function(x) Howell1_Adult$height - x)
 
