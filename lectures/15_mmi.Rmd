@@ -281,13 +281,16 @@ $$AIC = Deviance + 2K$$
     - So, $\bar{D} - \hat{D}$ = number of parameters\
 \
 - We term this $p_D$ for effective number of parameters
-
+  
 ## DIC
+
 ![](./images/15/Sir-David-Spiegelhalter_I0A0548.jpg)
 \
 $$DIC = 2 \bar{D} - 2 p_D$$  
-\
+
+
 ## DIC
+
 $$DIC = 2 \bar{D} - 2 p_D$$  
 
 - Works well for multivariate normal posteriors  
