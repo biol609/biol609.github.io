@@ -56,7 +56,7 @@ __Reading:__ McElreath Chapter 4-5
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-linreg    
 
 ### Week 8. 
-__Lecture:__ [Bayesian Multimodel Inference](./lectures/15_mmi.html)  
+__Lecture:__ [Bayesian Multimodel Inference](./lectures/15_mmi.html), [Interaction Effects](./lectures/16_interactions.html)  
 __Reading:__ McElreath Chapter 6-7  
 __Additional Reading:__ [Aho et al 2013 Ecology](http://izt.ciens.ucv.ve/ecologia/Archivos/ECO_POB%202014/ECOPO2_2014/Aho%20et%20al%202014.pdf), [Gelman et al. 2013 on WAIC and LOO](http://link.springer.com/article/10.1007/s11222-013-9416-2)  
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-mmi    
