@@ -1,0 +1,429 @@
+---
+title:
+css: style.css
+output:
+  revealjs::revealjs_presentation:
+    reveal_options:
+      slideNumber: true
+      previewLinks: true
+    theme: white
+    center: false
+    transition: fade
+    self_contained: false
+    lib_dir: libs
+---
+##
+<center>
+<h2>Interaction Effects</h2>
+</center>
+\
+![](./images/16/gosling_interaction.jpg){width="50%"}
+
+
+```{r prep, echo=FALSE, cache=FALSE, message=FALSE, warning=FALSE}
+library(knitr)
+
+opts_chunk$set(fig.height=5, fig.width=7, comment=NA, 
+               warning=FALSE, message=FALSE, 
+               dev="jpeg", echo=FALSE)
+
+library(rethinking)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+#center plot titles
+theme_set(theme_bw())
+theme_update(plot.title = element_text(hjust = 0.5))
+
+
+```
+
+## What is an interaction effect?
+>- Effects of predictors no longer independent 
+>     - Effects conditional on one another  
+\
+> - May not be possible to evluate effect of single predictor in isolation  
+\
+> - Generalized linear models: All predictors interact (even with themselves)  
+>     - Effect of a variable dependent on current value of all other predictors  
+\
+> - Multilevel models: slope/intercept vary by groups
+>     - interactions all the way down
+  
+## Linear nteractions with Discrete Variables
+- Variable slope  
+     - Contrast to just plain olde variable intercept  
+\
+- Effect of a predictor (even intercept!) depends on what group it's in  
+\
+- Gateway to multilevel/mixed models
+
+## How does ruggedness influence GDP?
+
+```{r show_rugged, echo=TRUE}
+data(rugged)
+rugged$log_gdp <- log(rugged$rgdppc_2000)
+```
+
+```{r show_rugged_plot}
+base_rugged <- ggplot(data=rugged,
+       aes(x=rugged, y=log_gdp)) +
+  geom_point() 
+
+base_rugged
+```
+
+
+## How does ruggedness influence GDP?
+```{r all_reg}
+base_lm <- base_rugged +
+  stat_smooth(method="lm")
+
+base_lm
+```
+
+## How does ruggedness influence GDP?
+```{r split_lm}
+base_lm +
+  facet_wrap(~cont_africa) +
+  ggtitle("Split by Africa (1) or Other (0)")
+```
+
+## Model with No Interaction
+```{r mod_no_int, echo=TRUE}
+#prep the data
+d <- rugged[complete.cases(rugged$log_gdp),]
+
+#need indices >0
+d$cont_africa <- d$cont_africa +1
+
+#The model
+mod_no_int <- alist(
+  #likelihood
+  log_gdp ~ dnorm(mu, sigma),
+
+  #data generating process
+  mu <- bA[cont_africa] + bR*rugged,
+
+  #priors
+  bR ~ dnorm(0,1),
+  bA[cont_africa] ~ dnorm(8,100),
+  sigma ~ dunif(0,10))
+
+fit_no_int <- map(mod_no_int, data=d)
+```
+
+## What does that look like?
+```{r no_int_pred}
+predDF <- crossing(cont_africa=c(1,2), rugged=seq(0,7,length.out=200))
+
+fit_pred <- link(fit_no_int, data = predDF, refresh=0)
+fit_pi <- apply(fit_pred, 2, PI)
+pred_pred <- sim(fit_no_int, data = predDF, refresh=0)
+pred_pi <- apply(pred_pred, 2, PI)
+  
+predDF <- predDF %>%
+  mutate(log_gdp = apply(fit_pred, 2, median),
+         fit_lwr = fit_pi[1,],
+         fit_upr = fit_pi[2,],
+         pred_lwr = pred_pi[1,],
+         pred_upr = pred_pi[2,])
+
+ggplot(predDF, 
+       mapping=aes(x=rugged, y=log_gdp)) +
+  geom_ribbon(fill="grey", mapping=aes(ymin=pred_lwr, ymax=pred_upr)) +
+  geom_ribbon(fill="blue", mapping=aes(ymin=fit_lwr, ymax=fit_upr)) +
+  geom_line() +
+  geom_point(data=d, color="red", shape=1) +
+  facet_wrap(~cont_africa)  +
+  ggtitle("Split by Africa (2) or Other (1)")
+
+```
+
+<center>Variable intercept only</center>
+
+## Handling Categories
+
+No Interaction:
+```{r eval=FALSE, echo=TRUE}
+mu <- bA[cont_africa] + bR*rugged,
+
+#OR
+
+mu <- a + bA[cont_africa] + bR*rugged,
+
+```
+
+\
+<div class="fragment"><center>What is the difference in what these two return?</center></div>
+
+## OK, so, How do we write a categorical interaction?
+Interaction 1:
+```{r eval=FALSE, echo=TRUE}
+mu <- bA[cont_africa] + bR*rugged,
+
+bR <- bR_0 + bR_1*cont_africa
+```
+
+- Keeps form for `mu` but incorporates new information  
+- `bR_1` is difference from non-African bR  
+
+
+
+## OK, so, How do we write a categorical interaction?
+Interaction 2
+```{r eval=FALSE, echo=TRUE}
+mu <- bA[cont_africa] + bR*rugged + bR_1*cont_africa,
+```
+
+- More compact
+- `bR_1` has same meaning as before  
+
+
+## OK, so, How do we write a categorical interaction?
+
+Interaction 3
+```{r eval=FALSE, echo=TRUE}
+mu <- bA[cont_africa] + bR[cont_africa]*rugged,
+```
+
+- Uses indexing for groups  
+- No post-hoc calculation issues
+
+
+## The full model
+```{r int_model, echo=TRUE}
+int_mod <- alist(
+  #likelihood
+  log_gdp ~ dnorm(mu, sigma),
+  
+  #Data generating process
+  mu <- bR[cont_africa]*rugged + bA[cont_africa],
+  
+  #priors - note indexing!
+  bR[cont_africa] ~ dnorm(0,1),
+  bA[cont_africa] ~ dnorm(8,100),
+  sigma ~ dunif(0,10)
+)
+
+int_fit <- map(int_mod, data=d)
+```
+
+## Coefficients
+
+Note `depth=2` for groups
+```{r coefs, echo=TRUE}
+precis(int_fit, depth=2, cor=TRUE)
+```
+
+<div class="fragment"><center>Note that `bR` changes in sign between groups!</div>
+
+## Inspection
+```{r pairs}
+pairs(int_fit)
+```
+
+## A posthoc: Are slopes really different?
+```{r samps}
+samps_br <- data.frame(extract.samples(int_fit)$bR) %>%
+  rename(Africa = X2, Not_Africa = X1)
+
+ggplot(data = samps_br %>% gather(Continent, bR), aes(x=bR, color=Continent)) +
+  geom_density()
+```
+
+## Calculate the difference
+```{r diff_samps1, echo=TRUE}
+samps <- extract.samples(int_fit)
+
+names(samps)
+```
+
+<div class="fragment">
+```{r diff_samps2, echo=TRUE}
+head(samps$bR)
+```
+</div>
+
+<div class="fragment">
+```{r diff_samps3, echo=TRUE}
+#Not Africa v. Africa
+diff_br <- samps$bR[,1] - samps$bR[,2]
+```
+</div>
+
+## Were they different?
+```{r dens_plot}
+plot(density(diff_br))
+```
+
+`r round(sum(diff_br<0)/length(diff_br), 3)*100`% were < 0  
+<span class="fragment">They are quite likely different</span>
+
+
+## Interpretation
+What can you say so far?
+
+<div class="fragment">
+```{r intplot}
+
+predDF_int <- crossing(cont_africa=c(1,2), rugged=seq(0,7,length.out=200))
+
+fit_pred <- link(int_fit, data = predDF, refresh=0)
+fit_pi <- apply(fit_pred, 2, PI)
+pred_pred <- sim(int_fit, data = predDF, refresh=0)
+pred_pi <- apply(pred_pred, 2, PI)
+  
+predDF_int <- predDF_int %>%
+  mutate(log_gdp = apply(fit_pred, 2, median),
+         fit_lwr = fit_pi[1,],
+         fit_upr = fit_pi[2,],
+         pred_lwr = pred_pi[1,],
+         pred_upr = pred_pi[2,])
+
+ggplot(predDF_int, 
+       mapping=aes(x=rugged, y=log_gdp)) +
+  geom_ribbon(fill="grey", mapping=aes(ymin=pred_lwr, ymax=pred_upr)) +
+  geom_ribbon(fill="blue", mapping=aes(ymin=fit_lwr, ymax=fit_upr)) +
+  geom_line() +
+  geom_point(data=d, color="red", shape=1) +
+  facet_wrap(~cont_africa)  +
+  ggtitle("Split by Africa (2) or Other (1)")
+```
+
+</div>
+
+## Continuous Interactions
+- Effects of predictors no longer independent 
+     - Effects conditional on one another  
+\
+- May not be possible to evluate effect of single predictor in isolation  
+\
+- Require counterfactual plots to assess meaning
+
+## Tulips!
+![](./images/16/tulips.jpg)
+
+```{r tulip_show, echo=TRUE}
+data(tulips)
+head(tulips)
+```
+
+## Continuous Interactions are Simple to Code
+```{r tulip_mod, echo=TRUE}
+tulip_mod <- alist(
+  #likelihood
+  blooms ~ dnorm(mu, sigma),
+  
+  #Data generating process
+  mu <- a + bW*water + bS*shade + bWS*water*shade,
+  
+  #priors
+  a ~ dnorm(130,100),
+  bW ~ dnorm(0,100),
+  bS ~ dnorm(0,100),
+  bWS ~ dnorm(0,100),
+  sigma ~ dunif(0,100)
+)
+```
+
+## Common fitting errors!
+```{r echo=TRUE, warning=TRUE, error=TRUE}
+fit_tulip <- map(tulip_mod, data=tulips)
+```
+
+## Fixes
+1. Try a different algorithm  
+    - `Nelder-Mead` often works, but slower  
+    - `SANN` also works, but sloooow  
+    \
+2. Transform values  
+    - Center
+    - Scale
+\
+3. Supply start values  
+\
+4. Change priors  
+\
+5. Change algorithmic parameters
+
+## These both work
+```{r tuplip_fix, echo=TRUE, warning=TRUE}
+fit_tulip_1 <- map(tulip_mod, 
+                   data=tulips,
+                   method="Nelder-Mead")
+```
+
+or
+```{r re_tulip}
+tulip_mod <- alist(
+  #likelihood
+  blooms ~ dnorm(mu, sigma),
+  
+  #Data generating process
+  mu <- a + bW*water + bS*shade + bWS*water*shade,
+  
+  #priors
+  a ~ dnorm(130,100),
+  bW ~ dnorm(0,100),
+  bS ~ dnorm(0,100),
+  bWS ~ dnorm(0,100),
+  sigma ~ dunif(0,100)
+)
+set.seed(609)
+
+```
+
+```{r tuplip_fix2, echo=TRUE, warning=TRUE}
+tulip_cent <- tulips %>% mutate(shade = shade-mean(shade),
+                                          water = water-mean(water))
+fit_tulip_2 <- map(tulip_mod, 
+                   data=tulip_cent)
+```
+
+## How does the meaning change with centering?
+
+```{r coefs_tulips}
+coeftab(fit_tulip_1, fit_tulip_2)
+```
+
+<div class="fragment">And, what do these coefficients say?</div>
+
+## Counterfactal Plots are Necessary
+```{r counterfact_pred, echo=TRUE}
+tulip_pred_df <- crossing(shade = -1:1, water = -1:1)
+```
+```{r counterfact_plot}
+fit_pred <- link(fit_tulip_2, data = tulip_pred_df, refresh=0)
+fit_pi <- apply(fit_pred, 2, PI)
+pred_pred <- sim(fit_tulip_2, data = tulip_pred_df, refresh=0)
+pred_pi <- apply(pred_pred, 2, PI)
+  
+tulip_pred_df <- tulip_pred_df %>%
+  mutate(blooms = apply(fit_pred, 2, median),
+         fit_lwr = fit_pi[1,],
+         fit_upr = fit_pi[2,],
+         pred_lwr = pred_pi[1,],
+         pred_upr = pred_pi[2,])
+
+ggplot(tulip_pred_df, mapping=aes(x=shade, y=blooms)) +
+  geom_ribbon(fill=NA, color="black", mapping=aes(ymin=fit_lwr, ymax=fit_upr)) +
+  geom_ribbon(fill=NA, color="black", mapping=aes(ymin=pred_lwr, ymax=pred_upr), lty=2) +
+  facet_wrap(~water) +
+  geom_point(data=tulip_cent, shape=1) +
+  ggtitle("Split by Watering")
+```
+
+## Exercise
+1. Take the excellent milk models you have!  
+\
+2. Now, make models where  
+    a. Effects vary by clade AND/OR  
+    b. Different predictors interact  
+\
+3. Evaluate with WAIC  
+\
+4. Plot implications to understand  
+    - Single model or ensemble  
+\
+5. Go green if you have something cool to throw up

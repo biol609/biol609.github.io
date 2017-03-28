@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <title></title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="libs/reveal.js-3.3.0/css/reveal.css"/>
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="libs/reveal.js-3.3.0/css/theme/white.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="style.css"/>
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'libs/reveal.js-3.3.0/css/print/pdf.css' : 'libs/reveal.js-3.3.0/css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+    <!--[if lt IE 9]>
+    <script src="libs/reveal.js-3.3.0/lib/js/html5shiv.js"></script>
+    <![endif]-->
+
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+
+<section id="section" class="slide level2">
+<h1></h1>
+<center>
+<h2>
+Interaction Effects
+</h2>
+</center>
+<p><br />
+<img src="images/16/gosling_interaction.jpg" style="width:50.0%" /></p>
+</section>
+<section id="what-is-an-interaction-effect" class="slide level2">
+<h1>What is an interaction effect?</h1>
+<ul>
+<li class="fragment">Effects of predictors no longer independent
+<ul>
+<li class="fragment">Effects conditional on one another<br />
+<br />
+</li>
+</ul></li>
+<li class="fragment">May not be possible to evluate effect of single predictor in isolation<br />
+<br />
+</li>
+<li class="fragment">Generalized linear models: All predictors interact (even with themselves)
+<ul>
+<li class="fragment">Effect of a variable dependent on current value of all other predictors<br />
+<br />
+</li>
+</ul></li>
+<li class="fragment">Multilevel models: slope/intercept vary by groups
+<ul>
+<li class="fragment">interactions all the way down</li>
+</ul></li>
+</ul>
+</section>
+<section id="linear-nteractions-with-discrete-variables" class="slide level2">
+<h1>Linear nteractions with Discrete Variables</h1>
+<ul>
+<li>Variable slope
+<ul>
+<li>Contrast to just plain olde variable intercept<br />
+<br />
+</li>
+</ul></li>
+<li>Effect of a predictor (even intercept!) depends on what group it’s in<br />
+<br />
+</li>
+<li>Gateway to multilevel/mixed models</li>
+</ul>
+</section>
+<section id="how-does-ruggedness-influence-gdp" class="slide level2">
+<h1>How does ruggedness influence GDP?</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(rugged)
+rugged$log_gdp &lt;-<span class="st"> </span><span class="kw">log</span>(rugged$rgdppc_2000)</code></pre></div>
+<p><img src="16_interactions_files/figure-revealjs/show_rugged_plot-1.jpeg" width="672" /></p>
+</section>
+<section id="how-does-ruggedness-influence-gdp-1" class="slide level2">
+<h1>How does ruggedness influence GDP?</h1>
+<p><img src="16_interactions_files/figure-revealjs/all_reg-1.jpeg" width="672" /></p>
+</section>
+<section id="how-does-ruggedness-influence-gdp-2" class="slide level2">
+<h1>How does ruggedness influence GDP?</h1>
+<p><img src="16_interactions_files/figure-revealjs/split_lm-1.jpeg" width="672" /></p>
+</section>
+<section id="model-with-no-interaction" class="slide level2">
+<h1>Model with No Interaction</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#prep the data</span>
+d &lt;-<span class="st"> </span>rugged[<span class="kw">complete.cases</span>(rugged$log_gdp),]
+
+<span class="co">#need indices &gt;0</span>
+d$cont_africa &lt;-<span class="st"> </span>d$cont_africa +<span class="dv">1</span>
+
+<span class="co">#The model</span>
+mod_no_int &lt;-<span class="st"> </span><span class="kw">alist</span>(
+  <span class="co">#likelihood</span>
+  log_gdp ~<span class="st"> </span><span class="kw">dnorm</span>(mu, sigma),
+
+  <span class="co">#data generating process</span>
+  mu &lt;-<span class="st"> </span>bA[cont_africa] +<span class="st"> </span>bR*rugged,
+
+  <span class="co">#priors</span>
+  bR ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">1</span>),
+  bA[cont_africa] ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">8</span>,<span class="dv">100</span>),
+  sigma ~<span class="st"> </span><span class="kw">dunif</span>(<span class="dv">0</span>,<span class="dv">10</span>))
+
+fit_no_int &lt;-<span class="st"> </span><span class="kw">map</span>(mod_no_int, <span class="dt">data=</span>d)</code></pre></div>
+</section>
+<section id="what-does-that-look-like" class="slide level2">
+<h1>What does that look like?</h1>
+<p><img src="16_interactions_files/figure-revealjs/no_int_pred-1.jpeg" width="672" /></p>
+<center>
+Variable intercept only
+</center>
+</section>
+<section id="handling-categories" class="slide level2">
+<h1>Handling Categories</h1>
+<p>No Interaction:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mu &lt;-<span class="st"> </span>bA[cont_africa] +<span class="st"> </span>bR*rugged,
+
+<span class="co">#OR</span>
+
+mu &lt;-<span class="st"> </span>a +<span class="st"> </span>bA[cont_africa] +<span class="st"> </span>bR*rugged,</code></pre></div>
+<br />
+
+<div class="fragment">
+<center>
+What is the difference in what these two return?
+</center>
+</div>
+</section>
+<section id="ok-so-how-do-we-write-a-categorical-interaction" class="slide level2">
+<h1>OK, so, How do we write a categorical interaction?</h1>
+<p>Interaction 1:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mu &lt;-<span class="st"> </span>bA[cont_africa] +<span class="st"> </span>bR*rugged,
+
+bR &lt;-<span class="st"> </span>bR_0 +<span class="st"> </span>bR_1*cont_africa</code></pre></div>
+<ul>
+<li>Keeps form for <code>mu</code> but incorporates new information<br />
+</li>
+<li><code>bR_1</code> is difference from non-African bR</li>
+</ul>
+</section>
+<section id="ok-so-how-do-we-write-a-categorical-interaction-1" class="slide level2">
+<h1>OK, so, How do we write a categorical interaction?</h1>
+<p>Interaction 2</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mu &lt;-<span class="st"> </span>bA[cont_africa] +<span class="st"> </span>bR*rugged +<span class="st"> </span>bR_1*cont_africa,</code></pre></div>
+<ul>
+<li>More compact</li>
+<li><code>bR_1</code> has same meaning as before</li>
+</ul>
+</section>
+<section id="ok-so-how-do-we-write-a-categorical-interaction-2" class="slide level2">
+<h1>OK, so, How do we write a categorical interaction?</h1>
+<p>Interaction 3</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mu &lt;-<span class="st"> </span>bA[cont_africa] +<span class="st"> </span>bR[cont_africa]*rugged,</code></pre></div>
+<ul>
+<li>Uses indexing for groups<br />
+</li>
+<li>No post-hoc calculation issues</li>
+</ul>
+</section>
+<section id="the-full-model" class="slide level2">
+<h1>The full model</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">int_mod &lt;-<span class="st"> </span><span class="kw">alist</span>(
+  <span class="co">#likelihood</span>
+  log_gdp ~<span class="st"> </span><span class="kw">dnorm</span>(mu, sigma),
+  
+  <span class="co">#Data generating process</span>
+  mu &lt;-<span class="st"> </span>bR[cont_africa]*rugged +<span class="st"> </span>bA[cont_africa],
+  
+  <span class="co">#priors - note indexing!</span>
+  bR[cont_africa] ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">1</span>),
+  bA[cont_africa] ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">8</span>,<span class="dv">100</span>),
+  sigma ~<span class="st"> </span><span class="kw">dunif</span>(<span class="dv">0</span>,<span class="dv">10</span>)
+)
+
+int_fit &lt;-<span class="st"> </span><span class="kw">map</span>(int_mod, <span class="dt">data=</span>d)</code></pre></div>
+</section>
+<section id="coefficients" class="slide level2">
+<h1>Coefficients</h1>
+<p>Note <code>depth=2</code> for groups</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">precis</span>(int_fit, <span class="dt">depth=</span><span class="dv">2</span>, <span class="dt">cor=</span><span class="ot">TRUE</span>)</code></pre></div>
+<pre><code>       Mean StdDev  5.5% 94.5% bR___1 bR___2 bA___1 bA___2 sigma
+bR[1] -0.20   0.08 -0.32 -0.08   1.00   0.00  -0.79   0.00     0
+bR[2]  0.19   0.10  0.02  0.36   0.00   1.00   0.00  -0.66     0
+bA[1]  9.22   0.14  9.00  9.44  -0.79   0.00   1.00   0.00     0
+bA[2]  7.28   0.18  6.99  7.56   0.00  -0.66   0.00   1.00     0
+sigma  0.93   0.05  0.85  1.01   0.00   0.00   0.00   0.00     1</code></pre>
+<div class="fragment">
+<center>
+Note that <code>bR</code> changes in sign between groups!
+</div>
+</section>
+<section id="inspection" class="slide level2">
+<h1>Inspection</h1>
+<p><img src="16_interactions_files/figure-revealjs/pairs-1.jpeg" width="672" /></p>
+</section>
+<section id="a-posthoc-are-slopes-really-different" class="slide level2">
+<h1>A posthoc: Are slopes really different?</h1>
+<p><img src="16_interactions_files/figure-revealjs/samps-1.jpeg" width="672" /></p>
+</section>
+<section id="calculate-the-difference" class="slide level2">
+<h1>Calculate the difference</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">samps &lt;-<span class="st"> </span><span class="kw">extract.samples</span>(int_fit)
+
+<span class="kw">names</span>(samps)</code></pre></div>
+<pre><code>[1] &quot;sigma&quot; &quot;bR&quot;    &quot;bA&quot;   </code></pre>
+<div class="fragment">
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(samps$bR)</code></pre></div>
+<pre><code>            [,1]       [,2]
+[1,] -0.15179570 0.27818267
+[2,] -0.17523714 0.09972111
+[3,] -0.15245867 0.34652585
+[4,] -0.09268935 0.11231884
+[5,] -0.14039837 0.25779016
+[6,] -0.19623546 0.21929095</code></pre>
+</div>
+<div class="fragment">
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Not Africa v. Africa</span>
+diff_br &lt;-<span class="st"> </span>samps$bR[,<span class="dv">1</span>] -<span class="st"> </span>samps$bR[,<span class="dv">2</span>]</code></pre></div>
+</div>
+</section>
+<section id="were-they-different" class="slide level2">
+<h1>Were they different?</h1>
+<p><img src="16_interactions_files/figure-revealjs/dens_plot-1.jpeg" width="672" /></p>
+<p>99.9% were &lt; 0<br />
+<span class="fragment">They are quite likely different</span></p>
+</section>
+<section id="interpretation" class="slide level2">
+<h1>Interpretation</h1>
+<p>What can you say so far?</p>
+<div class="fragment">
+<p><img src="16_interactions_files/figure-revealjs/intplot-1.jpeg" width="672" /></p>
+</div>
+</section>
+<section id="continuous-interactions" class="slide level2">
+<h1>Continuous Interactions</h1>
+<ul>
+<li>Effects of predictors no longer independent
+<ul>
+<li>Effects conditional on one another<br />
+<br />
+</li>
+</ul></li>
+<li>May not be possible to evluate effect of single predictor in isolation<br />
+<br />
+</li>
+<li>Require counterfactual plots to assess meaning</li>
+</ul>
+</section>
+<section id="tulips" class="slide level2">
+<h1>Tulips!</h1>
+<p><img src="images/16/tulips.jpg" /></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(tulips)
+<span class="kw">head</span>(tulips)</code></pre></div>
+<pre><code>  bed water shade blooms
+1   a     1     1   0.00
+2   a     1     2   0.00
+3   a     1     3 111.04
+4   a     2     1 183.47
+5   a     2     2  59.16
+6   a     2     3  76.75</code></pre>
+</section>
+<section id="continuous-interactions-are-simple-to-code" class="slide level2">
+<h1>Continuous Interactions are Simple to Code</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tulip_mod &lt;-<span class="st"> </span><span class="kw">alist</span>(
+  <span class="co">#likelihood</span>
+  blooms ~<span class="st"> </span><span class="kw">dnorm</span>(mu, sigma),
+  
+  <span class="co">#Data generating process</span>
+  mu &lt;-<span class="st"> </span>a +<span class="st"> </span>bW*water +<span class="st"> </span>bS*shade +<span class="st"> </span>bWS*water*shade,
+  
+  <span class="co">#priors</span>
+  a ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">130</span>,<span class="dv">100</span>),
+  bW ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">100</span>),
+  bS ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">100</span>),
+  bWS ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">100</span>),
+  sigma ~<span class="st"> </span><span class="kw">dunif</span>(<span class="dv">0</span>,<span class="dv">100</span>)
+)</code></pre></div>
+</section>
+<section id="common-fitting-errors" class="slide level2">
+<h1>Common fitting errors!</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit_tulip &lt;-<span class="st"> </span><span class="kw">map</span>(tulip_mod, <span class="dt">data=</span>tulips)</code></pre></div>
+<pre><code>Error in map(tulip_mod, data = tulips): non-finite finite-difference value [5]
+Start values for parameters may be too far from MAP.
+Try better priors or use explicit start values.
+If you sampled random start values, just trying again may work.
+Start values used in this attempt:
+a = 150.331309039261
+bW = 187.446212728008
+bS = -41.3825724654428
+bWS = 80.3598233487261
+sigma = 60.5601385002956</code></pre>
+</section>
+<section id="fixes" class="slide level2">
+<h1>Fixes</h1>
+<ol type="1">
+<li>Try a different algorithm
+<ul>
+<li><code>Nelder-Mead</code> often works, but slower<br />
+</li>
+<li><code>SANN</code> also works, but sloooow<br />
+<br />
+</li>
+</ul></li>
+<li>Transform values
+<ul>
+<li>Center</li>
+<li>Scale<br />
+</li>
+</ul></li>
+<li>Supply start values<br />
+<br />
+</li>
+<li>Change priors<br />
+<br />
+</li>
+<li>Change algorithmic parameters</li>
+</ol>
+</section>
+<section id="these-both-work" class="slide level2">
+<h1>These both work</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit_tulip_1 &lt;-<span class="st"> </span><span class="kw">map</span>(tulip_mod, 
+                   <span class="dt">data=</span>tulips,
+                   <span class="dt">method=</span><span class="st">&quot;Nelder-Mead&quot;</span>)</code></pre></div>
+<p>or</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tulip_cent &lt;-<span class="st"> </span>tulips %&gt;%<span class="st"> </span><span class="kw">mutate</span>(<span class="dt">shade =</span> shade-<span class="kw">mean</span>(shade),
+                                          <span class="dt">water =</span> water-<span class="kw">mean</span>(water))
+fit_tulip_2 &lt;-<span class="st"> </span><span class="kw">map</span>(tulip_mod, 
+                   <span class="dt">data=</span>tulip_cent)</code></pre></div>
+</section>
+<section id="how-does-the-meaning-change-with-centering" class="slide level2">
+<h1>How does the meaning change with centering?</h1>
+<pre><code>      fit_tulip_1 fit_tulip_2
+a      -49.50      128.98    
+bW     136.79       74.97    
+bS      20.49      -41.12    
+bWS    -33.70      -51.95    
+sigma   47.37       45.25    
+nobs       27          27    </code></pre>
+<div class="fragment">
+And, what do these coefficients say?
+</div>
+</section>
+<section id="counterfactal-plots-are-necessary" class="slide level2">
+<h1>Counterfactal Plots are Necessary</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tulip_pred_df &lt;-<span class="st"> </span><span class="kw">crossing</span>(<span class="dt">shade =</span> -<span class="dv">1</span>:<span class="dv">1</span>, <span class="dt">water =</span> -<span class="dv">1</span>:<span class="dv">1</span>)</code></pre></div>
+<p><img src="16_interactions_files/figure-revealjs/counterfact_plot-1.jpeg" width="672" /></p>
+</section>
+<section id="exercise" class="slide level2">
+<h1>Exercise</h1>
+<ol type="1">
+<li>Take the excellent milk models you have!<br />
+<br />
+</li>
+<li>Now, make models where
+<ol type="a">
+<li>Effects vary by clade AND/OR<br />
+</li>
+<li>Different predictors interact<br />
+<br />
+</li>
+</ol></li>
+<li>Evaluate with WAIC<br />
+<br />
+</li>
+<li>Plot implications to understand
+<ul>
+<li>Single model or ensemble<br />
+<br />
+</li>
+</ul></li>
+<li>Go green if you have something cool to throw up</li>
+</ol>
+</section>
+    </div>
+  </div>
+
+  <script src="libs/reveal.js-3.3.0/lib/js/head.min.js"></script>
+  <script src="libs/reveal.js-3.3.0/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display the page number of the current slide
+        slideNumber: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: false,
+        // Opens links in an iframe preview overlay
+        previewLinks: true,
+        // Transition style
+        transition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>
