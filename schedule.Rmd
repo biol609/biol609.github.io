@@ -62,8 +62,9 @@ __Additional Reading:__ [Aho et al 2013 Ecology](http://izt.ciens.ucv.ve/ecologi
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-mmi    
   
 ### Week 9. 
-__Lecture:__ Markov Chain Monte-Carlo Approaches  
-__Reading:__ McElreath Chapter 8
+__Lecture:__ [Markov Chain Monte-Carlo Approaches](./lectures/17_mcmc.html)   
+__Reading:__ McElreath Chapter 8,9  
+__Etherpad:__ https://etherpad.wikimedia.org/p/609-mcmc_entropy    
   
 ### Week 10. 
 __Lecture__: Generalized Linear Models in a Bayesian Framework  

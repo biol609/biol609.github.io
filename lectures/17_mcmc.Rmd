@@ -1,0 +1,400 @@
+---
+title:
+css: style.css
+output:
+  revealjs::revealjs_presentation:
+    reveal_options:
+      slideNumber: true
+      previewLinks: true
+    theme: white
+    center: false
+    transition: fade
+    self_contained: false
+    lib_dir: libs
+---
+##
+<center>
+<h2>Markov Chain Monte Carlo</h2>
+</center>
+\
+![](./images/17/f_this_mcmc.jpg){width="50%"}
+
+
+```{r prep, echo=FALSE, cache=FALSE, message=FALSE, warning=FALSE}
+library(knitr)
+
+opts_chunk$set(fig.height=5, fig.width=7, comment=NA, 
+               warning=FALSE, message=FALSE, 
+               dev="jpeg", echo=FALSE)
+
+library(rethinking)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+#center plot titles
+theme_set(theme_bw())
+theme_update(plot.title = element_text(hjust = 0.5))
+
+
+```
+
+## Our Story Thus Far...
+- We have been using Maximum A Posteriori Approximations  
+\
+- Assumes Gaussian posterior (approximately quadratic)  
+\
+- Great for simple models
+```{r quadratic}
+data(rugged)
+rugged$log_gdp <- log(rugged$rgdppc_2000)
+
+#prep the data
+d <- rugged[complete.cases(rugged$log_gdp),]
+
+#need indices >0
+d$cont_africa <- d$cont_africa +1
+
+#The model
+mod_no_int <- alist(
+  #likelihood
+  log_gdp ~ dnorm(mu, sigma),
+
+  #data generating process
+  mu <- bA[cont_africa] + bR*rugged,
+
+  #priors
+  bR ~ dnorm(0,1),
+  bA[cont_africa] ~ dnorm(8,100),
+  sigma ~ dunif(0,10))
+
+fit_no_int <- map(mod_no_int, data=d)
+
+plot(density(extract.samples(fit_no_int)$bR), main="Slope Posterior")
+```
+
+## But...
+- We've noticed problems with models of moderate complexity  
+\
+- Many problems do not have easy analytical solution  
+    - Autocorrelation  
+    - State-Space Models
+    - Mixed Models  
+\
+- Solution is simulated draws form the posterior...
+
+## King Markov and His Islands
+![](./images/17/Mergui-Archipelago.jpg)
+
+## King Markov and His Islands
+![](./images/17/Mergui-Archipelago.jpg)
+![](./images/17/boat2.jpg)
+
+## How to move around Islands
+![](./images/17/boat2.jpg)
+
+<li class="fragment">Flip a coin. Heads, move. Tails, stay.</li>  
+<li class="fragment">Figure out the number of people on each island.</li>  
+<li class="fragment">Assign a probability, next island / (total population)</li>  
+<li class="fragment">Choose a random number. If number < p, move.</li>
+<li class="fragment">Rinse and repeat</li>
+
+## What Metropolis MCMC Looks Like
+```{r mcmc, echo=TRUE}
+
+mcmc_ex <- function(num_weeks = 1e5, current=10, positions = rep(0, num_weeks)){
+  for ( i in 1:num_weeks ) {
+    # record current position
+    positions[i] <- current
+  
+    # flip coin to generate proposal
+    proposal <- current + sample( c(-1,1) , size=1 )
+    # now make sure he loops around the archipelago
+    if ( proposal < 1 ) proposal <- 10
+    if ( proposal > 10 ) proposal <- 1
+  
+    # move?
+    prob_move <- proposal/current
+    current <- ifelse( runif(1) < prob_move , proposal , current )
+  }
+
+  positions
+}
+
+```
+
+
+## Metropolis MCMC in Action: 10 Weeks
+Population = Island Number
+```{r met}
+par(mfrow=c(1,2))
+plot(mcmc_ex(10), xlab="weeks", type="l")
+simplehist(mcmc_ex(10))
+par(mfrow=c(1,1))
+```
+
+## Metropolis MCMC in Action: 50 Weeks
+Population = Island Number
+```{r met_50}
+par(mfrow=c(1,2))
+plot(mcmc_ex(50), xlab="weeks", type="l")
+simplehist(mcmc_ex(50))
+par(mfrow=c(1,1))
+```
+
+## Metropolis MCMC in Action: 1000 Weeks
+Population = Island Number
+```{r met_1000}
+par(mfrow=c(1,2))
+plot(mcmc_ex(1000), xlab="weeks", type="l")
+simplehist(mcmc_ex(1000))
+par(mfrow=c(1,1))
+```
+
+## Metropolis MCMC For Models
+<div id="left">
+```{r tmp}
+plot(mcmc_ex(100), xlab="weeks", type="l")
+```
+</div>
+
+<div id="right">
+- Each island is a set of parameter choices  
+\
+- Each "population" is a posterior density  
+\
+- The path is a 'chain'  
+\
+- Note the autocorrelation - we "thin" chains 
+    - Only use every ith sample so that there is no autocorrelation
+</div>
+
+## MCMC In Practice for Models
+![](./images/17/mcmc_in_practice.jpg)  
+\
+\
+\
+<div style="font-size:11pt">from http://www.cnblogs.com/Nietzsche/p/4255948.html</div>
+
+## MCMC is not a Panacea
+![](./images/17/mcmc_fail.jpg)
+
+## MCMC is not a Panacea
+![](./images/17/mcmc_stuck_green_worden_2015.jpg)
+
+## How can MCMC Fail?
+
+- MCMC (particularly Metropolis) can get stuck  
+\
+- Start values can still be important  
+\
+- Particularly a problem with many parameters which are correlated  
+\
+- One way we try and assess is fit with many chains and make sure they converge
+
+
+## MCMC Algorithms
+<div id="left">
+- Metropolis MCMC inefficient  
+\
+- Many algorithms to come up with clever proposed moves to speed up  
+\
+- Gibbs sampling used for BUGS, JAGS, etc.\
+    - Still has same problems as Metropilis  
+\
+- Or... Abandon search and use more deterministic sampling
+    - Hamiltonian MCMC
+</div>
+
+<div id="right">
+\
+\
+![](./images/17/gibbs_strangelove.jpg)
+</div>
+
+## King Hamilton and His BatBoat
+![](./images/17/Mergui-Archipelago.jpg){width="80%"}
+![](./images/17/batboat.jpg){width="40%"}
+
+## King Hamilton and His BatBoat
+![](./images/17/batboat.jpg)
+
+- Boat passes by all of the island, back and forth  
+\
+- Boat slows down to see people in porportion to how many folk  
+\
+- We sample position through time, more positions in areas where boat is slow
+
+## Metropolis versus Hamiltonian
+![](images/17/metropolis_hamilton_bivariate.jpg)
+\
+\
+\
+<div style="font-size:11pt">Neal 2011, http://www.cs.utoronto.ca/~radford/ham-mcmc.abstract.html </div>
+
+## Metropolis versus Hamiltonian
+![](images/17/metropolis_hamilton_sampling.jpg)
+\
+\
+\
+<div style="font-size:11pt">Neal 2011, http://www.cs.utoronto.ca/~radford/ham-mcmc.abstract.html </div>
+
+
+## Metropolis versus Hamiltonian
+![](images/17/metropolis_hamilton_sampling_high_n.jpg)
+\
+\
+\
+<div style="font-size:11pt">Neal 2011, http://www.cs.utoronto.ca/~radford/ham-mcmc.abstract.html </div>
+
+## Implementing HMCMC via Stan
+![](images/17/stan_team.jpg)
+
+- We use the `map2stan` function to call STAN  
+     - Compiles a model, so it can take a while  
+\
+- Can specify number of chains and other parameters  
+\
+- And now our samples are already part of our model!  
+\
+- Careful, models can get large (in size) depending on number of parameters and samples
+
+## Data Prep for HMCMC
+```{r show_rugged, echo=TRUE}
+data(rugged)
+rugged$log_gdp <- log(rugged$rgdppc_2000)
+
+#Prep the data
+d <- rugged[complete.cases(rugged$log_gdp),]
+
+# Need indices >0
+d$cont_africa <- d$cont_africa +1
+
+# Only want the data we are using
+# (otherwise slows STAN down)
+d.trim <- d[ , c("log_gdp","rugged","cont_africa") ]
+```
+
+## The Model...
+```{r int_model, echo=TRUE}
+int_mod <- alist(
+  #likelihood
+  log_gdp ~ dnorm(mu, sigma),
+  
+  #Data generating process
+  mu <- bR[cont_africa]*rugged + bA[cont_africa],
+  
+  #priors
+  bR[cont_africa] ~ dnorm(0,1),
+  bA[cont_africa] ~ dnorm(8,100),
+  sigma ~ dcauchy(0,2)
+)
+
+```
+
+<div class="fragment">Wait, Cauchy???</div>
+
+## Sidenote: the Cauchy Distribution
+- Pronounced Ko-she
+- A ratio of two normal distributions  
+- Large thick tail
+     - Extreme values regularly sampled
+- Uses half-cauchy, so, only positive  
+
+```{r cauchy, fig.height=4, fig.width=7}
+crossing(scale = c(1,3,5), value = seq(0,10, length.out=200)) %>%
+  mutate(dens = dcauchy(value, 0, scale)) %>%
+  ggplot() +
+  aes(x=value, y=dens, color=factor(scale)) +
+  geom_line(size=1.3)
+```
+
+## Fitting with map2stan
+```{r map2stan, cache=TRUE, echo=TRUE}
+fit <- map2stan(int_mod, data=d.trim)
+```
+
+- Note where errors occur  
+     - Warmup only?  
+     - How often in your chain?
+
+## Inspect your Chains for convergence!
+```{r plot_chain, fig.height=4, fig.width=7}
+plot(fit)
+```
+
+- Note, grey area is "warmup"  
+     - Warmup is the BatBoat motoring around, tuning up  
+     - Not used for posterior
+
+
+## Multiple Chains
+```{r map2stan_chains, cache=TRUE, echo=TRUE, results="hide"}
+fit_chains <- map2stan(int_mod, data=d.trim,
+                       chains = 4, cores=4)
+```
+
+- Can fit with multiple chains to inspect convergence  
+\
+- Yay multicore computers! 
+
+
+## Multiple Chains
+```{r chains_plot}
+plot(fit_chains)
+```
+
+## Assessing Convergence
+```{r chains_precis, echo=TRUE}
+precis(fit_chains, depth=2)
+```
+
+- `n_eff` is effective number of samples in chain  
+     - Should be reasonably large  
+\
+- `Rhat` is a measure of convergence  
+     - Gelman-Rubin diagnostic
+     - Should be 1 - even 1.01 is suspect  
+     \
+- Treat as warnings - necessary but not sufficient
+     
+## What do bad chains look like?
+```{r bad_chain_make, results="hide", cache=TRUE}
+y <- c(-1,1)
+m8.2 <- map2stan(
+    alist(
+        y ~ dnorm( mu , sigma ) ,
+        mu <- alpha
+    ) ,
+    data=list(y=y) , start=list(alpha=0,sigma=1) ,
+    chains=2 , iter=4000 , warmup=1000 )
+
+plot(m8.2)
+```
+
+
+## Lack of Convergence
+- Might be that model has not found good values  
+- More likely bad model  
+     - Too many parameters  
+     - Redundant parameters  
+     - Poor fit to data
+![](./images/17/mcmc_convergence_no.jpg)
+
+## General Workflow
+1. Fit one chain to make sure things look OK
+     - warmup = 1000, iter=2000 OK  
+\
+2. Fit multiple chains to ensure convergence  
+     - Inspect `n_eff` and `r_hat`
+     - Make sure posterior converges and is stationary
+     - Tune HMC and model parameters  
+\
+3. Fit one chain with large everything tuned 
+    - Can use more chains if you have the processors
+
+## Exercise
+- Refit your homework models  
+\
+- Do estimates differ from MAP?  
+\
+- Try uncentered model - does it perform better?

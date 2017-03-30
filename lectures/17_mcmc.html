@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <title></title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="libs/reveal.js-3.3.0/css/reveal.css"/>
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="libs/reveal.js-3.3.0/css/theme/white.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="style.css"/>
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'libs/reveal.js-3.3.0/css/print/pdf.css' : 'libs/reveal.js-3.3.0/css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+    <!--[if lt IE 9]>
+    <script src="libs/reveal.js-3.3.0/lib/js/html5shiv.js"></script>
+    <![endif]-->
+
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+
+<section id="section" class="slide level2">
+<h1></h1>
+<center>
+<h2>
+Markov Chain Monte Carlo
+</h2>
+</center>
+<p><br />
+<img src="images/17/f_this_mcmc.jpg" style="width:50.0%" /></p>
+</section>
+<section id="our-story-thus-far" class="slide level2">
+<h1>Our Story Thus Far…</h1>
+<ul>
+<li>We have been using Maximum A Posteriori Approximations<br />
+<br />
+</li>
+<li>Assumes Gaussian posterior (approximately quadratic)<br />
+<br />
+</li>
+<li>Great for simple models <img src="17_mcmc_files/figure-revealjs/quadratic-1.jpeg" width="672" /></li>
+</ul>
+</section>
+<section id="but" class="slide level2">
+<h1>But…</h1>
+<ul>
+<li>We’ve noticed problems with models of moderate complexity<br />
+<br />
+</li>
+<li>Many problems do not have easy analytical solution
+<ul>
+<li>Autocorrelation<br />
+</li>
+<li>State-Space Models</li>
+<li>Mixed Models<br />
+<br />
+</li>
+</ul></li>
+<li>Solution is simulated draws form the posterior…</li>
+</ul>
+</section>
+<section id="king-markov-and-his-islands" class="slide level2">
+<h1>King Markov and His Islands</h1>
+<p><img src="images/17/Mergui-Archipelago.jpg" /></p>
+</section>
+<section id="king-markov-and-his-islands-1" class="slide level2">
+<h1>King Markov and His Islands</h1>
+<p><img src="images/17/Mergui-Archipelago.jpg" /> <img src="images/17/boat2.jpg" /></p>
+</section>
+<section id="how-to-move-around-islands" class="slide level2">
+<h1>How to move around Islands</h1>
+<p><img src="images/17/boat2.jpg" /></p>
+<li class="fragment">
+Flip a coin. Heads, move. Tails, stay.
+</li>
+<li class="fragment">
+Figure out the number of people on each island.
+</li>
+<li class="fragment">
+Assign a probability, next island / (total population)
+</li>
+<li class="fragment">
+Choose a random number. If number &lt; p, move.
+</li>
+<li class="fragment">
+Rinse and repeat
+</li>
+</section>
+<section id="what-metropolis-mcmc-looks-like" class="slide level2">
+<h1>What Metropolis MCMC Looks Like</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mcmc_ex &lt;-<span class="st"> </span>function(<span class="dt">num_weeks =</span> <span class="fl">1e5</span>, <span class="dt">current=</span><span class="dv">10</span>, <span class="dt">positions =</span> <span class="kw">rep</span>(<span class="dv">0</span>, num_weeks)){
+  for ( i in <span class="dv">1</span>:num_weeks ) {
+    <span class="co"># record current position</span>
+    positions[i] &lt;-<span class="st"> </span>current
+  
+    <span class="co"># flip coin to generate proposal</span>
+    proposal &lt;-<span class="st"> </span>current +<span class="st"> </span><span class="kw">sample</span>( <span class="kw">c</span>(-<span class="dv">1</span>,<span class="dv">1</span>) , <span class="dt">size=</span><span class="dv">1</span> )
+    <span class="co"># now make sure he loops around the archipelago</span>
+    if ( proposal &lt;<span class="st"> </span><span class="dv">1</span> ) proposal &lt;-<span class="st"> </span><span class="dv">10</span>
+    if ( proposal &gt;<span class="st"> </span><span class="dv">10</span> ) proposal &lt;-<span class="st"> </span><span class="dv">1</span>
+  
+    <span class="co"># move?</span>
+    prob_move &lt;-<span class="st"> </span>proposal/current
+    current &lt;-<span class="st"> </span><span class="kw">ifelse</span>( <span class="kw">runif</span>(<span class="dv">1</span>) &lt;<span class="st"> </span>prob_move , proposal , current )
+  }
+
+  positions
+}</code></pre></div>
+</section>
+<section id="metropolis-mcmc-in-action-10-weeks" class="slide level2">
+<h1>Metropolis MCMC in Action: 10 Weeks</h1>
+<p>Population = Island Number <img src="17_mcmc_files/figure-revealjs/met-1.jpeg" width="672" /></p>
+</section>
+<section id="metropolis-mcmc-in-action-50-weeks" class="slide level2">
+<h1>Metropolis MCMC in Action: 50 Weeks</h1>
+<p>Population = Island Number <img src="17_mcmc_files/figure-revealjs/met_50-1.jpeg" width="672" /></p>
+</section>
+<section id="metropolis-mcmc-in-action-1000-weeks" class="slide level2">
+<h1>Metropolis MCMC in Action: 1000 Weeks</h1>
+<p>Population = Island Number <img src="17_mcmc_files/figure-revealjs/met_1000-1.jpeg" width="672" /></p>
+</section>
+<section id="metropolis-mcmc-for-models" class="slide level2">
+<h1>Metropolis MCMC For Models</h1>
+<div id="left">
+<p><img src="17_mcmc_files/figure-revealjs/tmp-1.jpeg" width="672" /></p>
+</div>
+<div id="right">
+<ul>
+<li>Each island is a set of parameter choices<br />
+<br />
+</li>
+<li>Each “population” is a posterior density<br />
+<br />
+</li>
+<li>The path is a ‘chain’<br />
+<br />
+</li>
+<li>Note the autocorrelation - we “thin” chains
+<ul>
+<li>Only use every ith sample so that there is no autocorrelation</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="mcmc-in-practice-for-models" class="slide level2">
+<h1>MCMC In Practice for Models</h1>
+<img src="images/17/mcmc_in_practice.jpg" /><br />
+<br />
+<br />
+<br />
+
+<div style="font-size:11pt">
+from <a href="http://www.cnblogs.com/Nietzsche/p/4255948.html" class="uri">http://www.cnblogs.com/Nietzsche/p/4255948.html</a>
+</div>
+</section>
+<section id="mcmc-is-not-a-panacea" class="slide level2">
+<h1>MCMC is not a Panacea</h1>
+<p><img src="images/17/mcmc_fail.jpg" /></p>
+</section>
+<section id="mcmc-is-not-a-panacea-1" class="slide level2">
+<h1>MCMC is not a Panacea</h1>
+<p><img src="images/17/mcmc_stuck_green_worden_2015.jpg" /></p>
+</section>
+<section id="how-can-mcmc-fail" class="slide level2">
+<h1>How can MCMC Fail?</h1>
+<ul>
+<li>MCMC (particularly Metropolis) can get stuck<br />
+<br />
+</li>
+<li>Start values can still be important<br />
+<br />
+</li>
+<li>Particularly a problem with many parameters which are correlated<br />
+<br />
+</li>
+<li>One way we try and assess is fit with many chains and make sure they converge</li>
+</ul>
+</section>
+<section id="mcmc-algorithms" class="slide level2">
+<h1>MCMC Algorithms</h1>
+<div id="left">
+<ul>
+<li>Metropolis MCMC inefficient<br />
+<br />
+</li>
+<li>Many algorithms to come up with clever proposed moves to speed up<br />
+<br />
+</li>
+<li>Gibbs sampling used for BUGS, JAGS, etc.<br />
+- Still has same problems as Metropilis<br />
+<br />
+</li>
+<li>Or… Abandon search and use more deterministic sampling
+<ul>
+<li>Hamiltonian MCMC</li>
+</ul></li>
+</ul>
+</div>
+<div id="right">
+<p><br />
+<br />
+<img src="images/17/gibbs_strangelove.jpg" /></p>
+</div>
+</section>
+<section id="king-hamilton-and-his-batboat" class="slide level2">
+<h1>King Hamilton and His BatBoat</h1>
+<p><img src="images/17/Mergui-Archipelago.jpg" style="width:80.0%" /> <img src="images/17/batboat.jpg" style="width:40.0%" /></p>
+</section>
+<section id="king-hamilton-and-his-batboat-1" class="slide level2">
+<h1>King Hamilton and His BatBoat</h1>
+<p><img src="images/17/batboat.jpg" /></p>
+<ul>
+<li>Boat passes by all of the island, back and forth<br />
+<br />
+</li>
+<li>Boat slows down to see people in porportion to how many folk<br />
+<br />
+</li>
+<li>We sample position through time, more positions in areas where boat is slow</li>
+</ul>
+</section>
+<section id="metropolis-versus-hamiltonian" class="slide level2">
+<h1>Metropolis versus Hamiltonian</h1>
+<img src="images/17/metropolis_hamilton_bivariate.jpg" /><br />
+<br />
+<br />
+
+<div style="font-size:11pt">
+Neal 2011, <a href="http://www.cs.utoronto.ca/~radford/ham-mcmc.abstract.html" class="uri">http://www.cs.utoronto.ca/~radford/ham-mcmc.abstract.html</a>
+</div>
+</section>
+<section id="metropolis-versus-hamiltonian-1" class="slide level2">
+<h1>Metropolis versus Hamiltonian</h1>
+<img src="images/17/metropolis_hamilton_sampling.jpg" /><br />
+<br />
+<br />
+
+<div style="font-size:11pt">
+Neal 2011, <a href="http://www.cs.utoronto.ca/~radford/ham-mcmc.abstract.html" class="uri">http://www.cs.utoronto.ca/~radford/ham-mcmc.abstract.html</a>
+</div>
+</section>
+<section id="metropolis-versus-hamiltonian-2" class="slide level2">
+<h1>Metropolis versus Hamiltonian</h1>
+<img src="images/17/metropolis_hamilton_sampling_high_n.jpg" /><br />
+<br />
+<br />
+
+<div style="font-size:11pt">
+Neal 2011, <a href="http://www.cs.utoronto.ca/~radford/ham-mcmc.abstract.html" class="uri">http://www.cs.utoronto.ca/~radford/ham-mcmc.abstract.html</a>
+</div>
+</section>
+<section id="implementing-hmcmc-via-stan" class="slide level2">
+<h1>Implementing HMCMC via Stan</h1>
+<p><img src="images/17/stan_team.jpg" /></p>
+<ul>
+<li>We use the <code>map2stan</code> function to call STAN
+<ul>
+<li>Compiles a model, so it can take a while<br />
+<br />
+</li>
+</ul></li>
+<li>Can specify number of chains and other parameters<br />
+<br />
+</li>
+<li>And now our samples are already part of our model!<br />
+<br />
+</li>
+<li>Careful, models can get large (in size) depending on number of parameters and samples</li>
+</ul>
+</section>
+<section id="data-prep-for-hmcmc" class="slide level2">
+<h1>Data Prep for HMCMC</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(rugged)
+rugged$log_gdp &lt;-<span class="st"> </span><span class="kw">log</span>(rugged$rgdppc_2000)
+
+<span class="co">#Prep the data</span>
+d &lt;-<span class="st"> </span>rugged[<span class="kw">complete.cases</span>(rugged$log_gdp),]
+
+<span class="co"># Need indices &gt;0</span>
+d$cont_africa &lt;-<span class="st"> </span>d$cont_africa +<span class="dv">1</span>
+
+<span class="co"># Only want the data we are using</span>
+<span class="co"># (otherwise slows STAN down)</span>
+d.trim &lt;-<span class="st"> </span>d[ , <span class="kw">c</span>(<span class="st">&quot;log_gdp&quot;</span>,<span class="st">&quot;rugged&quot;</span>,<span class="st">&quot;cont_africa&quot;</span>) ]</code></pre></div>
+</section>
+<section id="the-model" class="slide level2">
+<h1>The Model…</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">int_mod &lt;-<span class="st"> </span><span class="kw">alist</span>(
+  <span class="co">#likelihood</span>
+  log_gdp ~<span class="st"> </span><span class="kw">dnorm</span>(mu, sigma),
+  
+  <span class="co">#Data generating process</span>
+  mu &lt;-<span class="st"> </span>bR[cont_africa]*rugged +<span class="st"> </span>bA[cont_africa],
+  
+  <span class="co">#priors</span>
+  bR[cont_africa] ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">1</span>),
+  bA[cont_africa] ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">8</span>,<span class="dv">100</span>),
+  sigma ~<span class="st"> </span><span class="kw">dcauchy</span>(<span class="dv">0</span>,<span class="dv">2</span>)
+)</code></pre></div>
+<div class="fragment">
+Wait, Cauchy???
+</div>
+</section>
+<section id="sidenote-the-cauchy-distribution" class="slide level2">
+<h1>Sidenote: the Cauchy Distribution</h1>
+<ul>
+<li>Pronounced Ko-she</li>
+<li>A ratio of two normal distributions<br />
+</li>
+<li>Large thick tail
+<ul>
+<li>Extreme values regularly sampled</li>
+</ul></li>
+<li>Uses half-cauchy, so, only positive</li>
+</ul>
+<p><img src="17_mcmc_files/figure-revealjs/cauchy-1.jpeg" width="672" /></p>
+</section>
+<section id="fitting-with-map2stan" class="slide level2">
+<h1>Fitting with map2stan</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit &lt;-<span class="st"> </span><span class="kw">map2stan</span>(int_mod, <span class="dt">data=</span>d.trim)</code></pre></div>
+<pre><code>warning: unknown warning option &#39;-Wno-nneeded-internal-declaration&#39;; did you mean &#39;-Wno-unneeded-internal-declaration&#39;? [-Wunknown-warning-option]
+In file included from file111646090ffe9.cpp:8:
+In file included from /Users/jearbear/Library/R/3.3/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
+In file included from /Users/jearbear/Library/R/3.3/library/StanHeaders/include/stan/math.hpp:4:
+In file included from /Users/jearbear/Library/R/3.3/library/StanHeaders/include/stan/math/rev/mat.hpp:4:
+In file included from /Users/jearbear/Library/R/3.3/library/StanHeaders/include/stan/math/rev/core.hpp:12:
+In file included from /Users/jearbear/Library/R/3.3/library/StanHeaders/include/stan/math/rev/core/gevv_vvv_vari.hpp:5:
+In file included from /Users/jearbear/Library/R/3.3/library/StanHeaders/include/stan/math/rev/core/var.hpp:7:
+In file included from /Users/jearbear/Library/R/3.3/library/BH/include/boost/math/tools/config.hpp:13:
+In file included from /Users/jearbear/Library/R/3.3/library/BH/include/boost/config.hpp:39:
+/Users/jearbear/Library/R/3.3/library/BH/include/boost/config/compiler/clang.hpp:196:11: warning: &#39;BOOST_NO_CXX11_RVALUE_REFERENCES&#39; macro redefined [-Wmacro-redefined]
+#  define BOOST_NO_CXX11_RVALUE_REFERENCES
+          ^
+&lt;command line&gt;:6:9: note: previous definition is here
+#define BOOST_NO_CXX11_RVALUE_REFERENCES 1
+        ^
+2 warnings generated.
+
+SAMPLING FOR MODEL &#39;log_gdp ~ dnorm(mu, sigma)&#39; NOW (CHAIN 1).
+
+Chain 1, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 1, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 1, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 1, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 1, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 1, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 1, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 1, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 1, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 1, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 0.121338 seconds (Warm-up)
+               0.103927 seconds (Sampling)
+               0.225265 seconds (Total)
+
+
+SAMPLING FOR MODEL &#39;log_gdp ~ dnorm(mu, sigma)&#39; NOW (CHAIN 1).
+WARNING: No variance estimation is
+         performed for num_warmup &lt; 20
+
+
+Chain 1, Iteration: 1 / 1 [100%]  (Sampling)
+ Elapsed Time: 3e-06 seconds (Warm-up)
+               4.7e-05 seconds (Sampling)
+               5e-05 seconds (Total)
+
+[ 100 / 1000 ]
+[ 200 / 1000 ]
+[ 300 / 1000 ]
+[ 400 / 1000 ]
+[ 500 / 1000 ]
+[ 600 / 1000 ]
+[ 700 / 1000 ]
+[ 800 / 1000 ]
+[ 900 / 1000 ]
+[ 1000 / 1000 ]</code></pre>
+<ul>
+<li>Note where errors occur
+<ul>
+<li>Warmup only?<br />
+</li>
+<li>How often in your chain?</li>
+</ul></li>
+</ul>
+</section>
+<section id="inspect-your-chains-for-convergence" class="slide level2">
+<h1>Inspect your Chains for convergence!</h1>
+<p><img src="17_mcmc_files/figure-revealjs/plot_chain-1.jpeg" width="672" /></p>
+<ul>
+<li>Note, grey area is “warmup”
+<ul>
+<li>Warmup is the BatBoat motoring around, tuning up<br />
+</li>
+<li>Not used for posterior</li>
+</ul></li>
+</ul>
+</section>
+<section id="multiple-chains" class="slide level2">
+<h1>Multiple Chains</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit_chains &lt;-<span class="st"> </span><span class="kw">map2stan</span>(int_mod, <span class="dt">data=</span>d.trim,
+                       <span class="dt">chains =</span> <span class="dv">4</span>, <span class="dt">cores=</span><span class="dv">4</span>)</code></pre></div>
+<ul>
+<li>Can fit with multiple chains to inspect convergence<br />
+<br />
+</li>
+<li>Yay multicore computers!</li>
+</ul>
+</section>
+<section id="multiple-chains-1" class="slide level2">
+<h1>Multiple Chains</h1>
+<p><img src="17_mcmc_files/figure-revealjs/chains_plot-1.jpeg" width="672" /></p>
+</section>
+<section id="assessing-convergence" class="slide level2">
+<h1>Assessing Convergence</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">precis</span>(fit_chains, <span class="dt">depth=</span><span class="dv">2</span>)</code></pre></div>
+<pre><code>       Mean StdDev lower 0.89 upper 0.89 n_eff Rhat
+bR[1] -0.20   0.08      -0.33      -0.08  2339    1
+bR[2]  0.19   0.11       0.02       0.36  2975    1
+bA[1]  9.22   0.14       9.00       9.44  2210    1
+bA[2]  7.28   0.18       6.99       7.57  3133    1
+sigma  0.95   0.05       0.86       1.03  4000    1</code></pre>
+<ul>
+<li><code>n_eff</code> is effective number of samples in chain
+<ul>
+<li>Should be reasonably large<br />
+<br />
+</li>
+</ul></li>
+<li><code>Rhat</code> is a measure of convergence
+<ul>
+<li>Gelman-Rubin diagnostic</li>
+<li>Should be 1 - even 1.01 is suspect<br />
+<br />
+</li>
+</ul></li>
+<li>Treat as warnings - necessary but not sufficient</li>
+</ul>
+</section>
+<section id="what-do-bad-chains-look-like" class="slide level2">
+<h1>What do bad chains look like?</h1>
+<p><img src="17_mcmc_files/figure-revealjs/bad_chain_make-1.jpeg" width="672" /></p>
+</section>
+<section id="lack-of-convergence" class="slide level2">
+<h1>Lack of Convergence</h1>
+<ul>
+<li>Might be that model has not found good values<br />
+</li>
+<li>More likely bad model
+<ul>
+<li>Too many parameters<br />
+</li>
+<li>Redundant parameters<br />
+</li>
+<li>Poor fit to data <img src="images/17/mcmc_convergence_no.jpg" /></li>
+</ul></li>
+</ul>
+</section>
+<section id="general-workflow" class="slide level2">
+<h1>General Workflow</h1>
+<ol type="1">
+<li>Fit one chain to make sure things look OK
+<ul>
+<li>warmup = 1000, iter=2000 OK<br />
+<br />
+</li>
+</ul></li>
+<li>Fit multiple chains to ensure convergence
+<ul>
+<li>Inspect <code>n_eff</code> and <code>r_hat</code></li>
+<li>Make sure posterior converges and is stationary</li>
+<li>Tune HMC and model parameters<br />
+<br />
+</li>
+</ul></li>
+<li>Fit one chain with large everything tuned
+<ul>
+<li>Can use more chains if you have the processors</li>
+</ul></li>
+</ol>
+</section>
+<section id="exercise" class="slide level2">
+<h1>Exercise</h1>
+<ul>
+<li>Refit your homework models<br />
+<br />
+</li>
+<li>Do estimates differ from MAP?<br />
+<br />
+</li>
+<li>Try uncentered model - does it perform better?</li>
+</ul>
+</section>
+    </div>
+  </div>
+
+  <script src="libs/reveal.js-3.3.0/lib/js/head.min.js"></script>
+  <script src="libs/reveal.js-3.3.0/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display the page number of the current slide
+        slideNumber: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: false,
+        // Opens links in an iframe preview overlay
+        previewLinks: true,
+        // Transition style
+        transition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>
