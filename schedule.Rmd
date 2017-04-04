@@ -67,7 +67,7 @@ __Reading:__ McElreath Chapter 8,9
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-mcmc_entropy    
   
 ### Week 10. 
-__Lecture__: Generalized Linear Models in a Bayesian Framework  
+__Lecture__: [MaxEnt and GLMs](./lectures/18_maxent_glm.html), Generalized Linear Models in a Bayesian Framework  
 __Reading:__ McElreath Chapter 9-10
   
 ### Week 11. 
