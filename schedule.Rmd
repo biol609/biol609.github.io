@@ -71,12 +71,13 @@ __Lecture__: [MaxEnt and GLMs](./lectures/18_maxent_glm.html), Generalized Linea
 __Reading:__ McElreath Chapter 9-10
   
 ### Week 11. 
-__Lecture:__ Overdispersed and Mixture Models  
-__Reading:__ McElreath Chapter 11
+__Lecture:__ [Gamma and Zero Inflated Models](./lectures/20_zinfl.Rmd), Overdispersed Mixture Models  
+__Reading:__ McElreath Chapter 11  
+__Files:__ [Fishing Duration CSV](./lectures/data/20/fishing_duration.csv)  
   
 ### Week 12. 
 __Lecture:__ Mixed Models in a Bayesian Context  
-__Reading:__ McElreath Chapter 11
+__Reading:__ McElreath Chapter 12
   
 ### Week 13. 
 __Lecture:__ Revisiting Autocorrelation and Missing Data  
