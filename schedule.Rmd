@@ -74,6 +74,8 @@ __Reading:__ McElreath Chapter 9-10
 __Lecture:__ [Gamma and Zero Inflated Models](./lectures/20_zinfl.Rmd), Overdispersed Mixture Models  
 __Reading:__ McElreath Chapter 11  
 __Files:__ [Fishing Duration CSV](./lectures/data/20/fishing_duration.csv)  
+__Etherpad:__ https://etherpad.wikimedia.org/p/609-zig_zag    
+
   
 ### Week 12. 
 __Lecture:__ Mixed Models in a Bayesian Context  
