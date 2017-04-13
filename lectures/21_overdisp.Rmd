@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Briefly, we expect Binomial, Poisson, and other relationships to have a fixed relationship with their variance. For Poisson, variance = mean. For Binomial, the variance is size*p(1-p). This might not be the case. In glms, we used the quasi- family of distributions to essentially add a scaling factor to both of those relationships. This was a bit of a hack, but it got the work done. What does this look like, well - 
 
-```{r over, echo=FALSE, messages=FALSE}
+```{r over, echo=FALSE, message=FALSE, results="hide"}
 library(rethinking)
 library(dplyr)
 library(tidyr)
@@ -90,7 +90,7 @@ plot(density(frog_samp$a))
 
 Well that looks OK. But.... let's look at the QQ distribution of the observed values relative to their predictions. Note, I'm using the `gap` package here, as it has a `qqunif` so you don't have to roll your own.
 
-```{r dharma}
+```{r dharma, results="hide"}
 frog_sim <- sim(frog_fit)
 u_frog <- sapply(1:nrow(reedfrogs), function(i) sum(frog_sim[,i] < reedfrogs$surv[i]))/1000
 gap::qqunif(u_frog, logscale=FALSE)
@@ -231,7 +231,7 @@ qq_posterior <- function(fit, observations, n=1000, logscale=FALSE){
 
 And we can use it here with
 
-```{r qq_huric}
+```{r qq_huric, results="hide"}
 qq_posterior(huric_fit, Hurricanes$deaths)
 ```
 
@@ -260,7 +260,7 @@ huric_fit_gp <- map(huric_mod_gp, data=Hurricanes)
 
 OK, fits, but, how did it work out?
 
-```{r gp_qq}
+```{r gp_qq, results="hide"}
 qq_posterior(huric_fit_gp, Hurricanes$deaths)
 ```
 
