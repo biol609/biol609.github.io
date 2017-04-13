@@ -1,0 +1,284 @@
+---
+title: "Over dispersion and Compound Distributions"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1. Overdispersion
+
+### 1.1 What is overdispersion?
+
+Briefly, we expect Binomial, Poisson, and other relationships to have a fixed relationship with their variance. For Poisson, variance = mean. For Binomial, the variance is size*p(1-p). This might not be the case. In glms, we used the quasi- family of distributions to essentially add a scaling factor to both of those relationships. This was a bit of a hack, but it got the work done. What does this look like, well - 
+
+```{r over, echo=FALSE, messages=FALSE}
+library(rethinking)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+theme_set(theme_bw())
+theme_update(plot.title = element_text(hjust = 0.5))
+
+over_df <- data.frame(size=30, p = rep(seq(0,1, length.out=10), 20)) %>%
+  mutate(binomial = rbinom(length(p), size, p),
+         `overdispersed binomial` = rbetabinom(length(p), size, p, 4)) %>%
+  gather(distribution, successes, -p, -size)
+
+ggplot(over_df, aes(x=p, y=successes, color=distribution)) +
+  geom_point() +
+  facet_wrap(~distribution) +
+  theme_bw(base_size=14)
+
+over_p_df <- data.frame(lambda = rep(5:20, 20)) %>%
+  mutate(poisson = rpois(length(lambda), lambda),
+         `overdispersed poisson` = round(rnorm(length(lambda), lambda, 1.5*lambda))) %>%
+  gather(distribution, value, -lambda)
+
+ggplot(over_p_df, aes(x=lambda, y=value, color=distribution)) +
+  geom_point() +
+  facet_wrap(~distribution) +
+  theme_bw(base_size=14)
+```
+
+### 1.2 Compound Distributions
+
+Thus far, we've solved overdispersion by including a scaling parameter. However, a more straightfoward way is to use a **compound distribution*. This is a distribution where we assume that our parameter of interest in our likelihood function has a ditribution itself beyond just our predictors. So, for example, our estimated probability in our binomial distribution has some sort of distribution itself. Or, our lambda value has a distribution around it.  
+
+This has the advantage that we can combine this distributions into a single likelihood function rather than the hack of a quasi- distribution, and if we wanted we can even model the parameters that lead to overdispersion. Not only that, but it better safeguards against 'impossible' values which can become a problem with the quasi- approach.
+
+## 2. Froggies and the Beta Binomial
+
+### 2.1 Overdispersed Frogs
+
+Let's see this in action with an example of reed frog survivorship under different treatments.
+
+```{r reedfrogs}
+library(rethinking)
+data(reedfrogs)
+head(reedfrogs)
+```
+
+For the moment, we're going to ignore all of the things done to these frogs and just model survivorship. Why? Well, sometimes overdispersion is caused by our lack of knowledge about other predictors in a system. While in a perfect world, we'd have that information, if we don't, we can at least model the heterogeneity that increases our variance.  
+
+So, let's start with our model of survivorship.
+
+```{r reedmod}
+
+frog_mod <- alist(
+  #likelihood
+  surv ~ dbinom(density, prob),
+  
+  #DGP
+  logit(prob) <- a,
+  
+  a~dnorm(0,10)
+  
+)
+
+frog_fit <- map(frog_mod, data=reedfrogs)
+```
+
+It's nice, it's simple. But does it work? Let's look at the posterior. We don't have multiple values coming out, so let's just look at the samples.
+
+```{r frog_samp}
+frog_samp <- extract.samples(frog_fit)
+plot(density(frog_samp$a))
+```
+
+Well that looks OK. But.... let's look at the QQ distribution of the observed values relative to their predictions. Note, I'm using the `gap` package here, as it has a `qqunif` so you don't have to roll your own.
+
+```{r dharma}
+frog_sim <- sim(frog_fit)
+u_frog <- sapply(1:nrow(reedfrogs), function(i) sum(frog_sim[,i] < reedfrogs$surv[i]))/1000
+gap::qqunif(u_frog, logscale=FALSE)
+```
+
+Well that is....odd. And it indicates overdispersion! You can see this in `postcheck` as well (try it!) but the QQ plot is much nicer, in my humble opinion.
+
+### 2.2 The beta-binomial
+
+So, how do we model this overdispersion? First, what parameter of the binomial has additional variability? Well, it's not the size. Instead, it's the probability. OK, we have a parameter that we're estimating the mean value of, but then varies. It varies between 0 and 1. There are a few distributions this could take - like the uniform. But one of the more meaningful is the beta.  The beta distribution takes two parameters and can either look almost "normal", flat, or with its mass piled up at 0 and 1. So, the uniform is a special case. This makes it ideal for our purposes. Particularly as we'd assume that, when we estimate a mean probability, that most of the resulting probabilities should *likely* be close to it. Let's see what the beta looks like.
+
+```{r beta, echo=FALSE}
+beta_df <- crossing(a=1:3, b=1:3, x=seq(0,1,length.out=200)) %>%
+  mutate(dens = dbeta(x, a, b))
+
+ggplot(beta_df, aes(x=x, y=dens, color=factor(a), group=paste(a, b, sep=","))) +
+  geom_line() +
+  facet_wrap(~b, labeller = "label_both")
+```
+
+`dbetabinom` takes a probability and then a scaling parameter and converts them into a and b values. So it looks like the following:
+
+```{r dbetabinom, echo=FALSE}
+betabinom_df <- crossing(x = 0:40, p=0.5, theta = c(1, 2, 5, 10)) %>%
+  mutate(dens = dbetabinom(x, 40, p, theta))
+
+
+ggplot(betabinom_df, aes(x=x, y=dens, color=factor(theta))) +
+  geom_line() +
+  annotate(x=5, y=0.2, "text", label="size = 40")
+```
+
+
+OK, so, let's put this in action for our frog model!
+
+### 2.3 Beta-Binomial Frogs
+
+Our model is pretty similar to our old model:
+
+```{r reedmod_bb}
+frog_mod_bb <- alist(
+  #likelihood
+  surv ~ dbetabinom(density, prob, theta),
+  
+  #DGP
+  logit(prob) <- a,
+  
+  a~dnorm(0,10),
+  theta ~ dexp(3)
+  
+)
+
+frog_fit_bb <- map(frog_mod_bb, data=reedfrogs)
+```
+
+OK, let's look at those QQs now!
+
+```{r qq_betabinom}
+frog_sim_bb <- sim(frog_fit_bb)
+u_frog_bb <- sapply(1:nrow(reedfrogs), function(i) sum(frog_sim_bb[,i] < reedfrogs$surv[i]))/1000
+gap::qqunif(u_frog_bb, logscale=FALSE)
+```
+
+Look at that improvement! We've done a much better job this time around. We can now use these results for prediction, etc.
+
+### 2.4 Visualizing the overdispersion
+
+One last note, if you want to see that overdispersion, we can plot how the distribution of parameters plays out using `dbeta2`
+
+```{r plot_beta_coefs}
+frog_coefs_bb <- extract.samples(frog_fit_bb, n=50)
+f_coef_dens <- crossing(x=seq(0,1,length.out=100), as.data.frame(frog_coefs_bb)) %>%
+  mutate(dens = dbeta2(x, logistic(a), theta))
+
+ggplot(f_coef_dens, aes(x=x, y=dens, group=paste(a, theta))) +
+  geom_line(alpha=0.2)
+```
+
+What's great about this plot is that you can see that, for many values, the probability is piled up at the ends. This indicates a ton of overdispersion, and that you're definitely missing something big here.
+
+### 2.5 Exercises
+A. Plot model predictions with both forms of error. What does this show?
+B. What does WAIC tell you about betabinomial models with versus without one or more predictor? 
+C. Going back to the binomial model, does including one or more predictor alleviate the overdispersion problem in the orignal model?  
+
+
+## 3. Hurricanes and Gamma Poisson
+
+### 3.1 The Gamma Poisson
+One of the most useful distributions you will run into is the Gamma Poison. Why? Because it's just another name for the negative binomial. This is a distribution for count data whose variance increases faster than its mean! While we do have a specialized distribution for the Gamma Poisson, it s abit more natural to refer to it with this name as the negative binomial is a special case of the GP. How does the GP work? Essentially, the rate parameter of your standard Poisson is Gamma distribted. There are a few ways do model this, but we can just use a mean and a scaling factor using `dgammapois`.  For example, let's assume a mean of 40.
+
+```{r gampois, echo=FALSE}
+gampois_df <- crossing(x=0:100, scale=c(1,3,5)) %>%
+  mutate(dens = dgampois(x, 40, scale))
+
+ggplot(gampois_df, aes(x=x, y=dens, color=factor(scale))) +
+  geom_line() +
+  geom_point()
+```
+
+Bigger scale, more spread in the data. There's also some movement of the mode, but the mean stays the same.
+
+### 3.2 Overdispersed hurricanes
+
+Let's take a look at the damage caused by different hurricanes. One theory out there is that hurricanes with feminine names tend to cause more harm, as people take them less seriously. 
+
+```{r huric}
+data(Hurricanes)
+head(Hurricanes)
+```
+
+```{r mod_huric}
+huric_mod <- alist(
+  #likelihood
+  deaths ~ dpois(lambda),
+  
+  #Data generating process
+  log(lambda) <- a + b*femininity,
+  
+  #priors
+  a ~ dnorm(0,10),
+  b ~ dnorm(0,10)
+)
+
+huric_fit <- map(huric_mod, data=Hurricanes)
+```
+
+OK, let's examine the qq plot of the posterior to see if it's overdispersed. Rather than do all of that sapply code, here's a quickie function for future use
+
+```{r qq_posterior}
+qq_posterior <- function(fit, observations, n=1000, logscale=FALSE){
+  sim_output <- sim(fit, n=n)
+  u <- sapply(1:length(observations), function(i) sum(sim_output[,i] < observations[i]))/n
+  gap::qqunif(u, logscale=logscale)
+  
+}
+```
+
+And we can use it here with
+
+```{r qq_huric}
+qq_posterior(huric_fit, Hurricanes$deaths)
+```
+
+Hello overdispersion my old friend.
+
+### 3.3 Modeling with the Gamma Poisson
+
+Fortunately, we're now familiar with overdispersion, and, given the overdispersion here, we can look at the Gamma Poisson as a nice possible solution.
+```{r gp_mod}
+
+huric_mod_gp <- alist(
+  #likelihood
+  deaths ~ dgampois(lambda, scale),
+  
+  #Data generating process
+  log(lambda) <- a + b*female,
+  
+  #priors
+  a ~ dnorm(0,10),
+  b ~ dnorm(0,10),
+  scale ~ dexp(2)
+)
+
+huric_fit_gp <- map(huric_mod_gp, data=Hurricanes)
+```
+
+OK, fits, but, how did it work out?
+
+```{r gp_qq}
+qq_posterior(huric_fit_gp, Hurricanes$deaths)
+```
+
+Much much better. We can also look again at the posterior distribution for select values of `lambda`. Let's say, for example, a femininity score of 1 for 11, the range of our data.
+
+```{r plot_gp_coefs, warning=FALSE}
+huric_coefs_gp <- extract.samples(huric_fit_gp, n=50)
+h_coef_dens <- crossing(femininity = c(1, 11), x=0:20, data.frame(huric_coefs_gp)) %>%
+  mutate(dens = dgampois(x, exp(a + b*femininity), scale))
+
+ggplot(h_coef_dens, aes(x=x, y=dens, color=factor(femininity), group=factor(paste(scale, femininity, a, b)))) +
+  geom_line(alpha=0.2) +
+  facet_wrap(~femininity, labeller="label_both") +
+  scale_color_manual(values=c("red", "blue"), guide="none")
+```
+
+
+### 3.4 Exercises
+A. Plot model predictions! What does this show?
+B. What does WAIC tell you about models with additional predictors? What about an offset for damage? 
+C. Going back to the poisson model, does including one or more predictor alleviate the overdispersion problem in the orignal model? Particularly the offset of initial damage? 
