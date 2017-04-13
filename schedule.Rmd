@@ -71,7 +71,7 @@ __Lecture__: [MaxEnt and GLMs](./lectures/18_maxent_glm.html), Generalized Linea
 __Reading:__ McElreath Chapter 9-10
   
 ### Week 11. 
-__Lecture:__ [Gamma and Zero Inflated Models](./lectures/20_zinfl.Rmd), Overdispersed Mixture Models  
+__Lecture:__ [Gamma and Zero Inflated Models](./lectures/20_zinfl.html), [Overdispersed Models](./lectures/21_overdisp.html)  
 __Reading:__ McElreath Chapter 11, [fitting Gamma models multiple ways](http://seananderson.ca/2014/04/08/gamma-glms.html), [Gamma hurdle model](http://seananderson.ca/2014/05/18/gamma-hurdle.html)  
 __Files:__ [Fishing Duration CSV](./lectures/data/20/fishing_duration.csv)  
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-zig_zag    
