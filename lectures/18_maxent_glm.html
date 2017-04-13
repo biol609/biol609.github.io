@@ -247,7 +247,7 @@ But other distributions are possible
 <section id="lets-compare-to-some-other-distributions-meeting-constraint-using-entropy" class="slide level2">
 <h1>Let’s compare to some other distributions meeting constraint using Entropy</h1>
 <p><span class="math display">\[H = - \sum{p_i log p_i}\]</span><br />
-|Distribution| TT, HT, TH, HH | Entropy| |————|—————-|———-| |Binomial | 1/4, 1/4, 1/4, 1/4 | 1.3862944 | |Candiate 1 | 2/6, 1/6, 1/6, 2/6 | 1.3296613 | |Candiate 2 | 1/6, 2/6, 2/6, 1/6 | 1.3296613 | |Candiate 3 | 1/8, 1/2, 1/8, 2/8 | 1.2130076 |</p>
+| Distribution| TT, HT, TH, HH | Entropy| |————|—————-|———-| |Binomial | 1/4, 1/4, 1/4, 1/4 | 1.386 | |Candiate 1 | 2/6, 1/6, 1/6, 2/6 | 1.33 | |Candiate 2 | 1/6, 2/6, 2/6, 1/6 | 1.33 | | Candiate 3 | 1/8, 1/2, 1/8, 2/8 | 1.213 |</p>
 <br />
 
 <center>
@@ -5030,11 +5030,14 @@ a[2] -0.22   0.04 -0.28 -0.16</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Men</span>
 <span class="kw">logistic</span>(-<span class="fl">0.22</span>)</code></pre></div>
 <pre><code>[1] 0.4452208</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Male Advantage</span>
-samp &lt;-<span class="st"> </span><span class="kw">extract.samples</span>(fit_gender)
+</section>
+<section id="relative-comparison-male-advantage" class="slide level2">
+<h1>Relative comparison: Male Advantage</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">samp &lt;-<span class="st"> </span><span class="kw">extract.samples</span>(fit_gender)
 
 <span class="kw">exp</span>(<span class="kw">mean</span>(samp$a[,<span class="dv">2</span>] -<span class="st"> </span>samp$a[,<span class="dv">1</span>]))</code></pre></div>
 <pre><code>[1] 1.842296</code></pre>
+<p><img src="18_maxent_glm_files/figure-revealjs/plot_diff-1.jpeg" width="672" /></p>
 </section>
 <section id="but-was-this-a-good-model" class="slide level2">
 <h1>But was this a good model?</h1>

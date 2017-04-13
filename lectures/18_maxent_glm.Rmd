@@ -130,12 +130,12 @@ HH = p<sup>2</sup>
 ## Let's compare to some other distributions meeting constraint using Entropy
 $$H = - \sum{p_i log p_i}$$\
 
-|Distribution| TT, HT, TH, HH | Entropy|
+| Distribution| TT, HT, TH, HH | Entropy|
 |------------|----------------|----------|
-|Binomial | 1/4, 1/4, 1/4, 1/4  | `r entropy(rep(0.25,4))` |
-|Candiate 1 | 2/6, 1/6, 1/6, 2/6 |  `r entropy(c(2/6, 1/6, 1/6, 2/6))` |
-|Candiate 2 | 1/6, 2/6, 2/6, 1/6 |  `r entropy(c(1/6, 2/6, 2/6, 1/6))` |
-|Candiate 3 | 1/8, 1/2, 1/8, 2/8 |  `r entropy(c(1/8, 1/2, 1/8, 2/8))` |
+|Binomial | 1/4, 1/4, 1/4, 1/4  | `r round(entropy(rep(0.25,4)),3)` |
+|Candiate 1 | 2/6, 1/6, 1/6, 2/6 |  `r round(entropy(c(2/6, 1/6, 1/6, 2/6)),3)` |
+|Candiate 2 | 1/6, 2/6, 2/6, 1/6 |  `r round(entropy(c(1/6, 2/6, 2/6, 1/6)),3)` |
+|  Candiate 3 | 1/8, 1/2, 1/8, 2/8 |  `r round(entropy(c(1/8, 1/2, 1/8, 2/8)),3)` |
 
 \
 <center>Binomial wins!</center>
@@ -339,11 +339,18 @@ logistic(-0.83)
 
 #Men
 logistic(-0.22)
+```
 
-#Male Advantage
+## Relative comparison: Male Advantage
+```{r male_adf, echo=TRUE}
 samp <- extract.samples(fit_gender)
 
 exp(mean(samp$a[,2] - samp$a[,1]))
+```
+
+```{r plot_diff}
+plot(density(samp$a[,2] - samp$a[,1]), main="Male Advantage Distribution",
+     xlab="Male - Female Coefficient")
 ```
 
 ## But was this a good model?
@@ -380,11 +387,7 @@ quants <- sapply(1:nrow(UCBadmit), function(i){
 ## QQ Unif Looks..not great....
 ```{r post_pred_qq_plot, echo=TRUE}
 #get the quantiles from the uniform distribution
-quants_unif <- qunif(ppoints(length(quants)))
-
-#
-plot(quants_unif, sort(quants))
-abline(a=0, b=1)
+gap::qqunif(quants, logscale=FALSE)
 ```
 
 ## So, department...
