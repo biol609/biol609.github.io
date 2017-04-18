@@ -78,7 +78,8 @@ __Etherpad:__ https://etherpad.wikimedia.org/p/609-zig_zag
 
   
 ### Week 12. 
-__Lecture:__ Mixed Models in a Bayesian Context  
+__Lecture:__ [Varying Intercept Mixed Models](./lectures/22_varying_intercept.html) in a Bayesian Context  
+__Etherpad:__ https://etherpad.wikimedia.org/p/609-mixed_bayesian   
 __Reading:__ McElreath Chapter 12
   
 ### Week 13. 

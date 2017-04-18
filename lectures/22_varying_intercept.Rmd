@@ -1,0 +1,395 @@
+---
+title:
+css: style.css
+output:
+  revealjs::revealjs_presentation:
+    reveal_options:
+      slideNumber: true
+      previewLinks: true
+    theme: white
+    center: false
+    transition: fade
+    self_contained: false
+    lib_dir: libs
+---
+##
+<center>
+<h3>Bayesian Approaches to Mixed (aka Hierarchical, aka Multilevel) Models</h3>
+</center>
+\
+
+![](./images/22/deeper.jpg)
+
+```{r prep, echo=FALSE, cache=FALSE, message=FALSE, warning=FALSE}
+library(knitr)
+
+opts_chunk$set(fig.height=5, fig.width=7, comment=NA, 
+               warning=FALSE, message=FALSE, 
+               dev="jpeg", echo=FALSE)
+
+library(rethinking)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+#center plot titles
+theme_set(theme_bw())
+theme_update(plot.title = element_text(hjust = 0.5))
+
+
+qq_posterior <- function(fit, observations, n=1000, logscale=FALSE, ...){
+  sim_output <- rethinking::sim(fit, n=n)
+  u <- sapply(1:length(observations), function(i) sum(sim_output[,i] < observations[i]))/n
+  gap::qqunif(u, logscale=logscale, ...)
+}
+
+```
+
+## Mixed Models
+> - We have used these to tease out variation in parameters due to "blocks"  
+\
+> - Many kinds of "blocks"  
+\
+> - Variation can affect slopes and intercepts  
+\
+> - Variation can come from continuous "blocks" - Gaussian Process Models  
+\
+> - But **what do we gain?**
+
+## Gains from a Mixed Model Approach
+1. Shrinkage of Estimators  
+\
+2. Accurate post-hoc comparisons  
+\
+3. Better ability to make focused predictions
+
+## The Incredible Shrinking Frogs
+
+![](./images/22/argus-reed-frog.jpg)
+
+## The Reed Frog Data
+```{r loadFrogs, echo=TRUE}
+library(rethinking)
+data(reedfrogs)
+head(reedfrogs)
+```
+
+## Tank as a block
+- 48 tanks  
+\
+- Each tank has different number of frogs  
+\
+- Each frog is a "replicate"
+     - 1/0 live/die  
+\
+- Each tank is a "block"  
+\
+```{r tank_block, echo=TRUE}
+reedfrogs$tank <- 1:nrow(reedfrogs)
+```
+
+## Three ways of looking at survivorship
+\
+1. Every tank has the same survivorship (complete pooling)  
+\
+2. Every tank has its own unique survivorship (no pooling)  
+\
+3. Every tank is similar to others, but with some variation in survivorship (partial pooling)
+
+## Complete Pooling
+```{r allpool, echo=TRUE, cache=TRUE, results="hide", messages=FALSE}
+mod_fullpool <- alist(
+  
+  #likelihood
+  surv ~ dbinom(density, prob),
+  
+  #Data Generating Process
+  logit(prob) ~ p,
+  
+  #Priors
+  p ~ dnorm(0,10)
+)
+
+fit_fullpool <- map2stan(mod_fullpool, data=reedfrogs)
+```
+
+\
+Estimates mean probability across all tanks
+
+## No Pooling
+```{r nopool, echo=TRUE, cache=TRUE, results="hide", messages=FALSE}
+mod_nopool <- alist(
+  
+  #likelihood
+  surv ~ dbinom(density, prob),
+  
+  #Data Generating Process
+  logit(prob) ~ p[tank],
+  
+  #Priors
+  p[tank] ~ dnorm(0,10)
+)
+
+fit_nopool <- map2stan(mod_nopool, data=reedfrogs)
+```
+
+Each tank is independent
+
+
+## Partial Pooling and Hyperparameters
+<center>`p[tank] ~ dnorm(0,10)`</center>  
+\
+<div class="fragment">P[tank] can be anything, and our prior for `p[tank]` shows a distribution of possible values</div>
+\
+\
+<div class="fragment">But now...  
+<center>`p[tank] ~ dnorm(p_hat, sigma_tank)`</center>  
+</div>
+\
+<div class="fragment">P[tank] is drawn from a distribution, and `p_hat` and `sigma_tank` are **hyperparameters**, each with their own prior</div>
+
+## This can go on forever...
+\
+\
+![](./images/22/hyperparameters_dawg.jpg)
+
+
+## Partial Pooling
+```{r partial, echo=TRUE, cache=TRUE, messages=FALSE, results="hide"}
+mod_partialpool <- alist(
+  
+  #likelihood
+  surv ~ dbinom(density, prob),
+  
+  #DGP
+  logit(prob) ~ p[tank],
+  
+  #Define random effects (part of DGP!)
+  p[tank] ~ dnorm(p_hat, sigma_tank),
+
+  #Priors
+  p_hat ~ dnorm(0,10),
+  sigma_tank ~ dcauchy(0,2)
+)
+
+fit <- map2stan(mod_partialpool, data=reedfrogs)
+```
+
+\
+<div class="fragment">$$p_j \sim dnorm(\widehat{p} , \sigma^2_{tank})$$</div>
+
+## The Mathy Version
+**Likelihood**  
+$Survivors_j \sim dbinom(density_j , prob_j)$  
+\
+**Data Generating Process**  
+$logit(prob_j) = p_j$  
+\
+$p_j \sim dnorm(\widehat{p} , \sigma_{tank})$  
+\
+**Priors**  
+$\widehat{p} \sim dnorm(0,10)$  
+$\sigma_{tank} \sim dcauchy(0,2)$
+
+## Why Partial Pooling?
+1. Share information across blocks  
+     - estimate of one block informs the other  
+     - super helpful with unbalanced designs
+     - Enables Best Least Unbiased Predictor (BLUP) of observations  
+\
+2. Reduces number of effective parameters  
+\
+3. Improved estimation of true underlying parameter  
+     - Observed values have additional error, reduces accuracy  
+\
+
+## Sharing Information for Estimation
+<div id="left">
+- We already do this with regression  
+\
+- Regression model fits a line and generates predictions  
+\
+- Values in one data point inform estimates of another data point  
+\
+- Predictions are akin to BLUPs  
+\
+- Estimation of points shrinks to a regression line
+</div>
+<div id="right">
+```{r linreg, fig.height=7, fig.width=6}
+xdf <- data.frame(x=1:10, y = rnorm(10, 1:10*3, 5))
+xlm <- lm(y~x, data=xdf)
+plot(y~x, data=xdf, cex=2)
+xdf$res <- residuals(xlm)
+abline(xlm, col="blue", lwd=3)
+with(xdf, segments(x, y, x, y-res, col="red"), lwd=2)
+```
+
+## Shrinkage in Frog Survivorship
+```{r show_shrinkage}
+plot(coef(fit_nopool), ylab="P[tank]", xlab="Tank", cex=1.4, cex.lab=1.5, cex.axis=1.5)
+matplot(coef(fit)[1:48], add=TRUE, col="blue", pch=19, cex=1.4)
+abline(coef(fit)[49], b=0)
+```
+
+## Shrinkage and Unbalanced Designs
+\
+![](./images/22/hier_shrinkage.png)
+
+
+## Partial Pooling Better for Unbalanced Designs
+
+```{r show_shrinkage_bluck}
+plot(coef(fit_nopool), ylab="P[tank]", xlab="Tank", cex=1.4, cex.lab=1.5, cex.axis=1.5)
+matplot(coef(fit)[1:48], add=TRUE, col="blue", pch=19, cex=1.4)
+abline(coef(fit)[49], b=0)
+abline(v=16.5, lty=2)
+abline(v=32.5, lty=2)
+text(5,8, "Out of 10 frogs")
+text(22.5,8, "Out of 25 frogs")
+text(39.5,8, "Out of 35 frogs")
+```
+
+
+## Comparing Approaches
+```{r mod_compare, echo=TRUE}
+compare(fit, fit_nopool, fit_fullpool)
+```
+<div class="fragment">
+- Improved fit from partial pooling  
+\
+- Big reduction in number of parameters
+</div>
+
+## Fit and Overdispersion
+- Overdispersed models are kinda mixed models already  
+     - Parameters of distribution vary with their own distribution
+     - We use a formal compound distribution, but the concept is the same  
+     \
+- Mixed models have coefficients vary by distribution  
+     - Variation injected earlier, but similar effect
+
+## Oceanic Tool Use
+![](./images/22/tool_map.jpg){width="45%"}
+```{r kline}
+data(Kline)
+head(Kline)
+```
+
+## An Overdispersed Model
+
+```{r overdisp, echo=TRUE, results="hide", cache=TRUE}
+Kline$log_pop <- log(Kline$population)
+
+kline_over <- alist(
+  #Likelihood
+  total_tools ~ dgampois(lambda, scale),
+  
+  #DGP
+  log(lambda) ~ a + bp*log_pop,
+  
+  #Priors
+  a ~ dnorm(0,10),
+  bp ~ dnorm(0,1),
+  scale ~ dexp(2)
+)
+
+kline_over_fit <- map2stan(kline_over, data=Kline)
+```
+
+
+## Overdispersion needed
+```{r kline_show, results="hide"}
+precis(kline_over_fit)
+
+qq_posterior(kline_over_fit, Kline$total_tools)
+```
+
+## Overdispersion needed
+```{r kline_show2, results="hide"}
+qq_posterior(kline_over_fit, Kline$total_tools)
+```
+
+## What about modeling random variation in societies?
+```{r kline_mixed, results="hide", cache=TRUE, echo=TRUE}
+Kline$society <- 1:nrow(Kline)
+
+kline_mixed <- alist(
+  #Likelihood
+  total_tools ~ dpois(lambda),
+  
+  #DGP
+  log(lambda) ~ a[society] + bp*log_pop,
+  
+  a[society] ~ dnorm(a_hat, sigma_society),
+
+  #Priors
+  a_hat ~ dnorm(0,10),
+  bp ~ dnorm(0,1),
+  sigma_society ~ dcauchy(0,2)
+)
+
+kline_mixed_fit <- map2stan(kline_mixed, data=Kline,
+                            iter=10000, chains=3)
+```
+
+## Overdispersion Handled Here, Too
+```{r postcheck_kline, results="hide"}
+postcheck(kline_mixed_fit)
+```
+
+## What are we trying to predict with multilevel models?
+1. Prediction based on average "fixed" effect?  
+\
+2. Prediction marginalized over all possible random effects?  
+\
+3. Prediction for one bock - new or old!
+
+## Prediction of the Average
+- Use link to get predicted values  
+\
+- But, substitute in 0 for the random effects  
+\
+
+## First, the Matrix of Fixef Effects
+10x1000 (number of rows x number of sims) matrix
+\
+\
+```{r pred_kline_mat, echo=TRUE}
+#produces 60K
+kline_coefs <- extract.samples(kline_mixed_fit, n=10000)
+
+kline_a_fixed <- kline_coefs$a_hat
+
+#nrow = # of sims
+a_fixed_mat <- matrix(kline_a_fixed, nrow=1000, ncol=10)
+```
+
+## Now, use link, but, replace the society effect
+```{r fixed_link, results="hide"}
+kline_fixed_pred <- link(kline_mixed_fit,
+                         data=Kline,
+                         n=1000,
+                         replace=list(a = a_fixed_mat))
+
+```
+
+## Plot the result
+```{r kline_compare, results="hide"}
+#for comparison
+kline_link_pred <- link(kline_mixed_fit)
+
+Kline <- Kline %>%
+  mutate(pred = apply(kline_fixed_pred, 2, median),
+         upr_fixed = apply(kline_fixed_pred, 2, HPDI)[2,],
+         lwr_fixed = apply(kline_fixed_pred, 2, HPDI)[1,],
+         upr = apply(kline_link_pred, 2, HPDI)[2,],
+         lwr = apply(kline_link_pred, 2, HPDI)[1,])
+
+ggplot(Kline,
+       aes(x=log_pop, y=pred)) +
+ # geom_ribbon(aes(ymin=lwr, ymax=upr), alpha=0.3) +
+  geom_ribbon(aes(ymin=lwr_fixed, ymax=upr_fixed), alpha=0.3, fill="blue") +
+  geom_line(lwd=1.1) +
+  geom_point(mapping=aes(y=total_tools), size=1.5, pch=1)
+```
+  

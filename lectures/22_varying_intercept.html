@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <title></title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="libs/reveal.js-3.3.0/css/reveal.css"/>
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="libs/reveal.js-3.3.0/css/theme/white.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="style.css"/>
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'libs/reveal.js-3.3.0/css/print/pdf.css' : 'libs/reveal.js-3.3.0/css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+    <!--[if lt IE 9]>
+    <script src="libs/reveal.js-3.3.0/lib/js/html5shiv.js"></script>
+    <![endif]-->
+
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+
+<section id="section" class="slide level2">
+<h1></h1>
+<center>
+<h3>
+Bayesian Approaches to Mixed (aka Hierarchical, aka Multilevel) Models
+</h3>
+</center>
+<p><br />
+<img src="images/22/deeper.jpg" /></p>
+</section>
+<section id="mixed-models" class="slide level2">
+<h1>Mixed Models</h1>
+<ul>
+<li class="fragment">We have used these to tease out variation in parameters due to “blocks”<br />
+<br />
+</li>
+<li class="fragment">Many kinds of “blocks”<br />
+<br />
+</li>
+<li class="fragment">Variation can affect slopes and intercepts<br />
+<br />
+</li>
+<li class="fragment">Variation can come from continuous “blocks” - Gaussian Process Models<br />
+<br />
+</li>
+<li class="fragment">But <strong>what do we gain?</strong></li>
+</ul>
+</section>
+<section id="gains-from-a-mixed-model-approach" class="slide level2">
+<h1>Gains from a Mixed Model Approach</h1>
+<ol type="1">
+<li>Shrinkage of Estimators<br />
+<br />
+</li>
+<li>Accurate post-hoc comparisons<br />
+<br />
+</li>
+<li>Better ability to make focused predictions</li>
+</ol>
+</section>
+<section id="the-incredible-shrinking-frogs" class="slide level2">
+<h1>The Incredible Shrinking Frogs</h1>
+<p><img src="images/22/argus-reed-frog.jpg" /></p>
+</section>
+<section id="the-reed-frog-data" class="slide level2">
+<h1>The Reed Frog Data</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rethinking)
+<span class="kw">data</span>(reedfrogs)
+<span class="kw">head</span>(reedfrogs)</code></pre></div>
+<pre><code>  density pred  size surv propsurv
+1      10   no   big    9      0.9
+2      10   no   big   10      1.0
+3      10   no   big    7      0.7
+4      10   no   big   10      1.0
+5      10   no small    9      0.9
+6      10   no small    9      0.9</code></pre>
+</section>
+<section id="tank-as-a-block" class="slide level2">
+<h1>Tank as a block</h1>
+<ul>
+<li>48 tanks<br />
+<br />
+</li>
+<li>Each tank has different number of frogs<br />
+<br />
+</li>
+<li>Each frog is a “replicate”
+<ul>
+<li>1/0 live/die<br />
+<br />
+</li>
+</ul></li>
+<li>Each tank is a “block”<br />
+<br />
+</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">reedfrogs$tank &lt;-<span class="st"> </span><span class="dv">1</span>:<span class="kw">nrow</span>(reedfrogs)</code></pre></div>
+</section>
+<section id="three-ways-of-looking-at-survivorship" class="slide level2">
+<h1>Three ways of looking at survivorship</h1>
+<p><br />
+1. Every tank has the same survivorship (complete pooling)<br />
+<br />
+2. Every tank has its own unique survivorship (no pooling)<br />
+<br />
+3. Every tank is similar to others, but with some variation in survivorship (partial pooling)</p>
+</section>
+<section id="complete-pooling" class="slide level2">
+<h1>Complete Pooling</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod_fullpool &lt;-<span class="st"> </span><span class="kw">alist</span>(
+  
+  <span class="co">#likelihood</span>
+  surv ~<span class="st"> </span><span class="kw">dbinom</span>(density, prob),
+  
+  <span class="co">#Data Generating Process</span>
+  <span class="kw">logit</span>(prob) &lt;-<span class="st"> </span>p,
+  
+  <span class="co">#Priors</span>
+  p ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">10</span>)
+)
+
+fit_fullpool &lt;-<span class="st"> </span><span class="kw">map2stan</span>(mod_fullpool, <span class="dt">data=</span>reedfrogs)</code></pre></div>
+<p><br />
+Estimates mean probability across all tanks</p>
+</section>
+<section id="no-pooling" class="slide level2">
+<h1>No Pooling</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod_nopool &lt;-<span class="st"> </span><span class="kw">alist</span>(
+  
+  <span class="co">#likelihood</span>
+  surv ~<span class="st"> </span><span class="kw">dbinom</span>(density, prob),
+  
+  <span class="co">#Data Generating Process</span>
+  <span class="kw">logit</span>(prob) &lt;-<span class="st"> </span>p[tank],
+  
+  <span class="co">#Priors</span>
+  p[tank] ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">10</span>)
+)
+
+fit_nopool &lt;-<span class="st"> </span><span class="kw">map2stan</span>(mod_nopool, <span class="dt">data=</span>reedfrogs)</code></pre></div>
+<p>Each tank is independent</p>
+</section>
+<section id="partial-pooling-and-hyperparameters" class="slide level2">
+<h1>Partial Pooling and Hyperparameters</h1>
+<center>
+<code>p[tank] ~ dnorm(0,10)</code>
+</center>
+<br />
+
+<div class="fragment">
+P[tank] can be anything, and our prior for <code>p[tank]</code> shows a distribution of possible values
+</div>
+<br />
+<br />
+
+<div class="fragment">
+But now…<br />
+
+<center>
+<code>p[tank] ~ dnorm(p_hat, sigma_tank)</code>
+</center>
+</div>
+<br />
+
+<div class="fragment">
+P[tank] is drawn from a distribution, and <code>p_hat</code> and <code>sigma_tank</code> are <strong>hyperparameters</strong>, each with their own prior
+</div>
+</section>
+<section id="this-can-go-on-forever" class="slide level2">
+<h1>This can go on forever…</h1>
+<p><br />
+<br />
+<img src="images/22/hyperparameters_dawg.jpg" /></p>
+</section>
+<section id="partial-pooling" class="slide level2">
+<h1>Partial Pooling</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod_partialpool &lt;-<span class="st"> </span><span class="kw">alist</span>(
+  
+  <span class="co">#likelihood</span>
+  surv ~<span class="st"> </span><span class="kw">dbinom</span>(density, prob),
+  
+  <span class="co">#DGP</span>
+  <span class="kw">logit</span>(prob) &lt;-<span class="st"> </span>p[tank],
+  
+  <span class="co">#Define random effects (part of DGP!)</span>
+  p[tank] ~<span class="st"> </span><span class="kw">dnorm</span>(p_hat, sigma_tank),
+
+  <span class="co">#Priors</span>
+  p_hat ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">10</span>),
+  sigma_tank ~<span class="st"> </span><span class="kw">dcauchy</span>(<span class="dv">0</span>,<span class="dv">2</span>)
+)
+
+fit &lt;-<span class="st"> </span><span class="kw">map2stan</span>(mod_partialpool, <span class="dt">data=</span>reedfrogs)</code></pre></div>
+<br />
+
+<div class="fragment">
+<span class="math display">\[p_j \sim dnorm(\widehat{p} , \sigma^2_{tank})\]</span>
+</div>
+</section>
+<section id="the-mathy-version" class="slide level2">
+<h1>The Mathy Version</h1>
+<p><strong>Likelihood</strong><br />
+<span class="math inline">\(Survivors_j \sim dbinom(density_j , prob_j)\)</span><br />
+<br />
+<strong>Data Generating Process</strong><br />
+<span class="math inline">\(logit(prob_j) = p_j\)</span><br />
+<br />
+<span class="math inline">\(p_j \sim dnorm(\widehat{p} , \sigma_{tank})\)</span><br />
+<br />
+<strong>Priors</strong><br />
+<span class="math inline">\(\widehat{p} \sim dnorm(0,10)\)</span><br />
+<span class="math inline">\(\sigma_{tank} \sim dcauchy(0,2)\)</span></p>
+</section>
+<section id="why-partial-pooling" class="slide level2">
+<h1>Why Partial Pooling?</h1>
+<ol type="1">
+<li>Share information across blocks
+<ul>
+<li>estimate of one block informs the other<br />
+</li>
+<li>super helpful with unbalanced designs</li>
+<li>Enables Best Least Unbiased Predictor (BLUP) of observations<br />
+<br />
+</li>
+</ul></li>
+<li>Reduces number of effective parameters<br />
+<br />
+</li>
+<li>Improved estimation of true underlying parameter
+<ul>
+<li>Observed values have additional error, reduces accuracy<br />
+<br />
+</li>
+</ul></li>
+</ol>
+</section>
+<section id="sharing-information-for-estimation" class="slide level2">
+<h1>Sharing Information for Estimation</h1>
+<div id="left">
+<ul>
+<li>We already do this with regression<br />
+<br />
+</li>
+<li>Regression model fits a line and generates predictions<br />
+<br />
+</li>
+<li>Values in one data point inform estimates of another data point<br />
+<br />
+</li>
+<li>Predictions are akin to BLUPs<br />
+<br />
+</li>
+<li>Estimation of points shrinks to a regression line</li>
+</ul>
+</div>
+<div id="right">
+<p><img src="22_varying_intercept_files/figure-revealjs/linreg-1.jpeg" width="576" /></p>
+</section>
+<section id="shrinkage-in-frog-survivorship" class="slide level2">
+<h1>Shrinkage in Frog Survivorship</h1>
+<p><img src="22_varying_intercept_files/figure-revealjs/show_shrinkage-1.jpeg" width="672" /></p>
+</section>
+<section id="shrinkage-and-unbalanced-designs" class="slide level2">
+<h1>Shrinkage and Unbalanced Designs</h1>
+<p><br />
+<img src="images/22/hier_shrinkage.png" /></p>
+</section>
+<section id="partial-pooling-better-for-unbalanced-designs" class="slide level2">
+<h1>Partial Pooling Better for Unbalanced Designs</h1>
+<p><img src="22_varying_intercept_files/figure-revealjs/show_shrinkage_bluck-1.jpeg" width="672" /></p>
+</section>
+<section id="comparing-approaches" class="slide level2">
+<h1>Comparing Approaches</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">compare</span>(fit, fit_nopool, fit_fullpool)</code></pre></div>
+<pre><code>               WAIC pWAIC dWAIC weight    SE   dSE
+fit          1011.1  38.5   0.0      1 38.15    NA
+fit_nopool   1027.7  52.4  16.6      0 44.40  8.58
+fit_fullpool 1372.0   1.0 360.9      0 25.87 35.12</code></pre>
+<div class="fragment">
+<ul>
+<li>Improved fit from partial pooling<br />
+<br />
+</li>
+<li>Big reduction in number of parameters</li>
+</ul>
+</div>
+</section>
+<section id="fit-and-overdispersion" class="slide level2">
+<h1>Fit and Overdispersion</h1>
+<ul>
+<li>Overdispersed models are kinda mixed models already
+<ul>
+<li>Parameters of distribution vary with their own distribution</li>
+<li>We use a formal compound distribution, but the concept is the same<br />
+<br />
+</li>
+</ul></li>
+<li>Mixed models have coefficients vary by distribution
+<ul>
+<li>Variation injected earlier, but similar effect</li>
+</ul></li>
+</ul>
+</section>
+<section id="oceanic-tool-use" class="slide level2">
+<h1>Oceanic Tool Use</h1>
+<p><img src="images/22/tool_map.jpg" style="width:45.0%" /></p>
+<pre><code>     culture population contact total_tools mean_TU
+1   Malekula       1100     low          13     3.2
+2    Tikopia       1500     low          22     4.7
+3 Santa Cruz       3600     low          24     4.0
+4        Yap       4791    high          43     5.0
+5   Lau Fiji       7400    high          33     5.0
+6  Trobriand       8000    high          19     4.0</code></pre>
+</section>
+<section id="an-overdispersed-model" class="slide level2">
+<h1>An Overdispersed Model</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Kline$log_pop &lt;-<span class="st"> </span><span class="kw">log</span>(Kline$population)
+
+kline_over &lt;-<span class="st"> </span><span class="kw">alist</span>(
+  <span class="co">#Likelihood</span>
+  total_tools ~<span class="st"> </span><span class="kw">dgampois</span>(lambda, scale),
+  
+  <span class="co">#DGP</span>
+  <span class="kw">log</span>(lambda) ~<span class="st"> </span>a +<span class="st"> </span>bp*log_pop,
+  
+  <span class="co">#Priors</span>
+  a ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">10</span>),
+  bp ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">1</span>),
+  scale ~<span class="st"> </span><span class="kw">dexp</span>(<span class="dv">2</span>)
+)
+
+kline_over_fit &lt;-<span class="st"> </span><span class="kw">map2stan</span>(kline_over, <span class="dt">data=</span>Kline)</code></pre></div>
+</section>
+<section id="overdispersion-needed" class="slide level2">
+<h1>Overdispersion needed</h1>
+<p><img src="22_varying_intercept_files/figure-revealjs/kline_show-1.jpeg" width="672" /></p>
+</section>
+<section id="overdispersion-needed-1" class="slide level2">
+<h1>Overdispersion needed</h1>
+<p><img src="22_varying_intercept_files/figure-revealjs/kline_show2-1.jpeg" width="672" /></p>
+</section>
+<section id="what-about-modeling-random-variation-in-societies" class="slide level2">
+<h1>What about modeling random variation in societies?</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Kline$society &lt;-<span class="st"> </span><span class="dv">1</span>:<span class="kw">nrow</span>(Kline)
+
+kline_mixed &lt;-<span class="st"> </span><span class="kw">alist</span>(
+  <span class="co">#Likelihood</span>
+  total_tools ~<span class="st"> </span><span class="kw">dpois</span>(lambda),
+  
+  <span class="co">#DGP</span>
+  <span class="kw">log</span>(lambda) ~<span class="st"> </span>a[society] +<span class="st"> </span>bp*log_pop,
+  
+  a[society] ~<span class="st"> </span><span class="kw">dnorm</span>(a_hat, sigma_society),
+
+  <span class="co">#Priors</span>
+  a_hat ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">10</span>),
+  bp ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">1</span>),
+  sigma_society ~<span class="st"> </span><span class="kw">dcauchy</span>(<span class="dv">0</span>,<span class="dv">2</span>)
+)
+
+kline_mixed_fit &lt;-<span class="st"> </span><span class="kw">map2stan</span>(kline_mixed, <span class="dt">data=</span>Kline,
+                            <span class="dt">iter=</span><span class="dv">10000</span>, <span class="dt">chains=</span><span class="dv">3</span>)</code></pre></div>
+</section>
+<section id="overdispersion-handled-here-too" class="slide level2">
+<h1>Overdispersion Handled Here, Too</h1>
+<p><img src="22_varying_intercept_files/figure-revealjs/postcheck_kline-1.jpeg" width="672" /></p>
+</section>
+<section id="exercise" class="slide level2">
+<h1>Exercise</h1>
+<ul>
+<li>Revisit the Reed Frog survivorship<br />
+<br />
+</li>
+<li>Fit models with predation, tank size, both acting additively, and both interacting<br />
+<br />
+</li>
+<li>Compare with WAIC<br />
+<br />
+</li>
+<li>How does <code>sigma_tank</code> change across the different models?</li>
+</ul>
+</section>
+    </div>
+  </div>
+
+  <script src="libs/reveal.js-3.3.0/lib/js/head.min.js"></script>
+  <script src="libs/reveal.js-3.3.0/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display the page number of the current slide
+        slideNumber: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: false,
+        // Opens links in an iframe preview overlay
+        previewLinks: true,
+        // Transition style
+        transition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>
