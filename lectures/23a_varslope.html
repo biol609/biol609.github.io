@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <title></title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="libs/reveal.js-3.3.0/css/reveal.css"/>
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="libs/reveal.js-3.3.0/css/theme/white.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="style.css"/>
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'libs/reveal.js-3.3.0/css/print/pdf.css' : 'libs/reveal.js-3.3.0/css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+    <!--[if lt IE 9]>
+    <script src="libs/reveal.js-3.3.0/lib/js/html5shiv.js"></script>
+    <![endif]-->
+
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+
+<section id="section" class="slide level2">
+<h1></h1>
+<center>
+<h3>
+Varying Slopes in Bayesian Mixed (aka Hierarchical, aka Multilevel) Models
+</h3>
+</center>
+<p><br />
+<img src="images/23/mixed_models_walken.jpg" /></p>
+</section>
+<section id="gender-discrimination-in-graduate-admissions" class="slide level2">
+<h1>Gender Discrimination in Graduate Admissions</h1>
+<p><img src="images/18/FINAL_gender_news_dani-01.jpg" /></p>
+</section>
+<section id="our-data-berkeley" class="slide level2">
+<h1>Our data: Berkeley</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(UCBadmit)
+<span class="kw">class</span>(UCBadmit) &lt;-<span class="st"> &quot;data.frame&quot;</span>
+<span class="kw">head</span>(UCBadmit)</code></pre></div>
+<pre><code>  dept applicant.gender admit reject applications
+1    A             male   512    313          825
+2    A           female    89     19          108
+3    B             male   353    207          560
+4    B           female    17      8           25
+5    C             male   120    205          325
+6    C           female   202    391          593</code></pre>
+</section>
+<section id="a-poor-first-model" class="slide level2">
+<h1>A Poor First Model</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Make a dept and genderindex</span>
+UCBadmit$gender &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(UCBadmit$applicant.gender)
+UCBadmit$dept_id &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(UCBadmit$dept)
+
+mod_gender_bad &lt;-<span class="st"> </span><span class="kw">alist</span>(
+  <span class="co">#likelihood</span>
+  admit ~<span class="st"> </span><span class="kw">dbinom</span>(applications, p),
+  
+  <span class="co">#Data generating process</span>
+  <span class="kw">logit</span>(p) &lt;-<span class="st"> </span>a +<span class="st"> </span>b[gender],
+  
+  <span class="co">#priors</span>
+  a ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">10</span>),
+  b[gender] ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">10</span>)
+)
+
+fit_gender_bad &lt;-<span class="st"> </span><span class="kw">map</span>(mod_gender_bad, UCBadmit)</code></pre></div>
+</section>
+<section id="how-does-it-look" class="slide level2">
+<h1>How does it look?</h1>
+<p><img src="23a_varslope_files/figure-revealjs/bad_postcheck-1.jpeg" width="672" /></p>
+</section>
+<section id="what-is-the-model-we-want" class="slide level2">
+<h1>What is the model we want?</h1>
+<ol type="1">
+<li>Random effect of departent
+<ul>
+<li>Recall a fixed effect of department fit much better<br />
+<br />
+</li>
+</ul></li>
+<li>AND the gender effect might vary by department
+<ul>
+<li>In fixed effects, this would be dept*gender</li>
+<li>In mixed models, slope varies by gender</li>
+</ul></li>
+</ol>
+</section>
+<section id="what-about-this" class="slide level2">
+<h1>What about this?</h1>
+<span class="math inline">\(a_{dept} \sim dnorm(\hat{a}, \sigma_{a})\)</span><br />
+<br />
+<span class="math inline">\(b_{dept} \sim dnorm(\hat{b}, \sigma_{b})\)</span><br />
+<br />
+
+<center>
+<span class="fragment">What is missing?</span>
+</center>
+</section>
+<section id="notice-how-slope-and-intercept-covary" class="slide level2">
+<h1>Notice how Slope and Intercept covary</h1>
+<p><img src="23a_varslope_files/figure-revealjs/show_pairs-1.jpeg" width="672" /></p>
+</section>
+<section id="notice-how-slope-and-intercept-covary-1" class="slide level2">
+<h1>Notice how Slope and Intercept covary</h1>
+<p><img src="23a_varslope_files/figure-revealjs/show_lines_cov-1.jpeg" width="672" /></p>
+</section>
+<section id="dealing-with-slope-intercept-covariance" class="slide level2">
+<h1>Dealing with Slope-Intercept Covariance</h1>
+So, if we want… <span class="math display">\[logit(p_i) = a_{dept} + b_{dept} gender_i\]</span><br />
+<br />
+Then, <span class="math inline">\(a_{dept}\)</span> and <span class="math inline">\(b_{dept}\)</span> must covary<br />
+<br />
+
+<div class="fragment">
+<p><span class="math display">\[\begin{bmatrix}
+a_{dept}
+\\ 
+b_{dept}
+\end{bmatrix} \sim 
+MVNormal \left (\begin{bmatrix}
+\widehat{a}
+\\ 
+\widehat{b}
+\end{bmatrix}, \textbf{S} \right )\]</span></p>
+</section>
+<section id="building-a-covariance-matrix-with-correlations" class="slide level2">
+<h1>Building a Covariance Matrix with Correlations</h1>
+<ul>
+<li class="fragment">A covariance matrix is fine, but we often want to know correlation<br />
+<br />
+</li>
+<li class="fragment">Often harder to parameterize a covariance matrix conceptually<br />
+<br />
+</li>
+<li class="fragment">Fortunately, cov<sub>ab</sub> = cor<sub>ab</sub><em>sd<sub>a</sub></em>sd<sub>b</sub><br />
+<br />
+
+<div class="fragment">
+<span class="math display">\[S_{ab} =  \begin{bmatrix}
+\sigma_a &amp; 0\\ 
+0 &amp; \sigma_b
+\end{bmatrix} 
+\begin{bmatrix}
+1&amp; r_{ab}\\ 
+r_{ab} &amp; 1
+\end{bmatrix}
+\begin{bmatrix}
+\sigma_a &amp; 0\\ 
+0 &amp; \sigma_b
+\end{bmatrix}\]</span>
+<div>
+</li>
+</ul>
+</section>
+<section id="priors-and-correlations" class="slide level2">
+<h1>Priors and Correlations</h1>
+<ul>
+<li class="fragment">We know about how to make <span class="math inline">\(\sigma\)</span> priors with <code>dcauchy</code><br />
+<br />
+</li>
+<li class="fragment">What about correlations?<br />
+<br />
+</li>
+<li class="fragment">Introducting, the LKJ Correlation Distribution!<br />
+<br />
+-Evaluates probability of correlation matrices<br />
+<br />
+-Parameter <span class="math inline">\(\eta\)</span> says how peaked it is towards 0</li>
+</ul>
+</section>
+<section id="lkj-correlation-distribution" class="slide level2">
+<h1>LKJ Correlation Distribution</h1>
+<p><img src="23a_varslope_files/figure-revealjs/lkj-1.jpeg" width="672" /></p>
+</section>
+<section id="so-those-random-effects" class="slide level2">
+<h1>So, those random effects…</h1>
+<p><span class="math display">\[\begin{bmatrix}
+a_{dept}
+\\ 
+b_{dept}
+\end{bmatrix} \sim 
+MVNormal \left (\begin{bmatrix}
+\widehat{a}
+\\ 
+\widehat{b}
+\end{bmatrix}, \mathbf{ \sigma } \textbf{R} \mathbf{ \sigma } \right )\]</span></p>
+</section>
+<section id="a-variable-slope-intercept-model" class="slide level2">
+<h1>A Variable Slope Intercept Model</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">UCBadmit$isFemale &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(UCBadmit$applicant.gender)-<span class="dv">1</span>
+
+mod_gender_dept_mixed &lt;-<span class="st"> </span><span class="kw">alist</span>(
+  <span class="co">#likelihood</span>
+  admit ~<span class="st"> </span><span class="kw">dbinom</span>(applications, p),
+  
+  <span class="co">#Data generating process</span>
+  <span class="kw">logit</span>(p) &lt;-<span class="st"> </span>a_hat +<span class="st"> </span>a[dept_id] +<span class="st"> </span>b_hat*isFemale +<span class="st"> </span>b[dept_id]*isFemale,
+  
+  <span class="kw">c</span>(a,b)[dept_id] ~<span class="st"> </span><span class="kw">dmvnorm2</span>(<span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>), sigma_dept, Rho),
+  
+  <span class="co">#priors</span>
+  a_hat ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">10</span>),
+  b_hat ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">10</span>),
+  
+  sigma_dept ~<span class="st"> </span><span class="kw">dcauchy</span>(<span class="dv">0</span>,<span class="dv">2</span>),
+  Rho ~<span class="st"> </span><span class="kw">dlkjcorr</span>(<span class="dv">2</span>)
+)</code></pre></div>
+</section>
+<section id="what-is-new" class="slide level2">
+<h1>What is new</h1>
+Our definition of random effects:<br />
+<code>c(a,b)[dept_id] ~ dmvnorm2(c(0,0),</code><br />
+                <code>sigma_dept, Rho)</code><br />
+<br />
+<br />
+
+<div class="fragment">
+<p><code>sigma_dept</code> knows there are 2 values:<br />
+<code>sigma_dept ~ dcauchy(0,2)</code></p>
+</div>
+<br />
+<br />
+
+<div class="fragment">
+<p>Our Correlation Prior:<br />
+<code>Rho ~ dlkjcorr(2)</code></p>
+</div>
+</section>
+<section id="fitting" class="slide level2">
+<h1>Fitting</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit_gender_dept_mixed &lt;-<span class="st"> </span><span class="kw">map2stan</span>(mod_gender_dept_mixed, UCBadmit,
+                             <span class="dt">iter=</span><span class="dv">5000</span>, <span class="dt">chains=</span><span class="dv">3</span>)</code></pre></div>
+<div class="fragment">
+
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Warning:<span class="st"> </span>Variable <span class="st">&#39;applicant.gender&#39;</span> contains dots <span class="st">&#39;.&#39;</span>.
+Will attempt to remove dots internally.
+<span class="kw">DIAGNOSTIC</span>(S) FROM PARSER:
+<span class="kw">Warning</span> (non-fatal):
+Left-hand side of sampling <span class="kw">statement</span> (~) may contain a non-linear transform of a parameter or local variable.
+If it does, you need to include a target +<span class="er">=</span><span class="st"> </span>statement with the log absolute determinant of the Jacobian of the transform.
+Left-hand-side of sampling statement:
+<span class="st">    </span>v_ab ~<span class="st"> </span><span class="kw">multi_normal</span>(...)
+
+recompiling to avoid crashing R session</code></pre></div>
+</section>
+<section id="did-it-blend" class="slide level2">
+<h1>Did it blend?</h1>
+<p><img src="23a_varslope_files/figure-revealjs/plot_chains-1.jpeg" width="672" /></p>
+</section>
+<section id="did-it-blend-1" class="slide level2">
+<h1>Did it blend?</h1>
+<p><img src="23a_varslope_files/figure-revealjs/plot_chains2-1.jpeg" width="672" /></p>
+</section>
+<section id="did-it-blend-2" class="slide level2">
+<h1>Did it blend?</h1>
+<p><img src="23a_varslope_files/figure-revealjs/plot_chains3-1.jpeg" width="672" /></p>
+</section>
+<section id="posterior-check" class="slide level2">
+<h1>Posterior Check</h1>
+<p><img src="23a_varslope_files/figure-revealjs/postcheck-1.jpeg" width="672" /></p>
+</section>
+<section id="how-correlated-were-slope-and-intercept" class="slide level2">
+<h1>How correlated were slope and intercept?</h1>
+<p><img src="23a_varslope_files/figure-revealjs/show_cor_slope_int-1.jpeg" width="672" /></p>
+</section>
+<section id="how-important-was-incorporating-a-random-slope" class="slide level2">
+<h1>How important was incorporating a random slope?</h1>
+<ol type="1">
+<li>Can look at density of <span class="math inline">\(\sigma\)</span> for slope and intercept<br />
+<br />
+</li>
+<li>Can fit variable intercept only model and compare with WAIC
+<ul>
+<li>And no reason you can’t use ensemble predictions if both are valid hypotheses<br />
+</li>
+</ul></li>
+</ol>
+</section>
+<section id="density-of-sigmas" class="slide level2">
+<h1>Density of Sigmas</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#get samples</span>
+gender_samp &lt;-<span class="st"> </span><span class="kw">extract.samples</span>(fit_gender_dept_mixed)
+
+<span class="co">#extract sigma</span>
+sigma_df &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(gender_samp$sigma_dept) %&gt;%
+<span class="st">  </span><span class="kw">rename</span>(<span class="dt">sigma_int =</span> V1, <span class="dt">sigma_slope =</span> V2) %&gt;%
+<span class="st">  </span><span class="kw">gather</span>(sigma, value)
+
+<span class="kw">ggplot</span>(sigma_df, <span class="kw">aes</span>(<span class="dt">x=</span>value, <span class="dt">color=</span>sigma)) +
+<span class="st">  </span><span class="kw">geom_density</span>()</code></pre></div>
+</section>
+<section id="density-of-sigmas-1" class="slide level2">
+<h1>Density of Sigmas</h1>
+<p><img src="23a_varslope_files/figure-revealjs/plot_sigmas-1.jpeg" width="672" /></p>
+</section>
+<section id="variable-intercept-only-model" class="slide level2">
+<h1>Variable Intercept Only Model</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod_gender_dept_varint &lt;-<span class="st"> </span><span class="kw">alist</span>(
+  <span class="co">#likelihood</span>
+  admit ~<span class="st"> </span><span class="kw">dbinom</span>(applications, p),
+  
+  <span class="co">#Data generating process</span>
+  <span class="kw">logit</span>(p) &lt;-<span class="st"> </span>a_hat +<span class="st"> </span>a[dept_id] +<span class="st"> </span>b_hat*isFemale,
+  
+  a[dept_id] ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>, sigma_dept),
+  
+  <span class="co">#priors</span>
+  a_hat ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">10</span>),
+  b_hat ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">10</span>),
+  
+  sigma_dept ~<span class="st"> </span><span class="kw">dcauchy</span>(<span class="dv">0</span>,<span class="dv">2</span>)
+)
+
+fit_gender_dept_varint&lt;-<span class="st"> </span><span class="kw">map2stan</span>(mod_gender_dept_varint, UCBadmit,
+                             <span class="dt">iter=</span><span class="dv">5000</span>, <span class="dt">chains=</span><span class="dv">3</span>)</code></pre></div>
+</section>
+<section id="not-quite-as-good-of-a-fit" class="slide level2">
+<h1>Not quite as good of a fit…</h1>
+<p>(I assume we’ve checked the chains…)</p>
+<p><img src="23a_varslope_files/figure-revealjs/postcheck_varint-1.jpeg" width="672" /></p>
+</section>
+<section id="waic-suggests-variable-slope-model-better" class="slide level2">
+<h1>WAIC suggests Variable Slope model better…</h1>
+<pre><code>                         WAIC pWAIC dWAIC weight    SE  dSE
+fit_gender_dept_mixed  5191.1  11.2   0.0   0.99 57.28   NA
+fit_gender_dept_varint 5201.5   7.0  10.4   0.01 56.92 6.53</code></pre>
+<p>But big SE - what would you do?</p>
+</section>
+<section id="optimization-and-alternate-parameterization" class="slide level2">
+<h1>Optimization and Alternate Parameterization</h1>
+<ul>
+<li>How we build our golem in part of the model itself<br />
+<br />
+</li>
+<li>We have seen even with centering that we can improve fit/speed<br />
+<br />
+</li>
+<li>With big multivariate normal densities, Non-centered parameterization can help</li>
+</ul>
+</section>
+<section id="non-centered-parameterization" class="slide level2">
+<h1>Non-Centered Parameterization</h1>
+Consider<br />
+<span class="math display">\[ y \sim Normal(\mu, \sigma)\]</span><br />
+<br />
+
+<div class="fragment">
+<p>This can be re-written as:<br />
+<span class="math display">\[y = \mu + z \sigma\]</span> <span class="math display">\[ z \sim Normal(0,1)\]</span></p>
+</div>
+<br />
+
+<div class="fragment">
+<p>Fitting N(0,1) and estimating <span class="math inline">\(\mu\)</span> and <span class="math inline">\(z\)</span> is much more efficient</p>
+</section>
+<section id="implications-of-non-centered-parameterization-with-mixed-models" class="slide level2">
+<h1>Implications of Non-Centered Parameterization with Mixed Models</h1>
+<ul>
+<li>NC Paramterization implies that if we pull out sigmas and coefficients, we’re left with mean 0 and a correlation matrix<br />
+<br />
+</li>
+<li>Correlations of the priors can be further removed with <strong>Cholesky decomposition</strong> of the correlation matrix<br />
+<br />
+</li>
+<li>Thus, we can often sample more efficiently<br />
+<br />
+</li>
+<li>Rethinking does this for you under the hood with <code>dmvnormNC</code>
+<ul>
+<li>Assumes random effects are centered on 0</li>
+</ul></li>
+</ul>
+</section>
+<section id="nc-paramterized-model" class="slide level2">
+<h1>NC Paramterized Model</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod_gender_dept_nc &lt;-<span class="st"> </span><span class="kw">alist</span>(
+  <span class="co">#likelihood</span>
+  admit ~<span class="st"> </span><span class="kw">dbinom</span>(applications, p),
+  
+  <span class="co">#Data generating process</span>
+  <span class="kw">logit</span>(p) &lt;-<span class="st"> </span>a_hat +<span class="st"> </span>a[dept_id] +<span class="st"> </span>b_hat*isFemale +<span class="st"> </span>b[dept_id]*isFemale,
+  
+  <span class="kw">c</span>(a,b)[dept_id] ~<span class="st"> </span><span class="kw">dmvnormNC</span>(sigma_dept, Rho),
+  
+  <span class="co">#priors</span>
+  a_hat ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">10</span>),
+  b_hat ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">10</span>),
+  
+  sigma_dept ~<span class="st"> </span><span class="kw">dcauchy</span>(<span class="dv">0</span>,<span class="dv">2</span>),
+  Rho ~<span class="st"> </span><span class="kw">dlkjcorr</span>(<span class="dv">2</span>)
+)
+
+fit_gender_dept_nc &lt;-<span class="st"> </span><span class="kw">map2stan</span>(mod_gender_dept_nc, UCBadmit,
+                             <span class="dt">iter=</span><span class="dv">5000</span>, <span class="dt">chains=</span><span class="dv">3</span>)</code></pre></div>
+</section>
+<section id="are-they-different" class="slide level2">
+<h1>Are they different?</h1>
+<pre><code>                        WAIC pWAIC dWAIC weight    SE dSE
+fit_gender_dept_mixed 5191.1  11.2   0.0   0.51 57.28  NA
+fit_gender_dept_nc    5191.2  11.2   0.1   0.49 57.25 0.1</code></pre>
+<p><img src="23a_varslope_files/figure-revealjs/comp_nc-1.jpeg" width="672" /></p>
+</section>
+<section id="are-they-different-1" class="slide level2">
+<h1>Are they different?</h1>
+<pre><code>NC</code></pre>
+<pre><code>      Mean StdDev lower 0.89 upper 0.89 n_eff Rhat
+b[1] -0.63   0.33      -1.14      -0.12  3918    1
+b[2] -0.05   0.36      -0.62       0.52  5348    1
+b[3]  0.25   0.28      -0.15       0.68  3083    1
+b[4]  0.07   0.27      -0.36       0.47  3200    1
+b[5]  0.29   0.30      -0.17       0.73  3535    1
+b[6]  0.05   0.33      -0.48       0.55  4352    1</code></pre>
+<pre><code>
+Standard</code></pre>
+<pre><code>      Mean StdDev lower 0.89 upper 0.89 n_eff Rhat
+b[1] -0.63   0.34      -1.12      -0.09  2275    1
+b[2] -0.05   0.37      -0.62       0.50  2725    1
+b[3]  0.25   0.28      -0.14       0.69  1835    1
+b[4]  0.08   0.28      -0.35       0.48  1888    1
+b[5]  0.29   0.30      -0.13       0.76  2019    1
+b[6]  0.05   0.35      -0.46       0.58  2357    1</code></pre>
+</section>
+<section id="exercise-dinosaurs" class="slide level2">
+<h1>Exercise: DINOSAURS!!!!</h1>
+<p><img src="23a_varslope_files/figure-revealjs/dino_ex-1.jpeg" width="672" /></p>
+<ul>
+<li>Fit and check a variable slope-intercept model with the Dinosaurs data!</li>
+</ul>
+</section>
+    </div>
+  </div>
+
+  <script src="libs/reveal.js-3.3.0/lib/js/head.min.js"></script>
+  <script src="libs/reveal.js-3.3.0/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display the page number of the current slide
+        slideNumber: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: false,
+        // Opens links in an iframe preview overlay
+        previewLinks: true,
+        // Transition style
+        transition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>

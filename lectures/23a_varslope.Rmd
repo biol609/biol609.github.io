@@ -1,0 +1,533 @@
+---
+title:
+css: style.css
+output:
+  revealjs::revealjs_presentation:
+    reveal_options:
+      slideNumber: true
+      previewLinks: true
+    theme: white
+    center: false
+    transition: fade
+    self_contained: false
+    lib_dir: libs
+---
+##
+<center>
+<h3>Varying Slopes in Bayesian Mixed (aka Hierarchical, aka Multilevel) Models</h3>
+</center>
+\
+
+![](./images/23/mixed_models_walken.jpg)
+
+```{r prep, echo=FALSE, cache=FALSE, message=FALSE, warning=FALSE}
+library(knitr)
+
+opts_chunk$set(fig.height=5, fig.width=7, comment=NA, 
+               warning=FALSE, message=FALSE, 
+               dev="jpeg", echo=FALSE)
+
+library(rethinking)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+#center plot titles
+theme_set(theme_bw(base_size=17))
+theme_update(plot.title = element_text(hjust = 0.5))
+
+
+qq_posterior <- function(fit, observations, n=1000, logscale=FALSE, ...){
+  sim_output <- rethinking::sim(fit, n=n)
+  u <- sapply(1:length(observations), function(i) sum(sim_output[,i] < observations[i]))/n
+  gap::qqunif(u, logscale=logscale, ...)
+}
+
+```
+
+## Gender Discrimination in Graduate Admissions
+![](./images/18/FINAL_gender_news_dani-01.jpg)
+
+## Our data: Berkeley
+```{r ucb, echo=TRUE}
+data(UCBadmit)
+class(UCBadmit) <- "data.frame"
+head(UCBadmit)
+```
+
+## A Poor First Model
+```{r ecb_mod2, echo=TRUE}
+#Make a dept and genderindex
+UCBadmit$gender <- as.numeric(UCBadmit$applicant.gender)
+UCBadmit$dept_id <- as.numeric(UCBadmit$dept)
+
+mod_gender_bad <- alist(
+  #likelihood
+  admit ~ dbinom(applications, p),
+  
+  #Data generating process
+  logit(p) <- a + b[gender],
+  
+  #priors
+  a ~ dnorm(0,10),
+  b[gender] ~ dnorm(0,10)
+)
+
+fit_gender_bad <- map(mod_gender_bad, UCBadmit)
+```
+
+## How does it look?
+```{r bad_postcheck, results="hide"}
+postcheck(fit_gender_bad)
+```
+
+## What is the model we want?
+1. Random effect of departent  
+     - Recall a fixed effect of department fit much better  
+\
+2. AND the gender effect might vary by department  
+     - In fixed effects, this would be dept*gender
+     - In mixed models, slope varies by gender
+     
+## What about this?
+$a_{dept} \sim dnorm(\hat{a}, \sigma_{a})$  
+\
+$b_{dept} \sim dnorm(\hat{b}, \sigma_{b})$   
+\
+<center><span class="fragment">What is missing?</span></center>
+
+## Notice how Slope and Intercept covary
+```{r show_pairs}
+pairs(fit_gender_bad)
+```
+
+
+## Notice how Slope and Intercept covary
+```{r show_lines_cov, results="hide"}
+sim_bad <- sim(fit_gender_bad, data=data.frame(gender=c(1,2), applications=100), n=10)
+sim_bad <- cbind(sim_bad, 1:nrow(sim_bad))
+colnames(sim_bad) <- c("female", "male", "sim")
+sim_bad <- as.data.frame(sim_bad)
+sim_bad <- gather(sim_bad, gender, Admit, -sim)
+
+ggplot(data=sim_bad, mapping=aes(x=gender, y=Admit, group=sim, color=factor(sim))) +
+  geom_line() +
+  scale_color_discrete(guide="none")
+```
+
+## Dealing with Slope-Intercept Covariance
+So, if we want...
+$$logit(p_i) = a_{dept} + b_{dept} gender_i$$  
+\
+Then, $a_{dept}$ and  $b_{dept}$ must covary  
+\
+<div class="fragment">
+$$\begin{bmatrix}
+a_{dept}
+\\ 
+b_{dept}
+\end{bmatrix} \sim 
+MVNormal \left (\begin{bmatrix}
+\widehat{a}
+\\ 
+\widehat{b}
+\end{bmatrix}, \textbf{S} \right )$$
+
+## Building a Covariance Matrix with Correlations
+> - A covariance matrix is fine, but we often want to know correlation  
+\
+> - Often harder to parameterize a covariance matrix conceptually  
+\
+> - Fortunately, cov<sub>ab</sub> = cor<sub>ab</sub>*sd<sub>a</sub>*sd<sub>b</sub>  
+\
+<div class="fragment">
+$$S_{ab} =  \begin{bmatrix}
+\sigma_a & 0\\ 
+0 & \sigma_b
+\end{bmatrix} 
+\begin{bmatrix}
+1& r_{ab}\\ 
+r_{ab} & 1
+\end{bmatrix}
+\begin{bmatrix}
+\sigma_a & 0\\ 
+0 & \sigma_b
+\end{bmatrix}$$
+<div>
+
+## Priors and Correlations
+>- We know about how to make $\sigma$ priors with `dcauchy`  
+\
+>- What about correlations?  
+\
+>- Introducting, the LKJ Correlation Distribution!  
+\
+>-Evaluates probability of correlation matrices  
+\
+>-Parameter $\eta$ says how peaked it is towards 0
+
+## LKJ Correlation Distribution
+```{r lkj}
+make_cor <- function(r) {
+  mat <- diag(c(1,1))
+  mat[1,2] <- mat[2,1] <- r
+  mat
+}
+
+lkj_df <- crossing(eta = c(0.9, 1, 2, 4), r = seq(-1,1,length.out=500))%>%
+  rowwise() %>%
+  mutate(dens = dlkjcorr(make_cor(r), eta)) %>%
+ungroup()
+
+ggplot(lkj_df, aes(x=r, y=dens, color=factor(eta))) +
+  geom_line()
+```
+
+## So, those random effects...
+$$\begin{bmatrix}
+a_{dept}
+\\ 
+b_{dept}
+\end{bmatrix} \sim 
+MVNormal \left (\begin{bmatrix}
+\widehat{a}
+\\ 
+\widehat{b}
+\end{bmatrix}, \mathbf{ \sigma } \textbf{R} \mathbf{ \sigma } \right )$$
+
+## A Variable Slope Intercept Model
+
+```{r mod_varslope, echo=TRUE}
+UCBadmit$isFemale <- as.numeric(UCBadmit$applicant.gender)-1
+
+mod_gender_dept_mixed <- alist(
+  #likelihood
+  admit ~ dbinom(applications, p),
+  
+  #Data generating process
+  logit(p) <- a_hat + a[dept_id] + b_hat*isFemale + b[dept_id]*isFemale,
+  
+  c(a,b)[dept_id] ~ dmvnorm2(c(0,0), sigma_dept, Rho),
+  
+  #priors
+  a_hat ~ dnorm(0,10),
+  b_hat ~ dnorm(0,10),
+  
+  sigma_dept ~ dcauchy(0,2),
+  Rho ~ dlkjcorr(2)
+)
+
+```
+
+## What is new
+Our definition of random effects:  
+`c(a,b)[dept_id] ~ dmvnorm2(c(0,0),`  
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; `sigma_dept, Rho)`  
+\
+\
+<div class="fragment">
+`sigma_dept` knows there are 2 values:  
+`sigma_dept ~ dcauchy(0,2)`  
+</div>
+\
+\
+<div class="fragment">
+Our Correlation Prior:  
+`Rho ~ dlkjcorr(2)`
+</div>
+
+## Fitting
+```{r fit_varslope, echo=TRUE, warning=TRUE, results="hide", cache=TRUE}
+fit_gender_dept_mixed <- map2stan(mod_gender_dept_mixed, UCBadmit,
+                             iter=5000, chains=3)
+
+```
+
+<div class="fragment">
+```{r show_error, eval=FALSE, echo=TRUE}
+Warning: Variable 'applicant.gender' contains dots '.'.
+Will attempt to remove dots internally.
+DIAGNOSTIC(S) FROM PARSER:
+Warning (non-fatal):
+Left-hand side of sampling statement (~) may contain a non-linear transform of a parameter or local variable.
+If it does, you need to include a target += statement with the log absolute determinant of the Jacobian of the transform.
+Left-hand-side of sampling statement:
+    v_ab ~ multi_normal(...)
+
+recompiling to avoid crashing R session
+```
+
+## Did it blend?
+```{r plot_chains}
+plot(fit_gender_dept_mixed, pars="a")
+```
+
+## Did it blend?
+```{r plot_chains2}
+plot(fit_gender_dept_mixed, pars="b")
+```
+
+## Did it blend?
+```{r plot_chains3}
+plot(fit_gender_dept_mixed, pars=c("Rho", "sigma_dept"))
+par(mfrow=c(1,1))
+```
+
+## Posterior Check
+```{r postcheck, results="hide"}
+postcheck(fit_gender_dept_mixed)
+```
+
+## How correlated were slope and intercept?
+```{r show_cor_slope_int}
+gender_samp <- extract.samples(fit_gender_dept_mixed)
+plot(density(gender_samp$Rho[,1,2]), main="Rho")
+```
+
+## How important was incorporating a random slope?
+1. Can look at density of $\sigma$ for slope and intercept  
+\
+2. Can fit variable intercept only model and compare with WAIC  
+     - And no reason you can't use ensemble predictions if both are valid hypotheses
+\
+
+## Density of Sigmas
+```{r plot_sigmas, echo=TRUE, eval=FALSE}
+#get samples
+gender_samp <- extract.samples(fit_gender_dept_mixed)
+
+#extract sigma
+sigma_df <- as.data.frame(gender_samp$sigma_dept) %>%
+  rename(sigma_int = V1, sigma_slope = V2) %>%
+  gather(sigma, value)
+
+ggplot(sigma_df, aes(x=value, color=sigma)) +
+  geom_density()
+```
+
+## Density of Sigmas
+```{r plot_sigmas, echo=FALSE, eval=TRUE}
+```
+
+## Variable Intercept Only Model
+```{r var_int, echo=TRUE, cache=TRUE, results="hide"}
+mod_gender_dept_varint <- alist(
+  #likelihood
+  admit ~ dbinom(applications, p),
+  
+  #Data generating process
+  logit(p) <- a_hat + a[dept_id] + b_hat*isFemale,
+  
+  a[dept_id] ~ dnorm(0, sigma_dept),
+  
+  #priors
+  a_hat ~ dnorm(0,10),
+  b_hat ~ dnorm(0,10),
+  
+  sigma_dept ~ dcauchy(0,2)
+)
+
+fit_gender_dept_varint<- map2stan(mod_gender_dept_varint, UCBadmit,
+                             iter=5000, chains=3)
+```
+
+## Not quite as good of a fit...
+(I assume we've checked the chains...)  
+
+```{r postcheck_varint, results="hide"}
+postcheck(fit_gender_dept_varint)
+```
+
+## WAIC suggests Variable Slope model better...
+```{r compare_int_slope}
+compare(fit_gender_dept_varint, fit_gender_dept_mixed)
+```
+But big SE - what would you do?
+
+## Optimization and Alternate Parameterization
+- How we build our golem in part of the model itself  
+\
+- We have seen even with centering that we can improve fit/speed  
+\
+- With big multivariate normal densities, Non-centered parameterization can help
+
+## Non-Centered Parameterization
+Consider  
+$$ y \sim Normal(\mu, \sigma)$$  
+\
+<div class="fragment">
+This can be re-written as:  
+$$y = \mu + z \sigma$$
+$$ z \sim Normal(0,1)$$
+</div>
+\
+<div class="fragment">
+Fitting N(0,1) and estimating $\mu$ and $z$ is much more efficient
+
+## Implications of Non-Centered Parameterization with Mixed Models
+- NC Paramterization implies that if we pull out sigmas and coefficients, we're left with mean 0 and a correlation matrix  
+\
+- Correlations of the priors can be further removed with **Cholesky decomposition** of the correlation matrix  
+\
+- Thus, we can often sample more efficiently  
+\
+- Rethinking does this for you under the hood with `dmvnormNC`  
+     - Assumes random effects are centered on 0
+
+## NC Paramterized Model
+```{r mvparam, echo=TRUE, results="hide", cache=TRUE}
+mod_gender_dept_nc <- alist(
+  #likelihood
+  admit ~ dbinom(applications, p),
+  
+  #Data generating process
+  logit(p) <- a_hat + a[dept_id] + b_hat*isFemale + b[dept_id]*isFemale,
+  
+  c(a,b)[dept_id] ~ dmvnormNC(sigma_dept, Rho),
+  
+  #priors
+  a_hat ~ dnorm(0,10),
+  b_hat ~ dnorm(0,10),
+  
+  sigma_dept ~ dcauchy(0,2),
+  Rho ~ dlkjcorr(2)
+)
+
+fit_gender_dept_nc <- map2stan(mod_gender_dept_nc, UCBadmit,
+                             iter=5000, chains=3)
+```
+
+
+## Are they different?
+```{r comp_nc}
+compare(fit_gender_dept_nc, fit_gender_dept_mixed)
+
+neff <- rbind(data.frame(mod = "Non-Centered", n_eff = precis(fit_gender_dept_nc, depth=2)@output$n_eff),
+              data.frame(mod = "Standard", n_eff = precis(fit_gender_dept_mixed, depth=2)@output$n_eff))
+
+ggplot(neff, mapping=aes(x=mod, y=n_eff)) +
+  geom_boxplot()
+```
+
+## Are they different?
+```{r comp_nc2}
+cat("NC\n")
+precis(fit_gender_dept_nc, pars="b", depth=2)
+cat("\nStandard\n")
+precis(fit_gender_dept_mixed, pars="b", depth=2)
+```
+
+
+## Exercise: DINOSAURS!!!!
+```{r dino_ex}
+data(Dinosaurs)
+Dinosaurs$age_c <- Dinosaurs$age - mean(Dinosaurs$age)
+Dinosaurs$log_mass <- log(Dinosaurs$mass)
+
+ggplot(Dinosaurs, aes(x=age, y=log_mass, color=species)) +
+  geom_point() +
+  stat_smooth(method="lm", fill=NA)
+```
+
+- Fit and check a variable slope-intercept model with the Dinosaurs data!
+
+```{r, eval=FALSE}
+data(Dinosaurs)
+Dinosaurs$age_c <- Dinosaurs$age - mean(Dinosaurs$age)
+Dinosaurs$log_mass <- log(Dinosaurs$mass)
+
+
+mod <- alist(
+  #likelihood
+  mass ~ dlnorm(log_mu, sigma_log),
+  
+  #dgp
+  log_mu <- a + b*age_c,
+  
+  #priors
+  a ~ dnorm(0,10),
+  b ~ dnorm(0,10),
+  sigma_log ~ dcauchy(0,2)
+)
+
+fit <- map(mod_fixed, data=Dinosaurs)
+
+mod_fixed <- alist(
+  #likelihood
+  mass ~ dlnorm(log_mu, sigma_log),
+  
+  #dgp
+  log_mu <- a[sp_id] + b*age_c,
+  
+  #priors
+  a[sp_id] ~ dnorm(0,10),
+  b ~ dnorm(0,10),
+  sigma_log ~ dcauchy(0,2)
+)
+
+fit_fixed <- map(mod_fixed, data=Dinosaurs)
+
+
+mod_varint <-  alist(
+  #likelihood
+  log_mass ~ dlnorm(log_mu, sigma_log),
+  
+  #dgp
+  log_mu <- a_bar + a[sp_id] + b*age,
+  a[sp_id] ~ dnorm(0, sigma_sp),
+
+  #priors
+  a_bar ~ dnorm(0,10),
+  b ~ dnorm(0,10),
+  sigma_log ~ dcauchy(0,2),
+  sigma_sp ~ dcauchy(0,2)
+)
+
+fit_varint <- map2stan(mod_varint, data=Dinosaurs,
+                        iter=4000, chains=3)
+
+
+
+mod_varslope <-  alist(
+  #likelihood
+  log_mass ~ dnorm(log_mu, sigma_log),
+  
+  #dgp
+  log_mu <- a_bar + a[sp_id] + (b_bar + b[sp_id])*age,
+  
+  c(a,b)[sp_id] ~ dmvnorm2(0,sigma_species,Rho_species),
+  
+  #priors
+  a_bar ~ dnorm(0,10),
+  b_bar ~ dnorm(0,10),
+  sigma_log ~ dcauchy(0,2),
+  sigma_species ~ dcauchy(0,2),
+  Rho_species ~ dlkjcorr(4)
+)
+
+fit_varslope <- map2stan(mod_varslope, data=Dinosaurs,
+                        iter=4000, chains=3)
+
+
+
+
+mod_varslope2 <-  alist(
+  #likelihood
+  log_mass ~ dnorm(log_mu, sigma_log),
+  
+  #dgp
+  log_mu <- a_bar + a[sp_id] + (b_bar + b[sp_id])*age,
+  
+  c(a,b)[sp_id] ~ dmvnormNC(sigma_species,Rho_species),
+  
+  #priors
+  a_bar ~ dnorm(0,10),
+  b_bar ~ dnorm(0,10),
+  sigma_log ~ dcauchy(0,2),
+  sigma_species ~ dcauchy(0,2),
+  Rho_species ~ dlkjcorr(4)
+)
+
+fit_varslope2 <- map2stan(mod_varslope2, data=Dinosaurs,
+                        iter=4000, chains=3)
+
+```

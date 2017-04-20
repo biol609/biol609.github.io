@@ -1,0 +1,289 @@
+---
+title:
+css: style.css
+output:
+  revealjs::revealjs_presentation:
+    reveal_options:
+      slideNumber: true
+      previewLinks: true
+    theme: white
+    center: false
+    transition: fade
+    self_contained: false
+    lib_dir: libs
+---
+##
+<center>
+<h3>Prediction and Bayesian Mixed (aka Hierarchical, aka Multilevel) Models</h3>
+</center>
+\
+
+![](./images/23/mr-t-fool-prediction-pain.jpg)
+
+```{r prep, echo=FALSE, cache=FALSE, message=FALSE, warning=FALSE}
+library(knitr)
+
+opts_chunk$set(fig.height=5, fig.width=7, comment=NA, 
+               warning=FALSE, message=FALSE, 
+               dev="jpeg", echo=FALSE)
+
+library(rethinking)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+#center plot titles
+theme_set(theme_bw())
+theme_update(plot.title = element_text(hjust = 0.5))
+
+
+qq_posterior <- function(fit, observations, n=1000, logscale=FALSE, ...){
+  sim_output <- rethinking::sim(fit, n=n)
+  u <- sapply(1:length(observations), function(i) sum(sim_output[,i] < observations[i]))/n
+  gap::qqunif(u, logscale=logscale, ...)
+}
+
+```
+
+## Oceanic Tool Use
+![](./images/22/tool_map.jpg){width="45%"}
+```{r kline}
+data(Kline)
+head(Kline)
+```
+
+## Model of Tool Use with Random Variation
+Note `a_hat`'s location to facilitate consructing predictions and efficiency
+
+```{r kline_mixed, results="hide", cache=TRUE, echo=TRUE}
+Kline$society <- 1:nrow(Kline)
+Kline$log_pop <- log(Kline$population)
+
+kline_mixed <- alist(
+  #Likelihood
+  total_tools ~ dpois(lambda),
+  
+  #DGP
+  log(lambda) ~ a_hat + a[society] + bp*log_pop,
+  
+  a[society] ~ dnorm(0, sigma_society),
+
+  #Priors
+  a_hat ~ dnorm(0,10),
+  bp ~ dnorm(0,1),
+  sigma_society ~ dcauchy(0,2)
+)
+
+kline_mixed_fit <- map2stan(kline_mixed, data=Kline,
+                            iter=10000, chains=3)
+```
+
+## Convergence!
+```{r plot_fit}
+plot(kline_mixed_fit)
+```
+
+## Link and Sim show variation from curve and random intercepts
+```{r show_link_sim, results="hide"}
+
+kline_link_pred <- link(kline_mixed_fit)
+kline_sim_pred <- sim(kline_mixed_fit)
+
+Kline <- Kline %>%
+  mutate(pred_link = apply(kline_link_pred, 2, median),
+         upr_sim = apply(kline_sim_pred, 2, HPDI)[2,],
+         lwr_sim = apply(kline_sim_pred, 2, HPDI)[1,],
+         upr_link = apply(kline_link_pred, 2, HPDI)[2,],
+         lwr_link = apply(kline_link_pred, 2, HPDI)[1,])
+
+ggplot(Kline,
+       aes(x=log_pop, y=pred_link)) +
+   geom_ribbon(aes(ymin=lwr_sim, ymax=upr_sim), alpha=0.3) +
+  geom_ribbon(aes(ymin=lwr_link, ymax=upr_link), alpha=0.3, fill="blue") +
+  geom_line(lwd=1.1) +
+  geom_point(mapping=aes(y=total_tools), size=1.5, pch=1)
+
+```
+
+<div class="fragment">Is this useful?</div>
+
+## What are we trying to predict with multilevel models?
+1. Prediction based on average "fixed" effect?  
+\
+2. Prediction for one bock - new or old!  
+\
+3. Prediction marginalized over any possible random effects?  
+     - Incorporates variance of random effects
+
+
+
+  
+## Prediction of the Average
+- Use link to get predicted values  
+\
+- But, substitute in 0 for the random effects  
+\
+\
+```{r pred_kline_mat, echo=TRUE}
+#nrow = # of sims
+a_fixed_mat_zeroes <- matrix(rep(0, 10*1000), nrow=1000, ncol=10)
+```
+
+
+
+## Now, use link, but, replace the society effect
+`replace` lets us replace coefficient values 
+```{r fixed_link, results="hide", echo=TRUE}
+kline_fixed_link <- link(kline_mixed_fit,
+                         data=Kline,
+                         n=1000,
+                         replace=list(a = a_fixed_mat_zeroes))
+
+
+kline_fixed_sim <- sim(kline_mixed_fit,
+                         data=Kline,
+                         n=1000,
+                         replace=list(a = a_fixed_mat_zeroes))
+
+```
+
+## Compare Fixed Fit Error to Sample Fit Error
+```{r kline_fixed_sample}
+Kline <- Kline %>%
+  mutate(pred = apply(kline_fixed_link, 2, median),
+         upr_fixed = apply(kline_fixed_link, 2, HPDI)[2,],
+         lwr_fixed = apply(kline_fixed_link, 2, HPDI)[1,],
+         upr_fixed_sim = apply(kline_fixed_sim, 2, HPDI)[2,],
+         lwr_fixed_sim = apply(kline_fixed_sim, 2, HPDI)[1,])
+
+ggplot(Kline,
+       aes(x=log_pop, y=pred)) +
+   geom_ribbon(aes(ymin=lwr_link, ymax=upr_link), alpha=0.3) +
+  geom_ribbon(aes(ymin=lwr_fixed, ymax=upr_fixed), alpha=0.3, fill="blue") +
+  geom_line(lwd=1.1) +
+  geom_point(mapping=aes(y=total_tools), size=1.5, pch=1)
+```
+
+## Fit and Prediction Error for Fixed Effects Only
+```{r kline_compare, results="hide"}
+
+ggplot(Kline,
+       aes(x=log_pop, y=pred)) +
+   geom_ribbon(aes(ymin=lwr_fixed_sim, ymax=upr_fixed_sim), alpha=0.3) +
+  geom_ribbon(aes(ymin=lwr_fixed, ymax=upr_fixed), alpha=0.3, fill="blue") +
+  geom_line(lwd=1.1) +
+  geom_point(mapping=aes(y=total_tools), size=1.5, pch=1)
+
+```
+
+## What if we had a new blocks, and wanted their trend?
+- For a single block, a single draw of the random effect will suffice  
+\
+- Use the same way as the fixed only model  
+\
+- Draw of random effects comes from using the $\sigma_{society}$ in this case  
+\
+- But, parameters values must come from same draws of $\sigma_{society}$ 
+
+## Extracting New Trends - Easiest by hand!
+```{r new_trends, echo=TRUE}
+sims <- 50
+
+kline_samp <- extract.samples(kline_mixed_fit, n=sims)
+
+#fill in new a_hat values
+kline_samp$a_new <- rnorm(sims, 0, kline_samp$sigma_society)
+
+#remove matrices of random effects
+kline_samp <-kline_samp[setdiff(names(kline_samp), "a")]
+
+#make into data frame
+kline_samp <- as.data.frame(kline_samp)
+
+#now make a new data frame
+pred_df <- crossing(log_pop = seq(7,13, length.out=100), 
+                    kline_samp) %>%
+    mutate(pred = exp(a_new + a_hat + bp*log_pop))
+
+```
+
+## New Trends show variability in Possibilities
+```{r plot_new_grends}
+ggplot(pred_df, mapping=aes(x=log_pop, y=pred, group=a_new)) +
+  geom_line(alpha=0.3)
+```
+
+Can see uncertainty in trends for new blocks
+
+## What if we want to see full distribution of possible new observations
+- `a[society] ~ dnorm(0, sigma_society)` implies any new society is drawn from that distribution  
+\
+- Hence, in addition to fit and prediction uncertainty, we also have new block uncertainty  
+\
+- Straightforward to see both fit and prediction error  
+\
+- We are **marginalizing** over random effects
+
+## Build that new random effects matrix!
+Need as many samples as outputs from sim and link  
+10 "blocks" * 1000 sims
+
+```{r new_pred_mat, echo=TRUE}
+n_pts <- 10*1000
+kline_samp_all <- extract.samples(kline_mixed_fit, n=n_pts)
+
+## New random effects
+new_ranefs <- rnorm(n_pts, 0, kline_samp_all$sigma_society)
+
+## New matrix
+a_ranef_new <- matrix(new_ranefs, ncol=10, nrow=1000)
+```
+
+## Now, use link, but, replace the society effect
+`replace` lets us replace coefficient values 
+```{r new_link, results="hide", echo=TRUE}
+kline_new_link <- link(kline_mixed_fit,
+                         data=Kline,
+                         n=1000,
+                         replace=list(a = a_ranef_new))
+
+
+kline_new_sim <- sim(kline_mixed_fit,
+                         data=Kline,
+                         n=1000,
+                        replace=list(a = a_ranef_new))
+```
+
+## Marginalized Counterfactual Predictions
+```{r show_new}
+
+Kline <- Kline %>%
+  mutate(pred_new = apply(kline_new_link, 2, median),
+         upr_new = apply(kline_new_link, 2, PI)[2,],
+         lwr_new = apply(kline_new_link, 2, PI)[1,],
+         upr_new_sim = apply(kline_new_sim, 2, PI)[2,],
+         lwr_new_sim = apply(kline_new_sim, 2, PI)[1,])
+
+ggplot(Kline,
+       aes(x=log_pop, y=pred_new)) +
+   geom_ribbon(aes(ymin=lwr_new_sim, ymax=upr_new_sim), alpha=0.3) +
+  geom_ribbon(aes(ymin=lwr_new, ymax=upr_new), alpha=0.3, fill="blue") +
+  geom_line(lwd=1.1) +
+  geom_point(mapping=aes(y=total_tools), size=1.5, pch=1) 
+
+
+```
+
+<div class="fragment">Suggests random effects uncertainty is large relative to prediction uncertainty</div>
+
+## Exercise: DINOSAURS!!!!
+```{r dino_ex}
+data(Dinosaurs)
+Dinosaurs$age_c <- Dinosaurs$age - mean(Dinosaurs$age)
+Dinosaurs$log_mass <- log(Dinosaurs$mass)
+
+ggplot(Dinosaurs, aes(x=age, y=log_mass, color=species)) +
+  geom_point() +
+  stat_smooth(method="lm", fill=NA)
+```
+
+- Make predictions with fixed effects only and one other
