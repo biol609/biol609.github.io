@@ -290,7 +290,7 @@ fit &lt;-<span class="st"> </span><span class="kw">map2stan</span>(mod_partialpo
 <br />
 
 <div class="fragment">
-<span class="math display">\[p_j \sim dnorm(\widehat{p} , \sigma^2_{tank})\]</span>
+<span class="math display">\[p_j \sim dnorm(\widehat{p} , \sigma_{tank})\]</span>
 </div>
 </section>
 <section id="the-mathy-version" class="slide level2">
@@ -377,9 +377,16 @@ fit_fullpool 1372.0   1.0 360.9      0 25.87 35.12</code></pre>
 <li>Improved fit from partial pooling<br />
 <br />
 </li>
-<li>Big reduction in number of parameters</li>
+<li>Big reduction in number of parameters
+<ul>
+<li>From reducing paramter variance (remember pWAIC definition!)</li>
+</ul></li>
 </ul>
 </div>
+</section>
+<section id="reduced-parameter-variance" class="slide level2">
+<h1>Reduced Parameter Variance</h1>
+<p><img src="22_varying_intercept_files/figure-revealjs/show_p-1.jpeg" width="672" /></p>
 </section>
 <section id="fit-and-overdispersion" class="slide level2">
 <h1>Fit and Overdispersion</h1>
@@ -408,6 +415,39 @@ fit_fullpool 1372.0   1.0 360.9      0 25.87 35.12</code></pre>
 5   Lau Fiji       7400    high          33     5.0
 6  Trobriand       8000    high          19     4.0</code></pre>
 </section>
+<section id="a-typical-model" class="slide level2">
+<h1>A Typical Model</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Kline$log_pop &lt;-<span class="st"> </span><span class="kw">log</span>(Kline$population)
+
+kline_mod &lt;-<span class="st"> </span><span class="kw">alist</span>(
+  <span class="co">#Likelihood</span>
+  total_tools ~<span class="st"> </span><span class="kw">dpois</span>(lambda),
+  
+  <span class="co">#DGP</span>
+  <span class="kw">log</span>(lambda) ~<span class="st"> </span>a +<span class="st"> </span>bp*log_pop,
+  
+  <span class="co">#Priors</span>
+  a ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">10</span>),
+  bp ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">1</span>)
+)
+
+kline_fit &lt;-<span class="st"> </span><span class="kw">map</span>(kline_mod, <span class="dt">data=</span>Kline)</code></pre></div>
+</section>
+<section id="overdispersion" class="slide level2">
+<h1>Overdispersion?</h1>
+<pre><code>[ 100 / 1000 ]
+[ 200 / 1000 ]
+[ 300 / 1000 ]
+[ 400 / 1000 ]
+[ 500 / 1000 ]
+[ 600 / 1000 ]
+[ 700 / 1000 ]
+[ 800 / 1000 ]
+[ 900 / 1000 ]
+[ 1000 / 1000 ]</code></pre>
+<p><img src="22_varying_intercept_files/figure-revealjs/show_overdisp-1.jpeg" width="672" /><br />
+Mild, but yes.</p>
+</section>
 <section id="an-overdispersed-model" class="slide level2">
 <h1>An Overdispersed Model</h1>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Kline$log_pop &lt;-<span class="st"> </span><span class="kw">log</span>(Kline$population)
@@ -429,10 +469,9 @@ kline_over_fit &lt;-<span class="st"> </span><span class="kw">map2stan</span>(kl
 </section>
 <section id="overdispersion-needed" class="slide level2">
 <h1>Overdispersion needed</h1>
-<p><img src="22_varying_intercept_files/figure-revealjs/kline_show-1.jpeg" width="672" /></p>
 </section>
-<section id="overdispersion-needed-1" class="slide level2">
-<h1>Overdispersion needed</h1>
+<section id="overdispersion-helps" class="slide level2">
+<h1>Overdispersion helps</h1>
 <p><img src="22_varying_intercept_files/figure-revealjs/kline_show2-1.jpeg" width="672" /></p>
 </section>
 <section id="what-about-modeling-random-variation-in-societies" class="slide level2">

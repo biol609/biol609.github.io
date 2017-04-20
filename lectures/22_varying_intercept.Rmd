@@ -103,7 +103,7 @@ mod_fullpool <- alist(
   surv ~ dbinom(density, prob),
   
   #Data Generating Process
-  logit(prob) ~ p,
+  logit(prob) <- p,
   
   #Priors
   p ~ dnorm(0,10)
@@ -123,7 +123,7 @@ mod_nopool <- alist(
   surv ~ dbinom(density, prob),
   
   #Data Generating Process
-  logit(prob) ~ p[tank],
+  logit(prob) <- p[tank],
   
   #Priors
   p[tank] ~ dnorm(0,10)
@@ -161,7 +161,7 @@ mod_partialpool <- alist(
   surv ~ dbinom(density, prob),
   
   #DGP
-  logit(prob) ~ p[tank],
+  logit(prob) <- p[tank],
   
   #Define random effects (part of DGP!)
   p[tank] ~ dnorm(p_hat, sigma_tank),
@@ -175,7 +175,7 @@ fit <- map2stan(mod_partialpool, data=reedfrogs)
 ```
 
 \
-<div class="fragment">$$p_j \sim dnorm(\widehat{p} , \sigma^2_{tank})$$</div>
+<div class="fragment">$$p_j \sim dnorm(\widehat{p} , \sigma_{tank})$$</div>
 
 ## The Mathy Version
 **Likelihood**  
@@ -257,8 +257,20 @@ compare(fit, fit_nopool, fit_fullpool)
 <div class="fragment">
 - Improved fit from partial pooling  
 \
-- Big reduction in number of parameters
+- Big reduction in number of parameters  
+     - From reducing paramter variance (remember pWAIC definition!)
 </div>
+
+## Reduced Parameter Variance
+```{r show_p}
+samp_nopool <- extract.samples(fit_nopool)
+samp_partialpool <- extract.samples(fit)
+
+plot(density(samp_partialpool$p[,1]), main="Density of P")
+lines(density(samp_nopool$p[,1]), col="red")
+legend(4, 0.4, col=c("black", "red"), legend=c("Partial Pooling", "No Pooling"),
+       fill=c("black", "red"))
+```
 
 ## Fit and Overdispersion
 - Overdispersed models are kinda mixed models already  
@@ -274,6 +286,33 @@ compare(fit, fit_nopool, fit_fullpool)
 data(Kline)
 head(Kline)
 ```
+
+## A Typical Model
+```{r poisson, echo=TRUE, results="hide", cache=TRUE}
+Kline$log_pop <- log(Kline$population)
+
+kline_mod <- alist(
+  #Likelihood
+  total_tools ~ dpois(lambda),
+  
+  #DGP
+  log(lambda) ~ a + bp*log_pop,
+  
+  #Priors
+  a ~ dnorm(0,10),
+  bp ~ dnorm(0,1)
+)
+
+kline_fit <- map(kline_mod, data=Kline)
+```
+
+## Overdispersion?
+```{r show_overdisp}
+qq_posterior(kline_fit, Kline$total_tools)
+```
+\
+Mild, but yes.
+
 
 ## An Overdispersed Model
 
@@ -300,11 +339,9 @@ kline_over_fit <- map2stan(kline_over, data=Kline)
 ## Overdispersion needed
 ```{r kline_show, results="hide"}
 precis(kline_over_fit)
-
-qq_posterior(kline_over_fit, Kline$total_tools)
 ```
 
-## Overdispersion needed
+## Overdispersion helps
 ```{r kline_show2, results="hide"}
 qq_posterior(kline_over_fit, Kline$total_tools)
 ```
@@ -337,59 +374,11 @@ kline_mixed_fit <- map2stan(kline_mixed, data=Kline,
 postcheck(kline_mixed_fit)
 ```
 
-## What are we trying to predict with multilevel models?
-1. Prediction based on average "fixed" effect?  
+## Exercise
+- Revisit the Reed Frog survivorship  
 \
-2. Prediction marginalized over all possible random effects?  
+- Fit models with predation, tank size, both acting additively, and both interacting  
 \
-3. Prediction for one bock - new or old!
-
-## Prediction of the Average
-- Use link to get predicted values  
+- Compare with WAIC  
 \
-- But, substitute in 0 for the random effects  
-\
-
-## First, the Matrix of Fixef Effects
-10x1000 (number of rows x number of sims) matrix
-\
-\
-```{r pred_kline_mat, echo=TRUE}
-#produces 60K
-kline_coefs <- extract.samples(kline_mixed_fit, n=10000)
-
-kline_a_fixed <- kline_coefs$a_hat
-
-#nrow = # of sims
-a_fixed_mat <- matrix(kline_a_fixed, nrow=1000, ncol=10)
-```
-
-## Now, use link, but, replace the society effect
-```{r fixed_link, results="hide"}
-kline_fixed_pred <- link(kline_mixed_fit,
-                         data=Kline,
-                         n=1000,
-                         replace=list(a = a_fixed_mat))
-
-```
-
-## Plot the result
-```{r kline_compare, results="hide"}
-#for comparison
-kline_link_pred <- link(kline_mixed_fit)
-
-Kline <- Kline %>%
-  mutate(pred = apply(kline_fixed_pred, 2, median),
-         upr_fixed = apply(kline_fixed_pred, 2, HPDI)[2,],
-         lwr_fixed = apply(kline_fixed_pred, 2, HPDI)[1,],
-         upr = apply(kline_link_pred, 2, HPDI)[2,],
-         lwr = apply(kline_link_pred, 2, HPDI)[1,])
-
-ggplot(Kline,
-       aes(x=log_pop, y=pred)) +
- # geom_ribbon(aes(ymin=lwr, ymax=upr), alpha=0.3) +
-  geom_ribbon(aes(ymin=lwr_fixed, ymax=upr_fixed), alpha=0.3, fill="blue") +
-  geom_line(lwd=1.1) +
-  geom_point(mapping=aes(y=total_tools), size=1.5, pch=1)
-```
-  
+- How does `sigma_tank` change across the different models?
