@@ -240,21 +240,32 @@ kline_fixed_sim &lt;-<span class="st"> </span><span class="kw">sim</span>(kline_
 <h1>Extracting New Trends - Easiest by hand!</h1>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sims &lt;-<span class="st"> </span><span class="dv">50</span>
 
+<span class="co"># get the coefficients</span>
 kline_samp &lt;-<span class="st"> </span><span class="kw">extract.samples</span>(kline_mixed_fit, <span class="dt">n=</span>sims)
 
-<span class="co">#fill in new a_hat values</span>
-kline_samp$a_new &lt;-<span class="st"> </span><span class="kw">rnorm</span>(sims, <span class="dv">0</span>, kline_samp$sigma_society)
-
-<span class="co">#remove matrices of random effects</span>
+<span class="co"># create new a values</span>
+kline_samp$a_new &lt;-<span class="st"> </span><span class="kw">rnorm</span>(sims, <span class="dv">0</span>, kline_samp$sigma_society)</code></pre></div>
+</section>
+<section id="merge-new-random-effects" class="slide level2">
+<h1>Merge New Random Effects</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># replace matrices of random effects</span>
 kline_samp &lt;-kline_samp[<span class="kw">setdiff</span>(<span class="kw">names</span>(kline_samp), <span class="st">&quot;a&quot;</span>)]
 
-<span class="co">#make into data frame</span>
-kline_samp &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(kline_samp)
-
-<span class="co">#now make a new data frame</span>
+<span class="co"># make into data frame</span>
+kline_samp &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(kline_samp)</code></pre></div>
+</section>
+<section id="new-data-frame-for-plotting" class="slide level2">
+<h1>New data frame for plotting</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># now make a new data frame</span>
 pred_df &lt;-<span class="st"> </span><span class="kw">crossing</span>(<span class="dt">log_pop =</span> <span class="kw">seq</span>(<span class="dv">7</span>,<span class="dv">13</span>, <span class="dt">length.out=</span><span class="dv">100</span>), 
                     kline_samp) %&gt;%
-<span class="st">    </span><span class="kw">mutate</span>(<span class="dt">pred =</span> <span class="kw">exp</span>(a_new +<span class="st"> </span>a_hat +<span class="st"> </span>bp*log_pop))</code></pre></div>
+<span class="st">  </span>
+<span class="st">    </span><span class="kw">mutate</span>(<span class="dt">pred =</span> <span class="kw">exp</span>(a_new +<span class="st"> </span>a_hat +<span class="st"> </span>bp*log_pop))
+
+
+<span class="co">#plot</span>
+<span class="kw">ggplot</span>(pred_df, <span class="dt">mapping=</span><span class="kw">aes</span>(<span class="dt">x=</span>log_pop, <span class="dt">y=</span>pred, <span class="dt">group=</span>a_new)) +
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">alpha=</span><span class="fl">0.3</span>)</code></pre></div>
 </section>
 <section id="new-trends-show-variability-in-possibilities" class="slide level2">
 <h1>New Trends show variability in Possibilities</h1>

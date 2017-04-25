@@ -188,28 +188,39 @@ ggplot(Kline,
 ```{r new_trends, echo=TRUE}
 sims <- 50
 
+# get the coefficients
 kline_samp <- extract.samples(kline_mixed_fit, n=sims)
 
-#fill in new a_hat values
+# create new a values
 kline_samp$a_new <- rnorm(sims, 0, kline_samp$sigma_society)
+```
 
-#remove matrices of random effects
+## Merge New Random Effects
+```{r merge_new_ranef, echo=TRUE}
+# replace matrices of random effects
 kline_samp <-kline_samp[setdiff(names(kline_samp), "a")]
 
-#make into data frame
+# make into data frame
 kline_samp <- as.data.frame(kline_samp)
+```
 
-#now make a new data frame
+## New data frame for plotting
+```{r plot_new_grends, echo=TRUE, eval=FALSE}
+
+# now make a new data frame
 pred_df <- crossing(log_pop = seq(7,13, length.out=100), 
                     kline_samp) %>%
+  
     mutate(pred = exp(a_new + a_hat + bp*log_pop))
 
+
+#plot
+ggplot(pred_df, mapping=aes(x=log_pop, y=pred, group=a_new)) +
+  geom_line(alpha=0.3)
 ```
 
 ## New Trends show variability in Possibilities
-```{r plot_new_grends}
-ggplot(pred_df, mapping=aes(x=log_pop, y=pred, group=a_new)) +
-  geom_line(alpha=0.3)
+```{r plot_new_grends, echo=FALSE, eval=TRUE}
 ```
 
 Can see uncertainty in trends for new blocks

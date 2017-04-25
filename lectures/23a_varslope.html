@@ -177,7 +177,7 @@ fit_gender_bad &lt;-<span class="st"> </span><span class="kw">map</span>(mod_gen
 <li>AND the gender effect might vary by department
 <ul>
 <li>In fixed effects, this would be dept*gender</li>
-<li>In mixed models, slope varies by gender</li>
+<li>In mixed models, effect of gender varies by department</li>
 </ul></li>
 </ol>
 </section>
@@ -283,14 +283,14 @@ MVNormal \left (\begin{bmatrix}
 </section>
 <section id="a-variable-slope-intercept-model" class="slide level2">
 <h1>A Variable Slope Intercept Model</h1>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">UCBadmit$isFemale &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(UCBadmit$applicant.gender)-<span class="dv">1</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">UCBadmit$isMale &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(UCBadmit$applicant.gender)-<span class="dv">1</span>
 
 mod_gender_dept_mixed &lt;-<span class="st"> </span><span class="kw">alist</span>(
   <span class="co">#likelihood</span>
   admit ~<span class="st"> </span><span class="kw">dbinom</span>(applications, p),
   
   <span class="co">#Data generating process</span>
-  <span class="kw">logit</span>(p) &lt;-<span class="st"> </span>a_hat +<span class="st"> </span>a[dept_id] +<span class="st"> </span>b_hat*isFemale +<span class="st"> </span>b[dept_id]*isFemale,
+  <span class="kw">logit</span>(p) &lt;-<span class="st"> </span>a_hat +<span class="st"> </span>a[dept_id] +<span class="st"> </span>b_hat*isMale +<span class="st"> </span>b[dept_id]*isMale,
   
   <span class="kw">c</span>(a,b)[dept_id] ~<span class="st"> </span><span class="kw">dmvnorm2</span>(<span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>), sigma_dept, Rho),
   
@@ -396,7 +396,7 @@ sigma_df &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(gen
   admit ~<span class="st"> </span><span class="kw">dbinom</span>(applications, p),
   
   <span class="co">#Data generating process</span>
-  <span class="kw">logit</span>(p) &lt;-<span class="st"> </span>a_hat +<span class="st"> </span>a[dept_id] +<span class="st"> </span>b_hat*isFemale,
+  <span class="kw">logit</span>(p) &lt;-<span class="st"> </span>a_hat +<span class="st"> </span>a[dept_id] +<span class="st"> </span>b_hat*isMale,
   
   a[dept_id] ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>, sigma_dept),
   
@@ -474,7 +474,7 @@ Consider<br />
   admit ~<span class="st"> </span><span class="kw">dbinom</span>(applications, p),
   
   <span class="co">#Data generating process</span>
-  <span class="kw">logit</span>(p) &lt;-<span class="st"> </span>a_hat +<span class="st"> </span>a[dept_id] +<span class="st"> </span>b_hat*isFemale +<span class="st"> </span>b[dept_id]*isFemale,
+  <span class="kw">logit</span>(p) &lt;-<span class="st"> </span>a_hat +<span class="st"> </span>a[dept_id] +<span class="st"> </span>b_hat*isMale +<span class="st"> </span>b[dept_id]*isMale,
   
   <span class="kw">c</span>(a,b)[dept_id] ~<span class="st"> </span><span class="kw">dmvnormNC</span>(sigma_dept, Rho),
   

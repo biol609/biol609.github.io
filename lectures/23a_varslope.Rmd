@@ -86,7 +86,7 @@ postcheck(fit_gender_bad)
 \
 2. AND the gender effect might vary by department  
      - In fixed effects, this would be dept*gender
-     - In mixed models, slope varies by gender
+     - In mixed models, effect of gender varies by department
      
 ## What about this?
 $a_{dept} \sim dnorm(\hat{a}, \sigma_{a})$  
@@ -197,14 +197,14 @@ MVNormal \left (\begin{bmatrix}
 ## A Variable Slope Intercept Model
 
 ```{r mod_varslope, echo=TRUE}
-UCBadmit$isFemale <- as.numeric(UCBadmit$applicant.gender)-1
+UCBadmit$isMale <- as.numeric(UCBadmit$applicant.gender)-1
 
 mod_gender_dept_mixed <- alist(
   #likelihood
   admit ~ dbinom(applications, p),
   
   #Data generating process
-  logit(p) <- a_hat + a[dept_id] + b_hat*isFemale + b[dept_id]*isFemale,
+  logit(p) <- a_hat + a[dept_id] + b_hat*isMale + b[dept_id]*isMale,
   
   c(a,b)[dept_id] ~ dmvnorm2(c(0,0), sigma_dept, Rho),
   
@@ -315,7 +315,7 @@ mod_gender_dept_varint <- alist(
   admit ~ dbinom(applications, p),
   
   #Data generating process
-  logit(p) <- a_hat + a[dept_id] + b_hat*isFemale,
+  logit(p) <- a_hat + a[dept_id] + b_hat*isMale,
   
   a[dept_id] ~ dnorm(0, sigma_dept),
   
@@ -380,7 +380,7 @@ mod_gender_dept_nc <- alist(
   admit ~ dbinom(applications, p),
   
   #Data generating process
-  logit(p) <- a_hat + a[dept_id] + b_hat*isFemale + b[dept_id]*isFemale,
+  logit(p) <- a_hat + a[dept_id] + b_hat*isMale + b[dept_id]*isMale,
   
   c(a,b)[dept_id] ~ dmvnormNC(sigma_dept, Rho),
   
