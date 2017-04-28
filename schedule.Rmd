@@ -89,6 +89,8 @@ __Reading:__ McElreath Chapter 14, [Roberts et al. 2012](http://byrneslab.net/cl
   
 ### Week 14. 
 __Lecture:__ Open Lab  
+__Reading:__ [Prior Choice Wiki](https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations)  
   
 ### Week 15.
-__Lecture:__ Final Presentations
+__Lecture:__ Final Presentations, May 11  
+__Assignments:__ Final Paper due, May 18  
