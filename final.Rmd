@@ -1,0 +1,78 @@
+---
+  title: "Final Project"
+---
+
+#### Goals
+The goal of your project is to apply the analytic skills you have gained in the course to a project that is relevant to your own research. Towards that end, your project could take many forms. You may use either Frequentist or Bayesian techniques, but I am expecting that your analysis should be at a higher level of complexity than a simple ANOVA or multiple linear regression. Show me your chops!
+
+#### Products and Due Dates  
+You will have a final presentation on the last day of class. Project write-ups will be due one week later.
+
+
+#### Sample Projects  
+
+Sample projects include
+
+* A detailed plan for the experiments you will be caryring out in the near future, including, but not limited to, a discussion of the causal network of hypotheses you will be testing, why your design addresses your hypothesis of interest given said network, a rundown of your framework for analysis of the data, and a detailed justification on choices of alpha and beta for each experiment based on power analyses of the analytic tools you will be using. Please also include a data management plan.  
+
+* An analysis of experimental and/or observational data already collected for your dissertation. This should include an extremely detailed writeup of the hypotheses being tested, the methods to gather the data and why they are appropriate (including choices of analytic tools, alpha, beta, and supposed power from _a priori_ power analyses), results from analyses of the data, and a brief discussion interpreting the data in light of your hypotheses. 
+  
+* Modeling of publically available data relevant to your thesis or dissertation research. This is particularly great if you are combining multiple data sources into a more comprehensive single source of for analysis (e.g., combining LTER data, NOAA, and Census data into a single analysis). This should be similar to the previous example, but may include more detail on the data sources, acquisition, and post-processing of data. \emph{A Priori   power analyses could be useful to demonstrate the validity of your approach, as would an introduction discussing your hypotheses _explicitly_ and how your analysis will address them   
+
+
+Note - you may have an idea that is very different than any of the three above. Perhaps it brings tools like GIS to the table. Perhaps you want to write a new R package for a set of tools combining what we've learned during the course. Perhaps you have a whole new field of modeling you would like to incorporate into an analysis of available data. These are all great options. I'm very flexible to additional projects as long as they meet the following requirements.
+
+#### Group Work  
+Some projects are enormous in scope, and will take many hands to gather the data and/or perform all of the analyses. For these projects, group work is a-ok. I expect that 1) given the scope of the project, you all make a commitment towards pushing this work to publication and 2) that you will give me a clear breakdown of who is doing what. Everyone should be making a substantial investment of time and energy. No freeloading! Please include this breakdown in your proposal.
+
+#### Presentations
+
+The first part of your final project is a presentations. This presentation should be 5-7 minutes with 2 minutes for questions. I recommend a five slide strategy. With a standard deviation of two.  
+1) Some relevant background  
+2) Given this background, what question are you asking?  
+3) What techniques did you use to answer this question?  
+4) What do we need to know about your analysis?
+5) What did your analysis tell you?  
+
+The presentation is graded out of 30 points to the extent address the above five points and an extra five points on aesthetics. Please do it all using Markdown slides of some sort and making it look good. For those using `map2stan` remember, `cache=TRUE` is your friend.
+
+#### Final Paper
+
+For the final paper, I expect a 10-12 page fully referenced paper with a brief introduction that introduces the major question and hypotheses, an extended methods section that talks about what you did in detail and why you chose the methods you did, a results section that  shows your results, a full evaluation of assumptions of your methods, and all of the code. Finally, include a discussion of what your results mean in the context of your question(s) and/or hypotheses. See below for more detail.
+
+Grading will follow the rubric below, with each question corresponding to five points:
+
+- Clear statement of questions & hypotheses?
+- Did you choose the right analyses?
+- Did you justify the analysis?
+- Did you execute it properly?
+- Did you overcome assumption violations, or inferential traps (p-values, etc.)?
+- Did you describe their results cleanly and clearly?
+
+This is a total of 30 points. It should be written in markdown and include all code. 
+
+#### More Explicit Guidelines on the organization of your final paper
+Papers should be organized roughly as follows. If you find a cleaner flow, feel free to take it. You should write all of this in markdown and compile into a word file. I expect you to turn in the markdown, word file, and any data used. Feel free to post it all as a github repo (+5!)
+
+**Introduction**: No more than 1-2 paragraphs regarding theory or necessary background information followed by clear testable hypotheses/questions derived from biological theory.  
+
+**Methods**:  
+1. General approach  
+&nbsp; &nbsp; a. Clear description of questions that you want to answer with these analyses.  
+&nbsp; &nbsp; b. Discussion of overarching approach taken to answer these questions.  
+\
+2. Experimental/Sampling Design: Clear descriptions of sampling designs and why they are relevant for your question(s) and approach to them.  
+\
+3. Analytic Approach: What will you be doing? What models will you be building and how. Clear descriptions of and justifications for analytic frameworks and models.  
+\
+**Results, Figures, and Tables**: Walk me through what you did and what it showed. I do not need (nor want) to see your developmental process. Rather, this should be a finished product. Feel free to follow the workflows we have established in class.
+
+**Discussion** Clean analysis and deft interpretation of results.  Additional figures for interpretation are fine here.  
+
+#### Final Grade
+
+Your grade on the final is the sum of your paper and presentation - so, a total of 60 points.
+
+
+#### Extra Credit
+If you are able to publish the analysis that you put together in this project, I will raise your grade retroactively by one level (e.g., from a B+ to an A). It'll take some paperwork, but I'm excited to do it!
