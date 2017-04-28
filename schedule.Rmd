@@ -80,11 +80,12 @@ __Etherpad:__ https://etherpad.wikimedia.org/p/609-zig_zag
 ### Week 12. 
 __Lecture:__ [Varying Intercept Mixed Models](./lectures/22_varying_intercept.html) in a Bayesian Context, [Varying Slope Models](./lectures/23a_varslope.html), [Prediction with Mixed Models](./lectures/23b_prediction.html)  
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-mixed_bayesian   
-__Reading:__ McElreath Chapter 12
+__Reading:__ McElreath Chapter 12, 13   
+__Additional Reading:__ [Gelman and Hill Ch. 12](http://byrneslab.net/classes/biol609/gelman_hill_ch_12.pdf) (see the bit on one model written 5 ways), [Gelman and Hill Ch. 13](http://byrneslab.net/classes/biol609/gelman_hill_ch_13.pdf), [Gelman on multiple comparisons in mixed models](http://byrneslab.net/classes/biol609/Gelman_multcomp.pdf)
   
 ### Week 13. 
-__Lecture:__ Revisiting Autocorrelation and Missing Data  
-__Reading:__ McElreath Chapter 13-14
+__Lecture:__ Gaussian Proces Models and Rethinking Alternatives  
+__Reading:__ McElreath Chapter 14, [Roberts et al. 2012](http://byrneslab.net/classes/biol609/Roberts_et_al_2012_gaussian_process.pdf)  
   
 ### Week 14. 
 __Lecture:__ Open Lab  
