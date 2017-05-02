@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <title></title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="libs/reveal.js-3.3.0/css/reveal.css"/>
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="libs/reveal.js-3.3.0/css/theme/white.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="style.css"/>
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'libs/reveal.js-3.3.0/css/print/pdf.css' : 'libs/reveal.js-3.3.0/css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+    <!--[if lt IE 9]>
+    <script src="libs/reveal.js-3.3.0/lib/js/html5shiv.js"></script>
+    <![endif]-->
+
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+
+<section id="section" class="slide level2">
+<h1></h1>
+<h3>
+Gaussian Processes Models
+</h3>
+<p><br />
+<img src="images/gp/process_meme.jpg" /></p>
+</section>
+<section id="outline" class="slide level2">
+<h1>Outline</h1>
+<ol type="1">
+<li>Introduction Gaussian Processes<br />
+<br />
+</li>
+<li>Gaussian Processes for Spatial Autocorrelation<br />
+<br />
+</li>
+<li>Introduction Gaussian Processes for Timeseries</li>
+</ol>
+</section>
+<section id="previously-we-have-encountered-timeseries" class="slide level2">
+<h1>Previously we have encountered Timeseries</h1>
+<p><img src="24_gaussian_process_files/figure-revealjs/oahu_tsplot-1.jpeg" width="672" /></p>
+</section>
+<section id="correlation-in-residuals" class="slide level2">
+<h1>Correlation in Residuals</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(nlme)
+birds_lm &lt;-<span class="st"> </span><span class="kw">gls</span>(Birds ~<span class="st"> </span>Year, <span class="dt">data=</span>oahu_data)
+<span class="kw">acf</span>(<span class="kw">residuals</span>(birds_lm))</code></pre></div>
+<p><img src="24_gaussian_process_files/figure-revealjs/bird_ts_fit_acf-1.jpeg" width="672" /></p>
+</section>
+<section id="many-ways-of-modeling-autocorrelation" class="slide level2">
+<h1>Many ways of modeling autocorrelation</h1>
+<p><span class="math display">\[ \epsilon_{t} = \rho \epsilon_{t-1} + \zeta_{t}\]</span><br />
+<br />
+which produces<br />
+<span class="math display">\[ cor(\epsilon) = \begin{pmatrix}
+1 &amp; \rho &amp;\rho^{2} \\ 
+\rho &amp;  1&amp; \rho\\ 
+\rho^{2} &amp; \rho &amp; 1
+\end{pmatrix}\]</span><br />
+for n=3 time steps</p>
+</section>
+<section id="many-ways-of-modeling-autocorrelation-1" class="slide level2">
+<h1>Many ways of modeling autocorrelation</h1>
+<p><br />
+&gt; - Lagged models (<span class="math inline">\(y_t = \beta y_{t-1}\)</span>)<br />
+&gt; - AR1 or AR2 correlation<br />
+&gt; - ARMA (autoregressive moving average)<br />
+&gt; - ARIMA &gt; - ARCH (SD varies over time, but not mean)<br />
+&gt; - GARCH (SD and mean vary over time)<br />
+&gt; - Continuous error structure for gaps (CAR1, CAR2)</p>
+</section>
+<section id="continuous-error-useful-for-spatial-autocorrelation" class="slide level2">
+<h1>Continuous error useful for spatial autocorrelation</h1>
+<p><img src="24_gaussian_process_files/figure-revealjs/plot_boreal_raw-1.jpeg" width="672" /></p>
+</section>
+<section id="spatial-autocorrelation-in-residuals" class="slide level2">
+<h1>Spatial Autocorrelation in Residuals</h1>
+<p><img src="24_gaussian_process_files/figure-revealjs/boreal_bad-1.jpeg" width="672" /></p>
+</section>
+<section id="spatial-autocorrelation-variograms" class="slide level2">
+<h1>Spatial Autocorrelation Variograms!</h1>
+<p><img src="24_gaussian_process_files/figure-revealjs/boreal_variogram-1.jpeg" width="672" /></p>
+</section>
+<section id="what-shape-defines-autocorrelation" class="slide level2">
+<h1>What shape defines autocorrelation?</h1>
+<p>Consider: <span class="math display">\[ K_{ij} = \begin{pmatrix}
+\sigma_1^2 &amp; \sigma_1\sigma_2 &amp;\sigma_1\sigma_3 \\ 
+\sigma_1\sigma_2 &amp;  \sigma_2^2&amp; \sigma_2\sigma_3\\ 
+\sigma_1\sigma_3 &amp; \sigma_2\sigma_3 &amp; \sigma_3^2
+\end{pmatrix}\]</span>  <br />
+What is the function that defines <span class="math inline">\(\sigma_i\sigma_j\)</span> based on the distance between i and j?</p>
+</section>
+<section id="different-shapes-of-autocorrelation" class="slide level2">
+<h1>Different Shapes of Autocorrelation</h1>
+<img src="images/06/autocor_shape.jpg" /><br />
+
+<div class="fragment">
+This works for continuous temporal autocorrelation as well!
+</div>
+</section>
+<section id="linking-multilevel-models-and-correlation-consider-sampling-for-greeness" class="slide level2">
+<h1>Linking Multilevel Models and Correlation: Consider sampling for greeness</h1>
+<p><img src="24_gaussian_process_files/figure-revealjs/landscape-1.jpeg" width="960" /></p>
+</section>
+<section id="random-intercept-model-for-greeness" class="slide level2">
+<h1>Random Intercept model for greeness</h1>
+<strong>Likelihood</strong><br />
+<span class="math inline">\(Green_i \sim Normal(\mu_{green}, \sigma_{green})\)</span><br />
+<br />
+<strong>Data Generating Process</strong><br />
+<span class="math inline">\(\mu_{green} = \overline{a} + a_{patch}\)</span><br />
+<br />
+<span class="math inline">\(a_{patch} \sim dnorm(0, \sigma_{patch})\)</span><br />
+<br />
+
+<div class="fragment">
+<center>
+<font color="red">But “patch” isn’t discrete - it’s continuous, and we know how close they are to each other!</font>
+</center>
+</div>
+</section>
+<section id="introducing-gaussian-processes" class="slide level2">
+<h1>Introducing Gaussian Processes</h1>
+<p>A GP is a random process creating a multivariate normal distribution between points where the covariance between points is related to their distance.</p>
+<span class="math display">\[a_{patch} \sim MVNorm(0, K)\]</span><br />
+<br />
+<span class="math display">\[K_{ij} = F(D_{ij})\]</span>
+<center>
+where <span class="math inline">\(D_{ij} = x_i - x_j\)</span>
+</center>
+</section>
+<section id="the-squared-exponential-functionkernel" class="slide level2">
+<h1>The Squared Exponential Function(kernel)</h1>
+<p><span class="math display">\[K_{ij} = \eta^2 exp \left( -\frac{D_{ij}^2}{2 \mathcal{l}^2} \right)\]</span><br />
+<br />
+where <span class="math inline">\(\eta^2\)</span> provides the scale of the function and <span class="math inline">\(\mathcal{l}\)</span> the timescale of the process</p>
+</section>
+<section id="the-squared-exponential-covariance-function-kernel" class="slide level2">
+<h1>The Squared Exponential Covariance Function (kernel)</h1>
+<p><img src="24_gaussian_process_files/figure-revealjs/show_l-1.jpeg" width="672" /></p>
+</section>
+<section id="a-surface-from-a-squared-exponential-gp" class="slide level2">
+<h1>A surface from a Squared Exponential GP</h1>
+<p><img src="24_gaussian_process_files/figure-revealjs/landscape-1.jpeg" width="864" /></p>
+</section>
+<section id="squared-exponential-v.-squared-ar1-dropoff" class="slide level2">
+<h1>Squared Exponential v. Squared AR1 Dropoff</h1>
+<p><img src="24_gaussian_process_files/figure-revealjs/show_cov_fun-1.jpeg" width="672" /></p>
+</section>
+<section id="other-covariance-functions" class="slide level2">
+<h1>Other Covariance Functions</h1>
+<ul>
+<li class="fragment">Periodic: <span class="math inline">\(K_{P}(i,j) = \exp\left(-\frac{ 2\sin^2\left(\frac{D_{ij}}{2} \right)}{\mathcal{l}^2} \right)\)</span>
+<ul>
+<li class="fragment">VERY useful<br />
+<br />
+</li>
+</ul></li>
+<li class="fragment">Ornstein–Uhlenbeck: <span class="math inline">\(K_{OI}(i,j) = \eta^2 exp \left( -\frac{|D_{ij}|}{\mathcal{l}} \right)\)</span><br />
+<br />
+</li>
+<li class="fragment">Quadratic <span class="math inline">\(K_{RQ}(i,j)=(1+|d|^{2})^{-\alpha },\quad \alpha \geq 0\)</span></li>
+</ul>
+</section>
+<section id="the-squared-exponential-function-in-rethinking-with-glp2" class="slide level2">
+<h1>The Squared Exponential Function in rethinking (with GLP2)</h1>
+<span class="math display">\[K_{ij} = \eta^2 exp \left( -\frac{D_{ij}^2}{2 \mathcal{l}^2} \right)\]</span><br />
+<br />
+rethinking:<br />
+<span class="math display">\[K_{ij} = \eta^2 exp \left( -\rho^2 D_{ij}^2 \right) + \delta_{ij}\sigma^2\]</span><br />
+<br />
+
+<li class="fragment">
+<span class="math inline">\(\rho^2 = \frac{1}{2 \mathcal{l}^2}\)</span>
+</li>
+<br />
+
+<li class="fragment">
+<span class="math inline">\(\delta_{ij}\)</span> introduces stochasticity, and we set importance with <span class="math inline">\(\sigma^2\)</span>
+</li>
+</section>
+<section id="operationalizing-a-gp" class="slide level2">
+<h1>Operationalizing a GP</h1>
+<p>Let’s assume a Squared Exponential GP with an <span class="math inline">\(\eta^2\)</span> and <span class="math inline">\(\mathcal{l}\)</span> of 1. Many possible curves: <img src="24_gaussian_process_files/figure-revealjs/possible-1.jpeg" width="672" /></p>
+</section>
+<section id="operationalizing-a-gp-1" class="slide level2">
+<h1>Operationalizing a GP</h1>
+<p>And actually, on average <img src="24_gaussian_process_files/figure-revealjs/show_gp-1.jpeg" width="672" /></p>
+</section>
+<section id="but-once-we-add-some-data" class="slide level2">
+<h1>But once we add some data…</h1>
+<p>Pinching in around observations! <img src="24_gaussian_process_files/figure-revealjs/show_gp_2-1.jpeg" width="672" /></p>
+</section>
+<section id="warnings" class="slide level2">
+<h1>Warnings!</h1>
+<ol type="1">
+<li>Not mechanistic!<br />
+<br />
+</li>
+<li>But can incorporate many sources of variability
+<ul>
+<li>e.g., recent analysis showing multiple GP underlying Zika for forecasting<br />
+<br />
+</li>
+</ul></li>
+<li>Can mix mechanism and GP</li>
+</ol>
+</section>
+<section id="outline-1" class="slide level2">
+<h1>Outline</h1>
+<ol type="1">
+<li>Introduction Gaussian Processes<br />
+<br />
+</li>
+<li><font color="red">Gaussian Processes for Spatial Autocorrelation</font><br />
+<br />
+</li>
+<li>Introduction Gaussian Processes for Timeseries</li>
+</ol>
+</section>
+<section id="oceanic-tool-use" class="slide level2">
+<h1>Oceanic Tool Use</h1>
+<p><img src="images/gp/tool_map.jpg" style="width:45.0%" /></p>
+<pre><code>     culture population contact total_tools mean_TU   lat   lon  lon2
+1   Malekula       1100     low          13     3.2 -16.3 167.5 -12.5
+2    Tikopia       1500     low          22     4.7 -12.3 168.8 -11.2
+3 Santa Cruz       3600     low          24     4.0 -10.7 166.0 -14.0
+4        Yap       4791    high          43     5.0   9.5 138.1 -41.9
+5   Lau Fiji       7400    high          33     5.0 -17.7 178.1  -1.9
+6  Trobriand       8000    high          19     4.0  -8.7 150.9 -29.1
+    logpop
+1 7.003065
+2 7.313220
+3 8.188689
+4 8.474494
+5 8.909235
+6 8.987197</code></pre>
+</section>
+<section id="distances-between-islands" class="slide level2">
+<h1>Distances between islands</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(islandsDistMatrix)
+islandsDistMatrix</code></pre></div>
+<pre><code>           Malekula Tikopia Santa Cruz   Yap Lau Fiji Trobriand Chuuk
+Malekula      0.000   0.475      0.631 4.363    1.234     2.036 3.178
+Tikopia       0.475   0.000      0.315 4.173    1.236     2.007 2.877
+Santa Cruz    0.631   0.315      0.000 3.859    1.550     1.708 2.588
+Yap           4.363   4.173      3.859 0.000    5.391     2.462 1.555
+Lau Fiji      1.234   1.236      1.550 5.391    0.000     3.219 4.027
+Trobriand     2.036   2.007      1.708 2.462    3.219     0.000 1.801
+Chuuk         3.178   2.877      2.588 1.555    4.027     1.801 0.000
+Manus         2.794   2.670      2.356 1.616    3.906     0.850 1.213
+Tonga         1.860   1.965      2.279 6.136    0.763     3.893 4.789
+Hawaii        5.678   5.283      5.401 7.178    4.884     6.653 5.787
+           Manus Tonga Hawaii
+Malekula   2.794 1.860  5.678
+Tikopia    2.670 1.965  5.283
+Santa Cruz 2.356 2.279  5.401
+Yap        1.616 6.136  7.178
+Lau Fiji   3.906 0.763  4.884
+Trobriand  0.850 3.893  6.653
+Chuuk      1.213 4.789  5.787
+Manus      0.000 4.622  6.722
+Tonga      4.622 0.000  5.037
+Hawaii     6.722 5.037  0.000</code></pre>
+</section>
+<section id="what-if-i-needed-to-make-a-distance-matrix" class="slide level2">
+<h1>What if I needed to make a distance matrix?</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dist</span>(<span class="kw">cbind</span>(Kline2$lat, Kline2$lon))</code></pre></div>
+<pre><code>            1          2          3          4          5          6
+2    4.205948                                                       
+3    5.797413   3.224903                                            
+4   39.115214  37.652756  34.444884                                 
+5   10.692053  10.754069  13.978913  48.371893                      
+6   18.257053  18.258423  15.231874  22.250393  28.650305           
+7   28.539446  26.152055  23.129418  13.662357  36.500137  16.115210
+8   25.019992  24.158849  20.946837  14.560220  34.882660   7.717513
+9  342.735029 344.115112 341.361524 314.800540 353.317336 326.339486
+10 325.121593 325.994172 323.052503 293.884076 335.811629 307.831464
+            7          8          9
+2                                  
+3                                  
+4                                  
+5                                  
+6                                  
+7                                  
+8   10.599057                      
+9  328.049082 322.665802           
+10 307.454208 303.298945  45.534273</code></pre>
+<p>Well, convert lat/lon to UTM first, and to matrix after <code>dist</code></p>
+</section>
+<section id="our-gp-model" class="slide level2">
+<h1>Our GP Model</h1>
+<strong>Likelihood</strong><br />
+<span class="math inline">\(Tools_i \sim Poisson(\lambda_i)\)</span><br />
+<br />
+<strong>Data Generating Process</strong> <span class="math inline">\(log(\lambda_i) = \alpha + \gamma_{society} + \beta log(Population_i)\)</span><br />
+<br />
+
+<div class="fragment">
+<p><span class="math inline">\(\gamma_{society} \sim MVNormal((0, ....,0), K)\)</span><br />
+<span class="math inline">\(K_{ij} = \eta^2 exp \left( -\rho^2 D_{ij}^2 \right) + \delta_{ij}(0.01)\)</span></p>
+</div>
+<div class="fragment">
+<p><strong>Priors</strong><br />
+<span class="math inline">\(\alpha \sim Normal(0,10)\)</span><br />
+<span class="math inline">\(\beta \sim Normal(0,1)\)</span><br />
+<span class="math inline">\(\eta^2 \sim HalfCauchy(0,1)\)</span><br />
+<span class="math inline">\(\rho^2 \sim HalfCauchy(0,1)\)</span></p>
+</div>
+</section>
+<section id="quick-note-on-priors" class="slide level2">
+<h1>Quick note on Priors…</h1>
+<p><a href="https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations" class="uri">https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations</a><br />
+<br />
+<img src="images/gp/prior_wiki.jpg" /></p>
+</section>
+<section id="our-model" class="slide level2">
+<h1>Our model</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Kline2$society &lt;-<span class="st"> </span><span class="dv">1</span>:<span class="kw">nrow</span>(Kline2)
+
+k2mod &lt;-<span class="st">   </span><span class="kw">alist</span>(
+  <span class="co">#likelihood</span>
+  total_tools ~<span class="st"> </span><span class="kw">dpois</span>(lambda),
+  
+  <span class="co">#Data Generating Process</span>
+  <span class="kw">log</span>(lambda) &lt;-<span class="st"> </span>a +<span class="st"> </span>g[society] +<span class="st"> </span>bp*logpop,
+  g[society] ~<span class="st"> </span><span class="kw">GPL2</span>( Dmat , etasq , rhosq , <span class="fl">0.01</span> ),
+  
+  <span class="co">#Priors</span>
+  a ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">10</span>),
+  bp ~<span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">1</span>),
+  etasq ~<span class="st"> </span><span class="kw">dcauchy</span>(<span class="dv">0</span>,<span class="dv">1</span>),
+  rhosq ~<span class="st"> </span><span class="kw">dcauchy</span>(<span class="dv">0</span>,<span class="dv">1</span>)
+  )</code></pre></div>
+</section>
+<section id="gpl2" class="slide level2">
+<h1>GPL2</h1>
+<center>
+<code>g[society] ~ GPL2( Dmat , etasq , rhosq , 0.01)</code>
+</center>
+<p><br />
+- Note that we supply a distance matrix<br />
+<br />
+- <code>GPL2</code> explicitly creates the MV Normal density, but only requires parameters</p>
+</section>
+<section id="fitting---a-list-shall-lead-them" class="slide level2">
+<h1>Fitting - a list shall lead them</h1>
+<ul>
+<li>We have data of various classes (e.g. matrix, vectors)<br />
+</li>
+<li>Hence, we use a list<br />
+</li>
+<li>This can be generalized to many cases, e.g. true multilevel models</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">k2fit &lt;-<span class="st"> </span><span class="kw">map2stan</span>(k2mod,
+ <span class="dt">data =</span> <span class="kw">list</span>(
+    <span class="dt">total_tools =</span> Kline2$total_tools,
+    <span class="dt">logpop =</span> Kline2$logpop,
+    <span class="dt">society =</span> Kline2$society,
+    <span class="dt">Dmat =</span> islandsDistMatrix),
+  <span class="dt">warmup=</span><span class="dv">2000</span> , <span class="dt">iter=</span><span class="fl">1e4</span> , <span class="dt">chains=</span><span class="dv">3</span>)</code></pre></div>
+</section>
+<section id="did-it-converge" class="slide level2">
+<h1>Did it converge?</h1>
+<p><img src="24_gaussian_process_files/figure-revealjs/converge_k2-1.jpeg" width="672" /></p>
+</section>
+<section id="did-it-fit" class="slide level2">
+<h1>Did it fit?</h1>
+<p><img src="24_gaussian_process_files/figure-revealjs/postcheck_k2-1.jpeg" width="672" /></p>
+</section>
+<section id="what-does-it-all-mean" class="slide level2">
+<h1>What does it all mean?</h1>
+<pre><code>      Mean StdDev lower 0.89 upper 0.89 n_eff Rhat
+a     1.26   1.19      -0.56       3.13  3324    1
+bp    0.25   0.12       0.07       0.43  4401    1
+etasq 0.37   0.63       0.00       0.75  3539    1
+rhosq 1.94  24.43       0.01       2.07  7916    1</code></pre>
+</section>
+<section id="what-is-our-covariance-function-by-distance" class="slide level2">
+<h1>What is our covariance function by distance?</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#get samples</span>
+k2_samp &lt;-<span class="st"> </span><span class="kw">extract.samples</span>(k2fit)
+
+<span class="co">#covariance function</span>
+cov_fun_rethink &lt;-<span class="st"> </span>function(d, etasq, rhosq){
+  etasq *<span class="st"> </span><span class="kw">exp</span>( -rhosq *<span class="st"> </span>d^<span class="dv">2</span>)
+}
+
+<span class="co">#make curves</span>
+decline_df &lt;-<span class="st"> </span><span class="kw">crossing</span>(<span class="kw">data.frame</span>(<span class="dt">x =</span> <span class="kw">seq</span>(<span class="dv">0</span>,<span class="dv">10</span>,<span class="dt">length.out=</span><span class="dv">200</span>)), 
+                       <span class="kw">data.frame</span>(<span class="dt">etasq =</span> k2_samp$etasq[<span class="dv">1</span>:<span class="dv">100</span>],
+                                  <span class="dt">rhosq =</span> k2_samp$rhosq[<span class="dv">1</span>:<span class="dv">100</span>])) %&gt;%
+<span class="st"> </span>dplyr::<span class="kw">mutate</span>(<span class="dt">covariance =</span> <span class="kw">cov_fun_rethink</span>(x, etasq, rhosq))</code></pre></div>
+</section>
+<section id="covariance-by-distance" class="slide level2">
+<h1>Covariance by distance</h1>
+<p><img src="24_gaussian_process_files/figure-revealjs/plot_cov_dist-1.jpeg" width="672" /></p>
+</section>
+<section id="correlation-matrix" class="slide level2">
+<h1>Correlation Matrix</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cov_mat &lt;-<span class="st"> </span><span class="kw">cov_fun_rethink</span>(islandsDistMatrix,
+                           <span class="kw">median</span>(k2_samp$etasq),
+                           <span class="kw">median</span>(k2_samp$rhosq))
+
+cor_mat &lt;-<span class="st"> </span><span class="kw">cov2cor</span>(cov_mat)</code></pre></div>
+</section>
+<section id="putting-it-all-together" class="slide level2">
+<h1>Putting it all together…</h1>
+<p><img src="24_gaussian_process_files/figure-revealjs/plot_res-1.jpeg" width="672" /></p>
+</section>
+<section id="putting-it-all-together-1" class="slide level2">
+<h1>Putting it all together…</h1>
+<p><img src="24_gaussian_process_files/figure-revealjs/show_sims-1.jpeg" width="672" /></p>
+</section>
+<section id="outline-2" class="slide level2">
+<h1>Outline</h1>
+<ol type="1">
+<li>Introduction Gaussian Processes<br />
+<br />
+</li>
+<li>Gaussian Processes for Spatial Autocorrelation<br />
+<br />
+</li>
+<li><font color="red">Introduction Gaussian Processes for Timeseries</font></li>
+</ol>
+</section>
+<section id="kelp-from-spaaaace" class="slide level2">
+<h1>Kelp from spaaaace!!!</h1>
+<p><img src="images/gp/kelp_landsat.jpg" /><br />
+<br />
+<Cavanaugh et al. 2011, Bell et al. 2015, Rosenthal et al. THIS SUMMER
+
+## The Mohawk Transect 3 300m Timeseries
+<img src="24_gaussian_process_files/figure-revealjs/ltrmk-1.jpeg" width="672" /></p>
+</section>
+<section id="a-simple-gaussian-process-model" class="slide level2">
+<h1>A Simple Gaussian Process Model</h1>
+<p>For time point i<br />
+<br />
+<strong>Likelihood</strong> kelp<sub>i</sub> ~ Normal(<span class="math inline">\(\mu_i\)</span>, <span class="math inline">\(\sigma\)</span>)</p>
+<p><strong>Data Generating Process</strong> <span class="math inline">\(\mu_i \sim \alpha_i\)</span><br />
+<br />
+<span class="math inline">\(\alpha_i\)</span> ~ MVnormal((0, …0), K) <span class="math inline">\(K_{ij} = \eta^2 exp \left( -\rho^2 D_{ij}^2 \right) + \delta_{ij}(0.01)\)</span><br />
+<br />
+<strong>Priors</strong><br />
+<span class="math inline">\(\alpha \sim Normal(0,10)\)</span><br />
+<span class="math inline">\(\sigma \sim HalfCauchy(0,5)\)</span><br />
+<span class="math inline">\(\eta^2 \sim HalfCauchy(0,2)\)</span><br />
+<span class="math inline">\(\rho^2 \sim HalfCauchy(0,2)\)</span><br />
+<span class="math inline">\(\delta \sim HalfCauchy(0,2)\)</span></p>
+</section>
+<section id="a-transformation-and-complex-models" class="slide level2">
+<h1>A Transformation and Complex models</h1>
+<ul>
+<li>Specifying efficient priors can be difficult<br />
+<br />
+</li>
+<li>Scaling data can help with reasonable prior specification<br />
+<br />
+</li>
+<li>Centering removes need for mean parameter (no <span class="math inline">\(\overline{a}\)</span>)<br />
+<br />
+</li>
+<li>E.g. z-transformed kelp, or predictors<br />
+<br />
+</li>
+<li>This isn’t bad as a general practice, as back-scaling is easy</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ltrmk3_clean &lt;-<span class="st"> </span>ltrmk3 %&gt;%
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">kelp_s =</span> (X300m-<span class="kw">mean</span>(X300m, <span class="dt">na.rm=</span>T))/<span class="kw">sd</span>(X300m, <span class="dt">na.rm=</span>T) ) %&gt;%<span class="st"> </span>
+<span class="st">  </span><span class="kw">filter</span>(!<span class="kw">is.na</span>(kelp_s)) </code></pre></div>
+</section>
+<section id="kelp-model" class="slide level2">
+<h1>Kelp Model</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">kelp_mod_noyear &lt;-<span class="st"> </span><span class="kw">alist</span>(
+  kelp_s ~<span class="st"> </span><span class="kw">dnorm</span>(mu, sigma),
+  
+  mu &lt;-<span class="st"> </span>a[time_idx],  
+  a[time_idx] ~<span class="st"> </span><span class="kw">GPL2</span>( Dmat , etasq , rhosq , delta_sq),
+  
+  sigma ~<span class="st"> </span><span class="kw">dcauchy</span>(<span class="dv">0</span>,<span class="dv">5</span>),
+  etasq ~<span class="st"> </span><span class="kw">dcauchy</span>(<span class="dv">0</span>,<span class="dv">2</span>),
+  delta_sq ~<span class="st"> </span><span class="kw">dcauchy</span>(<span class="dv">0</span>,<span class="dv">2</span>),
+  rhosq ~<span class="st"> </span><span class="kw">dcauchy</span>(<span class="dv">0</span>,<span class="dv">2</span>)
+)</code></pre></div>
+</section>
+<section id="fitting" class="slide level2">
+<h1>Fitting</h1>
+<p>Need a time index and a distance matrix</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#distance matrix, distance in seconds, so correct to days</span>
+kelp_dist_mat &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(<span class="kw">dist</span>(ltrmk3_clean$Date))
+kelp_dist_mat &lt;-<span class="st"> </span>kelp_dist_mat/<span class="dv">60</span>/<span class="dv">60</span>/<span class="dv">24</span>
+
+<span class="co">#fit!</span>
+kelp_fit_noyear &lt;-<span class="st"> </span><span class="kw">map2stan</span>(kelp_mod_noyear, <span class="dt">data =</span> <span class="kw">list</span>(
+  <span class="dt">time_idx =</span> <span class="dv">1</span>:<span class="kw">nrow</span>(ltrmk3_clean),
+  <span class="dt">kelp_s =</span> ltrmk3_clean$kelp_s,
+  <span class="dt">Dmat =</span> kelp_dist_mat),
+  <span class="dt">warmup=</span><span class="dv">2000</span> , <span class="dt">iter=</span><span class="fl">1e4</span> , <span class="dt">chains=</span><span class="dv">3</span>)</code></pre></div>
+</section>
+<section id="are-we-good" class="slide level2">
+<h1>Are we good?</h1>
+<pre><code>[ 100 / 1000 ]
+[ 200 / 1000 ]
+[ 300 / 1000 ]
+[ 400 / 1000 ]
+[ 500 / 1000 ]
+[ 600 / 1000 ]
+[ 700 / 1000 ]
+[ 800 / 1000 ]
+[ 900 / 1000 ]
+[ 1000 / 1000 ]
+[ 100 / 1000 ]
+[ 200 / 1000 ]
+[ 300 / 1000 ]
+[ 400 / 1000 ]
+[ 500 / 1000 ]
+[ 600 / 1000 ]
+[ 700 / 1000 ]
+[ 800 / 1000 ]
+[ 900 / 1000 ]
+[ 1000 / 1000 ]</code></pre>
+<p><img src="24_gaussian_process_files/figure-revealjs/postcheck_kelp-1.jpeg" width="672" /></p>
+</section>
+<section id="the-fit-from-link" class="slide level2">
+<h1>The Fit from Link</h1>
+<p><img src="24_gaussian_process_files/figure-revealjs/kelp_fit_link-1.jpeg" width="672" /> With an l = 58.4 days</p>
+</section>
+<section id="two-options-for-interpolationprediction" class="slide level2">
+<h1>Two options for interpolation/prediction</h1>
+<ol type="1">
+<li>Refit the model with NA values to forecast predictions
+<ul>
+<li>Gets at uncertainty within the model<br />
+</li>
+<li>Missing data imputation</li>
+<li>Slow<br />
+<br />
+</li>
+</ul></li>
+<li>Recalculate covariance matrices given GP and use formulae
+<ul>
+<li>Need to roll your own<br />
+</li>
+<li>But I’ll give you a function…</li>
+<li>Creating predictions not automatic!</li>
+</ul></li>
+</ol>
+</section>
+<section id="data-imputation-approach" class="slide level2">
+<h1>Data Imputation Approach</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#new dates with 51 day intervals</span>
+date_delta &lt;-<span class="st"> </span><span class="kw">round</span>(<span class="kw">mean</span>(ltrmk3_clean$Date-<span class="kw">lag</span>(ltrmk3_clean$Date), <span class="dt">na.rm=</span>T))
+
+new_dates &lt;-<span class="st"> </span><span class="kw">c</span>(ltrmk3_clean$Date, <span class="kw">seq</span>(<span class="dv">1</span>,<span class="dv">10</span>)*date_delta+<span class="kw">max</span>(ltrmk3_clean$Date))
+
+<span class="co">#make a new distance matrix</span>
+kelp_dist_mat_for_pred &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(<span class="kw">dist</span>(new_dates))/<span class="dv">60</span>/<span class="dv">60</span>/<span class="dv">24</span>
+
+<span class="co">#the fit, with NA for values to impute</span>
+<span class="co">#and start values to tell rethinking </span>
+<span class="co">#how much data is there</span>
+kelp_fit_noyear_pred &lt;-<span class="st"> </span><span class="kw">map2stan</span>(kelp_mod_noyear, <span class="dt">data =</span> <span class="kw">list</span>(
+  <span class="dt">time_idx =</span> <span class="dv">1</span>:<span class="kw">length</span>(new_dates),
+  <span class="dt">kelp_s =</span> <span class="kw">c</span>(ltrmk3_clean$kelp_s, <span class="kw">rep</span>(<span class="ot">NA</span>, <span class="dv">10</span>)),
+  <span class="dt">Dmat =</span> kelp_dist_mat_for_pred),
+  <span class="dt">warmup=</span><span class="dv">2000</span> , <span class="dt">iter=</span><span class="fl">1e4</span> , <span class="dt">chains=</span><span class="dv">3</span>,
+  <span class="dt">start=</span><span class="kw">list</span>(<span class="dt">a=</span><span class="kw">rep</span>(<span class="dv">0</span>, <span class="kw">length</span>(new_dates))))</code></pre></div>
+</section>
+<section id="imputation" class="slide level2">
+<h1>Imputation</h1>
+<p><img src="24_gaussian_process_files/figure-revealjs/show_impute-1.jpeg" width="672" /></p>
+</section>
+<section id="or." class="slide level2">
+<h1>Or….</h1>
+</section>
+<section id="plot-those-predictions" class="slide level2">
+<h1>Plot those predictions!</h1>
+<p><img src="24_gaussian_process_files/figure-revealjs/plot_pred-1.jpeg" width="672" /></p>
+</section>
+<section id="a-smooth-curve" class="slide level2">
+<h1>A Smooth Curve</h1>
+<p><img src="24_gaussian_process_files/figure-revealjs/smooth_curve-1.jpeg" width="672" /></p>
+</section>
+<section id="or-individual-trajectories" class="slide level2">
+<h1>Or individual trajectories</h1>
+<p><img src="24_gaussian_process_files/figure-revealjs/show_traj-1.jpeg" width="672" /></p>
+</section>
+<section id="take-homes" class="slide level2">
+<h1>Take Homes</h1>
+<ol type="1">
+<li>Gaussian Process allow incorporation of non-mechanistic processes<br />
+<br />
+</li>
+<li>Accomodates many forms of autocorrelation<br />
+<br />
+</li>
+<li>Powerful, flexible, new
+<ul>
+<li>Can incporpoate multiple sources of GP variability<br />
+</li>
+<li>E.g. annual, decadal, multi-decadal signals</li>
+</ul></li>
+</ol>
+</section>
+    </div>
+  </div>
+
+  <script src="libs/reveal.js-3.3.0/lib/js/head.min.js"></script>
+  <script src="libs/reveal.js-3.3.0/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display the page number of the current slide
+        slideNumber: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: false,
+        // Opens links in an iframe preview overlay
+        previewLinks: true,
+        // Transition style
+        transition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>

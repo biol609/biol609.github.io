@@ -1,0 +1,780 @@
+---
+title:
+css: style.css
+output:
+  revealjs::revealjs_presentation:
+    reveal_options:
+      slideNumber: true
+      previewLinks: true
+    theme: white
+    center: false
+    transition: fade
+    self_contained: false
+    lib_dir: libs
+---
+  
+## 
+
+<h3>Gaussian Processes Models</h3>
+\
+![](images/gp/process_meme.jpg)  
+  ```{r prep, echo=FALSE, cache=FALSE, message=FALSE, warning=FALSE}
+library(knitr)
+opts_chunk$set(fig.height=5, fig.width=7, comment=NA, 
+               warning=FALSE, message=FALSE, 
+               dev="jpeg", echo=FALSE)
+
+library(dplyr)
+library(tidyr)
+
+library(rethinking)
+
+
+library(ggplot2)
+#center plot titles
+theme_set(theme_bw(base_size=14))
+theme_update(plot.title = element_text(hjust = 0.5))
+
+
+```
+
+## Outline
+1. Introduction Gaussian Processes  
+\
+2.  Gaussian Processes for Spatial Autocorrelation  
+\
+3. Introduction Gaussian Processes for Timeseries
+
+
+
+## Previously we have encountered Timeseries
+```{r birds}
+allbirds <- read.csv("./data/05/allbirds.csv", stringsAsFactors=FALSE)
+
+oahu_data <- allbirds %>% filter(Site == "Coot.Oahu") %>%
+  arrange(Year) %>%
+  mutate(Birds_Lag = lag(Birds)) %>%
+  mutate(Detrended_Birds = c(NA, residuals(lm(Birds ~ Birds_Lag, data=.))))
+
+```
+
+```{r oahu_tsplot}
+oahu <- ggplot(oahu_data,
+       mapping=aes(x=Year, y=Birds)) +
+  geom_line() +
+  theme_bw(base_size=17) +
+  ylab("Birds")
+
+oahu
+```
+
+
+## Correlation in Residuals
+
+```{r bird_ts_fit_acf, echo=TRUE}
+library(nlme)
+birds_lm <- gls(Birds ~ Year, data=oahu_data)
+acf(residuals(birds_lm))
+```
+  
+
+## Many ways of modeling autocorrelation
+
+$$ \epsilon_{t} = \rho \epsilon_{t-1} + \zeta_{t}$$ \
+\
+which produces\
+$$ cor(\epsilon) = \begin{pmatrix}
+1 & \rho &\rho^{2} \\ 
+\rho &  1& \rho\\ 
+\rho^{2} & \rho & 1
+\end{pmatrix}$$ \
+for n=3 time steps
+
+
+## Many ways of modeling autocorrelation
+\
+> - Lagged models ($y_t = \beta y_{t-1}$)  
+> - AR1 or AR2 correlation  
+> - ARMA (autoregressive moving average)  
+>    - ARIMA
+> - ARCH (SD varies over time, but not mean)  
+> - GARCH (SD and mean vary over time)  
+> - Continuous error structure for gaps (CAR1, CAR2)
+
+## Continuous error useful for spatial autocorrelation
+```{r read_boreal}
+boreal <- read.table("./data/06/Boreality.txt", header=T)
+```
+```{r plot_boreal_raw}
+
+raw_boreal <- qplot(x, y, data=boreal, size=Wet, color=NDVI) +
+  theme_bw() + 
+  scale_size_continuous("Index of Wetness", range=c(0,7)) + 
+  scale_color_gradient("NDVI", low="lightgreen", high="darkgreen")
+
+raw_boreal
+```
+
+## Spatial Autocorrelation in Residuals
+```{r boreal_bad}
+## @knitr boreal_gls
+bor_gls <- gls(NDVI ~ Wet, data=boreal)
+
+## @knitr boreal_gls_residualPlot
+qplot(x, y, data=boreal, size=abs(residuals(bor_gls, type="normalized")), color=factor((residuals(bor_gls)>0))) +
+  theme_bw() + scale_size_continuous("Absolute Value of Residual", range=c(0,5)) + scale_color_discrete("Residual > 0?")
+```
+
+## Spatial Autocorrelation Variograms!
+```{r boreal_variogram}
+plot(Variogram(bor_gls, form=~x+y, robust=T, maxDist=2000, resType="normalized"))
+```
+
+## What shape defines autocorrelation?
+Consider:
+$$ K_{ij} = \begin{pmatrix}
+\sigma_1^2 & \sigma_1\sigma_2 &\sigma_1\sigma_3 \\ 
+\sigma_1\sigma_2 &  \sigma_2^2& \sigma_2\sigma_3\\ 
+\sigma_1\sigma_3 & \sigma_2\sigma_3 & \sigma_3^2
+\end{pmatrix}$$ \ 
+\
+What is the function that defines $\sigma_i\sigma_j$ based on the distance between i and j?
+
+## Different Shapes of Autocorrelation
+![](./images/06/autocor_shape.jpg)  
+<div class="fragment">This works for continuous temporal autocorrelation as well!</div>
+
+## Linking Multilevel Models and Correlation: Consider sampling for greeness
+```{r landscape, fig.height=10, fig.width=10}
+library(SpatialTools)
+set.seed(609)
+nc <- 20
+x <- expand.grid(1:nc, 1:nc)
+z <- dist1(as.matrix(x))
+
+cov_fun <- function(d, etasq = 1, l = 3){
+  etasq*exp(-(d/(2*l))^2)
+}
+
+
+k2 <- cov_fun(z, 1, 2)
+
+y <- rmvnorm(1, rep(0, nrow(k2)), k2)
+z <- matrix(y, ncol=nc)
+
+jet.colors <- colorRampPalette( c("brown", "brown", "green", "lightgreen") )
+color <- jet.colors(length(y))
+zfacet <- z[-1, -1] + z[-1, -nc] + z[-nc, -1] + z[-nc, -nc]
+facetcol <- cut(zfacet, length(y))
+
+persp(x=1:nc, y=1:nc, z=matrix(y, ncol=nc), col=color[facetcol],
+      theta = 10, phi = 25, xlab="", ylab="", zlab="", box=FALSE, axes=FALSE,
+      mar=c(0,0,0,0) )
+```
+
+## Random Intercept model for greeness
+**Likelihood**  
+$Green_i \sim Normal(\mu_{green}, \sigma_{green})$  
+\
+**Data Generating Process**  
+$\mu_{green} = \overline{a} + a_{patch}$  
+\
+$a_{patch} \sim dnorm(0, \sigma_{patch})$  
+\
+<div class="fragment"><center><font color="red">But "patch" isn't discrete - it's continuous, and we know how close they are to each other!</font></center></div>
+
+## Introducing Gaussian Processes
+A GP is a random process creating a multivariate normal distribution between points where the covariance between points is related to their distance.  
+  
+$$a_{patch} \sim MVNorm(0, K)$$  
+\
+$$K_{ij} = F(D_{ij})$$
+<center>where $D_{ij} = x_i - x_j$</center>
+
+## The Squared Exponential Function(kernel)
+$$K_{ij} = \eta^2 exp \left( -\frac{D_{ij}^2}{2 \mathcal{l}^2} \right)$$  
+\
+where $\eta^2$ provides the scale of the function and $\mathcal{l}$ the timescale of the process
+
+## The Squared Exponential Covariance Function (kernel)
+```{r show_l}
+cov_fun <- function(d, etasq = 1, l = 1){
+  etasq*exp(-(d^2/(2*l^2)))
+}
+
+set.seed(609)
+testdf <- crossing(x=seq(0,50,length.out=200), l = c(0.1, 1, 10)) %>%
+  dplyr::group_by(l) %>%
+  dplyr::mutate(l3 = l[1], y = rmvnorm(1, rep(0, length(x)), 
+                     cov_fun(as.matrix(dist(x)), l = l[1]))[,1]) %>%
+  ungroup()
+
+qplot(x,y, data=testdf, geom="line", color=factor(l), group=l) +
+  facet_wrap(~l, labeller = labeller(l = function(x) paste("l =", x, sep=" ")))
+```
+
+## A surface from a Squared Exponential GP
+```{r landscape, fig.height=9, fig.width=9}
+```
+
+
+## Squared Exponential v. Squared AR1 Dropoff
+```{r show_cov_fun}
+cov_fun <- function(d, etasq = 1, l = 1){
+  etasq*exp(-(d^2/(2*l^2)))
+}
+
+x <- seq(1,50, length.out=200)
+xdist <- as.matrix(dist(x))
+x_cov <- cov_fun(xdist, l=5)
+
+ggplot(data.frame(x=x, y_exp = x_cov[1,], y_lin = rev(xdist[1,]/max(xdist))^2)) +
+  geom_line(mapping=aes(x=x, y=y_exp), color="red", lwd=1.3) +
+  geom_line(mapping=aes(x=x, y=y_lin), color="blue", lwd=1.3) 
+```
+
+## Other Covariance Functions
+>- Periodic:  $K_{P}(i,j) = \exp\left(-\frac{ 2\sin^2\left(\frac{D_{ij}}{2} \right)}{\mathcal{l}^2} \right)$  
+>     - VERY useful  
+\
+>- Ornstein–Uhlenbeck:  $K_{OI}(i,j) = \eta^2 exp \left( -\frac{|D_{ij}|}{\mathcal{l}} \right)$  
+\
+>- Quadratic $K_{RQ}(i,j)=(1+|d|^{2})^{-\alpha },\quad \alpha \geq 0$
+
+
+## The Squared Exponential Function in rethinking (with GLP2)
+$$K_{ij} = \eta^2 exp \left( -\frac{D_{ij}^2}{2 \mathcal{l}^2} \right)$$  
+\
+rethinking:  
+$$K_{ij} = \eta^2 exp \left( -\rho^2 D_{ij}^2 \right) + \delta_{ij}\sigma^2$$  
+\
+<li class="fragment"> $\rho^2 = \frac{1}{2 \mathcal{l}^2}$</li>  
+\
+<li class="fragment"> $\delta_{ij}$ introduces stochasticity, and we set importance with $\sigma^2$</li>
+
+## Operationalizing a GP
+Let's assume a Squared Exponential GP with an $\eta^2$ and $\mathcal{l}$ of 1. Many possible curves:
+```{r possible}
+poss_df <- data.frame(x=seq(0,50, length.out=200))
+poss_df <- cbind(poss_df, rmvnorm(10, rep(0, nrow(poss_df)), 
+                     cov_fun(as.matrix(dist(poss_df$x))))) %>%
+  gather(sim, y, -x)
+
+qplot(x, y, data=poss_df, group=sim, color=I("grey"), geom="line")
+```
+
+## Operationalizing a GP
+And actually, on average
+```{r show_gp}
+ggplot() +
+  xlim(c(0,50)) +
+  ylim(c(-3,3)) +
+  geom_ribbon(data=data.frame(ymin=c(-2, -2), ymax=c(2,2), x = c(0,50)),
+                              mapping=aes(ymin=ymin, ymax=ymax, x=x), fill="grey") +
+  geom_hline(yintercept=0)  +
+  ylab("") 
+```
+
+## But once we add some data...
+Pinching in around observations!
+```{r show_gp_2}
+
+#draws on http://www.jameskeirstead.ca/blog/gaussian-process-regression-with-r/
+predict_gp <- function(xold, xnew, yold,
+                      etasq=1, l=1, cfun = cov_fun){
+  dmat_old <- as.matrix(dist(xold))
+  
+  if(class(xold) == "matrix"){
+    dmat_new_all <- as.matrix(dist(c(xold, xnew)))
+  }else{
+    dmat_new_all <- as.matrix(dist(c(xold, xnew)))
+  }
+  
+  dmat_old_new <- dmat_new_all[-c(1:length(xold)), -c((length(xold)+1):ncol(dmat_new_all))]
+  dmat_new_old <- dmat_new_all[-c((length(xold)+1):nrow(dmat_new_all)), -c(1:length(xold))]
+  dmat_new_new <- dmat_new_all[-c(1:length(xold)), -c(1:length(xold))]
+  
+  k_old <- cfun(dmat_old, etasq = etasq, l = l)
+  k_old_new <- cfun(dmat_old_new, etasq = etasq, l = l)
+  
+  #for cov
+  k_new_old <- cfun(dmat_new_old, etasq = etasq, l = l)
+  k_new_new <- cfun(dmat_new_new, etasq = etasq, l = l)
+  
+  diag(k_old) <- etasq
+  diag(k_new_new) <- etasq
+  
+  mu <- k_old_new %*% solve(k_old) %*%yold
+  cov_pred <- k_new_new - k_old_new %*%  solve(k_old) %*% k_new_old
+  
+  data.frame(fit = mu, fit_se = sqrt(diag(cov_pred)))
+
+}
+
+#make a GP dataset
+set.seed(609)
+x1 <- runif(10, 0,40)
+dmat <- as.matrix(dist(x1))
+kmat <- cov_fun(dmat)
+diag(kmat) <- 1
+y1 <- rmvnorm(1, rep(0, length(x1)), kmat)[,1]
+xnew <- seq(0,50,length.out=200)
+preds <- predict_gp(x1, xnew, y1)
+preds$x <- xnew
+old <- data.frame(x=x1, fit=y1)
+
+ggplot(data=preds, mapping=aes(x=x, y=fit)) +
+  geom_ribbon(mapping=aes(ymin=fit-fit_se*2, ymax=fit+fit_se*2), alpha=0.4, color="grey") +
+  geom_line() +
+  geom_point(data=old) +
+  ylab("") +
+  xlim(c(0,50)) +
+  ylim(c(-3,3)) 
+#100, 10, 18 9:3
+```
+
+## Warnings!
+1. Not mechanistic!  
+\
+2. But can incorporate many sources of variability  
+     - e.g., recent analysis showing multiple GP underlying Zika for forecasting  
+\
+3. Can mix mechanism and GP
+
+## Outline
+1. Introduction Gaussian Processes  
+\
+2.  <font color="red">Gaussian Processes for Spatial Autocorrelation</font>  
+\
+3. Introduction Gaussian Processes for Timeseries  
+
+## Oceanic Tool Use
+![](./images/gp/tool_map.jpg){width="45%"}
+```{r kline}
+data(Kline2)
+head(Kline2)
+```
+
+## Distances between islands
+```{r kline_dist, echo=TRUE}
+data(islandsDistMatrix)
+islandsDistMatrix
+```
+
+## What if I needed to make a distance matrix?
+```{r make_dist, echo=TRUE}
+dist(cbind(Kline2$lat, Kline2$lon))
+```
+
+Well, convert lat/lon to UTM first, and to matrix after `dist`
+
+## Our GP Model
+**Likelihood**  
+$Tools_i \sim Poisson(\lambda_i)$  
+\
+**Data Generating Process**
+$log(\lambda_i) = \alpha + \gamma_{society} + \beta log(Population_i)$  
+\
+<div class="fragment">$\gamma_{society} \sim MVNormal((0, ....,0), K)$  
+$K_{ij} = \eta^2 exp \left( -\rho^2 D_{ij}^2 \right) + \delta_{ij}(0.01)$
+</div>  
+<div class="fragment">**Priors**  
+$\alpha \sim Normal(0,10)$  
+$\beta \sim Normal(0,1)$  
+$\eta^2 \sim HalfCauchy(0,1)$  
+$\rho^2 \sim HalfCauchy(0,1)$
+</div>
+
+## Quick note on Priors...
+https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations  
+\
+![](./images/gp/prior_wiki.jpg)
+
+## Our model
+```{r kline2_mod, echo=TRUE}
+Kline2$society <- 1:nrow(Kline2)
+
+k2mod <-   alist(
+  #likelihood
+  total_tools ~ dpois(lambda),
+  
+  #Data Generating Process
+  log(lambda) <- a + g[society] + bp*logpop,
+  g[society] ~ GPL2( Dmat , etasq , rhosq , 0.01 ),
+  
+  #Priors
+  a ~ dnorm(0,10),
+  bp ~ dnorm(0,1),
+  etasq ~ dcauchy(0,1),
+  rhosq ~ dcauchy(0,1)
+  )
+```
+
+## GPL2
+<center>`g[society] ~ GPL2( Dmat , etasq , rhosq , 0.01)`</center>  
+\
+- Note that we supply a distance matrix  
+\
+- `GPL2` explicitly creates the MV Normal density, but only requires parameters
+
+## Fitting - a list shall lead them
+- We have data of various classes (e.g. matrix, vectors)  
+- Hence, we use a list  
+- This can be generalized to many cases, e.g. true multilevel models
+
+```{r kline2_fit, echo=TRUE, eval=FALSE, results="hide"}
+k2fit <- map2stan(k2mod,
+ data = list(
+    total_tools = Kline2$total_tools,
+    logpop = Kline2$logpop,
+    society = Kline2$society,
+    Dmat = islandsDistMatrix),
+  warmup=2000 , iter=1e4 , chains=3)
+```
+```{r load_fit}
+#save(k2fit, file="./data/gp/k2fit.Rdata")
+load(file="./data/gp/k2fit.Rdata")
+```
+
+## Did it converge?
+```{r converge_k2, results="hide"}
+plot(k2fit)
+par(ask=FALSE)
+```
+
+## Did it fit?
+```{r postcheck_k2, results="hide"}
+postcheck(k2fit)
+par(ask=FALSE)
+```
+
+## What does it all mean?
+```{r show_coef}
+precis(k2fit)
+```
+
+## What is our covariance function by distance?
+```{r get_cov, echo=TRUE}
+#get samples
+k2_samp <- extract.samples(k2fit)
+
+#covariance function
+cov_fun_rethink <- function(d, etasq, rhosq){
+  etasq * exp( -rhosq * d^2)
+}
+
+#make curves
+decline_df <- crossing(data.frame(x = seq(0,10,length.out=200)), 
+                       data.frame(etasq = k2_samp$etasq[1:100],
+                                  rhosq = k2_samp$rhosq[1:100])) %>%
+ dplyr::mutate(covariance = cov_fun_rethink(x, etasq, rhosq))
+  
+```
+
+## Covariance by distance
+```{r plot_cov_dist}
+ggplot(decline_df) +
+  aes(x=x, y=covariance, group=etasq) +
+  geom_line(alpha=0.3) +
+  ylim(c(0,5)) +
+  xlab("Distance")
+```
+
+## Correlation Matrix
+```{r mats, echo=TRUE}
+cov_mat <- cov_fun_rethink(islandsDistMatrix,
+                           median(k2_samp$etasq),
+                           median(k2_samp$rhosq))
+
+cor_mat <- cov2cor(cov_mat)
+```
+
+## Putting it all together...
+```{r plot_res}
+Kline_pts <- crossing(Kline2, Kline2)
+names(Kline_pts)[11:20] <- paste(names(Kline_pts)[11:20], "2", sep = "_")
+
+cmat <- as.data.frame(cor_mat)
+cmat$culture <- rownames(cmat)
+cmat_df <- gather(cmat, culture_2, correlation, -culture) %>%
+  left_join(Kline_pts)
+
+is_plot <- ggplot(data=Kline2) +
+  aes(x=logpop, y=total_tools) +
+  geom_point(size=2) +
+  geom_segment(data=cmat_df, 
+               mapping=aes(xend = logpop_2, yend = total_tools_2, alpha=correlation)) +
+  scale_alpha_continuous(range = c(0,1)) +ylim(c(0,100)) +
+  xlim(c(7,13))
+
+is_plot
+```
+
+## Putting it all together...
+```{r show_sims, cache=TRUE}
+k2_pred <- crossing(data.frame(logpop = seq(7, 13, length.out=200)),
+                    data.frame(a=k2_samp$a, b=k2_samp$b)) %>%
+  dplyr::mutate(y = exp(a + b*logpop)) %>%
+  group_by(logpop) %>%
+  dplyr::summarise(total_tools = median(y),
+                   ymin = HPDI(y)[1], ymax=HPDI(y)[2]) %>%
+  ungroup()
+
+is_plot +
+  geom_line(data=k2_pred, color="red") +
+  geom_line(data=k2_pred, mapping=aes(y=ymin), lty=2)+
+  geom_line(data=k2_pred, mapping=aes(y=ymax), lty=2) 
+```
+
+
+## Outline
+1. Introduction Gaussian Processes  
+\
+2.  Gaussian Processes for Spatial Autocorrelation  
+\
+3. <font color="red">Introduction Gaussian Processes for Timeseries</font>  
+
+## Kelp from spaaaace!!!
+![](./images/gp/kelp_landsat.jpg)
+\
+\
+<Cavanaugh et al. 2011, Bell et al. 2015, Rosenthal et al. THIS SUMMER
+
+## The Mohawk Transect 3 300m Timeseries
+```{r ltrmk}
+ltrmk3 <- read.csv("./data/gp/LANDSAT_1999_2009_mohawk.csv") %>%
+  mutate(Date = lubridate::parse_date_time(Date, orders="ymd"))
+
+qplot(Date, X300m, data=ltrmk3, geom="line") +
+  ylab("Kelp Biomass in 300m Pixel")
+```
+
+## A Simple Gaussian Process Model
+For time point i  
+\
+**Likelihood**
+kelp<sub>i</sub> ~ Normal($\mu_i$, $\sigma$)  
+
+**Data Generating Process**
+$\mu_i \sim \alpha_i$  
+\
+$\alpha_i$ ~ MVnormal((0, ...0), K)
+$K_{ij} = \eta^2 exp \left( -\rho^2 D_{ij}^2 \right) + \delta_{ij}(0.01)$  
+\
+**Priors**  
+$\alpha \sim Normal(0,10)$  
+$\sigma \sim HalfCauchy(0,5)$  
+$\eta^2 \sim HalfCauchy(0,2)$  
+$\rho^2 \sim HalfCauchy(0,2)$  
+$\delta \sim HalfCauchy(0,2)$
+
+## A Transformation and Complex models
+- Specifying efficient priors can be difficult  
+\
+- Scaling data can help with reasonable prior specification  
+\
+- Centering removes need for mean parameter (no $\overline{a}$)  
+\
+- E.g. z-transformed kelp, or predictors  
+\
+- This isn't bad as a general practice, as back-scaling is easy  
+```{r kelp_clean, echo=TRUE}
+ltrmk3_clean <- ltrmk3 %>%
+  mutate(kelp_s = (X300m-mean(X300m, na.rm=T))/sd(X300m, na.rm=T) ) %>% 
+  filter(!is.na(kelp_s)) 
+```
+
+## Kelp Model
+```{r kelp_mod, echo=TRUE}
+kelp_mod_noyear <- alist(
+  kelp_s ~ dnorm(mu, sigma),
+  
+  mu <- a[time_idx],  
+  a[time_idx] ~ GPL2( Dmat , etasq , rhosq , delta_sq),
+  
+  sigma ~ dcauchy(0,5),
+  etasq ~ dcauchy(0,2),
+  delta_sq ~ dcauchy(0,2),
+  rhosq ~ dcauchy(0,2)
+)
+```
+
+## Fitting
+Need a time index and a distance matrix
+```{r kelp_fit, echo=TRUE, eval=FALSE}
+#distance matrix, distance in seconds, so correct to days
+kelp_dist_mat <- as.matrix(dist(ltrmk3_clean$Date))
+kelp_dist_mat <- kelp_dist_mat/60/60/24
+
+#fit!
+kelp_fit_noyear <- map2stan(kelp_mod_noyear, data = list(
+  time_idx = 1:nrow(ltrmk3_clean),
+  kelp_s = ltrmk3_clean$kelp_s,
+  Dmat = kelp_dist_mat),
+  warmup=2000 , iter=1e4 , chains=3)
+```
+
+```{r kelp_load}
+load("./data/gp/kelp_fit_noyear.Rdata")
+```
+
+## Are we good?
+```{r postcheck_kelp}
+par(mfrow=c(2,2))
+postcheck(kelp_fit_noyear)
+par(mfrow=c(1,1), ask=FALSE)
+```
+
+## The Fit from Link
+```{r kelp_fit_link, results="hide"}
+ltrmk3$kelp_s <- with(ltrmk3, (X300m - mean(X300m, na.rm=T))/sd(X300m, na.rm=T))
+
+kelp_link <- link(kelp_fit_noyear)
+kelp_median <- apply(kelp_link, 2, median)
+kelp_cl <- apply(kelp_link, 2, HPDI)
+
+qplot(Date, kelp_s, data=ltrmk3, geom="point") +
+  geom_line(data=ltrmk3_clean, y=kelp_median) +
+  geom_ribbon(data=ltrmk3_clean, ymin=kelp_cl[1,], ymax=kelp_cl[2,], alpha=0.5) +
+  theme_bw()
+```
+With an l = `r round(sqrt(as.list(coef(kelp_fit_noyear))$rhosq)^(-1),1)` days
+
+## Two options for interpolation/prediction
+1. Refit the model with NA values to forecast predictions  
+     - Gets at uncertainty within the model  
+     - Missing data imputation
+     - Slow  
+\
+2. Recalculate covariance matrices given GP and use formulae  
+     - Need to roll your own  
+     - But I'll give you a function...
+     - Creating predictions not automatic!
+
+## Data Imputation Approach
+```{r kelp_impute, echo=TRUE, eval=FALSE}
+#new dates with 51 day intervals
+date_delta <- round(mean(ltrmk3_clean$Date-lag(ltrmk3_clean$Date), na.rm=T))
+
+new_dates <- c(ltrmk3_clean$Date, seq(1,10)*date_delta+max(ltrmk3_clean$Date))
+
+#make a new distance matrix
+kelp_dist_mat_for_pred <- as.matrix(dist(new_dates))/60/60/24
+
+#the fit, with NA for values to impute
+#and start values to tell rethinking 
+#how much data is there
+kelp_fit_noyear_pred <- map2stan(kelp_mod_noyear, data = list(
+  time_idx = 1:length(new_dates),
+  kelp_s = c(ltrmk3_clean$kelp_s, rep(NA, 10)),
+  Dmat = kelp_dist_mat_for_pred),
+  warmup=2000 , iter=1e4 , chains=3,
+  start=list(a=rep(0, length(new_dates))))
+```
+
+## Imputation
+```{r show_impute, results="hide"}
+load("./data/gp/kelp_fit_noyear_pred.Rdata")
+
+#new dates with 51 day intervals
+date_delta <- round(mean(ltrmk3_clean$Date-lag(ltrmk3_clean$Date), na.rm=T))
+
+new_dates <- c(ltrmk3_clean$Date, seq(1,10)*date_delta+max(ltrmk3_clean$Date))
+#make a new distance matrix
+kelp_dist_mat_for_pred <- as.matrix(dist(new_dates))/60/60/24
+
+kelp_link_new <- link(kelp_fit_noyear_pred)
+kelp_median_new <- apply(kelp_link_new, 2, median)
+kelp_cl_new <- apply(kelp_link_new, 2, HPDI)
+
+pred_df <- data.frame(Date = new_dates, kelp_s = kelp_median_new)
+ggplot(data=pred_df, mapping=aes(x=Date, y=kelp_s)) +
+  geom_line() +
+  geom_ribbon(ymin=kelp_cl_new[1,], ymax=kelp_cl_new[2,], alpha=0.5) +
+  theme_bw() +
+  geom_point(data=ltrmk3)
+```
+
+## Or....
+```{r pred_gpl2}
+#new functions!
+source("./data/gp/predict_gpl2.R")
+
+#samples
+kelp_samp <- extract.samples(kelp_fit_noyear)
+
+#get a matrix of predictions for a
+xold <- as.numeric(ltrmk3_clean$Date)/60/60/24
+xnew <- as.numeric(new_dates)/60/60/24
+
+new_a <- predict_gpl2_fromsamp(xold, xnew,
+                               yold_mat = kelp_samp$a,
+                               etasq = kelp_samp$etasq,
+                               rhosq = kelp_samp$rhosq, n=50)
+```
+
+## Plot those predictions!
+```{r plot_pred}
+pred_df_link <- data.frame(Date = new_dates,
+                           kelp_s = apply(new_a, 2, median),
+                           lwr = apply(new_a, 2, PI)[1,],
+                           upr = apply(new_a, 2, PI)[2,]
+                           )
+
+ggplot(data=pred_df_link, mapping=aes(x=Date, y=kelp_s)) +
+  geom_line() +
+  geom_ribbon(mapping=aes(ymin=lwr, ymax=upr), alpha=0.5) +
+  theme_bw() +
+  geom_point(data=ltrmk3)
+```
+
+## A Smooth Curve
+```{r smooth_curve, cache=TRUE}
+smooth_dates <- seq(min(ltrmk3_clean$Date), max(ltrmk3_clean$Date), length.out=200)
+
+a_smooth <- predict_gpl2_fromsamp(xold, xnew = as.numeric(smooth_dates)/60/60/24,
+                               yold_mat = kelp_samp$a,
+                               etasq = kelp_samp$etasq,
+                               rhosq = kelp_samp$rhosq, n=50)
+
+pred_df_smooth <- data.frame(Date = smooth_dates,
+                           kelp_s = apply(a_smooth, 2, median),
+                           lwr = apply(a_smooth, 2, PI)[1,],
+                           upr = apply(a_smooth, 2, PI)[2,]
+                           )
+
+ggplot(data=pred_df_smooth, mapping=aes(x=Date, y=kelp_s)) +
+  geom_line() +
+  geom_ribbon(mapping=aes(ymin=lwr, ymax=upr), alpha=0.5) +
+  theme_bw() +
+  geom_point(data=ltrmk3) +
+  ylim(c(-4,4))
+```
+
+## Or individual trajectories
+```{r show_traj, cache=TRUE}
+
+#ggplot needs a dataframe
+a_smooth_d <- as.data.frame(t(a_smooth))
+
+#id variable for position in matrix 
+#a_smooth_d$id <- 1:nrow(a_smooth_d) 
+a_smooth_d$Date = smooth_dates
+#reshape to long format
+plot_data <- gather(a_smooth_d, sim, kelp_s, -Date)
+
+ggplot(plot_data, mapping=aes(x=Date, y=kelp_s)) +
+  geom_line(color="grey", mapping=aes( group=sim)) +
+  ylim(c(-4,4)) +
+  geom_line(data = pred_df_smooth) +
+  geom_point(data=ltrmk3)
+```
+
+## Take Homes
+1. Gaussian Process allow incorporation of non-mechanistic processes  
+\
+2. Accomodates many forms of autocorrelation  
+\
+3. Powerful, flexible, new  
+     - Can incporpoate multiple sources of GP variability  
+     - E.g. annual, decadal, multi-decadal signals
