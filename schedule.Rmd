@@ -85,7 +85,7 @@ __Additional Reading:__ [Gelman and Hill Ch. 12](http://byrneslab.net/classes/bi
   
 ### Week 13. 
 __Lecture:__ [Gaussian Proces Models](./lectures/24_gaussian_process.html) and Rethinking Alternatives  
-__Files:__ [predicted GP script](./data/gp/predict_gpl2.R)  
+__Files:__ [predicted GP script](./lectures/data/gp/predict_gpl2.R)  
 __Reading:__ McElreath Chapter 14, [Roberts et al. 2012](http://byrneslab.net/classes/biol609/Roberts_et_al_2012_gaussian_process.pdf)  
   
 ### Week 14. 
