@@ -92,7 +92,7 @@ for n=3 time steps
 
 
 ## Many ways of modeling autocorrelation
-\
+
 > - Lagged models ($y_t = \beta y_{t-1}$)  
 > - AR1 or AR2 correlation  
 > - ARMA (autoregressive moving average)  
@@ -535,13 +535,12 @@ is_plot +
 3. <font color="red">Introduction Gaussian Processes for Timeseries</font>  
 
 ## Kelp from spaaaace!!!
-![](./images/gp/kelp_landsat.jpg)
+![](./images/gp/kelp_landsat.jpg)  
 \
-\
-<Cavanaugh et al. 2011, Bell et al. 2015, Rosenthal et al. THIS SUMMER
+Cavanaugh et al. 2011, Bell et al. 2015, Rosenthal et al. THIS SUMMER
 
 ## The Mohawk Transect 3 300m Timeseries
-```{r ltrmk}
+```{r ltrmk_plot}
 ltrmk3 <- read.csv("./data/gp/LANDSAT_1999_2009_mohawk.csv") %>%
   mutate(Date = lubridate::parse_date_time(Date, orders="ymd"))
 
@@ -549,24 +548,19 @@ qplot(Date, X300m, data=ltrmk3, geom="line") +
   ylab("Kelp Biomass in 300m Pixel")
 ```
 
+
 ## A Simple Gaussian Process Model
 For time point i  
 \
 **Likelihood**
 kelp<sub>i</sub> ~ Normal($\mu_i$, $\sigma$)  
-
-**Data Generating Process**
+\
+**Data Generating Process**  
 $\mu_i \sim \alpha_i$  
 \
-$\alpha_i$ ~ MVnormal((0, ...0), K)
+$\alpha_i$ ~ MVnormal((0, ...0), K)  
 $K_{ij} = \eta^2 exp \left( -\rho^2 D_{ij}^2 \right) + \delta_{ij}(0.01)$  
 \
-**Priors**  
-$\alpha \sim Normal(0,10)$  
-$\sigma \sim HalfCauchy(0,5)$  
-$\eta^2 \sim HalfCauchy(0,2)$  
-$\rho^2 \sim HalfCauchy(0,2)$  
-$\delta \sim HalfCauchy(0,2)$
 
 ## A Transformation and Complex models
 - Specifying efficient priors can be difficult  
@@ -696,7 +690,7 @@ ggplot(data=pred_df, mapping=aes(x=Date, y=kelp_s)) +
 ```
 
 ## Or....
-```{r pred_gpl2}
+```{r pred_gpl2, echo=TRUE}
 #new functions!
 source("./data/gp/predict_gpl2.R")
 

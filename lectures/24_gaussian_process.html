@@ -159,13 +159,20 @@ for n=3 time steps</p>
 </section>
 <section id="many-ways-of-modeling-autocorrelation-1" class="slide level2">
 <h1>Many ways of modeling autocorrelation</h1>
-<p><br />
-&gt; - Lagged models (<span class="math inline">\(y_t = \beta y_{t-1}\)</span>)<br />
-&gt; - AR1 or AR2 correlation<br />
-&gt; - ARMA (autoregressive moving average)<br />
-&gt; - ARIMA &gt; - ARCH (SD varies over time, but not mean)<br />
-&gt; - GARCH (SD and mean vary over time)<br />
-&gt; - Continuous error structure for gaps (CAR1, CAR2)</p>
+<ul>
+<li class="fragment">Lagged models (<span class="math inline">\(y_t = \beta y_{t-1}\)</span>)<br />
+</li>
+<li class="fragment">AR1 or AR2 correlation<br />
+</li>
+<li class="fragment">ARMA (autoregressive moving average)<br />
+</li>
+<li class="fragment">ARIMA</li>
+<li class="fragment">ARCH (SD varies over time, but not mean)<br />
+</li>
+<li class="fragment">GARCH (SD and mean vary over time)<br />
+</li>
+<li class="fragment">Continuous error structure for gaps (CAR1, CAR2)</li>
+</ul>
 </section>
 <section id="continuous-error-useful-for-spatial-autocorrelation" class="slide level2">
 <h1>Continuous error useful for spatial autocorrelation</h1>
@@ -526,44 +533,33 @@ cor_mat &lt;-<span class="st"> </span><span class="kw">cov2cor</span>(cov_mat)</
 <h1>Kelp from spaaaace!!!</h1>
 <p><img src="images/gp/kelp_landsat.jpg" /><br />
 <br />
-<Cavanaugh et al. 2011, Bell et al. 2015, Rosenthal et al. THIS SUMMER
-
-## The Mohawk Transect 3 300m Timeseries
-<img src="24_gaussian_process_files/figure-revealjs/ltrmk-1.jpeg" width="672" /></p>
+Cavanaugh et al. 2011, Bell et al. 2015, Rosenthal et al. THIS SUMMER</p>
+</section>
+<section id="the-mohawk-transect-3-300m-timeseries" class="slide level2">
+<h1>The Mohawk Transect 3 300m Timeseries</h1>
+<p><img src="24_gaussian_process_files/figure-revealjs/ltrmk_plot-1.jpeg" width="672" /></p>
 </section>
 <section id="a-simple-gaussian-process-model" class="slide level2">
 <h1>A Simple Gaussian Process Model</h1>
 <p>For time point i<br />
 <br />
-<strong>Likelihood</strong> kelp<sub>i</sub> ~ Normal(<span class="math inline">\(\mu_i\)</span>, <span class="math inline">\(\sigma\)</span>)</p>
-<p><strong>Data Generating Process</strong> <span class="math inline">\(\mu_i \sim \alpha_i\)</span><br />
+<strong>Likelihood</strong> kelp<sub>i</sub> ~ Normal(<span class="math inline">\(\mu_i\)</span>, <span class="math inline">\(\sigma\)</span>)<br />
 <br />
-<span class="math inline">\(\alpha_i\)</span> ~ MVnormal((0, …0), K) <span class="math inline">\(K_{ij} = \eta^2 exp \left( -\rho^2 D_{ij}^2 \right) + \delta_{ij}(0.01)\)</span><br />
+<strong>Data Generating Process</strong><br />
+<span class="math inline">\(\mu_i \sim \alpha_i\)</span><br />
 <br />
-<strong>Priors</strong><br />
-<span class="math inline">\(\alpha \sim Normal(0,10)\)</span><br />
-<span class="math inline">\(\sigma \sim HalfCauchy(0,5)\)</span><br />
-<span class="math inline">\(\eta^2 \sim HalfCauchy(0,2)\)</span><br />
-<span class="math inline">\(\rho^2 \sim HalfCauchy(0,2)\)</span><br />
-<span class="math inline">\(\delta \sim HalfCauchy(0,2)\)</span></p>
-</section>
-<section id="a-transformation-and-complex-models" class="slide level2">
-<h1>A Transformation and Complex models</h1>
-<ul>
-<li>Specifying efficient priors can be difficult<br />
+<span class="math inline">\(\alpha_i\)</span> ~ MVnormal((0, …0), K)<br />
+<span class="math inline">\(K_{ij} = \eta^2 exp \left( -\rho^2 D_{ij}^2 \right) + \delta_{ij}(0.01)\)</span><br />
 <br />
-</li>
-<li>Scaling data can help with reasonable prior specification<br />
+## A Transformation and Complex models - Specifying efficient priors can be difficult<br />
 <br />
-</li>
-<li>Centering removes need for mean parameter (no <span class="math inline">\(\overline{a}\)</span>)<br />
+- Scaling data can help with reasonable prior specification<br />
 <br />
-</li>
-<li>E.g. z-transformed kelp, or predictors<br />
+- Centering removes need for mean parameter (no <span class="math inline">\(\overline{a}\)</span>)<br />
 <br />
-</li>
-<li>This isn’t bad as a general practice, as back-scaling is easy</li>
-</ul>
+- E.g. z-transformed kelp, or predictors<br />
+<br />
+- This isn’t bad as a general practice, as back-scaling is easy</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ltrmk3_clean &lt;-<span class="st"> </span>ltrmk3 %&gt;%
 <span class="st">  </span><span class="kw">mutate</span>(<span class="dt">kelp_s =</span> (X300m-<span class="kw">mean</span>(X300m, <span class="dt">na.rm=</span>T))/<span class="kw">sd</span>(X300m, <span class="dt">na.rm=</span>T) ) %&gt;%<span class="st"> </span>
 <span class="st">  </span><span class="kw">filter</span>(!<span class="kw">is.na</span>(kelp_s)) </code></pre></div>
@@ -671,6 +667,20 @@ kelp_fit_noyear_pred &lt;-<span class="st"> </span><span class="kw">map2stan</sp
 </section>
 <section id="or." class="slide level2">
 <h1>Or….</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#new functions!</span>
+<span class="kw">source</span>(<span class="st">&quot;./data/gp/predict_gpl2.R&quot;</span>)
+
+<span class="co">#samples</span>
+kelp_samp &lt;-<span class="st"> </span><span class="kw">extract.samples</span>(kelp_fit_noyear)
+
+<span class="co">#get a matrix of predictions for a</span>
+xold &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(ltrmk3_clean$Date)/<span class="dv">60</span>/<span class="dv">60</span>/<span class="dv">24</span>
+xnew &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(new_dates)/<span class="dv">60</span>/<span class="dv">60</span>/<span class="dv">24</span>
+
+new_a &lt;-<span class="st"> </span><span class="kw">predict_gpl2_fromsamp</span>(xold, xnew,
+                               <span class="dt">yold_mat =</span> kelp_samp$a,
+                               <span class="dt">etasq =</span> kelp_samp$etasq,
+                               <span class="dt">rhosq =</span> kelp_samp$rhosq, <span class="dt">n=</span><span class="dv">50</span>)</code></pre></div>
 </section>
 <section id="plot-those-predictions" class="slide level2">
 <h1>Plot those predictions!</h1>
