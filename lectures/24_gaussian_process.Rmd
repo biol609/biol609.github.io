@@ -769,5 +769,5 @@ ggplot(plot_data, mapping=aes(x=Date, y=kelp_s)) +
 2. Accomodates many forms of autocorrelation  
 \
 3. Powerful, flexible, new  
-     - Can incporpoate multiple sources of GP variability  
+     - Can incorporate multiple sources of GP variability  
      - E.g. annual, decadal, multi-decadal signals

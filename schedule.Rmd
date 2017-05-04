@@ -84,9 +84,10 @@ __Reading:__ McElreath Chapter 12, 13
 __Additional Reading:__ [Gelman and Hill Ch. 12](http://byrneslab.net/classes/biol609/gelman_hill_ch_12.pdf) (see the bit on one model written 5 ways), [Gelman and Hill Ch. 13](http://byrneslab.net/classes/biol609/gelman_hill_ch_13.pdf), [Gelman on multiple comparisons in mixed models](http://byrneslab.net/classes/biol609/Gelman_multcomp.pdf)
   
 ### Week 13. 
-__Lecture:__ [Gaussian Proces Models](./lectures/24_gaussian_process.html) and Rethinking Alternatives  
+__Lecture:__ [Gaussian Proces Models](./lectures/24_gaussian_process.html) and [Rethinking Alternatives](./lectures/25_beyond_rethinking.html)  
 __Files:__ [predicted GP script](./lectures/data/gp/predict_gpl2.R)  
 __Reading:__ McElreath Chapter 14, [Roberts et al. 2012](http://byrneslab.net/classes/biol609/Roberts_et_al_2012_gaussian_process.pdf)  
+__Further reading:__ [stan](http://mc-stan.org), [R-INLA examples](http://www.r-inla.org/examples/volume-1), [rstanarm intro](https://cran.r-project.org/web/packages/rstanarm/vignettes/rstanarm.html)  
   
 ### Week 14. 
 __Lecture:__ Open Lab  
