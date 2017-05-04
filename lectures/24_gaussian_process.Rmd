@@ -92,7 +92,6 @@ for n=3 time steps
 
 
 ## Many ways of modeling autocorrelation
-
 > - Lagged models ($y_t = \beta y_{t-1}$)  
 > - AR1 or AR2 correlation  
 > - ARMA (autoregressive moving average)  
