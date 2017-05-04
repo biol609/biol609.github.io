@@ -612,7 +612,7 @@ load("./data/gp/kelp_fit_noyear.Rdata")
 ```
 
 ## Are we good?
-```{r postcheck_kelp}
+```{r postcheck_kelp, results="hide"}
 par(mfrow=c(2,2))
 postcheck(kelp_fit_noyear)
 par(mfrow=c(1,1), ask=FALSE)
