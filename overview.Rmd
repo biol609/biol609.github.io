@@ -1,0 +1,16 @@
+---
+title: "Biol 609: Advanced Data Analysis for Biology"
+---
+
+**Overview** This course will cover the advanced statistical modeling techniques needed for students investigating complex biological systems. The course aims to have students focus on thinking about the biological processes that they are studying in their research and how to translate them into statistical models of realistic complexity.  This includes models that deal with autocorrelation, mixed models, multivariate Structural Equation Models with latent variables, and more. We will also emphasize Bayesian inferential techniques, as they have proven to be powerful and flexible in a wide variety of situations. They are also often philosophically aligned with scientists goals, perhaps more often than frequentist techniques. The course will take a hands-on computational approach, allowing students to first approach concepts theoretically, and then implement them in the programming language R. 
+
+**Objectives**  
+
+*	To learn how to think about your study system and research question of interest in a systematic way and match it with a realistic process-based model.  
+  
+*	To understand how to build and fit hierarchical/multilevel models in a likelihood and Bayesian framework.  
+  
+*	Provide the grounding needed to effectively collaborate with statistical experts.  
+  
+*	Allow students to gain the knowledge necessary to become life-long learners of data analysis techniques, able to incorporate new techniques into their analytic toolbelt as needed.
+
