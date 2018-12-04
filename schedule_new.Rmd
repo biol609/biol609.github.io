@@ -148,6 +148,6 @@ __R packages:__ piecewiseSEM
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
-__**Final Work Party Week!**__
-__Final Presentations:__  Friday May 17th
-__Final Papers Due:__ May 21st
+__**Final Work Party Week!**__  
+__Final Presentations:__  Friday May 17th  
+__Final Papers Due:__ May 21st  
