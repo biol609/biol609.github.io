@@ -298,8 +298,10 @@ summary(wd_arm_optim)
 I'll leave it to you to go from there. The speed advantage, given pre-compilation, is no longer as substantial, but it can be nice.
 
 ## 3. `brms`
-#### 3.1 Package Intro and our Linear Model
-`brms` is a fracking amazing package. It's amazing because, syntactically, it shares a lot in common with `rstanarm`. But, models are compiled before running. And so, the wonderful developer of the package has decided to take the swiss-army-knife approach, and is, daily, adding new customizations to `brms` to allow it to do any number of complex models, all with a fairly simple (relative to `rethinking` or `stan` formulation.)
+#### 3.1 Package Intro and our Models
+`brms` is a fracking amazing package. It's amazing because, syntactically, it shares a lot in common with `rstanarm`. But, models are compiled before running. And so, the wonderful developer of the package has decided to take the swiss-army-knife approach, and is, daily, adding new customizations to `brms` to allow it to do any number of complex models, all with a fairly simple (relative to `rethinking` or `stan` formulation.) It's worth following the [issue tracker](https://github.com/paul-buerkner/brms/issues) to see what gets added to the dev version and when new stable ones are released.
+
+So, what does our simple linear regression model look like? Not really any different from our `rstanarm` version.
 
 ```{r brm_lm, message=FALSE, results="hide", cache=TRUE}
 library(brms)
@@ -310,7 +312,8 @@ wd_brm_time <- system.time(
 )
 ```
 
-#### 3.2 Mixed Model
+Nor does our mixed model. It again uses `lme4`-like sytax.
+
 ```{r brm_lme, message=FALSE, results="hide", cache=TRUE}
 dino_brm_time <- system.time(
   dino_brm <- brm(log_mass ~ age + (1 + age | species), data=Dinosaurs,
@@ -318,12 +321,18 @@ dino_brm_time <- system.time(
 )
 ```
 
-#### 3.3 Priors
-#### 3.4 Inference
-##### 3.4.1 Model Checking
-##### 3.4.1 Model Evaluation
-#### 3.5 Prediction
-#### 3.6 More Fanciness From This Package
+#### 3.2 Priors
+```{r brms_propr}
+prior_wd <- c(set_prior("normal(0,5)", class="b", coef="MedianAgeMarriage_s"),
+                        set_prior("normal(0,5)", class="b", coef="Marriage_s"))
+wd_brm_prior <- brm(Divorce ~ MedianAgeMarriage_s + Marriage_s, data=wd,
+                    prior = prior_wd)
+```
+#### 3.3 Inference
+##### 3.3.1 Model Checking
+##### 3.3.1 Model Evaluation
+#### 3.4 Prediction
+#### 3.5 More Fanciness From This Package
 
 ## 4. `inla`
 #### 4.1 Package Intro and our Linear Model

@@ -1,0 +1,98 @@
+---  
+  title: "Course Schedule and Readings"  
+---  
+  While the topics covered are broad, each week will feature different examples from genetics, ecology, molecular, and evolutionary biology highlighting uses of each individual set of techniques. Each topic will have accompanying readings highlighting a general introduction to a technique (required), and one or more general references or examples. For access to blocked readings, biol609.   
+\
+To see the code of a lecture, load the slides, then change the file extension in your browser bar to .Rmd to get the code. Or go to [this link](https://github.com/biol609/biol609.github.io/tree/master/lectures) for all of the code.
+  
+  ### Week 1. 
+__Lecture__: [Why Advanced Data Analysis?](lectures/01_intro.html), [Re-Introduction to Bayesian Logic](./lectures/11_bayes_reintro.html) and [Sampling](./lectures/12_posterior_sampling.html)  
+__Reading:__ McElreath Ch. 1-3  
+__Etherpad:__ https://etherpad.wikimedia.org/p/609-bayes-2019  
+
+
+### Week 2. 
+__Lecture:__ [Linear Bayesian Models](./lectures/13_linear_models.html), [Multiple Predictor Variables (including Categoricals)](./lectures/14_multiple_predictors.html)  
+__Reading:__ McElreath Chapter 4-5  
+__Etherpad:__ https://etherpad.wikimedia.org/p/609-linreg-2019    
+
+### Week 3. 
+__Lecture:__ [Bayesian Multimodel Inference](./lectures/15_mmi.html), [Interaction Effects](./lectures/16_interactions.html)  
+__Reading:__ McElreath Chapter 6-7  
+__Additional Reading:__ [Aho et al 2013 Ecology](http://izt.ciens.ucv.ve/ecologia/Archivos/ECO_POB%202014/ECOPO2_2014/Aho%20et%20al%202014.pdf), [Gelman et al. 2013 on WAIC and LOO](http://link.springer.com/article/10.1007/s11222-013-9416-2)  
+__Etherpad:__ https://etherpad.wikimedia.org/p/609-mmi-2019    
+
+### Week 4. 
+__Lecture:__ [Markov Chain Monte-Carlo Approaches](./lectures/17_mcmc.html)   
+__Reading:__ McElreath Chapter 8,9  
+__Etherpad:__ https://etherpad.wikimedia.org/p/609-mcmc_entropy-2019    
+
+### Week 5. 
+__Lecture__: [GLM Review](lectures/02_generalized_linear_models.html), [MaxEnt and GLMs](./lectures/18_maxent_glm.html), Generalized Linear Models in a Bayesian Framework, [Overdispersed Models](./lectures/21_overdisp.html)    
+__Reading:__ McElreath Chapter 9-10 
+__Additional Readings:__ [O'Hara 2009](http://byrneslab.net/classes/biol609/O'Hara_2009_glmm.pdf) through section on GLMs, [O'Hara and Kotze 2010](http://byrneslab.net/classes/biol609/o'hara_and_kotze_do_not_log_transform.pdf), [Wharton and Hui 2011](http://byrneslab.net/classes/biol609/Wharton_Hui_2011_Ecology.pdf), [ver Hoef and Boveng 2007 on overdispersion](http://byrneslab.net/classes/biol609/Ver_Hoef_and_Boveng_qp_neg binomial.pdf), [Hartig DHARMa vignette](https://cran.r-project.org/web/packages/DHARMa/vignettes/DHARMa.html)  
+__Files:__ [Data for GLM Lecture](lectures/02_data.zip)
+__Etherpad:__ https://etherpad.wikimedia.org/p/609-glm-2019    
+
+
+### Week 6. 
+__Lecture:__ Zero Inflation, [Gamma and Zero Inflated Models](./lectures/20_zinfl.html), 
+__Reading:__ McElreath Chapter 11, [fitting Gamma models multiple ways](http://seananderson.ca/2014/04/08/gamma-glms.html), [Gamma hurdle model](http://seananderson.ca/2014/05/18/gamma-hurdle.html)  
+__Files:__ [Fishing Duration CSV](./lectures/data/20/fishing_duration.csv)  
+__Etherpad:__ https://etherpad.wikimedia.org/p/609-zig_zag-2019    
+
+
+### Week 7. 
+__Lecture:__ [Random Effects](./lectures/07_random_effects.html), [Mixed Models](./lectures/08_mixed_effects.html)  
+__Etherpad:__ https://etherpad.wikimedia.org/p/609-ranef-2019  
+__Reading:__ [Gelman and Hill Ch. 12](http://byrneslab.net/classes/biol609/gelman_hill_ch_12.pdf) and/or [Zuur on Random Effects](http://byrneslab.net/classes/biol609/Zuur_ch_5.pdf)  
+__Writings on visualization:__ <a href="http://strengejacke.wordpress.com/2014/10/26/visualizing-generalized-linear-mixed-effects-models-with-ggplot-rstats-lme4/">Visualizing Mixed Models part 1</a>, <a href="http://strengejacke.wordpress.com/2014/11/18/visualizing-generalized-linear-mixed-effects-models-part-2-rstats-lme4/">Visualizing Mixed Models part 2</a>, <a href="http://cran.r-project.org/web/packages/sjPlot/index.html">sjPlot</a>, <a href="http://anythingbutrbitrary.blogspot.com/2012/06/random-regression-coefficients-using.html">Random regression coefficients using lme4</a>, <a href="http://stackoverflow.com/questions/13847936/in-r-plotting-random-effects-from-lmer-lme4-package-using-qqmath-or-dotplot">Making mixed model plots look fancy</a>  
+__A Little More Reading:__ <a href="http://jonlefcheck.net/2013/03/13/r2-for-linear-mixed-effects-models/">R<sup>2</sup> for mixed models (from Jon Lefcheck)</a>  
+  __Your One Stop FAQ:__ [Ben Bolker's Mixed Model's FAQ](https://rawgit.com/bbolker/mixedmodels-misc/master/glmmFAQ.html)  
+__Files:__ [Mussels](./lectures/data/07/mussels.csv), [Uneven  Mussels](./lectures/data/07/mussels_ragged.csv), [RIKZ Beach data](./lectures/data/08/rikz.csv), [growth data](./lectures/data/07nestedGrowth.csv)    
+__R Packages:__ lme4, lmerTest, [merTools](https://github.com/jknowles/merTools), sjplot, RLRsim, cAIC4  
+  
+### Week 8. 
+__Lecture:__ [Varying Intercept Mixed Models](./lectures/22_varying_intercept.html) in a Bayesian Context, [Varying Slope Models](./lectures/23a_varslope.html), [Prediction with Mixed Models](./lectures/23b_prediction.html)  
+__Etherpad:__ https://etherpad.wikimedia.org/p/609-mixed_bayesian-2019   
+__Reading:__ McElreath Chapter 12, 13   
+__Additional Reading:__ [Gelman and Hill Ch. 12](http://byrneslab.net/classes/biol609/gelman_hill_ch_12.pdf) (see the bit on one model written 5 ways), [Gelman and Hill Ch. 13](http://byrneslab.net/classes/biol609/gelman_hill_ch_13.pdf), [Gelman on multiple comparisons in mixed models](http://byrneslab.net/classes/biol609/Gelman_multcomp.pdf)  
+
+### Week 9.
+  __Lecture:__ [Temporal Autocorrelation](lectures/05_timeseries.html), [Spatial Autocorrelation](lectures/06_spatial.html)\
+  __Etherpad:__ https://etherpad.wikimedia.org/p/609-autocorrelation-2019  
+  __Reading:__ [Zuur et al. on temporal autocorrelation](http://byrneslab.net/classes/biol609/Zuur_ch_6_temporal.pdf), [Why OLS is an Unbiased Estimator for GLS](https://dynamicecology.wordpress.com/2012/09/24/why-ols-estimator-is-an-unbiased-estimator-for-gls/), [Zuur et al. on spatial autocorrelation](http://byrneslab.net/classes/biol609/Zuur_ch_7_space.pdf), [Hawkings on the 8 1/2 deadly sins of spatial data analysis](http://byrneslab.net/classes/biol609/hawkins_2011_spatial.pdf)\
+  __Files:__ [Birds](./lectures/data/05/allbirds.csv), [Plankton](./lectures/data/05/planktonMeans.csv), [Boreal Forests](./lectures/data/06/Boreality.txt), [Irish EPA Data](./lectures/data/06/SDI2003.txt)  
+  __R Packages:__ nlme   
+
+  
+### Week 10. 
+__Lecture:__ [Gaussian Proces Models](./lectures/24_gaussian_process.html) and [Rethinking Alternatives](./lectures/25_beyond_rethinking.html)  
+__Etherpad:__ https://etherpad.wikimedia.org/p/609-beyond-2019   
+__Files:__ [predicted GP script](./lectures/data/gp/predict_gpl2.R)  
+__Reading:__ McElreath Chapter 14, [Roberts et al. 2012](http://byrneslab.net/classes/biol609/Roberts_et_al_2012_gaussian_process.pdf)  
+__Further reading:__ [R users will now inevitably become Bayesians](https://thinkinator.com/2016/01/12/r-users-will-now-inevitably-become-bayesians/), [rstanarm intro](https://cran.r-project.org/web/packages/rstanarm/vignettes/rstanarm.html), [brms overview](https://cran.r-project.org/web/packages/brms/vignettes/brms_overview.pdf), [stan](http://mc-stan.org), [Introduction to INLA](http://www.r-inla.org/events/bayes2013anintroductiontoinlawithacomparisontojagshandson), [more R-INLA examples](http://www.r-inla.org/examples/volume-1)  
+  
+### Week 11.
+__Lecture:__ Measurement Error and Missing Data, [Model II and Quantile Regression](./lectures/03_rma_quantile.html)
+__Etherpad:__ https://etherpad.wikimedia.org/p/609-alt_regression-2019  
+__Reading:__ [Warton et al. SMATR](http://byrneslab.net/classes/biol609/Warton_et_al_2012_MEE.pdf), [Warton et al. 2006 Model II Review](http://byrneslab.net/classes/biol609/Warton_et_al-2006-Biological_Reviews.pdf), [Cade and Noon 2003 on Quantile Regression](http://byrneslab.net/classes/biol609/Cade_and_Noon_2003_Quantile.pdf), [Brennen et al. 2015 quantile regression example](http://byrneslab.net/classes/biol609/Brennen_et_al_2015_quantile.pdf), [Colonescu Ch. 8 on Heteroskedasticity](https://bookdown.org/ccolonescu/RPoE4/heteroskedasticity.html)\
+__Files:__ [Elk data](./lectures/data/03/ekk_from_dryad.csv), [Clam data](./lectures/data/04/Clams.txt)  
+__R Packages:__ Quantreg  
+  
+### Week 12. 
+__Lecture:__ Meta-Analysis  
+__Etherpad:__ https://etherpad.wikimedia.org/p/609-metaanalysis-2019  
+
+### Week 13. 
+__Lecture:__ Causal Modeling
+  
+### Week 14.  
+__Lecture:__ [Intro to Structural Equation Models](https://1drv.ms/p/s!AvOIsObbweOroNIqHiVxra6SIrp4gw), [Implementing Piecewise SEM](https://1drv.ms/f/s!AvOIsObbweOroNIitg7KpsLhgffJrw)  
+__Etherpad:__ https://etherpad.wikimedia.org/p/609-sem-2019  
+__Reading:__ [Grace et al 2012 Ecosphere](http://byrneslab.net/classes/biol609/Grace_et_al-2012-Ecosphere.pdf)  
+__R packages:__ piecewiseSEM  
+
+### Week 15.  
+__Final Presentations:__  
+__Final Papers Due:__

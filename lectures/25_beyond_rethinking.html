@@ -218,7 +218,7 @@ rstan_wd_time &lt;- system.time(
 ##  50.935   4.430  73.843</code></pre>
 <pre class="r"><code>rstan_wd_time</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.188   0.003   0.193</code></pre>
+##   0.191   0.002   0.197</code></pre>
 <p>Daaaamn. Yeah, compiling a model can take a while.</p>
 </div>
 <div id="mixed-model" class="section level4">
@@ -535,7 +535,7 @@ summary(wd_arm_optim)</code></pre>
 <h2>3. <code>brms</code></h2>
 <div id="package-intro-and-our-linear-model-1" class="section level4">
 <h4>3.1 Package Intro and our Linear Model</h4>
-<p><code>brms</code> is a fracking amazing package.</p>
+<p><code>brms</code> is a fracking amazing package. It’s amazing because, syntactically, it shares a lot in common with <code>rstanarm</code>. But, models are compiled before running. And so, the wonderful developer of the package has decided to take the swiss-army-knife approach, and is, daily, adding new customizations to <code>brms</code> to allow it to do any number of complex models, all with a fairly simple (relative to <code>rethinking</code> or <code>stan</code> formulation.)</p>
 <pre class="r"><code>library(brms)
 
 wd_brm_time &lt;- system.time(
