@@ -3,15 +3,78 @@
 <head>
   <meta charset="utf-8">
   <meta name="generator" content="pandoc">
-  <title></title>
+  <title>01_intro.utf8.md</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-  <link rel="stylesheet" href="libs/reveal.js-3.3.0/css/reveal.css"/>
+  <link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/reveal.css"/>
 
 
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
 
-<link rel="stylesheet" href="libs/reveal.js-3.3.0/css/theme/white.css" id="theme">
+<link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/theme/white.css" id="theme">
 
 
   <!-- some tweaks to reveal css -->
@@ -54,22 +117,394 @@
       border-color: gray;
     }
 
+
   </style>
 
     <style type="text/css">code{white-space: pre;}</style>
 
     <link rel="stylesheet" href="style.css"/>
-    <!-- Printing and PDF exports -->
-    <script>
-      var link = document.createElement( 'link' );
-      link.rel = 'stylesheet';
-      link.type = 'text/css';
-      link.href = window.location.search.match( /print-pdf/gi ) ? 'libs/reveal.js-3.3.0/css/print/pdf.css' : 'libs/reveal.js-3.3.0/css/print/paper.css';
-      document.getElementsByTagName( 'head' )[0].appendChild( link );
-    </script>
-    <!--[if lt IE 9]>
-    <script src="libs/reveal.js-3.3.0/lib/js/html5shiv.js"></script>
-    <![endif]-->
+
+<!-- Printing and PDF exports -->
+<script id="paper-css" type="application/dynamic-css">
+
+/* Default Print Stylesheet Template
+   by Rob Glazebrook of CSSnewbie.com
+   Last Updated: June 4, 2008
+
+   Feel free (nay, compelled) to edit, append, and
+   manipulate this file as you see fit. */
+
+
+@media print {
+
+	/* SECTION 1: Set default width, margin, float, and
+	   background. This prevents elements from extending
+	   beyond the edge of the printed page, and prevents
+	   unnecessary background images from printing */
+	html {
+		background: #fff;
+		width: auto;
+		height: auto;
+		overflow: visible;
+	}
+	body {
+		background: #fff;
+		font-size: 20pt;
+		width: auto;
+		height: auto;
+		border: 0;
+		margin: 0 5%;
+		padding: 0;
+		overflow: visible;
+		float: none !important;
+	}
+
+	/* SECTION 2: Remove any elements not needed in print.
+	   This would include navigation, ads, sidebars, etc. */
+	.nestedarrow,
+	.controls,
+	.fork-reveal,
+	.share-reveal,
+	.state-background,
+	.reveal .progress,
+	.reveal .backgrounds {
+		display: none !important;
+	}
+
+	/* SECTION 3: Set body font face, size, and color.
+	   Consider using a serif font for readability. */
+	body, p, td, li, div {
+		font-size: 20pt!important;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		color: #000;
+	}
+
+	/* SECTION 4: Set heading font face, sizes, and color.
+	   Differentiate your headings from your body text.
+	   Perhaps use a large sans-serif for distinction. */
+	h1,h2,h3,h4,h5,h6 {
+		color: #000!important;
+		height: auto;
+		line-height: normal;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		text-shadow: 0 0 0 #000 !important;
+		text-align: left;
+		letter-spacing: normal;
+	}
+	/* Need to reduce the size of the fonts for printing */
+	h1 { font-size: 28pt !important;  }
+	h2 { font-size: 24pt !important; }
+	h3 { font-size: 22pt !important; }
+	h4 { font-size: 22pt !important; font-variant: small-caps; }
+	h5 { font-size: 21pt !important; }
+	h6 { font-size: 20pt !important; font-style: italic; }
+
+	/* SECTION 5: Make hyperlinks more usable.
+	   Ensure links are underlined, and consider appending
+	   the URL to the end of the link for usability. */
+	a:link,
+	a:visited {
+		color: #000 !important;
+		font-weight: bold;
+		text-decoration: underline;
+	}
+	/*
+	.reveal a:link:after,
+	.reveal a:visited:after {
+		content: " (" attr(href) ") ";
+		color: #222 !important;
+		font-size: 90%;
+	}
+	*/
+
+
+	/* SECTION 6: more reveal.js specific additions by @skypanther */
+	ul, ol, div, p {
+		visibility: visible;
+		position: static;
+		width: auto;
+		height: auto;
+		display: block;
+		overflow: visible;
+		margin: 0;
+		text-align: left !important;
+	}
+	.reveal pre,
+	.reveal table {
+		margin-left: 0;
+		margin-right: 0;
+	}
+	.reveal pre code {
+		padding: 20px;
+		border: 1px solid #ddd;
+	}
+	.reveal blockquote {
+		margin: 20px 0;
+	}
+	.reveal .slides {
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 0 !important;
+		zoom: 1 !important;
+
+		overflow: visible !important;
+		display: block !important;
+
+		text-align: left !important;
+		-webkit-perspective: none;
+		   -moz-perspective: none;
+		    -ms-perspective: none;
+		        perspective: none;
+
+		-webkit-perspective-origin: 50% 50%;
+		   -moz-perspective-origin: 50% 50%;
+		    -ms-perspective-origin: 50% 50%;
+		        perspective-origin: 50% 50%;
+	}
+	.reveal .slides section {
+		visibility: visible !important;
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+		display: block !important;
+		overflow: visible !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 60px 20px !important;
+		z-index: auto !important;
+
+		opacity: 1 !important;
+
+		page-break-after: always !important;
+
+		-webkit-transform-style: flat !important;
+		   -moz-transform-style: flat !important;
+		    -ms-transform-style: flat !important;
+		        transform-style: flat !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+
+		-webkit-transition: none !important;
+		   -moz-transition: none !important;
+		    -ms-transition: none !important;
+		        transition: none !important;
+	}
+	.reveal .slides section.stack {
+		padding: 0 !important;
+	}
+	.reveal section:last-of-type {
+		page-break-after: avoid !important;
+	}
+	.reveal section .fragment {
+		opacity: 1 !important;
+		visibility: visible !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+	}
+	.reveal section img {
+		display: block;
+		margin: 15px 0px;
+		background: rgba(255,255,255,1);
+		border: 1px solid #666;
+		box-shadow: none;
+	}
+
+	.reveal section small {
+		font-size: 0.8em;
+	}
+
+}  
+</script>
+
+
+<script id="pdf-css" type="application/dynamic-css">
+    
+/**
+ * This stylesheet is used to print reveal.js
+ * presentations to PDF.
+ *
+ * https://github.com/hakimel/reveal.js#pdf-export
+ */
+
+* {
+	-webkit-print-color-adjust: exact;
+}
+
+body {
+	margin: 0 auto !important;
+	border: 0;
+	padding: 0;
+	float: none !important;
+	overflow: visible;
+}
+
+html {
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+/* Remove any elements not needed in print. */
+.nestedarrow,
+.reveal .controls,
+.reveal .progress,
+.reveal .playback,
+.reveal.overview,
+.fork-reveal,
+.share-reveal,
+.state-background {
+	display: none !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	text-shadow: 0 0 0 #000 !important;
+}
+
+.reveal pre code {
+	overflow: hidden !important;
+	font-family: Courier, 'Courier New', monospace !important;
+}
+
+ul, ol, div, p {
+	visibility: visible;
+	position: static;
+	width: auto;
+	height: auto;
+	display: block;
+	overflow: visible;
+	margin: auto;
+}
+.reveal {
+	width: auto !important;
+	height: auto !important;
+	overflow: hidden !important;
+}
+.reveal .slides {
+	position: static;
+	width: 100%;
+	height: auto;
+
+	left: auto;
+	top: auto;
+	margin: 0 !important;
+	padding: 0 !important;
+
+	overflow: visible;
+	display: block;
+
+	-webkit-perspective: none;
+	   -moz-perspective: none;
+	    -ms-perspective: none;
+	        perspective: none;
+
+	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
+	   -moz-perspective-origin: 50% 50%;
+	    -ms-perspective-origin: 50% 50%;
+	        perspective-origin: 50% 50%;
+}
+
+.reveal .slides section {
+	page-break-after: always !important;
+
+	visibility: visible !important;
+	position: relative !important;
+	display: block !important;
+	position: relative !important;
+
+	margin: 0 !important;
+	padding: 0 !important;
+	box-sizing: border-box !important;
+	min-height: 1px;
+
+	opacity: 1 !important;
+
+	-webkit-transform-style: flat !important;
+	   -moz-transform-style: flat !important;
+	    -ms-transform-style: flat !important;
+	        transform-style: flat !important;
+
+	-webkit-transform: none !important;
+	   -moz-transform: none !important;
+	    -ms-transform: none !important;
+	        transform: none !important;
+}
+
+.reveal section.stack {
+	margin: 0 !important;
+	padding: 0 !important;
+	page-break-after: avoid !important;
+	height: auto !important;
+	min-height: auto !important;
+}
+
+.reveal img {
+	box-shadow: none;
+}
+
+.reveal .roll {
+	overflow: visible;
+	line-height: 1em;
+}
+
+/* Slide backgrounds are placed inside of their slide when exporting to PDF */
+.reveal section .slide-background {
+	display: block !important;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: -1;
+}
+
+/* All elements should be above the slide-background */
+.reveal section>* {
+	position: relative;
+	z-index: 1;
+}
+
+/* Display slide speaker notes when 'showNotes' is enabled */
+.reveal .speaker-notes-pdf {
+	display: block;
+	width: 100%;
+	max-height: none;
+	left: auto;
+	top: auto;
+	z-index: 100;
+}
+
+/* Display slide numbers when 'slideNumber' is enabled */
+.reveal .slide-number-pdf {
+	display: block;
+	position: absolute;
+	font-size: 14px;
+}
+
+</script>
+
+
+<script>
+var style = document.createElement( 'style' );
+style.type = 'text/css';
+var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
+var style_script = document.getElementById(style_script_id).text;
+style.innerHTML = style_script;
+document.getElementsByTagName('head')[0].appendChild(style);
+</script>
 
 </head>
 <body>
@@ -78,7 +513,7 @@
 
 
 <section id="section" class="slide level2" data-background="images/01/gorgeous-wildflowers-37110-37953-hd-wallpapers.jpg">
-<h1></h1>
+<h2></h2>
 <br><br>
 <center>
 <div style="font-size: 2em;font-weight: bold; color:black;background-color:white;opacity:0.8;">
@@ -91,8 +526,8 @@ UMass Boston<br />
 </center>
 </section>
 <section id="first-somenew-technology" class="slide level2">
-<h1>First, SomeNew Technology</h1>
-<p><a href="https://etherpad.wikimedia.org/p/609-intro" class="uri">https://etherpad.wikimedia.org/p/609-intro</a></p>
+<h2>First, SomeNew Technology</h2>
+<p><a href="https://etherpad.wikimedia.org/p/609-intro-2019" class="uri">https://etherpad.wikimedia.org/p/609-intro-2019</a></p>
 <ul>
 <li><p>This class will use collaborative note-taking</p></li>
 <li><p>Research shows that this enhances learning!</p></li>
@@ -100,26 +535,28 @@ UMass Boston<br />
 </ul>
 </section>
 <section id="second-some-old-technology" class="slide level2">
-<h1>Second, Some Old Technology</h1>
-<p><img src="images/01/sticky-note-color-clipart.jpeg" style="width:30.0%" /></p>
+<h2>Second, Some Old Technology</h2>
+<p><img data-src="images/01/sticky-note-color-clipart.jpeg" style="width:30.0%" /></p>
 <ul>
 <li class="fragment">Green: Party on, Wayne</li>
 <li class="fragment">Red: I fell off the understanding wagon<br />
+</li>
+<li class="fragment">Yellow: Slow down, Mister Teacher<br />
 </li>
 <li class="fragment">Blue: Write a question/Other</li>
 </ul>
 </section>
 <section id="outline-for-today" class="slide level2">
-<h1>Outline for Today</h1>
+<h2>Outline for Today</h2>
 <ol type="1">
 <li><p>Who are you?</p></li>
 <li><p>How will this course work?</p></li>
 <li><p>What are we doing here?</p></li>
-<li><p>Review of generalized linear modeling techniques so far</p></li>
+<li><p>Rethinking everything</p></li>
 </ol>
 </section>
 <section id="who-are-you" class="slide level2">
-<h1>Who are You?</h1>
+<h2>Who are You?</h2>
 <ol type="1">
 <li><p>Name</p></li>
 <li><p>Lab</p></li>
@@ -128,16 +565,16 @@ UMass Boston<br />
 </ol>
 </section>
 <section id="outline-for-today-1" class="slide level2">
-<h1>Outline for Today</h1>
+<h2>Outline for Today</h2>
 <ol type="1">
 <li><p>Who are you?</p></li>
 <li><p><strong>How will this course work?</strong></p></li>
 <li><p>What are we doing here?</p></li>
-<li><p>Review of generalized linear modeling techniques so far</p></li>
+<li><p>Rethinking everything</p></li>
 </ol>
 </section>
 <section id="lecture-and-lab" class="slide level2">
-<h1>Lecture and Lab</h1>
+<h2>Lecture and Lab</h2>
 <ul>
 <li>1 Hour Lecutre on Concepts with code</li>
 <li>1/2 Hour work on problem</li>
@@ -145,7 +582,7 @@ UMass Boston<br />
 </ul>
 </section>
 <section id="lectures-are-coded" class="slide level2">
-<h1>Lectures are Coded</h1>
+<h2>Lectures are Coded</h2>
 R Markdown sometimes with Reveal.js  <br />
 
 <center>
@@ -153,19 +590,29 @@ R Markdown sometimes with Reveal.js  <br />
 </center>
 <p><a href="http://github.com/biol609/biol609.github.io" class="uri">http://github.com/biol609/biol609.github.io</a></p>
 </section>
+<section id="interact-via-slack" class="slide level2">
+<h2>Interact via Slack</h2>
+<p><img data-src="images/01/umbrug.jpg" /></p>
+<ul>
+<li>Join the #Biol609 channel
+<ul>
+<li><a href="https://umbrug.slack.com/" class="uri">https://umbrug.slack.com/</a> <br>  </li>
+</ul></li>
+</ul>
+</section>
 <section id="the-book-statistical-rethinking" class="slide level2">
-<h1>The Book: Statistical Rethinking</h1>
-<p><img src="images/01/book.jpg" style="width:40.0%" /></p>
+<h2>The Book: Statistical Rethinking</h2>
+<p><img data-src="./images/01/book.jpg" style="width:40.0%" /></p>
 </section>
 <section id="monthly-problem-sets" class="slide level2">
-<h1>Monthly Problem Sets</h1>
+<h2>Monthly Problem Sets</h2>
 <ol type="1">
 <li><p>2-3 Problems covering topics from the month</p></li>
 <li><p>We will go over them in 1/2 hour of the next class, self-graded</p></li>
 </ol>
 </section>
 <section id="final-paper" class="slide level2">
-<h1>Final Paper</h1>
+<h2>Final Paper</h2>
 <br><br><br>
 <h3>
 Do your research
@@ -173,7 +620,7 @@ Do your research
 <p>(but be statsy about it)</p>
 </section>
 <section id="extra-credit-1-be-me" class="slide level2">
-<h1>Extra Credit 1: Be Me</h1>
+<h2>Extra Credit 1: Be Me</h2>
 <ul>
 <li><p>I have a few meetings this semester</p></li>
 <li><p>Will have some guest lectures</p></li>
@@ -181,64 +628,74 @@ Do your research
 </ul>
 </section>
 <section id="extra-credit-2-livin-la-vida-data-science" class="slide level2">
-<h1>Extra Credit 2: Livin’ La Vida Data Science</h1>
+<h2>Extra Credit 2: Livin’ La Vida Data Science</h2>
 <table>
 <tbody>
 <tr class="odd">
-<td><img src="images/01/nssd.jpg" /></td>
-<td><img src="images/01/hadley.jpg" /></td>
+<td><img data-src="images/01/nssd.jpg" /></td>
+<td><img data-src="images/01/hadley.jpg" /></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="extra-credit-3-data-science-for-social-good" class="slide level2">
-<h1>Extra Credit 3: Data Science for Social Good</h1>
-<p><img src="images/01/dssg.png" /></p>
-<p><a href="http://www.meetup.com/Data-Science-for-Social-Good/" class="uri">http://www.meetup.com/Data-Science-for-Social-Good/</a></p>
+<section id="extra-credit-3-do-something-local" class="slide level2">
+<h2>Extra Credit 3: Do Something Local!</h2>
+<ul>
+<li><p>Go to meetup.com</p></li>
+<li><p>Search out data science, stan, or R meetups</p></li>
+</ul>
 </section>
 <section id="extra-credit-4-stats-lunch" class="slide level2">
-<h1>Extra Credit 4: Stats Lunch</h1>
+<h2>Extra Credit 4: Stats Lunch</h2>
 <h3>
 Tuesdays 12-1 in M-2-628
 </h3>
 <p>It’s mostly psychologists, so let’s start interacting!</p>
 </section>
+<section id="extra-credit-5-help-make-the-umbrug-personal" class="slide level2">
+<h2>Extra Credit 5: Help make the UMBRUG personal</h2>
+<p><img data-src="images/01/umbrug.jpg" /></p>
+<ul>
+<li><p>We have online infrastructure</p></li>
+<li><p>Need someone to help coordinate actual meetings, etc!</p></li>
+</ul>
+</section>
 <section id="outline-for-today-2" class="slide level2">
-<h1>Outline for Today</h1>
+<h2>Outline for Today</h2>
 <ol type="1">
 <li><p>Who are you?</p></li>
 <li><p>How will this course work?</p></li>
 <li><p><strong>What are we doing here?</strong></p></li>
-<li><p>Review of generalized linear modeling techniques so far</p></li>
+<li><p>Rethinking everything</p></li>
 </ol>
 </section>
 <section id="model-a-palooza" class="slide level2">
-<h1>Model-A-Palooza</h1>
+<h2>Model-A-Palooza</h2>
 <p><strong>Objective 1)</strong> To learn how to think about your study system and research question of interest in a systematic way and match it with a realistic process-based model.</p>
 </section>
 <section id="enter-the-reverend" class="slide level2">
-<h1>Enter The Reverend</h1>
+<h2>Enter The Reverend</h2>
 <p><strong>Objective 2)</strong> To understand how to build and fit hierarchical/multilevel models in a likelihood and Bayesian framework.</p>
 </section>
 <section id="the-rest-of-your-life" class="slide level2">
-<h1>The Rest of Your Life</h1>
+<h2>The Rest of Your Life</h2>
 <p><strong>Objective 3)</strong> Provide the grounding needed to effectively collaborate with statistical experts.</p>
 <p><strong>Objective 4)</strong> Allow students to gain the knowledge necessary to become life-long learners of data analysis techniques, able to incorporate new techniques into their analytic toolbelt as needed.</p>
 </section>
 <section id="modeling-so-far-general-linear-models" class="slide level2">
-<h1>Modeling So Far: General Linear Models</h1>
+<h2>Modeling So Far: General Linear Models</h2>
 <p><span class="math display">\[\boldsymbol{Y} = \boldsymbol{b X} + \boldsymbol{\epsilon}\]</span></p>
 <p><img src="01_intro_files/figure-revealjs/iris_plot-1.jpeg" width="768" /></p>
 </section>
 <section id="foundational-modeling-approach" class="slide level2">
-<h1>Foundational Modeling Approach</h1>
+<h2>Foundational Modeling Approach</h2>
 <ol type="1">
 <li><p>What is your data generating process?</p></li>
 <li><p>What is your error generating process?</p></li>
 </ol>
 </section>
 <section id="philosophical-approach" class="slide level2">
-<h1>Philosophical Approach</h1>
+<h2>Philosophical Approach</h2>
 <ul>
 <li class="fragment"><strong>Frequentist Inference:</strong> Correct conclusion drawn from repeated experiments
 <ul>
@@ -246,7 +703,7 @@ Tuesdays 12-1 in M-2-628
 <br />
 </li>
 </ul></li>
-<li class="fragment"><strong>Likelihoodist/Information Theoretic Inference:</strong> Evaluate the weight of evidence for different hypotheses
+<li class="fragment"><strong>Information Theoretic Inference:</strong> Evaluate the weight of evidence for different hypotheses
 <ul>
 <li class="fragment">Derivative of frequentist mode of thinking<br />
 </li>
@@ -260,211 +717,184 @@ Tuesdays 12-1 in M-2-628
 </ul></li>
 </ul>
 </section>
-<section id="two-foci-of-the-course" class="slide level2">
-<h1>Two Foci of the Course</h1>
+<section id="the-foci-of-the-course" class="slide level2">
+<h2>The Foci of the Course</h2>
 <ol type="1">
-<li><p>Funky Error Structures</p></li>
+<li><p>More realistic/complex <strong>Generative Models</strong></p></li>
+<li><p>Thinking with Care about <strong>Error Structures</strong></p></li>
 <li><p>Bayesian Inference and the Freedom it Brings for Process-Based Models</p></li>
+<li><p>Causal Inference</p></li>
 </ol>
 </section>
-<section id="heterogeneous-error-structure" class="slide level2">
-<h1>Heterogeneous Error Structure</h1>
-<p><img src="images/01/Fig-1-Linear-models-fi-tted-using-the-generalized-least-squares-GLS-method-corrected.png" /></p>
-</section>
-<section id="spatial-autocorrelation" class="slide level2">
-<h1>Spatial Autocorrelation</h1>
-<p><img src="images/01/spatial_auto.png" style="width:70.0%" /></p>
-</section>
-<section id="temporal-autocorrelation" class="slide level2">
-<h1>Temporal Autocorrelation</h1>
-<p><img src="images/01/dfs_autocorrelation_sm.gif" /></p>
-</section>
-<section id="mixed-models" class="slide level2">
-<h1>Mixed Models</h1>
-<p><img src="images/01/repeated_measures.png" /></p>
-</section>
-<section id="mixed-models-1" class="slide level2">
-<h1>Mixed Models</h1>
-<p><img src="images/01/mixed_models_walken.jpg" /></p>
-</section>
-<section id="zero-inflated-models" class="slide level2">
-<h1>Zero Inflated Models</h1>
+<section id="new-process-based-models-zero-inflated-models" class="slide level2">
+<h2>New Process-Based Models: Zero Inflated Models</h2>
 <p><img src="01_intro_files/figure-revealjs/z-1.jpeg" width="768" /></p>
 </section>
-<section id="deep-dives-into-bayes" class="slide level2">
-<h1>Deep Dives into Bayes</h1>
-<p><img src="images/01/052816_bayesian-opener_free.jpg" /></p>
+<section id="mixed-models" class="slide level2">
+<h2>Mixed Models</h2>
+<p><img data-src="./images/01/repeated_measures.png" /></p>
 </section>
-<section id="process-models" class="slide level2">
-<h1>Process Models</h1>
-<p><img src="images/01/process.jpg" style="width:80.0%" /></p>
+<section id="mixed-models-1" class="slide level2">
+<h2>Mixed Models</h2>
+<p><img data-src="./images/01/mixed_models_walken.jpg" /></p>
+</section>
+<section id="heterogeneous-error-structure" class="slide level2">
+<h2>Heterogeneous Error Structure</h2>
+<p><img data-src="./images/01/Fig-1-Linear-models-fi-tted-using-the-generalized-least-squares-GLS-method-corrected.png" /></p>
+</section>
+<section id="spatial-autocorrelation" class="slide level2">
+<h2>Spatial Autocorrelation</h2>
+<p><img data-src="./images/01/spatial_auto.png" style="width:70.0%" /></p>
+</section>
+<section id="temporal-autocorrelation" class="slide level2">
+<h2>Temporal Autocorrelation</h2>
+<p><img data-src="./images/01/dfs_autocorrelation_sm.gif" /></p>
+</section>
+<section id="deep-dives-into-bayes" class="slide level2">
+<h2>Deep Dives into Bayes</h2>
+<p><img data-src="./images/01/052816_bayesian-opener_free.jpg" /></p>
+</section>
+<section id="causal-modeling-with-graph-theory" class="slide level2">
+<h2>Causal Modeling with Graph Theory</h2>
+<p><img data-src="./images/01/process.jpg" style="width:80.0%" /></p>
 </section>
 <section id="outline-for-today-3" class="slide level2">
-<h1>Outline for Today</h1>
+<h2>Outline for Today</h2>
 <ol type="1">
 <li><p>Who are you?</p></li>
 <li><p>How will this course work?</p></li>
 <li><p>What are we doing here?</p></li>
-<li><p><strong>Review of generalized linear modeling techniques so far </strong></p></li>
+<li><p><strong>Rethinking everything</strong></p></li>
 </ol>
 </section>
-<section id="the-general-linear-model" class="slide level2">
-<h1>The General Linear Model</h1>
-<p><span class="math display">\[\Large \boldsymbol{Y} = \boldsymbol{\beta X} + \boldsymbol{\epsilon} \]</span> <span class="math display">\[\Large \epsilon \sim \mathcal{N}(0,\sigma^{2})\]</span></p>
+<section id="how-do-you-view-data-analysis" class="slide level2">
+<h2>How do You View Data Analysis?</h2>
+<img data-src="./images/11/many_paths.jpg" />
+<div class="fragment">
+NO!
+</div>
+</section>
+<section id="one-hypothesis-one-statistical-model" class="slide level2">
+<h2>One Hypothesis ≠ One Statistical Model</h2>
+<p><img data-src="./images/01/multiple_models.jpg" /></p>
+<div class="fragment">
+Apply this to your research!
+</div>
+</section>
+<section id="back-to-bayes-ics" class="slide level2">
+<h2>Back to Bayes-ics</h2>
+<p><img data-src="./images/01/bayes-and-hus-theory.png" alt="image" /></p>
+</section>
+<section id="bayesian-inference" class="slide level2">
+<h2>Bayesian Inference</h2>
+<p><img data-src="./images/01/bayes_in_the_head.jpg" alt="image" style="width:40.0%" /><br />
+</p>
+<p><font size="6"></p>
 <ul>
-<li><p>This equation is huge. X can be anything - categorical, continuous, squared, sine, etc.</p></li>
-<li><p>There can be straight additivity, or interactions</p></li>
+<li><p>Estimate probability of a parameter</p></li>
+<li><p>State degree of believe in specific parameter values</p></li>
+<li><p>Evaluate probability of hypothesis given the data</p></li>
+<li><p>Incorporate prior knowledge</p></li>
 </ul>
+<p></font></p>
 </section>
-<section id="general-linear-models" class="slide level2">
-<h1>General Linear Models</h1>
-<ol type="1">
-<li><p>Simple Linear Regresion</p></li>
-<li><p>ANOVA</p></li>
-<li><p>ANCOVA</p></li>
-<li><p>Multiple Linear Regression</p></li>
-<li><p>MLR with Interactions</p></li>
-</ol>
-</section>
-<section id="simple-linear-regression" class="slide level2">
-<h1>Simple Linear Regression</h1>
-<p><span class="math display">\[y_{i} = \beta_{0} + \beta_{1}x_{i} + \epsilon_{i}\]</span> <span class="math display">\[\epsilon \sim \mathcal{N}(0,\sigma^{2})\]</span></p>
-<p><img src="01_intro_files/figure-revealjs/iris_plot_lm-1.jpeg" width="768" /></p>
-</section>
-<section id="multiple-linear-regression" class="slide level2">
-<h1>Multiple Linear Regression</h1>
-<p><span class="math display">\[y_{i} = \beta_{0} + \sum^{k}_{j=0}\beta_{j}x_{ij} + \epsilon_{i}\]</span></p>
-<p><img src="01_intro_files/figure-revealjs/iris_plot_mlm-1.jpeg" width="768" /></p>
-</section>
-<section id="categorical-predictors-and-anova" class="slide level2">
-<h1>Categorical Predictors and ANOVA</h1>
-<p><span class="math display">\[y_{ij} = \beta_{0} + \sum \beta_{j}x_{ij} + \epsilon_{j}, \qquad x_{i} = 0,1\]</span></p>
-<p><img src="01_intro_files/figure-revealjs/iris_plot_anova-1.jpeg" width="768" /></p>
-</section>
-<section id="interactions-and-mixing-categorical-and-continuous-predictors" class="slide level2">
-<h1>Interactions and Mixing Categorical and Continuous Predictors</h1>
-<p><img src="01_intro_files/figure-revealjs/iris_plot-1.jpeg" width="768" /></p>
-</section>
-<section id="generalized-linear-models" class="slide level2">
-<h1>Generalized Linear Models</h1>
-<p><span class="math display">\[\boldsymbol{\eta} = \boldsymbol{\beta X}\]</span><br />
-<span class="math display">\[f(\boldsymbol{\hat{Y}}) = \boldsymbol{\eta}\]</span><br />
-f(y) is called the <strong>link</strong> function<br />
-<br />
-<span class="math display">\[\boldsymbol{Y} = E(\boldsymbol{\hat{Y}}, \theta)\]</span><br />
-E is any distribution from the Exponential Family<br />
-<span class="math inline">\(\theta\)</span> is an error parameter, and can be a function of Y</p>
-</section>
-<section id="glms-link-functions" class="slide level2">
-<h1>GLMs: Link Functions</h1>
-<p>Basic Premise:</p>
-<ol type="1">
-<li><span>We have a linear predictor, <span class="math inline">\(\eta_i = a+Bx\)</span></span><br />
-<br />
-</li>
-<li>That predictor is linked to the fitted value of <span class="math inline">\(Y_i\)</span>, <span class="math inline">\(\mu_i\)</span><br />
-<br />
-</li>
-<li>We call this a link function, such that <span class="math inline">\(g(\mu_i) = \eta_i\)</span><br />
-
+<section id="section-1" class="slide level2">
+<h2></h2>
+<h1>
 <ul>
-<li>For example, for a linear function, <span class="math inline">\(\mu_i = \eta_i\)</span><br />
+<li class="fragment">Frequentist: p(x ≤ D | H)<br />
+<br />
+<br />
 </li>
-<li>For an exponential function, <span class="math inline">\(log(\mu_i) = \eta_i\)</span></li>
+<li class="fragment">Likelhoodist: p( D | H)<br />
+<br />
+<br />
+</li>
+<li class="fragment">Bayesian: p(H | D)</li>
+</ul>
+</h1>
+</section>
+<section id="why-is-this-approach-inherently-bayesian" class="slide level2">
+<h2>Why is this approach inherently Bayesian?</h2>
+<p><img data-src="./images/01/multiple_models.jpg" /></p>
+</section>
+<section id="lets-see-how-bayes-works" class="slide level2">
+<h2>Let’s see how Bayes works</h2>
+<p><br />
+I have a bag with 6 stones. Some are black. Some are white.<br />
+<br />
+I’m going to draw stones, one at a time, with replacement, and let’s see the number of ways that the draw could have been produced.<br />
+<br />
+After 4 draws, let’s calculate the probability of W white stones and B black stones. Let’s formalize how we made this calculation. This leads to conditional versus marginal probabilities.<br />
+<br />
+</p>
+</section>
+<section id="lets-see-how-bayes-works-1" class="slide level2">
+<h2>Let’s see how Bayes works…</h2>
+<p>Now, I will look at the stones, and introduce a prior or some sort for W.<br />
+<br />
+Let’s do a new set of draws, but this time, on the board, update our posterior.<br />
+<br />
+And finally, relate this to the definition of Bayes theorem in 2.3.4 pg 36.</p>
+</section>
+<section id="lets-do-this-in-r-with-grid-sampling" class="slide level2">
+<h2>Let’s do this in R with Grid Sampling!</h2>
+<p>Use <code>dplyr</code> and mutate for the following.</p>
+<ol start="0" type="1">
+<li>Chose what fraction of stones is white in a bag of infinite size.<br />
+<br />
+</li>
+<li>Creat a column of possible values from 0 to 1.<br />
+<br />
+</li>
+<li>Define a prior as the second column.<br />
+<br />
+</li>
+<li>Calculate your posterior after 1 random draw, then repeat for draws 2-4 plotting your posteriors
+<ul>
+<li>posterior = likelihood*prior/sum(all posterior values)<br />
+<br />
+</li>
 </ul></li>
+<li>Plot your posterior given 100 draws, given your initial prior.</li>
 </ol>
 </section>
-<section id="some-common-links" class="slide level2">
-<h1>Some Common Links</h1>
-<ul>
-<li><p>Identity: <span class="math inline">\(\mu = \eta\)</span>, e.g. <span class="math inline">\(\mu = a + bx\)</span></p></li>
-<li><p>Log: <span class="math inline">\(log(\mu) = \eta\)</span>, e.g. <span class="math inline">\(\mu = e^{a + bx}\)</span></p></li>
-<li><p>Logit: <span class="math inline">\(logit(\mu) = \eta\)</span>, e.g. <span class="math inline">\(\mu = \frac{e^{a + bx}}{1+e^{a + bx}}\)</span></p></li>
-<li><p>Inverse: <span class="math inline">\(\frac{1}{\mu} = \eta\)</span>, e.g. <span class="math inline">\(\mu = (a + bx)^{-1}\)</span></p></li>
-</ul>
-</section>
-<section id="glms-error" class="slide level2">
-<h1>GLMs: Error</h1>
-<p>Basic Premise:</p>
-<ol type="1">
-<li><p><span>The error distribution is from the <span><em>exponential</em></span> family</span></p>
-<ul>
-<li>e.g., Normal, Poisson, Binomial, and more.</li>
-</ul>
+<section id="introducing-rethinking" class="slide level2">
+<h2>Introducing rethinking</h2>
+<p>This is from the Rcode on page 42, box 2.6. Assume 100 draws.<br />
 <br />
-<br />
-</li>
-<li><p>For these distributions, the variance is a funciton of the fitted value on the curve: <span class="math inline">\(var(Y_i) = \theta V(\mu_i)\)</span></p>
-<ul>
-<li>For a normal distribution, <span class="math inline">\(var(\mu_i) = \theta*1\)</span> as <span class="math inline">\(V(\mu_i)=1\)</span><br />
-</li>
-<li>For a poisson distribution, <span class="math inline">\(var(\mu_i) = 1*\mu_i\)</span> as <span class="math inline">\(V(\mu_i)=\mu_i\)</span></li>
-</ul></li>
-</ol>
+</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(rethinking)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="co">#alist is a list for used to define a model</span></a>
+<a class="sourceLine" id="cb1-4" data-line-number="4">draws_mod &lt;-<span class="st"> </span><span class="kw">alist</span>(</a>
+<a class="sourceLine" id="cb1-5" data-line-number="5">  </a>
+<a class="sourceLine" id="cb1-6" data-line-number="6">  <span class="co">#our likelihood</span></a>
+<a class="sourceLine" id="cb1-7" data-line-number="7">  w <span class="op">~</span><span class="st"> </span><span class="kw">dbinom</span>(<span class="dv">100</span>, p)</a>
+<a class="sourceLine" id="cb1-8" data-line-number="8">  </a>
+<a class="sourceLine" id="cb1-9" data-line-number="9">  <span class="co">#our prior - can be something else if you want!</span></a>
+<a class="sourceLine" id="cb1-10" data-line-number="10">  p <span class="op">~</span><span class="st"> </span><span class="kw">dunif</span>(<span class="dv">0</span>,<span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb1-11" data-line-number="11">)</a>
+<a class="sourceLine" id="cb1-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb1-13" data-line-number="13"><span class="co">#define the data - you fill in the probability</span></a>
+<a class="sourceLine" id="cb1-14" data-line-number="14">draws_data &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">w =</span> XXX)</a>
+<a class="sourceLine" id="cb1-15" data-line-number="15"></a>
+<a class="sourceLine" id="cb1-16" data-line-number="16"><span class="co">#We will use map - maximum a posteriori sampling</span></a>
+<a class="sourceLine" id="cb1-17" data-line-number="17"><span class="co">#Note, I use rethinking:: in case you&#39;ve loaded purrr</span></a>
+<a class="sourceLine" id="cb1-18" data-line-number="18">draws_fit &lt;-<span class="st"> </span>rethinking<span class="op">::</span><span class="kw">map</span>(draws_mod,</a>
+<a class="sourceLine" id="cb1-19" data-line-number="19">                             <span class="dt">data =</span> draws_data)</a></code></pre></div>
 </section>
-<section id="distributions-canonical-links-and-dispersion" class="slide level2">
-<h1>Distributions, Canonical Links, and Dispersion</h1>
-<table>
-<thead>
-<tr class="header">
-<th>Distribution</th>
-<th>Canonical Link</th>
-<th>Variance Function</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Normal</td>
-<td>identity</td>
-<td><span class="math inline">\(\theta\)</span></td>
-</tr>
-<tr class="even">
-<td>Poisson</td>
-<td>log</td>
-<td><span class="math inline">\(\mu\)</span></td>
-</tr>
-<tr class="odd">
-<td>Quasipoisson</td>
-<td>log</td>
-<td><span class="math inline">\(\mu\theta\)</span></td>
-</tr>
-<tr class="even">
-<td>Binomial</td>
-<td>logit</td>
-<td><span class="math inline">\(\mu(1-\mu)\)</span></td>
-</tr>
-<tr class="odd">
-<td>Quasibinomial</td>
-<td>logit</td>
-<td><span class="math inline">\(\mu(1-\mu)\theta\)</span></td>
-</tr>
-<tr class="even">
-<td>Negative Binomial</td>
-<td>log</td>
-<td><span class="math inline">\(\mu + \kappa\mu^2\)</span></td>
-</tr>
-<tr class="odd">
-<td>Gamma</td>
-<td>inverse</td>
-<td><span class="math inline">\(\mu^2\)</span></td>
-</tr>
-<tr class="even">
-<td>Inverse Normal</td>
-<td><span class="math inline">\(1/\mu^2\)</span></td>
-<td><span class="math inline">\(\mu^3\)</span></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="glms-in-practice" class="slide level2">
-<h1>GLMs in Practice</h1>
-<p><img src="01_intro_files/figure-revealjs/iris_plot_glm-1.jpeg" width="768" /></p>
+<section id="now-lets-explore-our-output" class="slide level2">
+<h2>Now let’s explore our output</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">draws_fit</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="kw">summary</span>(draws_fit)</a></code></pre></div>
 </section>
     </div>
   </div>
 
-  <script src="libs/reveal.js-3.3.0/lib/js/head.min.js"></script>
-  <script src="libs/reveal.js-3.3.0/js/reveal.js"></script>
+  <script src="libs/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
+  <script src="libs/reveal.js-3.3.0.1/js/reveal.js"></script>
 
   <script>
 
@@ -484,6 +914,8 @@ E is any distribution from the Exponential Family<br />
         // Transition style for full page slide backgrounds
         backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
 
+
+
         // Optional reveal.js plugins
         dependencies: [
         ]
@@ -494,7 +926,7 @@ E is any distribution from the Exponential Family<br />
     (function () {
       var script = document.createElement("script");
       script.type = "text/javascript";
-      script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
       document.getElementsByTagName("head")[0].appendChild(script);
     })();
   </script>

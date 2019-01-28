@@ -59,7 +59,7 @@ https://etherpad.wikimedia.org/p/609-intro-2019
   
 3. What are we doing here?  
   
-4. Rethinking everything 
+4. Rethinking Everything 
 
 ## Who are You?
 1. Name  
@@ -77,7 +77,7 @@ https://etherpad.wikimedia.org/p/609-intro-2019
   
 3. What are we doing here?  
   
-4. Rethinking everything 
+4. Review of generalized linear modeling techniques so far 
 
 ## Lecture and Lab
  - 1 Hour Lecutre on Concepts with code
@@ -90,13 +90,6 @@ R Markdown sometimes with Reveal.js
 &nbsp;  
 <center><img src="images/01/lecture_code.jpg"></center>
 http://github.com/biol609/biol609.github.io
-
-## Interact via Slack
-![](images/01/umbrug.jpg)
-
-- Join the #Biol609 channel
-     * https://umbrug.slack.com/ <br> \    
-
 
 
 ## The Book: Statistical Rethinking
@@ -124,23 +117,15 @@ http://github.com/biol609/biol609.github.io
 |-----------------------|-----------------------|
 |![](images/01/nssd.jpg)|![](images/01/hadley.jpg)|
 
-## Extra Credit 3: Do Something Local!
-- Go to meetup.com  
-  
-- Search out data science, stan, or R meetups
+## Extra Credit 3: Data Science for Social Good
+![](images/01/dssg.png)
+
+http://www.meetup.com/Data-Science-for-Social-Good/
 
 ## Extra Credit 4: Stats Lunch
 <h3>Tuesdays 12-1 in M-2-628</h3>  
   
 It's mostly psychologists, so let's start interacting!
-
-## Extra Credit 5: Help make the UMBRUG personal
-![](images/01/umbrug.jpg)
-
-- We have online infrastructure  
-  
-- Need someone to help coordinate actual meetings, etc!
-
 
 ## Outline for Today
 1. Who are you?  
@@ -149,7 +134,7 @@ It's mostly psychologists, so let's start interacting!
   
 3. **What are we doing here?**  
   
-4. Rethinking everything 
+4. Review of generalized linear modeling techniques so far 
 
 
 ## Model-A-Palooza
@@ -187,7 +172,7 @@ ggplot(iris, mapping=aes(y=Sepal.Width, x=Sepal.Length, color=Species)) +
 > - **Frequentist Inference:** Correct conclusion drawn from repeated experiments  
 >     - Uses p-values and CIs as inferential engine  
 \
-> - **Information Theoretic Inference:** Evaluate the weight of evidence for different hypotheses  
+> - **Likelihoodist/Information Theoretic Inference:** Evaluate the weight of evidence for different hypotheses  
 >     - Derivative of frequentist mode of thinking  
 >     - Uses model comparison (sometimes with p-values...)  
 \
@@ -196,29 +181,11 @@ ggplot(iris, mapping=aes(y=Sepal.Width, x=Sepal.Length, color=Species)) +
 
 
 
-## The Foci of the Course
+## Two Foci of the Course
   
-1.  More realistic/complex **Generative Models**    
+1.  Funky Error Structures 
   
-2.  Thinking with Care about **Error Structures**  
-  
-3. Bayesian Inference and the Freedom it Brings for Process-Based Models  
-  
-4.  Causal Inference   
-
-
-## New Process-Based Models: Zero Inflated Models
-```{r z}
-a <- rpois(300, 5)
-a <- c(a, rep(0,200))
-hist(a)
-```
-
-## Mixed Models
-![](./images/01/repeated_measures.png)
-
-## Mixed Models
-![](./images/01/mixed_models_walken.jpg)
+2. Bayesian Inference and the Freedom it Brings for Process-Based Models
 
 ## Heterogeneous Error Structure
 ![](./images/01/Fig-1-Linear-models-fi-tted-using-the-generalized-least-squares-GLS-method-corrected.png)
@@ -229,10 +196,23 @@ hist(a)
 ## Temporal Autocorrelation
 ![](./images/01/dfs_autocorrelation_sm.gif)
 
+## Mixed Models
+![](./images/01/repeated_measures.png)
+
+## Mixed Models
+![](./images/01/mixed_models_walken.jpg)
+
+## Zero Inflated Models
+```{r z}
+a <- rpois(300, 5)
+a <- c(a, rep(0,200))
+hist(a)
+```
+
 ## Deep Dives into Bayes
 ![](./images/01/052816_bayesian-opener_free.jpg)
 
-## Causal Modeling with Graph Theory
+## Process Models
 ![](./images/01/process.jpg){width="80%"}
 
 ## Outline for Today
@@ -242,110 +222,151 @@ hist(a)
   
 3. What are we doing here?  
   
-4. **Rethinking everything** 
+4. **Review of generalized linear modeling techniques so far **
 
-## How do You View Data Analysis?
-![](./images/11/many_paths.jpg)
-<div class = "fragment">NO!</div>
+## The General Linear Model
 
-## One Hypothesis ≠ One Statistical Model
-![](./images/01/multiple_models.jpg)
-
-<div class = "fragment">Apply this to your research!</div>
-
-## Back to Bayes-ics
-![image](./images/01/bayes-and-hus-theory.png)
-
-## Bayesian Inference
-
-![image](./images/01/bayes_in_the_head.jpg){width="40%"}\
-
-<font size="6">
-
--   Estimate probability of a parameter
-
--   State degree of believe in specific parameter values
-
--   Evaluate probability of hypothesis given the data
-
--   Incorporate prior knowledge
-
-</font>
-
-##
-<h1>
-> - Frequentist: p(x &le; D &#x7c; H)  
-\
-\
-> - Likelhoodist: p( D &#x7c; H)  
-\
-\
-> -  Bayesian: p(H &#x7c; D)
-
-</h1>
-
-## Why is this approach inherently Bayesian?
-![](./images/01/multiple_models.jpg)
-
-## Let's see how Bayes works
-\
-I have a bag with 6 stones. Some are black. Some are white.  
-\
-I'm going to draw stones, one at a time, with replacement, and let's see the number of ways that the draw could have been produced.  
-\
-After 4 draws, let's calculate the probability of W white stones and B black stones. Let's formalize how we made this calculation. This leads to conditional versus marginal probabilities.  
-\
-
-## Let's see how Bayes works...
-Now, I will look at the stones, and introduce a prior or some sort for W.  
-\
-Let's do a new set of draws, but this time, on the board, update our posterior.  
-\
-And finally, relate this to the definition of Bayes theorem in 2.3.4 pg 36.  
-
-## Let's do this in R with Grid Sampling!  
-
-Use `dplyr` and mutate for the following.   
+$$\Large \boldsymbol{Y} = \boldsymbol{\beta X} + \boldsymbol{\epsilon} $$ 
+$$\Large \epsilon \sim \mathcal{N}(0,\sigma^{2})$$
   
-0. Chose what fraction of stones is white in a bag of infinite size.  
-\
-1. Creat a column of possible values from 0 to 1.  
-\
-2. Define a prior as the second column.  
-\
-3. Calculate your posterior after 1 random draw, then repeat for draws 2-4 plotting your posteriors    
-      * posterior = likelihood*prior/sum(all posterior values)  
-\
-4. Plot your posterior given 100 draws, given your initial prior. 
-
-## Introducing rethinking  
-This is from the Rcode on page 42, box 2.6. Assume 100 draws.  
-\
-```{r rethinking, eval=FALSE, echo = TRUE}
-library(rethinking)
-
-#alist is a list for used to define a model
-draws_mod <- alist(
   
-  #our likelihood
-  w ~ dbinom(100, p)
+-   This equation is huge. X can be anything - categorical,
+    continuous, squared, sine, etc.
+
+-   There can be straight additivity, or interactions
+
+
+## General Linear Models
+
+1.   Simple Linear Regresion  
   
-  #our prior - can be something else if you want!
-  p ~ dunif(0,1)
-)
+2.   ANOVA
 
-#define the data - you fill in the probability
-draws_data <- list(w = XXX)
+3.   ANCOVA
 
-#We will use map - maximum a posteriori sampling
-#Note, I use rethinking:: in case you've loaded purrr
-draws_fit <- rethinking::map(draws_mod,
-                             data = draws_data)
+4.   Multiple Linear Regression
+
+5.   MLR with Interactions
+
+## Simple Linear Regression
+$$y_{i} = \beta_{0} + \beta_{1}x_{i} + \epsilon_{i}$$ 
+$$\epsilon \sim \mathcal{N}(0,\sigma^{2})$$
+
+```{r iris_plot_lm}
+ggplot(iris, mapping=aes(y=Sepal.Width, x=Sepal.Length)) +
+  geom_point() +
+  stat_smooth(method="lm") +
+  theme_bw(base_size=17)
 ```
 
-## Now let's explore our output
-```{r explore, eval=FALSE, echo = TRUE}
-draws_fit
+## Multiple Linear Regression
+$$y_{i} = \beta_{0} + \sum^{k}_{j=0}\beta_{j}x_{ij} + \epsilon_{i}$$ 
 
-summary(draws_fit)
+```{r iris_plot_mlm}
+i_mlr <- lm(Sepal.Width ~ Sepal.Length+Petal.Width, data=iris)
+par(mfrow=c(1,2))
+visreg::visreg(i_mlr)
+par(mfrow=c(1,1))
+```
+
+## Categorical Predictors and ANOVA
+$$y_{ij} = \beta_{0} + \sum \beta_{j}x_{ij} + \epsilon_{j}, \qquad x_{i} = 0,1$$  
+
+```{r iris_plot_anova}
+ggplot(iris, mapping=aes(y=Sepal.Width, x=Species, fill=Species)) +
+  geom_boxplot() +
+  theme_bw(base_size=17)
+```
+
+## Interactions and Mixing Categorical and Continuous Predictors
+```{r iris_plot}
+```
+
+
+## Generalized Linear Models
+$$\boldsymbol{\eta} = \boldsymbol{\beta X}$$ 
+\
+$$f(\boldsymbol{\hat{Y}}) = \boldsymbol{\eta}$$ \
+
+f(y) is called the **link** function  
+\
+$$\boldsymbol{Y} = E(\boldsymbol{\hat{Y}}, \theta)$$ 
+\
+E is any distribution from the Exponential Family\
+$\theta$ is an error parameter, and can be a function of Y
+
+## GLMs: Link Functions
+
+Basic Premise:
+
+1.  <span>We have a linear predictor, $\eta_i = a+Bx$</span>\
+    \
+
+2.  That predictor is linked to the fitted value of $Y_i$, $\mu_i$\
+    \
+
+3.  We call this a link function, such that $g(\mu_i) = \eta_i$\
+
+    -   For example, for a linear function, $\mu_i = \eta_i$\
+
+    -   For an exponential function, $log(\mu_i) = \eta_i$
+
+
+
+## Some Common Links
+
+-   Identity: $\mu = \eta$, e.g. $\mu = a + bx$
+
+-   Log: $log(\mu) = \eta$, e.g. $\mu = e^{a + bx}$
+
+-   Logit: $logit(\mu) = \eta$, e.g.
+    $\mu = \frac{e^{a + bx}}{1+e^{a + bx}}$
+
+-   Inverse: $\frac{1}{\mu} = \eta$, e.g. $\mu = (a + bx)^{-1}$
+
+
+
+## GLMs: Error
+
+Basic Premise:
+
+1.  <span>The error distribution is from the <span>*exponential*</span>
+    family</span>
+
+    -   e.g., Normal, Poisson, Binomial, and more.
+
+    \
+    \
+
+2.  For these distributions, the variance is a funciton of the fitted
+    value on the curve: $var(Y_i) = \theta V(\mu_i)$
+
+    -   For a normal distribution, $var(\mu_i) = \theta*1$ as
+        $V(\mu_i)=1$\
+
+    -   For a poisson distribution, $var(\mu_i) = 1*\mu_i$ as
+        $V(\mu_i)=\mu_i$
+
+
+
+## Distributions, Canonical Links, and Dispersion
+
+|Distribution | Canonical Link | Variance Function|
+|-------------|-------------|-------------|
+|Normal | identity | $\theta$|
+|Poisson | log | $\mu$|
+|Quasipoisson | log | $\mu\theta$|
+|Binomial | logit | $\mu(1-\mu)$|
+|Quasibinomial | logit | $\mu(1-\mu)\theta$|
+|Negative Binomial | log | $\mu + \kappa\mu^2$|
+|Gamma | inverse | $\mu^2$|
+|Inverse Normal | $1/\mu^2$ | $\mu^3$|
+
+
+## GLMs in Practice
+```{r iris_plot_glm}
+ggplot(iris, mapping=aes(y=Sepal.Width, x=Sepal.Length, color=Species)) +
+  geom_point() +
+  stat_smooth(method="glm", method.args=list(family=Gamma(link="log"))) +
+  theme_bw(base_size=17)
 ```
