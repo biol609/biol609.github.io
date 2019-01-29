@@ -15,7 +15,7 @@ plot(chains, plotfun="stan_trace")
 
 **Email:** jarrett.byrnes@umb.edu
 
-**Weekly Schedule:** Tuesday & Thursday 1-2:30
+**Weekly Schedule:** Tuesday & Thursday 2-3:30
 
 **Office Hours:** Prof. Byrnes will hold office hours Wednesday from 1:30-3.
 
@@ -25,4 +25,5 @@ plot(chains, plotfun="stan_trace")
 &nbsp;  
 
 ## Course News: 
-*1/20/17* Welcome to the class! Please browse around the site or download the [syllabus](./syllabus/adv_data_analysis_syllabus_2016a.doc)!
+*1/25/19* Welcome to the class! Please browse around the site or download the [syllabus](./syllabus/adv_data_analysis_syllabus_2016a.doc)!
+
