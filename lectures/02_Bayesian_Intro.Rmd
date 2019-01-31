@@ -1,0 +1,295 @@
+---
+title: 
+css: style.css
+output:
+  revealjs::revealjs_presentation:
+    reveal_options:
+      slideNumber: true
+      previewLinks: true
+    theme: white
+    center: false
+    transition: fade
+    self_contained: false
+    lib_dir: libs
+    
+
+---
+
+
+```{r prep, echo=FALSE, cache=FALSE, message=FALSE, warning=FALSE}
+library(knitr)
+opts_chunk$set(fig.height=4.5, comment=NA, 
+               warning=FALSE, message=FALSE, 
+               dev="jpeg", echo=FALSE)
+library(tidyverse)
+library(ggplot2)
+library(rethinking)
+library(tidybayes)
+library(tidybayes.rethinking)
+library(gganimate)
+
+theme_set(theme_bw(base_size=15))
+```
+
+
+
+
+## Back to Bayes-ics
+![image](./images/bayes/bayes-and-hus-theory.png)
+
+## Bayesian Inference
+
+![](./images/bayes/bayes_in_the_head.jpg){width="40%"}\
+
+<font size="6">
+
+-   Estimate probability of a parameter
+
+-   State degree of believe in specific parameter values
+
+-   Evaluate probability of hypothesis given the data
+
+-   Incorporate prior knowledge
+
+</font>
+
+##
+<h1>
+> - Frequentist: p(x &le; D &#x7c; H)  
+\
+\
+> - Likelhoodist: p( D &#x7c; H)  
+\
+\
+> -  Bayesian: p(H &#x7c; D)
+
+</h1>
+
+## Why is this approach inherently Bayesian?
+![](./images/bayes/multiple_models.jpg)
+
+## Let's see how Bayes works
+\
+I have a bag with 4 stones. Some are black. Some are white.  
+\
+I'm going to draw stones, one at a time, with replacement, and let's see the number of ways that the draw could have been produced.  
+\
+After 4 draws, let's calculate the probability of W white stones and B black stones. Let's formalize how we made this calculation - and derive Bayes Theorem!
+\
+
+## Bayes Theorem and Stones
+![](./images/bayes/gostones-thickbox.jpg){width="25%"}
+
+- Each possibility = H  
+\
+- Prior plausibility = P(H)  
+\
+- P(Draw | H) = Likelihood  
+\
+- Sum of all P(Draw | H) P(H) = Average Likelihood  
+      - = P(Draw)
+
+## Bayes Theorem and Stones
+![](./images/bayes/gostones-thickbox.jpg){width="30%"}
+\
+\
+$$p(H_i | Draw) = \frac{Likelihood\,* \,Prior}{Average\,\,Likelihood}$$
+
+
+## Bayes Theorem and Stones
+![](./images/bayes/gostones-thickbox.jpg){width="30%"}
+\
+\
+$$p(H_i | Draw) = \frac{p(Draw | H_i) p(H_i)}{P(Draw)}$$
+
+## Bayes Theorem
+
+![](./images/bayes/baes_theorem.jpg)
+\
+\
+$$p(Hypothesis | Data) = \frac{p(Data | Hypothesis) p(Hypothesis)}{P(Data)}$$
+
+
+## Bayesian Updating
+![](./images/bayes/hot_bayes.jpg)  
+\
+Now let's do that over again! And again!
+
+## Watch the Updating in Realtime!
+```{r}
+set.seed(2019)
+prob <- 0.3
+results <- replicate(9, rbinom(1, prob, size = 1))
+trials <- cumsum(results)
+
+prob_tib <- tibble(probs = seq(0,1,length.out = 100),
+                prior = 1) 
+
+probs <- prob_tib %>%
+  pmap_df(~dbinom(results, .x, size = 1) %>%
+          as.list() %>% 
+         set_names(str_c("Trial ", 1:9)) %>%
+          as_tibble())
+
+posteriors <- bind_cols(prob_tib, probs) %>%
+ gather(trial, value, -probs) %>%
+  group_by(probs) %>%
+  arrange(factor(trial)) %>%
+  mutate(post = cumprod(value)) %>%
+  group_by(trial) %>%
+  mutate(post = post/sum(post)) %>%
+  ungroup() 
+```
+
+```{r, eval=FALSE}
+posterior_plot <- ggplot(posteriors, aes(x = probs, y = post)) + 
+  geom_line(size = 1.5)  +
+  labs(title = '{closest_state}', 
+       y = "probability",
+       x = "fraction white") +
+  transition_states(trial ,
+    transition_length = 2,
+    state_length = 3)
+
+anim_save("./images/bayes/updating.gif", posterior_plot)
+```
+![](./images/bayes/updating.gif)
+
+## Let's do this in R with Grid Sampling!  
+
+Use `dplyr` and `mutate()` for the following.   
+  
+0. Chose what fraction of stones is white in a bag of infinite size.  
+\
+1. Creat a column of possible values from 0 to 1.  
+\
+2. Define a prior as the second column.  
+\
+3. Calculate your posterior after 1 random draw, then repeat for draws 2-4 plotting your posteriors    
+      * posterior = likelihood*prior/sum(all posterior values)  
+\
+4. Plot your posterior given 100 draws, given your initial prior. 
+
+## Introducing rethinking  
+\
+```{r rethinking_intro, eval=FALSE, echo = TRUE}
+library(rethinking)
+
+#alist is a list for used to define a model
+some_model <- alist(
+  
+  #our likelihood
+
+  #our prior - can be something else if you want!
+)
+
+#define the data - you fill in the probability
+some_data <- list(...)
+
+#We will use map - maximum a posteriori sampling
+#Note, I use rethinking:: in case you've loaded purrr
+some_fit <- rethinking::map(some_model,
+                             data = some_data)
+```
+
+## Introducing rethinking  
+This is from the Rcode on page 42, box 2.6. Assume 100 draws.  
+\
+```{r rethinking, echo = TRUE}
+library(rethinking)
+
+#alist is a list for used to define a model
+draws_mod <- alist(
+  
+  #our likelihood
+  w ~ dbinom(100, p),
+  
+  #our prior - can be something else if you want!
+  p ~ dunif(0,1)
+)
+
+#define the data - you fill in the number of successes
+draws_data <- list(w = 32)
+
+#We will use map - maximum a posteriori sampling
+#Note, I use rethinking:: in case you've loaded purrr
+draws_fit <- rethinking::map(draws_mod,
+                             data = draws_data)
+```
+
+## Now let's explore our output
+```{r explore, echo = TRUE}
+draws_fit
+
+```
+
+## Summary
+```{r summary_rethinking, echo=TRUE}
+summary(draws_fit)
+```
+
+## precis
+```{r precis_rethinking, echo=TRUE}
+precis(draws_fit, prob = 0.6)
+```
+
+## Evaluation of a Posterior: Bayesian Credible Intervals
+
+<div style="text-align:left">In Bayesian analyses, the <span>**95% Credible Interval**</span> is the
+region in which we find 95% of the possible parameter values. The
+observed parameter is drawn from this distribution. For normally
+distributed parameters:  
+\
+<span class="fragment">$$\hat{\beta} - 2*\hat{SD} \le \hat{\beta} \le \hat{\beta} +2*\hat{SD}$$ </span>\
+\
+<span class="fragment">where $\hat{SD}$ is the SD of the posterior distribution of the
+parameter $\beta$. Note, for non-normal posteriors, the distribution
+may be different.</span>
+</div>
+
+## Evaluation of a Posterior: Frequentist Confidence Intervals
+
+<div style="text-align:left">In Frequentist analyses, the <span>**95% Confidence Interval**</span> of
+a parameter is the region in which, were we to repeat the experiment an
+infinite number of times, the *true value* would occur 95% of the time.
+For normal distributions of parameters:</div>  
+\
+\
+$$\hat{\beta} - t(\alpha, df)SE_{\beta} \le \beta \le \hat{\beta} +t(\alpha, df)SE_{\beta}$$
+
+## Credible Intervals versus Confidence Intervals
+
+> - Frequentist Confidence Intervals tell you the region you have confidence a **true value** of a parameter may occur \
+\
+> - If you have an estimate of 5 with a Frequentist CI of 2, you cannot say how likely it is that the parameter is 3, 4, 5, 6, or 7  
+\
+> - Bayesian Credible Intervals tell you the region that you have some probability of a parameter value \
+\
+> - With an estimate of 5 and a CI of 2, you can make statements about degree of belief in whether a parmeter is 3, 4,5, 6 or 7 - or even the probability that it falls outside of those bounds
+
+## The Posterior with extract.samples
+```{r tidybayes, echo = TRUE}
+
+draws_fit %>% extract.samples() %>%
+  head()
+
+```
+
+## Visualize the posterior
+```{r}
+samp <- draws_fit %>% extract.samples() 
+ggplot(samp, aes(p)) +
+  geom_histogram(size = 1.3, bins = 100) +
+  labs(title = "p = 0.3") +
+  xlim(c(0,1))
+```
+
+## Your turn
+
+- Fit a binomial model using rethinking with
+      - 19 successes
+      - 50 trials  
+\  
+- Plot it  
+\
+- If you can, with geom_ribbon(), highlight the 75% CI
