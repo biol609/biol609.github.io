@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <title>03_posterior_sampling.utf8.md</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/reveal.css"/>
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/theme/white.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="style.css"/>
+
+<!-- Printing and PDF exports -->
+<script id="paper-css" type="application/dynamic-css">
+
+/* Default Print Stylesheet Template
+   by Rob Glazebrook of CSSnewbie.com
+   Last Updated: June 4, 2008
+
+   Feel free (nay, compelled) to edit, append, and
+   manipulate this file as you see fit. */
+
+
+@media print {
+
+	/* SECTION 1: Set default width, margin, float, and
+	   background. This prevents elements from extending
+	   beyond the edge of the printed page, and prevents
+	   unnecessary background images from printing */
+	html {
+		background: #fff;
+		width: auto;
+		height: auto;
+		overflow: visible;
+	}
+	body {
+		background: #fff;
+		font-size: 20pt;
+		width: auto;
+		height: auto;
+		border: 0;
+		margin: 0 5%;
+		padding: 0;
+		overflow: visible;
+		float: none !important;
+	}
+
+	/* SECTION 2: Remove any elements not needed in print.
+	   This would include navigation, ads, sidebars, etc. */
+	.nestedarrow,
+	.controls,
+	.fork-reveal,
+	.share-reveal,
+	.state-background,
+	.reveal .progress,
+	.reveal .backgrounds {
+		display: none !important;
+	}
+
+	/* SECTION 3: Set body font face, size, and color.
+	   Consider using a serif font for readability. */
+	body, p, td, li, div {
+		font-size: 20pt!important;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		color: #000;
+	}
+
+	/* SECTION 4: Set heading font face, sizes, and color.
+	   Differentiate your headings from your body text.
+	   Perhaps use a large sans-serif for distinction. */
+	h1,h2,h3,h4,h5,h6 {
+		color: #000!important;
+		height: auto;
+		line-height: normal;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		text-shadow: 0 0 0 #000 !important;
+		text-align: left;
+		letter-spacing: normal;
+	}
+	/* Need to reduce the size of the fonts for printing */
+	h1 { font-size: 28pt !important;  }
+	h2 { font-size: 24pt !important; }
+	h3 { font-size: 22pt !important; }
+	h4 { font-size: 22pt !important; font-variant: small-caps; }
+	h5 { font-size: 21pt !important; }
+	h6 { font-size: 20pt !important; font-style: italic; }
+
+	/* SECTION 5: Make hyperlinks more usable.
+	   Ensure links are underlined, and consider appending
+	   the URL to the end of the link for usability. */
+	a:link,
+	a:visited {
+		color: #000 !important;
+		font-weight: bold;
+		text-decoration: underline;
+	}
+	/*
+	.reveal a:link:after,
+	.reveal a:visited:after {
+		content: " (" attr(href) ") ";
+		color: #222 !important;
+		font-size: 90%;
+	}
+	*/
+
+
+	/* SECTION 6: more reveal.js specific additions by @skypanther */
+	ul, ol, div, p {
+		visibility: visible;
+		position: static;
+		width: auto;
+		height: auto;
+		display: block;
+		overflow: visible;
+		margin: 0;
+		text-align: left !important;
+	}
+	.reveal pre,
+	.reveal table {
+		margin-left: 0;
+		margin-right: 0;
+	}
+	.reveal pre code {
+		padding: 20px;
+		border: 1px solid #ddd;
+	}
+	.reveal blockquote {
+		margin: 20px 0;
+	}
+	.reveal .slides {
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 0 !important;
+		zoom: 1 !important;
+
+		overflow: visible !important;
+		display: block !important;
+
+		text-align: left !important;
+		-webkit-perspective: none;
+		   -moz-perspective: none;
+		    -ms-perspective: none;
+		        perspective: none;
+
+		-webkit-perspective-origin: 50% 50%;
+		   -moz-perspective-origin: 50% 50%;
+		    -ms-perspective-origin: 50% 50%;
+		        perspective-origin: 50% 50%;
+	}
+	.reveal .slides section {
+		visibility: visible !important;
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+		display: block !important;
+		overflow: visible !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 60px 20px !important;
+		z-index: auto !important;
+
+		opacity: 1 !important;
+
+		page-break-after: always !important;
+
+		-webkit-transform-style: flat !important;
+		   -moz-transform-style: flat !important;
+		    -ms-transform-style: flat !important;
+		        transform-style: flat !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+
+		-webkit-transition: none !important;
+		   -moz-transition: none !important;
+		    -ms-transition: none !important;
+		        transition: none !important;
+	}
+	.reveal .slides section.stack {
+		padding: 0 !important;
+	}
+	.reveal section:last-of-type {
+		page-break-after: avoid !important;
+	}
+	.reveal section .fragment {
+		opacity: 1 !important;
+		visibility: visible !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+	}
+	.reveal section img {
+		display: block;
+		margin: 15px 0px;
+		background: rgba(255,255,255,1);
+		border: 1px solid #666;
+		box-shadow: none;
+	}
+
+	.reveal section small {
+		font-size: 0.8em;
+	}
+
+}  
+</script>
+
+
+<script id="pdf-css" type="application/dynamic-css">
+    
+/**
+ * This stylesheet is used to print reveal.js
+ * presentations to PDF.
+ *
+ * https://github.com/hakimel/reveal.js#pdf-export
+ */
+
+* {
+	-webkit-print-color-adjust: exact;
+}
+
+body {
+	margin: 0 auto !important;
+	border: 0;
+	padding: 0;
+	float: none !important;
+	overflow: visible;
+}
+
+html {
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+/* Remove any elements not needed in print. */
+.nestedarrow,
+.reveal .controls,
+.reveal .progress,
+.reveal .playback,
+.reveal.overview,
+.fork-reveal,
+.share-reveal,
+.state-background {
+	display: none !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	text-shadow: 0 0 0 #000 !important;
+}
+
+.reveal pre code {
+	overflow: hidden !important;
+	font-family: Courier, 'Courier New', monospace !important;
+}
+
+ul, ol, div, p {
+	visibility: visible;
+	position: static;
+	width: auto;
+	height: auto;
+	display: block;
+	overflow: visible;
+	margin: auto;
+}
+.reveal {
+	width: auto !important;
+	height: auto !important;
+	overflow: hidden !important;
+}
+.reveal .slides {
+	position: static;
+	width: 100%;
+	height: auto;
+
+	left: auto;
+	top: auto;
+	margin: 0 !important;
+	padding: 0 !important;
+
+	overflow: visible;
+	display: block;
+
+	-webkit-perspective: none;
+	   -moz-perspective: none;
+	    -ms-perspective: none;
+	        perspective: none;
+
+	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
+	   -moz-perspective-origin: 50% 50%;
+	    -ms-perspective-origin: 50% 50%;
+	        perspective-origin: 50% 50%;
+}
+
+.reveal .slides section {
+	page-break-after: always !important;
+
+	visibility: visible !important;
+	position: relative !important;
+	display: block !important;
+	position: relative !important;
+
+	margin: 0 !important;
+	padding: 0 !important;
+	box-sizing: border-box !important;
+	min-height: 1px;
+
+	opacity: 1 !important;
+
+	-webkit-transform-style: flat !important;
+	   -moz-transform-style: flat !important;
+	    -ms-transform-style: flat !important;
+	        transform-style: flat !important;
+
+	-webkit-transform: none !important;
+	   -moz-transform: none !important;
+	    -ms-transform: none !important;
+	        transform: none !important;
+}
+
+.reveal section.stack {
+	margin: 0 !important;
+	padding: 0 !important;
+	page-break-after: avoid !important;
+	height: auto !important;
+	min-height: auto !important;
+}
+
+.reveal img {
+	box-shadow: none;
+}
+
+.reveal .roll {
+	overflow: visible;
+	line-height: 1em;
+}
+
+/* Slide backgrounds are placed inside of their slide when exporting to PDF */
+.reveal section .slide-background {
+	display: block !important;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: -1;
+}
+
+/* All elements should be above the slide-background */
+.reveal section>* {
+	position: relative;
+	z-index: 1;
+}
+
+/* Display slide speaker notes when 'showNotes' is enabled */
+.reveal .speaker-notes-pdf {
+	display: block;
+	width: 100%;
+	max-height: none;
+	left: auto;
+	top: auto;
+	z-index: 100;
+}
+
+/* Display slide numbers when 'slideNumber' is enabled */
+.reveal .slide-number-pdf {
+	display: block;
+	position: absolute;
+	font-size: 14px;
+}
+
+</script>
+
+
+<script>
+var style = document.createElement( 'style' );
+style.type = 'text/css';
+var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
+var style_script = document.getElementById(style_script_id).text;
+style.innerHTML = style_script;
+document.getElementsByTagName('head')[0].appendChild(style);
+</script>
+
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+
+<section id="section" class="slide level2">
+<h2></h2>
+<h2>
+Sampling Your Posterior
+</h2>
+<p><img data-src="./images/12/coolest_bayesian.jpg" style="width:60.0%" /></p>
+</section>
+<section id="the-data" class="slide level2">
+<h2>The data</h2>
+<p>So, we’ve flipped the globe 6 times, and drawn W,L,W,W,W,L,W,L,W<br />
+</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">water &lt;-<span class="st"> </span><span class="dv">6</span></a></code></pre></div>
+<p><img data-src="./images/12/rcLnp89bi.jpg" style="width:50.0%" /></p>
+</section>
+<section id="grid-sampling" class="slide level2">
+<h2>Grid Sampling</h2>
+<div style="text-align:left">
+<p>In a data frame:<br />
+1. Use <code>seq</code> to come up with a set of possible probability values<br />
+<br />
+2. Add a column of priors. Make it flat, so they’re all 1, or get fancy.<br />
+<br />
+3. Calculate your likelihoods for each probability with size=9 and W=6<br />
+<br />
+4. Calculate your prior * likelihood<br />
+<br />
+5. Calculate your posterior, as the previous value divided by the sum of all prior*likelihoods</p>
+</div>
+</section>
+<section id="and-weve-made-a-grid-sample" class="slide level2">
+<h2>And we’ve made a grid sample</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">library</span>(dplyr)</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">grid &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">prob =</span> <span class="kw">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>,.<span class="dv">01</span>), <span class="dt">prior=</span><span class="dv">1</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="st">  </span></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">likelihood =</span> </a>
+<a class="sourceLine" id="cb2-6" data-line-number="6">           <span class="kw">dbinom</span>(water, <span class="dt">size =</span> <span class="dv">9</span>, <span class="dt">prob =</span> prob)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="st">  </span></a>
+<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">posterior =</span> likelihood<span class="op">*</span>prior) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="st">  </span></a>
+<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">posterior =</span> posterior<span class="op">/</span><span class="kw">sum</span>(posterior))</a></code></pre></div>
+</section>
+<section id="section-1" class="slide level2">
+<h2></h2>
+<br><br><br>
+<center>
+<h3>
+How do we query our posterior?
+</h3>
+</centeR>
+</section>
+<section id="our-posterior" class="slide level2">
+<h2>Our posterior</h2>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">head</span>(grid)</a></code></pre></div>
+<pre><code>  prob prior   likelihood    posterior
+1 0.00     1 0.000000e+00 0.000000e+00
+2 0.01     1 8.150512e-11 8.150511e-12
+3 0.02     1 5.059848e-09 5.059848e-10
+4 0.03     1 5.588844e-08 5.588844e-09
+5 0.04     1 3.044058e-07 3.044058e-08
+6 0.05     1 1.125305e-06 1.125305e-07</code></pre>
+</section>
+<section id="our-posterior-at-its-peak" class="slide level2">
+<h2>Our posterior at it’s peak</h2>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">grid <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">arrange</span>(<span class="kw">desc</span>(posterior)) <span class="op">%&gt;%</span><span class="st"> </span>head</a></code></pre></div>
+<pre><code>  prob prior likelihood  posterior
+1 0.67     1  0.2730674 0.02730674
+2 0.66     1  0.2728850 0.02728850
+3 0.68     1  0.2721339 0.02721339
+4 0.65     1  0.2716211 0.02716211
+5 0.69     1  0.2700592 0.02700591
+6 0.64     1  0.2693188 0.02693188</code></pre>
+</section>
+<section id="how-do-we-query-our-posterior" class="slide level2">
+<h2>How do we query our posterior?</h2>
+<ol type="1">
+<li class="fragment">We could look at all values of the posterior and calcuate the density<br />
+<br />
+</li>
+<li class="fragment">We could look at the highest posterior or weighted average<br />
+<br />
+</li>
+<li class="fragment">We could integrate over a selected range and…</li>
+</ol>
+</section>
+<section id="ah-intergrals-no-samples-yes" class="slide level2">
+<h2>AH! Intergrals? No! Samples? Yes!</h2>
+<ul>
+<li class="fragment">Posteriors summarize the frequency of certain values<br />
+<br />
+</li>
+<li class="fragment">We can leverage that and use our grid sample to generate an <strong>empirical distribution</strong><br />
+<br />
+</li>
+<li class="fragment">This lets us develop an intuitive notion of the posterior, and manipulate it easily</li>
+</ul>
+</section>
+<section id="sampling-from-your-posterior" class="slide level2">
+<h2>Sampling from your Posterior</h2>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">samp &lt;-<span class="st"> </span><span class="kw">sample</span>(grid<span class="op">$</span>prob, </a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">               </a>
+<a class="sourceLine" id="cb7-3" data-line-number="3">               <span class="dt">size =</span> <span class="fl">1e4</span>,</a>
+<a class="sourceLine" id="cb7-4" data-line-number="4">               </a>
+<a class="sourceLine" id="cb7-5" data-line-number="5">               <span class="dt">replace=</span><span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb7-6" data-line-number="6">               </a>
+<a class="sourceLine" id="cb7-7" data-line-number="7">               <span class="dt">prob =</span> grid<span class="op">$</span>posterior)</a></code></pre></div>
+</section>
+<section id="sampling-from-your-posterior-1" class="slide level2">
+<h2>Sampling from your Posterior</h2>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw">plot</span>(samp)</a></code></pre></div>
+<p><img src="03_posterior_sampling_files/figure-revealjs/plot_samp-1.jpeg" width="672" /></p>
+</section>
+<section id="sampling-from-your-posterior-mcmc-style" class="slide level2">
+<h2>Sampling from your Posterior: MCMC style</h2>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">samp_df &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">samp =</span> samp, <span class="dt">draw =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(samp))</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2"><span class="kw">qplot</span>(<span class="dt">y =</span> samp, <span class="dt">x =</span> draw, <span class="dt">data =</span> samp_df, <span class="dt">geom=</span><span class="st">&quot;line&quot;</span>)</a></code></pre></div>
+<p><img src="03_posterior_sampling_files/figure-revealjs/ggplot_samp-1.jpeg" width="672" /></p>
+</section>
+<section id="what-can-we-do-with-this-histogram" class="slide level2">
+<h2>What can we do with this: histogram</h2>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">qplot</span>(<span class="dt">x =</span> samp, <span class="dt">data =</span> samp_df, <span class="dt">geom=</span><span class="st">&quot;histogram&quot;</span>, <span class="dt">bins =</span> <span class="dv">40</span>)<span class="op">+</span></a>
+<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;bins = 40&quot;</span>)</a></code></pre></div>
+<p><img src="03_posterior_sampling_files/figure-revealjs/hist_samp-1.jpeg" width="672" /></p>
+</section>
+<section id="histograms-can-show-weakness-of-grid" class="slide level2">
+<h2>Histograms can show weakness of grid</h2>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">qplot</span>(<span class="dt">x =</span> samp, <span class="dt">data =</span> samp_df, <span class="dt">geom=</span><span class="st">&quot;histogram&quot;</span>, <span class="dt">bins =</span> <span class="dv">50</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;bins = 50&quot;</span>)</a></code></pre></div>
+<p><img src="03_posterior_sampling_files/figure-revealjs/hist_samp_50-1.jpeg" width="672" /></p>
+</section>
+<section id="what-can-we-do-with-this-density" class="slide level2">
+<h2>What can we do with this: density</h2>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw">qplot</span>(<span class="dt">x =</span> samp, <span class="dt">data =</span> samp_df, <span class="dt">geom=</span><span class="st">&quot;density&quot;</span>, <span class="dt">fill=</span><span class="kw">I</span>(<span class="st">&quot;grey&quot;</span>))</a></code></pre></div>
+<p><img src="03_posterior_sampling_files/figure-revealjs/density_samp-1.jpeg" width="672" /></p>
+</section>
+<section id="what-do-you-learn-from-this" class="slide level2">
+<h2>What do you learn from this?</h2>
+<p><img src="03_posterior_sampling_files/figure-revealjs/density_samp-1.jpeg" width="672" /></p>
+</section>
+<section id="section-2" class="slide level2">
+<h2></h2>
+<br />
+<br />
+<br />
+
+<h3>
+Summarizing a Parameter with a Sample
+</h3>
+</section>
+<section id="summarizing-a-sample-of-a-posterior-questions-we-can-ask" class="slide level2">
+<h2>Summarizing a sample of a posterior: Questions we can ask</h2>
+<blockquote>
+<p>How much of the posterior is <em>less</em> than a certain value?<br />
+<br />
+How much of the posterior is <em>greater</em> than a certain value?<br />
+<br />
+What value of the posterior has the highest density?<br />
+<br />
+What is the range of the values of some percent of the posterior? e.g., 90%</p>
+</blockquote>
+</section>
+<section id="looking-at-mass-a-key-value" class="slide level2">
+<h2>Looking at mass &lt; a key value</h2>
+<ul>
+<li>Let’s say we wanted the % of the posterior &lt; 0.4<br />
+<br />
+</li>
+</ul>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="kw">sum</span>(samp <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.4</span>) <span class="op">/</span><span class="st"> </span><span class="kw">length</span>(samp)</a></code></pre></div>
+<pre><code>[1] 0.0522</code></pre>
+<p>So, 5.22% of the posterior</p>
+</section>
+<section id="plotting" class="slide level2">
+<h2>Plotting</h2>
+<p>It’s a filter thang!</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="kw">ggplot</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb15-2" data-line-number="2"><span class="st">  </span></a>
+<a class="sourceLine" id="cb15-3" data-line-number="3"><span class="st">  </span><span class="co">#grid posterior</span></a>
+<a class="sourceLine" id="cb15-4" data-line-number="4"><span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">data =</span> grid,</a>
+<a class="sourceLine" id="cb15-5" data-line-number="5">               <span class="kw">aes</span>(<span class="dt">x =</span> prob, <span class="dt">y =</span> posterior)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb15-6" data-line-number="6"><span class="st">  </span></a>
+<a class="sourceLine" id="cb15-7" data-line-number="7"><span class="st">  </span><span class="co">#the interval</span></a>
+<a class="sourceLine" id="cb15-8" data-line-number="8"><span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="dt">data =</span> grid <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(prob <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.4</span>),</a>
+<a class="sourceLine" id="cb15-9" data-line-number="9">              <span class="dt">ymin =</span> <span class="dv">0</span>, <span class="kw">aes</span>(<span class="dt">x =</span> prob, <span class="dt">ymax =</span> posterior),</a>
+<a class="sourceLine" id="cb15-10" data-line-number="10">              <span class="dt">fill =</span> <span class="st">&quot;black&quot;</span>)</a></code></pre></div>
+</section>
+<section id="plotting-1" class="slide level2">
+<h2>Plotting</h2>
+<p><img src="03_posterior_sampling_files/figure-revealjs/plot_crit_val-1.jpeg" width="672" /></p>
+</section>
+<section id="try-a-few" class="slide level2">
+<h2>Try a few</h2>
+<ul>
+<li><p>What % is &lt; 0.6<br />
+</p></li>
+<li><p>What % is &gt; 0.6<br />
+</p></li>
+<li><p>What % is between 0.2 and 0.6<br />
+</p></li>
+</ul>
+</section>
+<section id="how-do-we-describe-a-parameter" class="slide level2">
+<h2>How do we describe a parameter</h2>
+<ul>
+<li>Typically we want to know a parameter estimate and incormation about uncertainty<br />
+<br />
+</li>
+<li>Uncertainty can be summarized via the distribution of a large sample
+<ul>
+<li>We can look at credible intervals based on mass of sample<br />
+<br />
+</li>
+</ul></li>
+<li>We have a few point estimates we can also draw from a sample
+<ul>
+<li>Mean, median, mode</li>
+</ul></li>
+</ul>
+</section>
+<section id="summarizing-uncertainty-50th-percentile-interval" class="slide level2">
+<h2>Summarizing Uncertainty: 50th Percentile Interval</h2>
+<div style="text-align:left">
+<p>We often look at the 95% interval</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw">quantile</span>(samp, <span class="kw">c</span>(<span class="fl">0.025</span>, <span class="fl">0.975</span>))</a></code></pre></div>
+<pre><code> 2.5% 97.5% 
+ 0.35  0.88 </code></pre>
+<div class="fragment">
+<p>But this is arbitrary (thanks, Fisher), and unstable. Lower intervals are more stable</p>
+</div>
+<div class="fragment">
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw">quantile</span>(samp, <span class="kw">c</span>(<span class="fl">0.25</span>, <span class="fl">0.75</span>))</a></code></pre></div>
+<pre><code> 25%  75% 
+0.54 0.74 </code></pre>
+</div>
+</div>
+</section>
+<section id="summarizing-uncertainty-50th-percentile-interval-1" class="slide level2">
+<h2>Summarizing Uncertainty: 50th Percentile Interval</h2>
+<p>We can calculate quantiles using the cummulative density of the posterior</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">grid &lt;-<span class="st"> </span>grid <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb20-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">quantile =</span> <span class="kw">cumsum</span>(posterior)<span class="op">/</span><span class="kw">sum</span>(posterior))</a></code></pre></div>
+</section>
+<section id="summarizing-uncertainty-50th-percentile-interval-2" class="slide level2">
+<h2>Summarizing Uncertainty: 50th Percentile Interval</h2>
+<p>Visualize as before</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw">ggplot</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb21-2" data-line-number="2"><span class="st">  </span></a>
+<a class="sourceLine" id="cb21-3" data-line-number="3"><span class="st">  </span><span class="co">#grid posterior</span></a>
+<a class="sourceLine" id="cb21-4" data-line-number="4"><span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">data =</span> grid,</a>
+<a class="sourceLine" id="cb21-5" data-line-number="5">               <span class="kw">aes</span>(<span class="dt">x =</span> prob, <span class="dt">y =</span> posterior)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb21-6" data-line-number="6"><span class="st">  </span></a>
+<a class="sourceLine" id="cb21-7" data-line-number="7"><span class="st">  </span><span class="co">#the interval</span></a>
+<a class="sourceLine" id="cb21-8" data-line-number="8"><span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="dt">data =</span> grid <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(quantile <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.25</span> <span class="op">&amp;</span><span class="st"> </span>quantile <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.75</span>),</a>
+<a class="sourceLine" id="cb21-9" data-line-number="9">              <span class="dt">ymin =</span> <span class="dv">0</span>, <span class="kw">aes</span>(<span class="dt">x =</span> prob, <span class="dt">ymax =</span> posterior),</a>
+<a class="sourceLine" id="cb21-10" data-line-number="10">              <span class="dt">fill =</span> <span class="st">&quot;black&quot;</span>)</a></code></pre></div>
+</section>
+<section id="summarizing-uncertainty-50th-percentile-interval-3" class="slide level2">
+<h2>Summarizing Uncertainty: 50th Percentile Interval</h2>
+<p>Visualize as before <img src="03_posterior_sampling_files/figure-revealjs/quant_plot-1.jpeg" width="672" /></p>
+<p>Note that this is not the <strong>Highest</strong> Posterior Density Interval</p>
+</section>
+<section id="pi-v.-hpdi" class="slide level2">
+<h2>PI v. HPDI</h2>
+<ul>
+<li>Percentile Intervals get interval around median that covers X% of the distribution<br />
+<br />
+</li>
+<li>Highest Posteriod Density Interval gets interval with highest density containing 50% of mass of distribution</li>
+</ul>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1"><span class="kw">library</span>(rethinking)</a>
+<a class="sourceLine" id="cb22-2" data-line-number="2"><span class="kw">PI</span>(samp, <span class="fl">0.5</span>)</a></code></pre></div>
+<pre><code> 25%  75% 
+0.54 0.74 </code></pre>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="kw">HPDI</span>(samp, <span class="fl">0.5</span>)</a></code></pre></div>
+<pre><code>|0.5 0.5| 
+0.54 0.73 </code></pre>
+</section>
+<section id="pi-v.-hpdi-for-a-skewed-distribution" class="slide level2">
+<h2>PI v. HPDI for a Skewed Distribution</h2>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">samp_bad &lt;-<span class="st"> </span><span class="kw">rbeta</span>(<span class="fl">1e4</span>, <span class="dv">2</span>,<span class="dv">3</span>)</a>
+<a class="sourceLine" id="cb26-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb26-3" data-line-number="3"><span class="kw">PI</span>(samp_bad, <span class="fl">0.5</span>)</a></code></pre></div>
+<pre><code>      25%       75% 
+0.2433043 0.5394459 </code></pre>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="kw">HPDI</span>(samp_bad, <span class="fl">0.5</span>)</a></code></pre></div>
+<pre><code>     |0.5      0.5| 
+0.1908544 0.4829067 </code></pre>
+</section>
+<section id="pi-v.-hpdi-1" class="slide level2">
+<h2>PI v. HPDI</h2>
+<p><img src="03_posterior_sampling_files/figure-revealjs/hpdi_pi_plot-1.jpeg" width="672" /></p>
+</section>
+<section id="so-which-interval-to-use" class="slide level2">
+<h2>So which interval to use?</h2>
+<ul>
+<li>Usually, they are quite similar<br />
+<br />
+</li>
+<li>PI communicates distirbution shape for parameter<br />
+<br />
+</li>
+<li>HPDI matches more with the mass of the parameter that is consistent with the data<br />
+<br />
+</li>
+<li>BUT - computationally intensive and sensitive to # of posterior draws<br />
+<br />
+</li>
+<li>If the two are <em>very</em> different, the problem is <em>not</em> which interval type to use<br />
+
+<ul>
+<li>It’s in your model/data! Buyer beware!</li>
+</ul></li>
+</ul>
+</section>
+<section id="which-point-estimate-mean-median-mode" class="slide level2">
+<h2>Which Point Estimate: Mean, Median, Mode?</h2>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1"><span class="kw">mean</span>(samp)</a></code></pre></div>
+<pre><code>[1] 0.637585</code></pre>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1"><span class="kw">median</span>(samp)</a></code></pre></div>
+<pre><code>[1] 0.65</code></pre>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1"><span class="co">#mode</span></a>
+<a class="sourceLine" id="cb34-2" data-line-number="2">samp[<span class="kw">which.max</span>(grid<span class="op">$</span>posterior)]</a></code></pre></div>
+<pre><code>[1] 0.59</code></pre>
+</section>
+<section id="applying-a-loss-function" class="slide level2">
+<h2>Applying a Loss Function!</h2>
+<ul>
+<li>Well, let’s think about the cost of getting it wrong!<br />
+<br />
+</li>
+<li>Assume a point estimate of d<br />
+<br />
+</li>
+<li>The cost of being wrong if using d is:<br />
+<span class="math inline">\(\sum{posterior * \left |(d-p)\right |}\)</span><br />
+<br />
+</li>
+<li>Could have also squared or done other things depending on cost of being wrong<br />
+<br />
+</li>
+<li>Can apply this to chosing <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> in frequentist stats!</li>
+</ul>
+</section>
+<section id="linear-loss-function-says-median-its-close" class="slide level2">
+<h2>Linear Loss Function Says Median (it’s close)!</h2>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" data-line-number="1">loss_fun &lt;-<span class="st"> </span><span class="cf">function</span>(d) <span class="kw">sum</span>(grid<span class="op">$</span>posterior <span class="op">*</span><span class="st"> </span><span class="kw">abs</span>(d <span class="op">-</span><span class="st"> </span>grid<span class="op">$</span>prob))</a>
+<a class="sourceLine" id="cb36-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb36-3" data-line-number="3">loss &lt;-<span class="st"> </span><span class="kw">sapply</span>(grid<span class="op">$</span>prob, loss_fun)</a>
+<a class="sourceLine" id="cb36-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb36-5" data-line-number="5">grid<span class="op">$</span>prob[<span class="kw">which.min</span>(loss)]</a></code></pre></div>
+<pre><code>[1] 0.64</code></pre>
+</section>
+<section id="linear-loss-function-says-median-its-close-1" class="slide level2">
+<h2>Linear Loss Function Says Median (it’s close)!</h2>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" data-line-number="1">grid<span class="op">$</span>loss &lt;-<span class="st"> </span>loss</a>
+<a class="sourceLine" id="cb38-2" data-line-number="2"><span class="kw">ggplot</span>(grid) <span class="op">+</span></a>
+<a class="sourceLine" id="cb38-3" data-line-number="3"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">x =</span> prob, <span class="dt">y =</span> loss)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb38-4" data-line-number="4"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">x =</span> grid<span class="op">$</span>prob[<span class="kw">which.min</span>(loss)], <span class="dt">y =</span> <span class="kw">min</span>(loss),</a>
+<a class="sourceLine" id="cb38-5" data-line-number="5">             <span class="dt">size =</span> <span class="dv">2</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb38-6" data-line-number="6"><span class="st">  </span><span class="kw">geom_vline</span>(<span class="dt">data =</span> <span class="kw">data.frame</span>(<span class="dt">value =</span> <span class="kw">c</span>(<span class="kw">mean</span>(samp),</a>
+<a class="sourceLine" id="cb38-7" data-line-number="7">                                           <span class="kw">median</span>(samp),</a>
+<a class="sourceLine" id="cb38-8" data-line-number="8">                                           samp[<span class="kw">which.max</span>(grid<span class="op">$</span>posterior)]),</a>
+<a class="sourceLine" id="cb38-9" data-line-number="9">                               <span class="dt">measure =</span> <span class="kw">c</span>(<span class="st">&quot;mean&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;mode&quot;</span>)),</a>
+<a class="sourceLine" id="cb38-10" data-line-number="10">             <span class="kw">aes</span>(<span class="dt">xintercept =</span> value, <span class="dt">color =</span> measure)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb38-11" data-line-number="11"><span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">values =</span> <span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>, <span class="st">&quot;black&quot;</span>))</a></code></pre></div>
+<p><img src="03_posterior_sampling_files/figure-revealjs/unnamed-chunk-4-1.jpeg" width="672" /></p>
+</section>
+<section id="choosing-a-loss-function" class="slide level2">
+<h2>Choosing a loss function</h2>
+<ul>
+<li>Usually the mean and median will agree<br />
+<br />
+</li>
+<li>If the cost of being wrong is higher, go with the mean<br />
+<br />
+</li>
+<li>If this is a big problem, or big discrepancy, problem might be deeper</li>
+</ul>
+</section>
+<section id="section-3" class="slide level2">
+<h2></h2>
+<br />
+<br />
+<br />
+
+<h3>
+Using your samples for model checking
+</h3>
+</section>
+<section id="model-checking---why" class="slide level2">
+<h2>Model Checking - Why?</h2>
+<ul>
+<li>We’re in Simulation land<br />
+<br />
+</li>
+<li>A lot can go wrong do to small errors in our model<br />
+<br />
+</li>
+<li>A lot can go wrong because of big errors in our model<br />
+<br />
+</li>
+<li>Maybe our software failed (i.e., convergence)<br />
+<br />
+</li>
+<li>Maybe our sampling design cannot produce valid estimates</li>
+</ul>
+</section>
+<section id="how-do-you-check-models" class="slide level2">
+<h2>How do you check models?</h2>
+<ul>
+<li>Did you reproduce your observed summarized data?<br />
+<br />
+</li>
+<li>Did you reproduce patterns in your raw data?</li>
+</ul>
+</section>
+<section id="simulating-from-your-posterior-sample" class="slide level2">
+<h2>Simulating from your Posterior Sample</h2>
+<ul>
+<li>Make random draws using your sampled parameters</li>
+</ul>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb39-1" data-line-number="1">w &lt;-<span class="st"> </span><span class="kw">rbinom</span>(<span class="fl">1e4</span>, <span class="dt">size=</span><span class="dv">9</span>, <span class="dt">prob =</span> samp)</a></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb40-1" data-line-number="1"><span class="kw">table</span>(w)</a></code></pre></div>
+<pre><code>w
+   0    1    2    3    4    5    6    7    8    9 
+  21  127  361  724 1269 1680 2039 1911 1298  570 </code></pre>
+</section>
+<section id="simulating-from-your-posterior-sample-1" class="slide level2">
+<h2>Simulating from your Posterior Sample</h2>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb42-1" data-line-number="1"><span class="kw">simplehist</span>(w)</a></code></pre></div>
+<p><img src="03_posterior_sampling_files/figure-revealjs/sim_hist-1.jpeg" width="672" /></p>
+<p>Note that 6 is the peak, and our draw was w=6!</p>
+</section>
+<section id="getting-fancier-with-checking" class="slide level2">
+<h2>Getting Fancier with Checking</h2>
+<ul>
+<li>We drew W,L,W,W,W,L,W,L,W<br />
+<br />
+</li>
+<li>Can we reproduce 3 Ws as the most common run?<br />
+<br />
+</li>
+<li>This will require fancier use of the posterior to simulate order of observations<br />
+<br />
+</li>
+<li>See slide code - but, this empahsized the subjective nature of model checking!</li>
+</ul>
+</section>
+<section id="so-reproducing-runs-of-w" class="slide level2">
+<h2>So, reproducing runs of W</h2>
+<p><img src="03_posterior_sampling_files/figure-revealjs/runs-1.jpeg" width="672" /></p>
+<p>We had a run of 3 - not bad, not spot on - is this a good model or check?</p>
+</section>
+<section id="exercise" class="slide level2">
+<h2>Exercise</h2>
+<ul>
+<li>Choose a # of observations and # of tosses that land on W<br />
+<br />
+</li>
+<li>Use grid sampling to get a posterior with your choice of prior<br />
+<br />
+</li>
+<li>Derive point estimates and uncertainty<br />
+<br />
+</li>
+<li>Did your model checks show you were all good?</li>
+</ul>
+</section>
+    </div>
+  </div>
+
+  <script src="libs/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
+  <script src="libs/reveal.js-3.3.0.1/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display the page number of the current slide
+        slideNumber: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: false,
+        // Opens links in an iframe preview overlay
+        previewLinks: true,
+        // Transition style
+        transition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+
+
+
+        // Optional reveal.js plugins
+        dependencies: [
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>
