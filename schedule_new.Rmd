@@ -27,6 +27,7 @@ datestring <- paste(month(current_date), day(current_date), year(current_date), 
 __Lecture:__ [Sampling from your Posterior](./lectures/03_posterior_sampling.html), [Linear Bayesian Models](./lectures/04_linear_models.html),   
 __Reading:__ McElreath Chapter 3-4  
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-linreg-2019    
+__Homework:__ [HW1](homework/hw1_sampling_linear.html)
 
 ### Week 3.
 ```{r next_date, echo=FALSE}

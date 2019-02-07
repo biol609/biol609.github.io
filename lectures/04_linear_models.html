@@ -562,11 +562,6 @@ Bayesian Linear Regression
 <section id="try-it" class="slide level2">
 <h2>Try it</h2>
 <p><img src="04_linear_models_files/figure-revealjs/norm_try-1.jpeg" width="672" /></p>
-<ol type="1">
-<li>Ask the carriers to put my milage on</li>
-<li>Upgrades - you do it through united.com</li>
-<li>Go to star alliance upgrade award section -</li>
-</ol>
 </section>
 <section id="flexible-to-many-distributions" class="slide level2">
 <h2>Flexible to Many distributions</h2>
@@ -898,6 +893,17 @@ Prior:<br />
 </section>
 <section id="the-fit" class="slide level2">
 <h2>The fit</h2>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">base_plot &lt;-<span class="st"> </span><span class="kw">ggplot</span>(<span class="dt">data=</span>Howell1_Adult,</a>
+<a class="sourceLine" id="cb21-2" data-line-number="2">                    <span class="dt">mapping=</span><span class="kw">aes</span>(<span class="dt">x=</span>weight, <span class="dt">y=</span>height)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb21-3" data-line-number="3"><span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb21-4" data-line-number="4"><span class="st">  </span><span class="kw">theme_bw</span>(<span class="dt">base_size=</span><span class="dv">17</span>)</a>
+<a class="sourceLine" id="cb21-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb21-6" data-line-number="6">base_plot<span class="op">+</span></a>
+<a class="sourceLine" id="cb21-7" data-line-number="7"><span class="st">  </span><span class="kw">geom_abline</span>(<span class="dt">slope=</span><span class="kw">coef</span>(weight_fit)[<span class="dv">2</span>], <span class="dt">intercept=</span><span class="kw">coef</span>(weight_fit)[<span class="dv">1</span>],</a>
+<a class="sourceLine" id="cb21-8" data-line-number="8">              <span class="dt">color=</span><span class="st">&quot;blue&quot;</span>, <span class="dt">lwd=</span><span class="fl">1.4</span>)</a></code></pre></div>
+</section>
+<section id="the-fit-1" class="slide level2">
+<h2>The fit</h2>
 <p><img src="04_linear_models_files/figure-revealjs/hw_plot-1.jpeg" width="672" /></p>
 </section>
 <section id="so-what-do-we-do-with-a-fit-model" class="slide level2">
@@ -920,20 +926,20 @@ Prior:<br />
 <section id="sampling-from-the-posterior-predictions" class="slide level2">
 <h2>Sampling from the Posterior Predictions</h2>
 <p>We use <code>link</code> to extract from the link (prediction) function:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">fit_vals_sim &lt;-<span class="st"> </span><span class="kw">link</span>(weight_fit, <span class="dt">n =</span> <span class="fl">1e4</span>, <span class="dt">refresh=</span><span class="dv">0</span>)</a>
-<a class="sourceLine" id="cb21-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb21-3" data-line-number="3"><span class="kw">dim</span>(fit_vals_sim)</a></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">fit_vals_sim &lt;-<span class="st"> </span><span class="kw">link</span>(weight_fit, <span class="dt">n =</span> <span class="fl">1e4</span>, <span class="dt">refresh=</span><span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb22-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb22-3" data-line-number="3"><span class="kw">dim</span>(fit_vals_sim)</a></code></pre></div>
 <pre><code>[1] 10000   352</code></pre>
 <div class="fragment">
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1">fit_vals &lt;-<span class="st"> </span><span class="kw">apply</span>(fit_vals_sim, <span class="dv">2</span>, median)</a>
-<a class="sourceLine" id="cb23-2" data-line-number="2">fit_pi &lt;-<span class="st"> </span><span class="kw">apply</span>(fit_vals_sim, <span class="dv">2</span>, HPDI, <span class="dt">prob=</span><span class="fl">0.8</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">fit_vals &lt;-<span class="st"> </span><span class="kw">apply</span>(fit_vals_sim, <span class="dv">2</span>, median)</a>
+<a class="sourceLine" id="cb24-2" data-line-number="2">fit_pi &lt;-<span class="st"> </span><span class="kw">apply</span>(fit_vals_sim, <span class="dv">2</span>, PI, <span class="dt">prob=</span><span class="fl">0.8</span>)</a></code></pre></div>
 </div>
 </section>
 <section id="qq-etc" class="slide level2">
 <h2>QQ, etc…</h2>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">res_vals &lt;-<span class="st"> </span>Howell1_Adult<span class="op">$</span>height <span class="op">-</span><span class="st"> </span>fit_vals</a>
-<a class="sourceLine" id="cb24-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb24-3" data-line-number="3"><span class="kw">qqnorm</span>(res_vals); <span class="kw">qqline</span>(res_vals)</a></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1">res_vals &lt;-<span class="st"> </span>Howell1_Adult<span class="op">$</span>height <span class="op">-</span><span class="st"> </span>fit_vals</a>
+<a class="sourceLine" id="cb25-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb25-3" data-line-number="3"><span class="kw">qqnorm</span>(res_vals); <span class="kw">qqline</span>(res_vals)</a></code></pre></div>
 <p><img src="04_linear_models_files/figure-revealjs/qq-1.jpeg" width="672" /></p>
 </section>
 <section id="observed---fitted" class="slide level2">
@@ -946,7 +952,7 @@ Prior:<br />
 </section>
 <section id="model-results" class="slide level2">
 <h2>Model Results</h2>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="kw">precis</span>(weight_fit, <span class="dt">cor=</span><span class="ot">TRUE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="kw">precis</span>(weight_fit, <span class="dt">cor=</span><span class="ot">TRUE</span>)</a></code></pre></div>
 <pre><code>        Mean StdDev   5.5%  94.5% alpha  beta sigma
 alpha 113.98   1.90 110.94 117.03  1.00 -0.99     0
 beta    0.90   0.04   0.84   0.97 -0.99  1.00     0
@@ -964,9 +970,9 @@ sigma   5.07   0.19   4.77   5.38  0.00  0.00     1</code></pre>
 </section>
 <section id="sampling-from-the-posterior-distribution" class="slide level2">
 <h2>Sampling from the Posterior Distribution</h2>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">post &lt;-<span class="st"> </span><span class="kw">extract.samples</span>(weight_fit, <span class="fl">1e4</span>)</a>
-<a class="sourceLine" id="cb27-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb27-3" data-line-number="3"><span class="kw">head</span>(post)</a></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1">post &lt;-<span class="st"> </span><span class="kw">extract.samples</span>(weight_fit, <span class="fl">1e4</span>)</a>
+<a class="sourceLine" id="cb28-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb28-3" data-line-number="3"><span class="kw">head</span>(post)</a></code></pre></div>
 <pre><code>     alpha      beta    sigma
 1 113.2631 0.9113468 5.447617
 2 111.5392 0.9552925 5.374237
@@ -977,25 +983,29 @@ sigma   5.07   0.19   4.77   5.38  0.00  0.00     1</code></pre>
 </section>
 <section id="posterior-1" class="slide level2">
 <h2>Posterior!</h2>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1"><span class="kw">qplot</span>(alpha, beta, <span class="dt">data=</span>post, <span class="dt">alpha=</span><span class="kw">I</span>(<span class="fl">0.2</span>), <span class="dt">color=</span><span class="kw">I</span>(<span class="st">&quot;blue&quot;</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb30-2" data-line-number="2"><span class="st">  </span><span class="kw">theme_bw</span>(<span class="dt">base_size=</span><span class="dv">17</span>)</a></code></pre></div>
 <p><img src="04_linear_models_files/figure-revealjs/plot_post_coefs-1.jpeg" width="672" /></p>
 </section>
 <section id="posterior-2" class="slide level2">
 <h2>Posterior!</h2>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1"><span class="kw">qplot</span>(alpha, sigma, <span class="dt">data=</span>post, <span class="dt">alpha=</span><span class="kw">I</span>(<span class="fl">0.2</span>), <span class="dt">color=</span><span class="kw">I</span>(<span class="st">&quot;blue&quot;</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb31-2" data-line-number="2"><span class="st">  </span><span class="kw">theme_bw</span>(<span class="dt">base_size=</span><span class="dv">17</span>)</a></code></pre></div>
 <p><img src="04_linear_models_files/figure-revealjs/plot_post_coefs2-1.jpeg" width="672" /></p>
 </section>
 <section id="how-well-have-we-fit-the-data" class="slide level2">
 <h2>How Well Have we Fit the Data?</h2>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1"><span class="kw">ggplot</span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb29-2" data-line-number="2"><span class="st">  </span></a>
-<a class="sourceLine" id="cb29-3" data-line-number="3"><span class="st">  </span><span class="co">#the data</span></a>
-<a class="sourceLine" id="cb29-4" data-line-number="4"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data=</span>Howell1_Adult, </a>
-<a class="sourceLine" id="cb29-5" data-line-number="5">             <span class="dt">mapping=</span><span class="kw">aes</span>(<span class="dt">x=</span>weight, <span class="dt">y=</span>height), <span class="dt">pch=</span><span class="dv">1</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb29-6" data-line-number="6"><span class="st">  </span></a>
-<a class="sourceLine" id="cb29-7" data-line-number="7"><span class="st">  </span><span class="co">#simulated fits from the posterior</span></a>
-<a class="sourceLine" id="cb29-8" data-line-number="8"><span class="st">  </span><span class="kw">geom_abline</span>(<span class="dt">data=</span>post[<span class="dv">1</span><span class="op">:</span><span class="dv">50</span>,], </a>
-<a class="sourceLine" id="cb29-9" data-line-number="9">              <span class="dt">mapping=</span><span class="kw">aes</span>(<span class="dt">slope=</span>beta, <span class="dt">intercept=</span>alpha), <span class="dt">alpha=</span><span class="fl">0.2</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb29-10" data-line-number="10"><span class="st">  </span></a>
-<a class="sourceLine" id="cb29-11" data-line-number="11"><span class="st">  </span><span class="kw">theme_bw</span>(<span class="dt">base_size=</span><span class="dv">17</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1"><span class="kw">ggplot</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb32-2" data-line-number="2"><span class="st">  </span></a>
+<a class="sourceLine" id="cb32-3" data-line-number="3"><span class="st">  </span><span class="co">#the data</span></a>
+<a class="sourceLine" id="cb32-4" data-line-number="4"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data=</span>Howell1_Adult, </a>
+<a class="sourceLine" id="cb32-5" data-line-number="5">             <span class="dt">mapping=</span><span class="kw">aes</span>(<span class="dt">x=</span>weight, <span class="dt">y=</span>height), <span class="dt">pch=</span><span class="dv">1</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb32-6" data-line-number="6"><span class="st">  </span></a>
+<a class="sourceLine" id="cb32-7" data-line-number="7"><span class="st">  </span><span class="co">#simulated fits from the posterior</span></a>
+<a class="sourceLine" id="cb32-8" data-line-number="8"><span class="st">  </span><span class="kw">geom_abline</span>(<span class="dt">data=</span>post[<span class="dv">1</span><span class="op">:</span><span class="dv">50</span>,], </a>
+<a class="sourceLine" id="cb32-9" data-line-number="9">              <span class="dt">mapping=</span><span class="kw">aes</span>(<span class="dt">slope=</span>beta, <span class="dt">intercept=</span>alpha), <span class="dt">alpha=</span><span class="fl">0.2</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb32-10" data-line-number="10"><span class="st">  </span></a>
+<a class="sourceLine" id="cb32-11" data-line-number="11"><span class="st">  </span><span class="kw">theme_bw</span>(<span class="dt">base_size=</span><span class="dv">17</span>)</a></code></pre></div>
 </section>
 <section id="how-well-have-we-fit-the-data-1" class="slide level2">
 <h2>How Well Have we Fit the Data?</h2>
@@ -1003,18 +1013,18 @@ sigma   5.07   0.19   4.77   5.38  0.00  0.00     1</code></pre>
 </section>
 <section id="what-about-with-fit-intervals" class="slide level2">
 <h2>What about with fit intervals?</h2>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1"><span class="co">#1) Make a fake data frame over the relevant range</span></a>
-<a class="sourceLine" id="cb30-2" data-line-number="2">pred_df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">weight=</span><span class="kw">seq</span>(<span class="dv">30</span>,<span class="dv">65</span>, <span class="dt">length.out=</span><span class="dv">200</span>))</a>
-<a class="sourceLine" id="cb30-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb30-4" data-line-number="4"><span class="co">#2) Get the fit values &amp; interval</span></a>
-<a class="sourceLine" id="cb30-5" data-line-number="5">pred &lt;-<span class="st"> </span><span class="kw">link</span>(weight_fit, <span class="dt">data=</span>pred_df, <span class="dt">refresh=</span><span class="dv">0</span>)</a>
-<a class="sourceLine" id="cb30-6" data-line-number="6">pred_hpdi &lt;-<span class="st">  </span><span class="kw">apply</span>(pred, <span class="dv">2</span>, HPDI)</a>
-<a class="sourceLine" id="cb30-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb30-8" data-line-number="8"><span class="co">#3) Put it all back together and plot</span></a>
-<a class="sourceLine" id="cb30-9" data-line-number="9">pred_df &lt;-<span class="st"> </span><span class="kw">mutate</span>(pred_df, </a>
-<a class="sourceLine" id="cb30-10" data-line-number="10">                  <span class="dt">height =</span> <span class="kw">apply</span>(pred, <span class="dv">2</span>, mean),</a>
-<a class="sourceLine" id="cb30-11" data-line-number="11">                  <span class="dt">lwr_fit =</span> pred_hpdi[<span class="dv">1</span>,],</a>
-<a class="sourceLine" id="cb30-12" data-line-number="12">                  <span class="dt">upr_fit =</span> pred_hpdi[<span class="dv">2</span>,])</a></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1"><span class="co">#1) Make a fake data frame over the relevant range</span></a>
+<a class="sourceLine" id="cb33-2" data-line-number="2">pred_df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">weight=</span><span class="kw">seq</span>(<span class="dv">30</span>,<span class="dv">65</span>, <span class="dt">length.out=</span><span class="dv">200</span>))</a>
+<a class="sourceLine" id="cb33-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb33-4" data-line-number="4"><span class="co">#2) Get the fit values &amp; interval</span></a>
+<a class="sourceLine" id="cb33-5" data-line-number="5">pred &lt;-<span class="st"> </span><span class="kw">link</span>(weight_fit, <span class="dt">data=</span>pred_df, <span class="dt">refresh=</span><span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb33-6" data-line-number="6">pred_hpdi &lt;-<span class="st">  </span><span class="kw">apply</span>(pred, <span class="dv">2</span>, HPDI)</a>
+<a class="sourceLine" id="cb33-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb33-8" data-line-number="8"><span class="co">#3) Put it all back together and plot</span></a>
+<a class="sourceLine" id="cb33-9" data-line-number="9">pred_df &lt;-<span class="st"> </span><span class="kw">mutate</span>(pred_df, </a>
+<a class="sourceLine" id="cb33-10" data-line-number="10">                  <span class="dt">height =</span> <span class="kw">apply</span>(pred, <span class="dv">2</span>, mean),</a>
+<a class="sourceLine" id="cb33-11" data-line-number="11">                  <span class="dt">lwr_fit =</span> pred_hpdi[<span class="dv">1</span>,],</a>
+<a class="sourceLine" id="cb33-12" data-line-number="12">                  <span class="dt">upr_fit =</span> pred_hpdi[<span class="dv">2</span>,])</a></code></pre></div>
 </section>
 <section id="what-about-with-fit-intervals-1" class="slide level2">
 <h2>What about with fit intervals?</h2>
@@ -1023,14 +1033,14 @@ sigma   5.07   0.19   4.77   5.38  0.00  0.00     1</code></pre>
 </section>
 <section id="what-about-prediction-intervals" class="slide level2">
 <h2>What about prediction intervals?</h2>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1"><span class="co">#1) Get the posterior prediction interval</span></a>
-<a class="sourceLine" id="cb31-2" data-line-number="2">pred_full &lt;-<span class="st"> </span><span class="kw">sim</span>(weight_fit, <span class="dt">data=</span>pred_df, <span class="dt">refresh=</span><span class="dv">0</span>)</a>
-<a class="sourceLine" id="cb31-3" data-line-number="3">full_hpdi &lt;-<span class="st">  </span><span class="kw">apply</span>(pred_full, <span class="dv">2</span>, HPDI)</a>
-<a class="sourceLine" id="cb31-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb31-5" data-line-number="5"><span class="co">#2) Put it all back together and plot</span></a>
-<a class="sourceLine" id="cb31-6" data-line-number="6">pred_df &lt;-<span class="st"> </span><span class="kw">mutate</span>(pred_df, </a>
-<a class="sourceLine" id="cb31-7" data-line-number="7">                  <span class="dt">lwr_pred =</span> full_hpdi[<span class="dv">1</span>,],</a>
-<a class="sourceLine" id="cb31-8" data-line-number="8">                  <span class="dt">upr_pred =</span> full_hpdi[<span class="dv">2</span>,])</a></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1"><span class="co">#1) Get the posterior prediction interval</span></a>
+<a class="sourceLine" id="cb34-2" data-line-number="2">pred_full &lt;-<span class="st"> </span><span class="kw">sim</span>(weight_fit, <span class="dt">data=</span>pred_df, <span class="dt">refresh=</span><span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb34-3" data-line-number="3">full_hpdi &lt;-<span class="st">  </span><span class="kw">apply</span>(pred_full, <span class="dv">2</span>, HPDI)</a>
+<a class="sourceLine" id="cb34-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb34-5" data-line-number="5"><span class="co">#2) Put it all back together and plot</span></a>
+<a class="sourceLine" id="cb34-6" data-line-number="6">pred_df &lt;-<span class="st"> </span><span class="kw">mutate</span>(pred_df, </a>
+<a class="sourceLine" id="cb34-7" data-line-number="7">                  <span class="dt">lwr_pred =</span> full_hpdi[<span class="dv">1</span>,],</a>
+<a class="sourceLine" id="cb34-8" data-line-number="8">                  <span class="dt">upr_pred =</span> full_hpdi[<span class="dv">2</span>,])</a></code></pre></div>
 </section>
 <section id="prediction-interval" class="slide level2">
 <h2>Prediction Interval</h2>
@@ -1086,33 +1096,33 @@ Prior:<br />
 </section>
 <section id="our-model" class="slide level2">
 <h2>Our Model</h2>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1">full_height_mod &lt;-<span class="st"> </span><span class="kw">alist</span>(</a>
-<a class="sourceLine" id="cb32-2" data-line-number="2">  <span class="co">#likelihood</span></a>
-<a class="sourceLine" id="cb32-3" data-line-number="3">  height <span class="op">~</span><span class="st"> </span><span class="kw">dnorm</span>(mu, sigma),</a>
-<a class="sourceLine" id="cb32-4" data-line-number="4">  </a>
-<a class="sourceLine" id="cb32-5" data-line-number="5">  <span class="co">#Data generating process</span></a>
-<a class="sourceLine" id="cb32-6" data-line-number="6">  mu &lt;-<span class="st"> </span>alpha <span class="op">+</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb32-7" data-line-number="7"><span class="st">    </span>beta1 <span class="op">*</span><span class="st"> </span>weight.s <span class="op">+</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb32-8" data-line-number="8"><span class="st">    </span>beta2 <span class="op">*</span><span class="st"> </span>weight.s2 <span class="op">+</span></a>
-<a class="sourceLine" id="cb32-9" data-line-number="9"><span class="st">    </span>beta3 <span class="op">*</span><span class="st"> </span>weight.s3,</a>
-<a class="sourceLine" id="cb32-10" data-line-number="10">  </a>
-<a class="sourceLine" id="cb32-11" data-line-number="11">  <span class="co">#priors</span></a>
-<a class="sourceLine" id="cb32-12" data-line-number="12">  alpha <span class="op">~</span><span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">178</span>, <span class="dv">100</span>),</a>
-<a class="sourceLine" id="cb32-13" data-line-number="13">  beta1 <span class="op">~</span><span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>, <span class="dv">10</span>),</a>
-<a class="sourceLine" id="cb32-14" data-line-number="14">  beta2 <span class="op">~</span><span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>, <span class="dv">10</span>),</a>
-<a class="sourceLine" id="cb32-15" data-line-number="15">  beta3 <span class="op">~</span><span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>, <span class="dv">10</span>),</a>
-<a class="sourceLine" id="cb32-16" data-line-number="16">  sigma <span class="op">~</span><span class="st"> </span><span class="kw">dunif</span>(<span class="dv">0</span>,<span class="dv">50</span>)</a>
-<a class="sourceLine" id="cb32-17" data-line-number="17">)</a></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" data-line-number="1">full_height_mod &lt;-<span class="st"> </span><span class="kw">alist</span>(</a>
+<a class="sourceLine" id="cb35-2" data-line-number="2">  <span class="co">#likelihood</span></a>
+<a class="sourceLine" id="cb35-3" data-line-number="3">  height <span class="op">~</span><span class="st"> </span><span class="kw">dnorm</span>(mu, sigma),</a>
+<a class="sourceLine" id="cb35-4" data-line-number="4">  </a>
+<a class="sourceLine" id="cb35-5" data-line-number="5">  <span class="co">#Data generating process</span></a>
+<a class="sourceLine" id="cb35-6" data-line-number="6">  mu &lt;-<span class="st"> </span>alpha <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb35-7" data-line-number="7"><span class="st">    </span>beta1 <span class="op">*</span><span class="st"> </span>weight.s <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb35-8" data-line-number="8"><span class="st">    </span>beta2 <span class="op">*</span><span class="st"> </span>weight.s2 <span class="op">+</span></a>
+<a class="sourceLine" id="cb35-9" data-line-number="9"><span class="st">    </span>beta3 <span class="op">*</span><span class="st"> </span>weight.s3,</a>
+<a class="sourceLine" id="cb35-10" data-line-number="10">  </a>
+<a class="sourceLine" id="cb35-11" data-line-number="11">  <span class="co">#priors</span></a>
+<a class="sourceLine" id="cb35-12" data-line-number="12">  alpha <span class="op">~</span><span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">178</span>, <span class="dv">100</span>),</a>
+<a class="sourceLine" id="cb35-13" data-line-number="13">  beta1 <span class="op">~</span><span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>, <span class="dv">10</span>),</a>
+<a class="sourceLine" id="cb35-14" data-line-number="14">  beta2 <span class="op">~</span><span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>, <span class="dv">10</span>),</a>
+<a class="sourceLine" id="cb35-15" data-line-number="15">  beta3 <span class="op">~</span><span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>, <span class="dv">10</span>),</a>
+<a class="sourceLine" id="cb35-16" data-line-number="16">  sigma <span class="op">~</span><span class="st"> </span><span class="kw">dunif</span>(<span class="dv">0</span>,<span class="dv">50</span>)</a>
+<a class="sourceLine" id="cb35-17" data-line-number="17">)</a></code></pre></div>
 </section>
 <section id="making-variables-and-fitting" class="slide level2">
 <h2>Making variables and Fitting</h2>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1">Howell1 &lt;-<span class="st"> </span><span class="kw">mutate</span>(Howell1,</a>
-<a class="sourceLine" id="cb33-2" data-line-number="2">                  <span class="dt">weight.s =</span> (weight<span class="op">-</span><span class="kw">mean</span>(weight))<span class="op">/</span><span class="kw">sd</span>(weight),</a>
-<a class="sourceLine" id="cb33-3" data-line-number="3">                  <span class="dt">weight.s2 =</span> weight.s<span class="op">^</span><span class="dv">2</span>,</a>
-<a class="sourceLine" id="cb33-4" data-line-number="4">                  <span class="dt">weight.s3 =</span> weight.s<span class="op">^</span><span class="dv">3</span>)</a>
-<a class="sourceLine" id="cb33-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb33-6" data-line-number="6">full_height_fit &lt;-<span class="st"> </span><span class="kw">map</span>(full_height_mod,</a>
-<a class="sourceLine" id="cb33-7" data-line-number="7">                       <span class="dt">data =</span> Howell1)</a></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" data-line-number="1">Howell1 &lt;-<span class="st"> </span><span class="kw">mutate</span>(Howell1,</a>
+<a class="sourceLine" id="cb36-2" data-line-number="2">                  <span class="dt">weight.s =</span> (weight<span class="op">-</span><span class="kw">mean</span>(weight))<span class="op">/</span><span class="kw">sd</span>(weight),</a>
+<a class="sourceLine" id="cb36-3" data-line-number="3">                  <span class="dt">weight.s2 =</span> weight.s<span class="op">^</span><span class="dv">2</span>,</a>
+<a class="sourceLine" id="cb36-4" data-line-number="4">                  <span class="dt">weight.s3 =</span> weight.s<span class="op">^</span><span class="dv">3</span>)</a>
+<a class="sourceLine" id="cb36-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb36-6" data-line-number="6">full_height_fit &lt;-<span class="st"> </span><span class="kw">map</span>(full_height_mod,</a>
+<a class="sourceLine" id="cb36-7" data-line-number="7">                       <span class="dt">data =</span> Howell1)</a></code></pre></div>
 </section>
 <section id="exercise" class="slide level2">
 <h2>Exercise</h2>
@@ -1135,10 +1145,10 @@ Prior:<br />
 </section>
 <section id="i-hate-that-x-axis" class="slide level2">
 <h2>I hate that x axis</h2>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1">pred_plot <span class="op">+</span></a>
-<a class="sourceLine" id="cb34-2" data-line-number="2"><span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">label =</span> <span class="cf">function</span>(x) </a>
-<a class="sourceLine" id="cb34-3" data-line-number="3">    <span class="kw">round</span>(x<span class="op">*</span><span class="kw">sd</span>(Howell1<span class="op">$</span>weight) <span class="op">+</span><span class="st"> </span><span class="kw">mean</span>(Howell1<span class="op">$</span>weight),<span class="dv">1</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb34-4" data-line-number="4"><span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;Weight&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" data-line-number="1">pred_plot <span class="op">+</span></a>
+<a class="sourceLine" id="cb37-2" data-line-number="2"><span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">label =</span> <span class="cf">function</span>(x) </a>
+<a class="sourceLine" id="cb37-3" data-line-number="3">    <span class="kw">round</span>(x<span class="op">*</span><span class="kw">sd</span>(Howell1<span class="op">$</span>weight) <span class="op">+</span><span class="st"> </span><span class="kw">mean</span>(Howell1<span class="op">$</span>weight),<span class="dv">1</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb37-4" data-line-number="4"><span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;Weight&quot;</span>)</a></code></pre></div>
 <p><img src="04_linear_models_files/figure-revealjs/axis-1.jpeg" width="672" /></p>
 </section>
     </div>

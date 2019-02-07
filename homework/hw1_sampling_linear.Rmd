@@ -1,0 +1,24 @@
+---
+title: "Biol 609 HW1"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1: Sampling from a binomial
+a. Choose a # of observations and # of tosses of the globe that land on W. Start with a probability of 0.8.  
+b. Use grid sampling to get a posterior with your choice of prior that is *not flat*.  
+c. Give point estimates and uncertainty of the probability of landing on W. Make an informative plot.   
+d. Create a model check. Did your model checks show you were all good?  
+\
+
+## 2: A Linear Model
+With the Howell data on the !kung san - `data(Howell1)`  
+a. Subset to between ages 0-20  
+b. Intelligently evaluate your priors. Show that you have done so!
+c. Fit a linear model using `rethinking`.  
+d. Show checks of assumptions  
+e. Show the fit with both fit and prediction intervals.  
+f. For extra credit/fun, look at the whole dataset and repeat with a nonlinear model!

@@ -83,10 +83,6 @@ plot(density(samps))
 
 ```
 
-1. Ask the carriers to put my milage on
-2. Upgrades - you do it through united.com
-3. Go to star alliance upgrade award section - 
-
 ## Flexible to Many distributions
 ```{r binom_sum2}
 par(mfrow=c(1,2))
@@ -443,7 +439,7 @@ weight_fit <- map(weight_mod,
 ```
 
 ## The fit
-```{r hw_plot}
+```{r hw_plot, eval = FALSE, echo = TRUE}
 base_plot <- ggplot(data=Howell1_Adult,
                     mapping=aes(x=weight, y=height)) +
   geom_point() +
@@ -452,6 +448,10 @@ base_plot <- ggplot(data=Howell1_Adult,
 base_plot+
   geom_abline(slope=coef(weight_fit)[2], intercept=coef(weight_fit)[1],
               color="blue", lwd=1.4)
+```
+
+## The fit
+```{r hw_plot, eval=TRUE, echo = FALSE}
 ```
 
 ## So, what do we do with a fit model?
@@ -476,7 +476,7 @@ dim(fit_vals_sim)
 <div class="fragment">
 ```{r fitted2, echo=TRUE}
 fit_vals <- apply(fit_vals_sim, 2, median)
-fit_pi <- apply(fit_vals_sim, 2, HPDI, prob=0.8)
+fit_pi <- apply(fit_vals_sim, 2, PI, prob=0.8)
 ```
 </div>
 
@@ -533,13 +533,13 @@ head(post)
 
 
 ## Posterior!
-```{r plot_post_coefs}
+```{r plot_post_coefs, echo = TRUE}
 qplot(alpha, beta, data=post, alpha=I(0.2), color=I("blue")) +
   theme_bw(base_size=17)
 ```
 
 ## Posterior!
-```{r plot_post_coefs2}
+```{r plot_post_coefs2, echo = TRUE}
 qplot(alpha, sigma, data=post, alpha=I(0.2), color=I("blue")) +
   theme_bw(base_size=17)
 ```
