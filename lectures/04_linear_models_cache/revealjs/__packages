@@ -1,0 +1,9 @@
+base
+knitr
+ggplot2
+StanHeaders
+rstan
+rethinking
+dplyr
+tidyr
+bindrcpp

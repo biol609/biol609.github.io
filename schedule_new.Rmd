@@ -13,7 +13,7 @@ datestring <- paste(month(current_date), day(current_date), year(current_date), 
 
 ### Week 1.
 `r datestring`   
-__Lecture__: [Why Advanced Data Analysis?](lectures/01_intro.html),  [Re-Introduction to Bayes](lectures/02_Bayesian_Intro.html), 
+__Lecture__: [Why Advanced Data Analysis?](lectures/01_intro.html),  [Re-Introduction to Bayes](lectures/02_Bayesian_Intro.html)   
 __Reading:__ McElreath Ch. 1-2  
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-bayes-2019  
 
@@ -24,7 +24,7 @@ current_date <- current_date+ days(7)
 datestring <- paste(month(current_date), day(current_date), year(current_date), sep="/")
 ```
 `r datestring`  
-__Lecture:__ [Sampling from your Posterior](./lectures/03_posterior_sampling.html), [Linear Bayesian Models](./lectures/13_linear_models.html),   
+__Lecture:__ [Sampling from your Posterior](./lectures/03_posterior_sampling.html), [Linear Bayesian Models](./lectures/04_linear_models.html),   
 __Reading:__ McElreath Chapter 3-4  
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-linreg-2019    
 
