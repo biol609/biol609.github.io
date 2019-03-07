@@ -1,0 +1,881 @@
+---
+title:
+output:
+  revealjs::revealjs_presentation:
+    reveal_options:
+      slideNumber: true
+      previewLinks: true
+    theme: white
+    center: false
+    transition: fade
+    self_contained: false
+    lib_dir: libs
+    css: style.css
+---
+
+##
+<!-- next year, put glms in using the same order as bayesian - use likelihood -->
+
+![](images/02/gosling_normality.jpg){width="40.00000%"}\
+
+<h3>Genearlized Linear Models</h3>
+
+
+```{r prep, echo=FALSE, cache=FALSE, message=FALSE, warning=FALSE}
+library(knitr)
+opts_chunk$set(fig.height=4.5, comment=NA, 
+               warning=FALSE, message=FALSE, 
+               dev="jpeg", echo=FALSE)
+library(dplyr)
+library(tidyr)
+library(broom)
+library(ggplot2)
+library(car)
+library(DHARMa)
+library(stringr)
+theme_set(theme_bw(base_size = 17))
+```
+
+
+## A Generalized Outline
+1. Why use GLMs? An Intro to Entropy  
+\
+2. Logistic Regression Verus Linear Regression  
+\
+3. Generalized Linear Models  
+\
+4. Poisson Regression (Poisson Error, Long Link)  
+
+## What is Maximum Entropy?
+![](./images/18/tangled-ball-mess-of-computer-cords-dxpt68.jpg)
+
+## Maximum Entropy Principle
+\
+\
+<center><b>The distribution that can happen the most ways is also the distribution with the biggest information entropy. The distribution with the biggest entropy is the most conservative distribution that obeys its constraints.</b></center>  
+\
+-McElreath 2017
+
+## Why are we thinking about MaxEnt?
+- MaxEnt distributions have the widest spread - conservative  
+\
+- Nature tends to favor maximum entropy distributions  
+     - It's just natural probability  
+\
+- The foundation of Generalized Linear ModelDistributions  
+\
+- Leads to useful distributions once we impose *constraints*
+
+##
+![](./images/18/maxent_1.jpg)
+<div style="font-size:11pt">McElreath 2016</div>
+
+##
+![](./images/18/maxent_2.jpg)
+<div style="font-size:11pt">McElreath 2016</div>
+
+##
+![](./images/18/maxent_3.jpg)
+<div style="font-size:11pt">McElreath 2016</div>
+
+##
+![](./images/18/maxent_4.jpg)
+<div style="font-size:11pt">McElreath 2016</div>
+
+##
+![](./images/18/maxent_5.jpg)
+<div style="font-size:11pt">McElreath 2016</div>
+
+##
+![](./images/18/maxent_6.jpg)
+<div style="font-size:11pt">McElreath 2016</div>
+
+##
+![](./images/18/maxent_7.jpg)
+<div style="font-size:11pt">McElreath 2016</div>
+
+##
+![](./images/18/maxent_8.jpg)
+<div style="font-size:11pt">McElreath 2016</div>
+
+##
+```{r entropy_show}
+#from pg 303 of 2nd edition of Statistical Rethinking
+p <- list()
+p$A <- c(0,0,10,0,0)
+p$B <- c(0,1,8,1,0)
+p$C <- c(0,2,6,2,0)
+p$D <- c(1,2,4,2,1)
+p$E <- c(2,2,2,2,2)
+
+p_norm <- lapply( p , function(q) q/sum(q))
+H <- sapply( p_norm , function(q) -sum(ifelse(q==0,0,q*log(q))) ) 
+ways <- c(1,90,1260,37800,113400)
+logwayspp <- log(ways)/10
+
+set.seed(2019)
+qplot(logwayspp, H, label = LETTERS[1:5], geom = "point") +
+  geom_text(position = position_jitter(height = 0.1, width = 0.07)) +
+  stat_smooth(method = "lm", fill = NA, lty = 2) +
+  xlab("log # Ways") + ylab('-sum(p log p) = Entropy')
+```
+
+
+## Information Entropy
+$$H(p) = - \sum p_i log \, p_i$$
+
+- Measure of uncertainty  
+\
+- If more events possible, it increases  
+\
+- Nature finds the distribution with the largest entropy, given constraints of distribution
+
+## Maximum Entropy and Coin Flips
+* Let's say you are flipping a fair (p=0.5) coin twice    
+\
+* What is the maximum entropy distribution of # Heads?  
+\
+* Possible Outcomes: TT, HT, TH, HH  
+     - which leads to 0, 1, 2 heads  
+\
+* Constraint is, with p=0.5, the average outcome is 1 heads
+     
+## The Binomial Possibilities
+```{r entropy}
+entropy <- function(z) {
+  ret <- -1*sum(sapply(z, function(x) x*log(x)))
+  if(!is.finite(ret)) ret <- 0
+  ret
+}
+expandBin <- function(p, trials){
+  ways <- sapply(0:trials, function(x) choose(trials,x))
+  out <- sapply(1:length(p), function(i) rep(p[i]/ways[i], times=ways[i]))
+  do.call(c, out)
+}
+
+binEnt <- function(trials = 2, prob=0.5){
+  p <- dbinom(0:trials, trials, prob)
+  entropy(expandBin(p, trials))
+}
+
+```
+TT = p<sup>2</sup>  
+HT = p(1-p)  
+TH = (1-p)p  
+HH = p<sup>2</sup>  
+\
+<center>But other distributions are possible</center>
+
+## Let's compareother distributions meeting constraint using Entropy
+
+Remember, we must average 1 Heads, so,  
+sum(distribution * 0,1,1,2) = 1
+
+$$H = - \sum{p_i log p_i}$$\
+
+
+
+| Distribution | TT, HT, TH, HH | Entropy |
+|--------------|----------------|---------|
+|Binomial | 1/4, 1/4, 1/4, 1/4  | `r round(entropy(rep(0.25,4)),3)` |
+|Candiate 1 | 2/6, 1/6, 1/6, 2/6 |  `r round(entropy(c(2/6, 1/6, 1/6, 2/6)),3)` |
+|Candiate 2 | 1/6, 2/6, 2/6, 1/6 |  `r round(entropy(c(1/6, 2/6, 2/6, 1/6)),3)` |
+|Candiate 3 | 1/8, 1/2, 1/8, 2/8 |  `r round(entropy(c(1/8, 1/2, 1/8, 2/8)),3)` |
+
+\
+<center>Binomial wins!</center>
+
+## What about other p's and draws?
+Assume 2 draws, p=0.7, make 1000 simulated distributions
+```{r bin_try}
+
+get_rand_coin_dist <- function(trials=2, prob=0.5, expand=TRUE){
+  exp_heads <- sum(dbinom(0:trials, trials, prob)*0:trials)
+  x <- runif(trials) #gets 0, 1, ... trials -1
+  r <- sum(sapply(1:trials, function(j) x[j]*(j-1))) #intermediate thing
+  x_i <- (sum(x)*exp_heads - r)/(trials - exp_heads) #the constraint
+  p <- c(x,x_i)/sum(c(x,x_i)) #normalize to probabilities
+  
+  #test
+  #exp_heads
+  #sum(p*0:trials)
+
+  #return
+  if(expand) return(expandBin(p,trials))
+  p
+}
+
+H_2_0.7 <- replicate(1e3, entropy(get_rand_coin_dist(trials = 2, prob=0.7)))
+plot(density(H_2_0.7, bw=0.001), main=paste("Trials=100, prob=0.6\nBinomial Max Ent = ", binEnt(2, 0.7)), xlab="Entropy")
+```
+
+<!--
+## What about other p's and draws?
+Assume 10 draws, p=0.6, make 1000 simulated distributions
+```{r maxent2, cache=TRUE}
+H_10_0.6 <- replicate(1e3, entropy(get_rand_coin_dist(10, 0.6)))
+plot(density(H_10_0.6, bw=0.01), main=paste("Trials=10, prob=0.6\nBinomial Max Ent = ", binEnt(10, 0.6)), xlab="Entropy")
+```
+-->
+
+## OK, what about the Gaussian?
+<div id="left">
+```{r norm, fig.height=6,fig.width=5}
+library(pgnorm)
+norm_dists <- crossing(x=seq(-4,4, length.out=300), shape=1:4) %>%
+  rowwise() %>%
+  mutate(y=dpgnorm(x, shape, 0,1)) %>%
+  ungroup()
+
+qplot(x, y, data=norm_dists, color=factor(shape), geom="line") +
+  ggtitle("Generalized Normal Distribution\nStandard Normal Shape=2")
+```
+</div>
+
+<div id="right">
+- Constraints: mean, finite variance, unbounded  
+\
+- Lots of possible distributions for normal processes\
+\
+- Flattest distribution given constraints: MaxEnt
+</div>
+
+## Maximum Entropy Distributions
+Constraints | Maxent distribution |
+------------|---------------------|
+Real value in interval | Uniform |
+Real value,  finite variance | Gaussian |
+Binary events,  fixed probability | Binomial |
+Non-negative real, has mean | **Exponential** |
+
+
+
+## How Distributions are Coupled
+![](./images/18/all_dists.jpg){width="85%"}
+
+
+## A Generalized Outline
+1. Why use GLMs? An Intro to Entropy  
+\
+2. Logistic Regression Verus Linear Regression  
+\
+3. Generalized Linear Models  
+\
+4. Poisson Regression (Poisson Error, Long Link)  
+
+##  {data-background="./images/02/cryptosporidiosis-cryptosporidium-hominis.jpeg"}
+<h2 style="color:white">Infection by Cryptosporidium</h2>
+
+## {data-background="./images/02/mouseinject.jpg"}
+
+## Cryptosporidum Infection Rates
+```{r crypto_data}
+crypto <- read.csv("data/02/cryptoDATA.csv") %>%
+  mutate(success=Y/N)
+```
+
+```{r crypto_plot}
+
+cryptoPlot <- qplot(Dose, success, data=crypto) +
+  theme_bw(base_size=16) +
+  ylab("Fraction of Mice Infected")
+cryptoPlot
+```
+
+## This is not linear or gaussian
+
+```{r crypto_linear}
+cryptoPlot +
+  stat_smooth(method="lm")
+```
+
+Why?
+
+## The General Linear Model
+
+$$\Large \boldsymbol{Y_i} = \boldsymbol{\beta X_i} + \boldsymbol{\epsilon} $$ 
+\
+\
+\
+\
+\
+\
+$$\Large \epsilon \sim \mathcal{N}(0,\sigma^{2})$$
+
+
+## The General Linear Model
+
+Likelihood:  
+$$\Large Y_i \sim \mathcal{N}(\hat{Y_i},\sigma^{2})$$
+\
+\
+\
+\
+Data Generating Process:  
+$$\Large \boldsymbol{\hat{Y}_{i}} = \boldsymbol{\beta X_i} $$ 
+
+  
+## The General(ized) Linear Model
+
+Likelihood:  
+$$\Large Y_i \sim \mathcal{N}(\hat{Y_i},\sigma^{2})$$
+\
+\
+**Data Generating Process:**  
+- Transformation (Identity Link):  
+$$\Large \hat{Y}_{i} =  \eta_{i} $$ 
+\
+- Linear Equation:  
+$$\Large \boldsymbol{\eta_{i}} = \boldsymbol{\beta X_i} $$ 
+
+## A Generalized Linear Model with an Exponential Curve
+
+Likelihood:  
+$$\Large Y_i \sim \mathcal{N}(\hat{Y_i},\sigma^{2})$$
+\
+\
+**Data Generating Process:**  
+- Transformation (Log Link):  
+$$\Large Log(\hat{Y}_{i}) =  \eta_{i} $$ 
+
+\
+\
+- Linear Equation:  
+$$\Large \boldsymbol{\eta_{i}} = \boldsymbol{\beta X_i} $$ 
+
+
+## Log Link
+```{r crypto_log}
+cryptoPlot +
+   stat_smooth(method="glm", 
+               method.args=list(family=gaussian(link="log")), formula=y+0.0000001 ~ x)
+```
+
+## Isn't this just a transformation?
+
+Aren't we just doing
+$$\Large \boldsymbol{log(Y_{i})} = \boldsymbol{\beta X_i} + \boldsymbol{\epsilon_i}$$ 
+\
+<div class="fragment">NO!</div>
+\
+<div class="fragment">$$\Large \boldsymbol{Y_{i}} = e^{\boldsymbol{\beta X_i} + \boldsymbol{\epsilon_i}}$$ </div>
+\
+<div class="fragment">Error is log-normal</div>
+
+Likelihood:  
+$$\Large Y_i \sim \mathcal{N}(\hat{Y_i},\sigma^{2})$$
+<span class="fragment"><font color="red">Error is Normal</font></span>
+\
+\
+**Data Generating Process:**  
+- Transformation (Log Link):  
+$$\Large Log(\hat{Y}_{i}) =  \eta_{i} $$ 
+
+\
+\
+- Linear Equation:  
+$$\Large \boldsymbol{\eta_{i}} = \boldsymbol{\beta X_i} $$ 
+
+
+## But This is Not Normal
+```{r crypto_plot}
+```
+    
+
+## Binomial Distribution
+$$ Y_i \sim B(prob, size) $$
+
+> * Discrete Distribution
+> * prob = probability of something happening (% Infected)
+> * size = # of discrete trials
+> * Used for frequency or probability data
+> * We estimate coefficients that influence prob
+
+## So, Y is a Logistic Curve
+\
+$$Probability = \frac{1}{1+e^{\beta X}}$$
+\
+\
+<div class="fragment">$$logit(Probability) = \beta X$$</div>
+
+## Generalized Linear Model with a Logit Link
+Likelihood:
+$$\Large Y_i \sim \mathcal{B}(\hat{Y_i}, size)$$
+\
+<span class="fragment">Data Generating Process:</span>  
+<span class="fragment"><font color="red">Logit Link Function</font></span>
+<span class="fragment">$$\Large Logit(\hat{Y_i}) = \eta_{i}$$</span>
+\
+\
+<span class="fragment">Linear Function</span>  
+<span class="fragment">$$\Large \boldsymbol{\eta_{i}} = \boldsymbol{\beta X_i} $$ <span class="fragment">
+
+## Logitistic Regression
+```{r crypto_logit}
+cryptoPlot+
+  stat_smooth(method="glm", aes(weight=N), 
+              method.args=list(family=binomial()),  col="red", lwd=2) 
+
+```
+
+## Generalized Linear Model with Logit Link
+```{r glm_crypto, echo=TRUE}
+crypto_glm <- glm(Y/N ~ Dose,
+                  weight=N,
+                  family=binomial(link="logit"),
+                  data=crypto)
+```
+
+OR, with Success and Failures
+
+```{r glm_crypto2, echo=TRUE, eval=FALSE}
+crypto_glm <- glm(cbind(Y, Y-N) ~ Dose,
+                  family=binomial(link="logit"),
+                  data=crypto)
+```
+
+## Outputs
+```{r crypto_out}
+knitr::kable(Anova(crypto_glm))
+```
+
+And logit coefficients
+```{r crypto_out2}
+knitr::kable(broom::tidy(crypto_glm))
+```
+
+
+## The Odds
+
+$$Odds  = \frac{p}{1-p}$$\
+\
+<div class="fragment">
+$$Log-Odds = Log\frac{p}{1-p} = logit(p)$$
+</div>
+
+
+## The Meaning of a Logit Coefficient
+
+Logit Coefficient: A 1 unit increase in a predictor = an increase of
+$\beta$ increase in the log-odds of the response.  
+\
+<div class="fragment">
+$$\beta = logit(p_2) - logit(p_1)$$
+</div><div class="fragment">
+$$\beta =  Log\frac{p_1}{1-p_1} -  Log\frac{p_2}{1-p_2}$$
+</div>
+\
+<div class="fragment">
+We need to know both p1 and $\beta$ to interpret this.\
+</div><div class="fragment">
+If p1 = 0.5, $\beta$ = 0.01347, then p2 = 0.503\ </div>
+<div class="fragment">
+If p1 = 0.7, $\beta$ = 0.01347, then p2 = 0.702\
+</div>
+
+## But how do we assess assumptions?
+> - Should still be no fitted v. residual relationship  
+\
+> - But QQ plots lose meaning
+>     - Not a normal distribution
+>     - Mean scales with variance  
+\
+> - Also many types of residuals
+>     - Deviance, Pearson, raw, etc.
+
+## Randomized quantile residuals
+> - If model fits well, quantiles of residuals should be uniformly distributed  
+\
+> - I.E., for any point, if we had its distribution, there should be no bias in its quantile  
+\
+> - We do this via simulation  
+\
+> - Works for **many** models, and naturally via Bayesian simuation
+
+## Randomized quantile residuals: Steps
+1. Get ~1000 (or more) simulations of model coefficients \
+\
+2. For each response (y) value, create an empirical distribution from the simuations\
+\
+3. For each response, determine it's quantile from that empirical distribution\
+\
+4. The quantiles of all y values should be uniformly distributed
+      - QQ plot of a uniform distribution!\
+
+## Randomized quantile residuals: Visualize
+```{r rqr}
+library(ggplot2)
+z <- data.frame(vals=rpois(250, 20))
+zdist <- ecdf(z$vals)
+
+zplot <- ggplot() +
+  geom_histogram(data=z, mapping=aes(vals, ..density..), bins=40) + 
+  theme_bw(base_size=17) +
+  ylab("Density\n(point or cummulative)")+
+  xlim(c(0,35))
+
+zplot
+```
+
+## Randomized quantile residuals: Visualize
+```{r rqr1}
+z <- data.frame(vals=rpois(250, 20))
+zdist <- ecdf(z$vals)
+
+zplot <- zplot + 
+  stat_ecdf(data=z, mapping=aes(vals)) 
+
+zplot
+```
+
+## Randomized quantile residuals: Visualize
+```{r rqr2}
+v <- data.frame(x=25, y=0, quant = zdist(25))
+zplot <- zplot + 
+  geom_point(data = v, color = "red",size = 5, mapping=aes(x=x, y=y))
+zplot
+```
+
+
+## Randomized quantile residuals: Visualize
+```{r rqr3}
+zplot <- zplot + 
+  geom_segment(data=v, color="red", lty=2, mapping=aes(x=x, y=y, xend=x, yend=quant)) +
+  geom_point(data = v, color = "red",size = 5, mapping=aes(x=x, y=quant))
+zplot
+```
+
+## Randomized quantile residuals: Visualize
+```{r rqr4}
+zplot <- zplot + 
+  geom_segment(data=v, color="red", lty=2, mapping=aes(x=x, y=quant, xend=0, yend=quant))+
+  geom_point(data = v, color = "red",size = 5, mapping=aes(x=0, y=quant)) 
+zplot
+```
+
+
+## Quantile Residuals
+```{r quant_crypto, eval = FALSE, echo = TRUE}
+library(DHARMa)
+
+set.seed(2010)
+#Get quantile residuals from simulations
+simulationOutput_crypto <- simulateResiduals(crypto_glm, 
+                                      n = 1000)
+#plot!
+plot(simulationOutput_crypto)
+```
+
+## Quantile Residuals
+```{r quant_crypto, eval = TRUE, echo = FALSE}
+```
+
+
+## A Generalized Outline
+1. Why use GLMs? An Intro to Entropy  
+\
+2. Logistic Regression Verus Linear Regression  
+\
+3. Generalized Linear Models  
+\
+4. Poisson Regression (Poisson Error, Long Link)  
+
+## General Linear Models are a Special Case
+
+Likelihood:  
+$$\Large Y_i \sim \mathcal{N}(\hat{Y_i},\sigma^{2})$$
+\
+\
+**Data Generating Process:**  
+- Transformation (Identity Link):  
+$$\Large \hat{Y}_{i} =  \eta_{i} $$ 
+\
+- Linear Equation:  
+$$\Large \boldsymbol{\eta_{i}} = \boldsymbol{\beta X_i} $$ 
+<span class="fragment">But what if We don't want a Normal Distribution?
+
+## The Generalized Linear Model
+**Likelihood:**  
+$$\boldsymbol{Y_i} = E(\boldsymbol{\hat{Y_i}}, \theta)$$ 
+\
+E is any distribution from the Exponential Family\
+$\theta$ is an error parameter, and can be a function of Y  
+
+**Data Generating Process:**  
+- Link Function
+$$\boldsymbol{f(\hat{Y_i})} = \boldsymbol{\eta_i}$$ \
+\
+- Linear Predictor
+$$\boldsymbol{\eta_i} = \boldsymbol{\beta X}$$ 
+\
+
+
+
+
+## Generalized Linear Models: Link Functions
+
+Basic Premise:
+
+1.  <span>We have a linear predictor, $\eta_i = a+Bx_i$</span>\
+    \
+
+2.  That predictor is linked to the fitted value of $Y_i$, $\hat{Y_i}$\
+    \
+
+3.  We call this a link function, such that $g(\hat{Y_i}) = \eta_i$\
+
+    -   For example, for a linear function, $\mu_i = \eta_i$\
+
+    -   For an exponential function, $log(\mu_i) = \eta_i$
+
+
+
+## Some Common Links
+
+-   Identity: $\hat{Y_i} = \eta_i$ - e.g. $\mu = a + bx$
+
+-   Log: $log(\hat{Y_i}) = \eta_i$ - e.g. $\mu = e^{a + bx}$
+
+-   Logit: $logit(\hat{Y_i}) = \eta_i$ - e.g.
+    $\hat{Y_i} = \frac{e^{a + bx}}{1+e^{a + bx}}$
+
+-   Inverse: $\frac{1}{\hat{Y_i}} = \eta_i$ - e.g. $\hat{Y_i} = (a + bx)^{-1}$
+
+
+
+## Generalized Linear Models: Error
+
+Basic Premise:
+
+1.  <span>The error distribution is from the <span>*exponential*</span>
+    family</span>
+
+    -   e.g., Normal, Poisson, Binomial, and more.
+
+    \
+    \
+
+2.  For these distributions, the variance is a funciton of the fitted
+    value on the curve: $var(Y_i) = \theta V(\hat{Y_i})$
+
+    -   For a normal distribution, $var(Y_i) = \theta*1$ as
+        $V(\hat{Y_i})=1$\
+
+    -   For a poisson distribution, $var(Y_i) = 1*\mu_i$ as
+        $V(\hat{Y_i})=\hat{Y_i}$
+
+
+
+## Distributions, Canonical Links, and Dispersion
+
+|Distribution | Canonical Link | Variance Function|
+|-------------|-------------|-------------|
+|Normal | identity | $\theta$|
+|Poisson | log | $\hat{Y_i}$|
+|Binomial | logit | $\hat{Y_i}(1-\hat{Y_i})$|
+|Negative Binomial | log | $\mu + \kappa\hat{Y_i}^2$|
+|Gamma | inverse | $\hat{Y_i}^2$|
+|Inverse Normal | $1/\hat{Y_i}^2$ | $\hat{Y_i}^3$|
+
+## The Generalized Linear Model
+**Likelihood:**  
+$$\boldsymbol{Y_i} = E(\boldsymbol{\hat{Y_i}}, \theta)$$ 
+\
+E is any distribution from the Exponential Family\
+$\theta$ is an error parameter, and can be a function of Y  
+
+**Data Generating Process:**  
+- Link Function
+$$\boldsymbol{f(\hat{Y_i})} = \boldsymbol{\eta_i}$$ \
+\
+- Linear Predictor
+$$\boldsymbol{\eta_i} = \boldsymbol{\beta X}$$ 
+\
+
+
+
+## A Generalized Outline
+1. Why use GLMs? An Intro to Entropy  
+\
+2. Logistic Regression Verus Linear Regression  
+\
+3. Generalized Linear Models  
+\
+4. **Poisson Regression (Poisson Error, Long Link)**  
+
+## Poisson Regression with a Log Link
+
+**Likelihood:**  
+$$\boldsymbol{Y_i} \sim \mathcal{P}(\lambda = \boldsymbol{\hat{Y_i}})$$ 
+\
+\
+**Data Generating Process:**
+$$log(\boldsymbol{\hat{Y_i}}) = \boldsymbol{\eta_i}$$
+\
+$$\boldsymbol{\eta_i} = \boldsymbol{\beta X_i}$$ 
+
+## What is the relationship between kelp holdfast size and number of fronds?
+![](images/02/Giant_kelp_adult.jpeg)
+
+## What About Kelp Holdfasts?
+```{r kelp}
+kelp <- read.csv("data/02/kelp_holdfast.csv")
+
+kelp_plot <- qplot(HLD_DIAM, FRONDS, data=kelp) +
+  theme_bw(base_size=17) +
+  geom_point(size=2)
+kelp_plot
+```
+
+## How 'bout dem residuals?
+```{r fit_kelp, echo=TRUE}
+kelp_lm <- lm(FRONDS ~ HLD_DIAM, data=kelp)
+```
+
+```{r plot_lelp}
+plot(kelp_lm, which=2)
+```
+
+## What is our data and error generating process?
+```{r kelp}
+```
+
+## What is our data and error generating process?
+> - Data generating process should be exponential
+>       - No values less than 1  
+\
+> - Error generating process should be Poisson
+>       - Count data
+
+## What is our data and error generating process?
+\
+\
+```{r kelp glm, echo=TRUE}
+kelp_glm <- glm(FRONDS ~ HLD_DIAM, data=kelp,
+                family=poisson(link="log"))
+```
+
+
+## Kelp GLM Results
+LR Test
+```{r kelp_aov}
+knitr::kable(Anova(kelp_glm), digits=5)
+```
+
+\
+Coefficients:
+```{r kelp_summary}
+knitr::kable(broom::tidy(kelp_glm))
+```
+
+## Kelp GLM Results
+```{r kelpplot, eval=FALSE, echo=TRUE}
+kelp_plot +
+  stat_smooth(method="glm", 
+              method.args=list(family=poisson(link="log")))
+```
+
+## Kelp GLM Results
+```{r kelpplot2}
+kelp_plot_pois_fit <- kelp_plot +
+  stat_smooth(method="glm", 
+              method.args=list(family=poisson(link="log")))
+
+kelp_plot_pois_fit
+```
+
+ 
+## Kelp GLM Quantile Residuals
+```{r kelp_resid_dharma, echo=TRUE}
+library(DHARMa)
+set.seed(2017)
+simulationOutput <- simulateResiduals(kelp_glm, 
+                                      n = 1000)
+plot(simulationOutput)
+```
+
+## Ruh roh! Overdispersion
+- Sometimes, your variance changes faster than predicted by your error distribution  
+\
+- This is called **overdispersion**  
+\
+- We will deal with it more formally next week, but...  
+\
+- Sometimes, a different error structure will do.
+
+## The Negative Binomial
+- Related to the binomial (coin flips!)  
+\
+- Number of failures before *size* successes are seen given *p* as the probability of success  
+\
+- $Y_i \sim NB(size, p)$  
+\
+- Variance = $\hat{Y_i}^2 + \kappa\hat{Y_i}^2$|$  
+\
+- Increases with the square, not linearly  
+
+
+## The Negative Binomial
+```{r}
+nbdf <- crossing(x = 1:80, r = c(1,3,5,7), p = c(0.1, 0.8)) %>%
+  mutate(y = dnbinom(x, size = r, prob = p)) %>%
+  mutate(p = str_c("prob = ", p),
+         r = str_c("# of successes = ", r))
+
+ggplot(nbdf,
+       aes(x = x, y = y, color = r, fill = r)) +
+  geom_col(width = 0.1, position = position_dodge()) +
+  facet_wrap(~p, scale = "free_y")
+
+```
+
+## Negative Binomials and Log Links...
+
+- We can also write NBs using means and a dispersion parameter.  
+\
+- If the mean is $\mu_i$, then, the variance is:
+$$var(Y_i) = \mu_i + \mu_i^2/\theta$$
+\
+- We call $\theta$ the dispersion parameters
+
+
+## A Negative Binomial GLM
+**Likelihood:**  
+$$\boldsymbol{Y_i} \sim NB(\boldsymbol{\hat{Y_i}}, \boldsymbol{\theta})$$ 
+\
+\
+**Data Generating Process:**
+$$log(\boldsymbol{\hat{Y_i}}) = \boldsymbol{\eta_i}$$
+\
+$$\boldsymbol{\eta_i} = \boldsymbol{\beta X_i}$$ 
+
+## A Negative Binomial GLM
+```{r nb_mod, echo=TRUE}
+library(MASS)
+kelp_glm_nb <- glm.nb(FRONDS ~ HLD_DIAM, data=kelp)
+Anova(kelp_glm_nb)
+```
+
+## Kelp NB GLM Results
+```{r nbplot, eval=TRUE, echo=TRUE}
+kelp_plot +
+  stat_smooth(method="glm.nb")
+```
+
+## Kelp NB GLM Checks
+```{r nbdharma, eval=TRUE, echo=TRUE}
+res <- simulateResiduals(kelp_glm_nb)
+
+plot(res)
+```
+
+
+## You Try: Wolf Inbreeding and Litter Size
+```{r wolves}
+wolves <- read.csv("./data/02/16e2InbreedingWolves.csv")
+
+ggplot(data=wolves, mapping=aes(x=inbreeding.coefficient, y=pups)) +
+xlab("Inbreeding Coefficient") + ylab("# of Pups") +
+geom_point(size=3) +
+theme_bw(base_size=24)
+```
