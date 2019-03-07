@@ -17,7 +17,9 @@ output:
 <h2>Bayesian Generalized Linear Models</h2>
 </center>
 \
-![](./images/bayesian_glm/star_wars_glm.jpg){width="75%"}
+<!-- add some fitted and predictions intervals next time -->
+
+![](./images/bayesian_glm/star_wars_glm.jpg){width="65%"}
 
 
 ```{r prep, echo=FALSE, cache=FALSE, message=FALSE, warning=FALSE}
@@ -397,15 +399,39 @@ data(Kline)
 head(Kline)
 ```
 
+## How to Handle the data?
+```{r kline_data0}
+ggplot(Kline,
+       aes(x = population, y = total_tools)) +
+  geom_point()
+```
+
+## OK, Population scale is off - log it?
+```{r kline_data_log}
+ggplot(Kline,
+       aes(x = log10(population), y = total_tools)) +
+  geom_point()
+```
+
+## Center Population, as our smallest still have 1K People!
+```{r kline_data_log_cent}
+ggplot(Kline,
+       aes(x = log(population) - mean(log(population)), y = total_tools)) +
+  geom_point()
+```
+
 
 ## A Simple Model
 ```{r kline_simp, eval = FALSE}
+
+Kline$P <- log(Kline$population) - mean(log(Kline$population))
+  
 kline_mod <- alist(
   #likelihood
   total_tools ~ dpois(lambda)
   
   #DGP
-  log(lambda) <- a + b*population
+  log(lambda) <- a + b * P
   
   #priors
   ...
@@ -413,25 +439,7 @@ kline_mod <- alist(
 ```
 
 ## What should our priors be? Data
-```{r kline_data0}
-ggplot(Kline,
-       aes(x = population, y = total_tools)) +
-  geom_point()
-```
-
-## What should our priors be? Data Logged
-```{r kline_data}
-ggplot(Kline,
-       aes(x = log(population), y = total_tools)) +
-  geom_point()
-```
-
-
-## What should our priors be? Mean Tool Use
-```{r kline_data2}
-ggplot(Kline,
-       aes(x = log(population), y = mean_TU)) +
-  geom_point()
+```{r kline_data_log_cent}
 ```
 
 ## Try out a few
@@ -443,7 +451,7 @@ a_priors <- crossing(m = 0:3,
   unnest()
 ```
 
-## Viz Priors
+## Visualize Priors (data centered on ~40)
 ```{r}
 ggplot(a_priors,
        aes(x = exp(value))) +
@@ -460,40 +468,102 @@ b_priors <- crossing(m = 0:3,
   unnest() %>%
   
   #make the line
-  crossing(pop = seq(1,1e4, length.out=100)) %>%
-  mutate(tools_sim = exp(value*pop))
+  crossing(p = seq(-3,3, length.out=100)) %>%
+  mutate(tools_sim = exp(value*p))
 ```
 
 ## What about b?
 ```{r}
 ggplot(b_priors,
-       aes(x = log(pop), y = log(tools_sim), group = value)) +
+       aes(x = p, y = tools_sim, group = value)) +
   geom_line() +
   facet_grid(m ~ s, scale = "free")
 ```
 
+## What about b?
+```{r}
+ggplot(b_priors %>% filter(s < 0.5),
+       aes(x = p, y = tools_sim, group = value)) +
+  geom_line() +
+  facet_grid(m ~ s, scale = "free")
+```
+
+
 ## A Simple Model
-```{r kline_simp2, eval = TRUE, echo = TRUE, cache=TRUE}
+```{r kline_simp2, eval = TRUE, echo = TRUE, cache=FALSE}
+Kline$P <- log(Kline$population) - mean(log(Kline$population))
+
 kline_mod <- alist(
   #likelihood
   total_tools ~ dpois(lambda),
   
   #DGP
-  log(lambda) <- a + b*population,
+  log(lambda) <- a + b * P,
   
   #priors
   a ~ dnorm(3,0.5),
   b ~ dnorm(1,0.2)
 )
 
-#kline_fit <- map(kline_mod, data = Kline)
+kline_fit <- map2stan(kline_mod, data = Kline)
 ```
 
-## Outcome?
-```{r out}
-#precis(kline_fit)
+##Did we converge?
+```{r converge_pois, echo = TRUE}
+plot(kline_fit)
 ```
 
+## Check your posterior
+```{r postcheck_pois, message=FALSE, results="hide", echo = TRUE}
+postcheck(kline_fit)
+```
+
+## Check Quantile Residuals
+```{r post_pred_pois, echo=TRUE, eval = FALSE}
+#sim gets predictions
+kline_post_pred <- sim(kline_fit, refresh=0)
+
+#figure out how much of each column < observation
+quants_kline <- sapply(1:nrow(Kline), function(i){
+  #what fraction of predictions < the observation
+  sum(kline_post_pred[,i] < Kline$total_tools[i])/nrow(kline_post_pred)
+})
+
+gap::qqunif(quants_kline, logscale=FALSE)
+```
+
+## Check Quantile Residuals
+```{r post_pred_pois, echo=FALSE, eval = TRUE}
+```
+
+## Outcomes?
+```{r out, echo = TRUE}
+precis(kline_fit)
+```
+
+## Should the link really be linear?
+```{r kline_linear, eval = TRUE, echo = TRUE, cache=FALSE}
+Kline$P <- log(Kline$population) - mean(log(Kline$population))
+
+kline_linear <- alist(
+  #likelihood
+  total_tools ~ dpois(lambda),
+  
+  #DGP
+  lambda <- a + b * P,
+  
+  #priors
+  a ~ dnorm(3,0.5),
+  b ~ dnorm(1,0.2)
+)
+
+kline_linear_fit <- map2stan(kline_linear, data = Kline)
+```
+
+## Should the link really be linear?
+```{r compare, echo = TRUE}
+compare(kline_fit, kline_linear_fit)
+```
 
 ## Your turn -  What drives tool use?
 ```{r kline}
