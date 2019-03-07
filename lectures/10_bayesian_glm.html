@@ -931,6 +931,18 @@ Note that difference has reversed!
 </section>
 <section id="a-simple-model" class="slide level2">
 <h2>A Simple Model</h2>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1">Kline<span class="op">$</span>P &lt;-<span class="st"> </span><span class="kw">log</span>(Kline<span class="op">$</span>population) <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(<span class="kw">log</span>(Kline<span class="op">$</span>population))</a>
+<a class="sourceLine" id="cb31-2" data-line-number="2">  </a>
+<a class="sourceLine" id="cb31-3" data-line-number="3">kline_mod &lt;-<span class="st"> </span><span class="kw">alist</span>(</a>
+<a class="sourceLine" id="cb31-4" data-line-number="4">  <span class="co">#likelihood</span></a>
+<a class="sourceLine" id="cb31-5" data-line-number="5">  total_tools <span class="op">~</span><span class="st"> </span><span class="kw">dpois</span>(lambda)</a>
+<a class="sourceLine" id="cb31-6" data-line-number="6">  </a>
+<a class="sourceLine" id="cb31-7" data-line-number="7">  <span class="co">#DGP</span></a>
+<a class="sourceLine" id="cb31-8" data-line-number="8">  <span class="kw">log</span>(lambda) &lt;-<span class="st"> </span>a <span class="op">+</span><span class="st"> </span>b <span class="op">*</span><span class="st"> </span>P</a>
+<a class="sourceLine" id="cb31-9" data-line-number="9">  </a>
+<a class="sourceLine" id="cb31-10" data-line-number="10">  <span class="co">#priors</span></a>
+<a class="sourceLine" id="cb31-11" data-line-number="11">  ...</a>
+<a class="sourceLine" id="cb31-12" data-line-number="12">)</a></code></pre></div>
 </section>
 <section id="what-should-our-priors-be-data" class="slide level2">
 <h2>What should our priors be? Data</h2>
@@ -938,11 +950,11 @@ Note that difference has reversed!
 </section>
 <section id="try-out-a-few" class="slide level2">
 <h2>Try out a few</h2>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1">a_priors &lt;-<span class="st"> </span><span class="kw">crossing</span>(<span class="dt">m =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">3</span>, </a>
-<a class="sourceLine" id="cb31-2" data-line-number="2">                     <span class="dt">s =</span> <span class="kw">seq</span>(<span class="fl">0.5</span>,<span class="dv">3</span>,.<span class="dv">5</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb31-3" data-line-number="3"><span class="st">  </span><span class="kw">rowwise</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb31-4" data-line-number="4"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">value =</span> <span class="kw">list</span>(<span class="kw">rnorm</span>(<span class="fl">1e4</span>, m, s))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb31-5" data-line-number="5"><span class="st">  </span><span class="kw">unnest</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1">a_priors &lt;-<span class="st"> </span><span class="kw">crossing</span>(<span class="dt">m =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">3</span>, </a>
+<a class="sourceLine" id="cb32-2" data-line-number="2">                     <span class="dt">s =</span> <span class="kw">seq</span>(<span class="fl">0.5</span>,<span class="dv">3</span>,.<span class="dv">5</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb32-3" data-line-number="3"><span class="st">  </span><span class="kw">rowwise</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb32-4" data-line-number="4"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">value =</span> <span class="kw">list</span>(<span class="kw">rnorm</span>(<span class="fl">1e4</span>, m, s))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb32-5" data-line-number="5"><span class="st">  </span><span class="kw">unnest</span>()</a></code></pre></div>
 </section>
 <section id="visualize-priors-data-centered-on-40" class="slide level2">
 <h2>Visualize Priors (data centered on ~40)</h2>
@@ -950,15 +962,15 @@ Note that difference has reversed!
 </section>
 <section id="what-about-b" class="slide level2">
 <h2>What about b?</h2>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1">b_priors &lt;-<span class="st"> </span><span class="kw">crossing</span>(<span class="dt">m =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">3</span>, </a>
-<a class="sourceLine" id="cb32-2" data-line-number="2">                     <span class="dt">s =</span> <span class="kw">seq</span>(<span class="fl">0.1</span>,<span class="dv">1</span>,.<span class="dv">1</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb32-3" data-line-number="3"><span class="st">  </span><span class="kw">rowwise</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb32-4" data-line-number="4"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">value =</span> <span class="kw">list</span>(<span class="kw">rnorm</span>(<span class="fl">1e2</span>, m, s))) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb32-5" data-line-number="5"><span class="st">  </span><span class="kw">unnest</span>() <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb32-6" data-line-number="6"><span class="st">  </span></a>
-<a class="sourceLine" id="cb32-7" data-line-number="7"><span class="st">  </span><span class="co">#make the line</span></a>
-<a class="sourceLine" id="cb32-8" data-line-number="8"><span class="st">  </span><span class="kw">crossing</span>(<span class="dt">p =</span> <span class="kw">seq</span>(<span class="op">-</span><span class="dv">3</span>,<span class="dv">3</span>, <span class="dt">length.out=</span><span class="dv">100</span>)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb32-9" data-line-number="9"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">tools_sim =</span> <span class="kw">exp</span>(value<span class="op">*</span>p))</a></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1">b_priors &lt;-<span class="st"> </span><span class="kw">crossing</span>(<span class="dt">m =</span> <span class="dv">0</span><span class="op">:</span><span class="dv">3</span>, </a>
+<a class="sourceLine" id="cb33-2" data-line-number="2">                     <span class="dt">s =</span> <span class="kw">seq</span>(<span class="fl">0.1</span>,<span class="dv">1</span>,.<span class="dv">1</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb33-3" data-line-number="3"><span class="st">  </span><span class="kw">rowwise</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb33-4" data-line-number="4"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">value =</span> <span class="kw">list</span>(<span class="kw">rnorm</span>(<span class="fl">1e2</span>, m, s))) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb33-5" data-line-number="5"><span class="st">  </span><span class="kw">unnest</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb33-6" data-line-number="6"><span class="st">  </span></a>
+<a class="sourceLine" id="cb33-7" data-line-number="7"><span class="st">  </span><span class="co">#make the line</span></a>
+<a class="sourceLine" id="cb33-8" data-line-number="8"><span class="st">  </span><span class="kw">crossing</span>(<span class="dt">p =</span> <span class="kw">seq</span>(<span class="op">-</span><span class="dv">3</span>,<span class="dv">3</span>, <span class="dt">length.out=</span><span class="dv">100</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb33-9" data-line-number="9"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">tools_sim =</span> <span class="kw">exp</span>(value<span class="op">*</span>p))</a></code></pre></div>
 </section>
 <section id="what-about-b-1" class="slide level2">
 <h2>What about b?</h2>
@@ -970,21 +982,21 @@ Note that difference has reversed!
 </section>
 <section id="a-simple-model-1" class="slide level2">
 <h2>A Simple Model</h2>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1">Kline<span class="op">$</span>P &lt;-<span class="st"> </span><span class="kw">log</span>(Kline<span class="op">$</span>population) <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(<span class="kw">log</span>(Kline<span class="op">$</span>population))</a>
-<a class="sourceLine" id="cb33-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb33-3" data-line-number="3">kline_mod &lt;-<span class="st"> </span><span class="kw">alist</span>(</a>
-<a class="sourceLine" id="cb33-4" data-line-number="4">  <span class="co">#likelihood</span></a>
-<a class="sourceLine" id="cb33-5" data-line-number="5">  total_tools <span class="op">~</span><span class="st"> </span><span class="kw">dpois</span>(lambda),</a>
-<a class="sourceLine" id="cb33-6" data-line-number="6">  </a>
-<a class="sourceLine" id="cb33-7" data-line-number="7">  <span class="co">#DGP</span></a>
-<a class="sourceLine" id="cb33-8" data-line-number="8">  <span class="kw">log</span>(lambda) &lt;-<span class="st"> </span>a <span class="op">+</span><span class="st"> </span>b <span class="op">*</span><span class="st"> </span>P,</a>
-<a class="sourceLine" id="cb33-9" data-line-number="9">  </a>
-<a class="sourceLine" id="cb33-10" data-line-number="10">  <span class="co">#priors</span></a>
-<a class="sourceLine" id="cb33-11" data-line-number="11">  a <span class="op">~</span><span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">3</span>,<span class="fl">0.5</span>),</a>
-<a class="sourceLine" id="cb33-12" data-line-number="12">  b <span class="op">~</span><span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">1</span>,<span class="fl">0.2</span>)</a>
-<a class="sourceLine" id="cb33-13" data-line-number="13">)</a>
-<a class="sourceLine" id="cb33-14" data-line-number="14"></a>
-<a class="sourceLine" id="cb33-15" data-line-number="15">kline_fit &lt;-<span class="st"> </span><span class="kw">map2stan</span>(kline_mod, <span class="dt">data =</span> Kline)</a></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1">Kline<span class="op">$</span>P &lt;-<span class="st"> </span><span class="kw">log</span>(Kline<span class="op">$</span>population) <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(<span class="kw">log</span>(Kline<span class="op">$</span>population))</a>
+<a class="sourceLine" id="cb34-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb34-3" data-line-number="3">kline_mod &lt;-<span class="st"> </span><span class="kw">alist</span>(</a>
+<a class="sourceLine" id="cb34-4" data-line-number="4">  <span class="co">#likelihood</span></a>
+<a class="sourceLine" id="cb34-5" data-line-number="5">  total_tools <span class="op">~</span><span class="st"> </span><span class="kw">dpois</span>(lambda),</a>
+<a class="sourceLine" id="cb34-6" data-line-number="6">  </a>
+<a class="sourceLine" id="cb34-7" data-line-number="7">  <span class="co">#DGP</span></a>
+<a class="sourceLine" id="cb34-8" data-line-number="8">  <span class="kw">log</span>(lambda) &lt;-<span class="st"> </span>a <span class="op">+</span><span class="st"> </span>b <span class="op">*</span><span class="st"> </span>P,</a>
+<a class="sourceLine" id="cb34-9" data-line-number="9">  </a>
+<a class="sourceLine" id="cb34-10" data-line-number="10">  <span class="co">#priors</span></a>
+<a class="sourceLine" id="cb34-11" data-line-number="11">  a <span class="op">~</span><span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">3</span>,<span class="fl">0.5</span>),</a>
+<a class="sourceLine" id="cb34-12" data-line-number="12">  b <span class="op">~</span><span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">1</span>,<span class="fl">0.2</span>)</a>
+<a class="sourceLine" id="cb34-13" data-line-number="13">)</a>
+<a class="sourceLine" id="cb34-14" data-line-number="14"></a>
+<a class="sourceLine" id="cb34-15" data-line-number="15">kline_fit &lt;-<span class="st"> </span><span class="kw">map2stan</span>(kline_mod, <span class="dt">data =</span> Kline)</a></code></pre></div>
 <pre><code>
 SAMPLING FOR MODEL &#39;total_tools ~ dpois(lambda)&#39; NOW (CHAIN 1).
 Chain 1: 
@@ -1006,9 +1018,9 @@ Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)
 Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
 Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
 Chain 1: 
-Chain 1:  Elapsed Time: 0.020164 seconds (Warm-up)
-Chain 1:                0.020224 seconds (Sampling)
-Chain 1:                0.040388 seconds (Total)
+Chain 1:  Elapsed Time: 0.017101 seconds (Warm-up)
+Chain 1:                0.017591 seconds (Sampling)
+Chain 1:                0.034692 seconds (Total)
 Chain 1: 
 
 SAMPLING FOR MODEL &#39;total_tools ~ dpois(lambda)&#39; NOW (CHAIN 1).
@@ -1038,26 +1050,26 @@ Chain 1:
 [ 900 / 1000 ]
 [ 1000 / 1000 ]</code></pre>
 <p>##Did we converge?</p>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" data-line-number="1"><span class="kw">plot</span>(kline_fit)</a></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" data-line-number="1"><span class="kw">plot</span>(kline_fit)</a></code></pre></div>
 <p><img src="10_bayesian_glm_files/figure-revealjs/converge_pois-1.jpeg" width="672" /></p>
 </section>
 <section id="check-your-posterior" class="slide level2">
 <h2>Check your posterior</h2>
-<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" data-line-number="1"><span class="kw">postcheck</span>(kline_fit)</a></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" data-line-number="1"><span class="kw">postcheck</span>(kline_fit)</a></code></pre></div>
 <p><img src="10_bayesian_glm_files/figure-revealjs/postcheck_pois-1.jpeg" width="672" /></p>
 </section>
 <section id="check-quantile-residuals" class="slide level2">
 <h2>Check Quantile Residuals</h2>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" data-line-number="1"><span class="co">#sim gets predictions</span></a>
-<a class="sourceLine" id="cb37-2" data-line-number="2">kline_post_pred &lt;-<span class="st"> </span><span class="kw">sim</span>(kline_fit, <span class="dt">refresh=</span><span class="dv">0</span>)</a>
-<a class="sourceLine" id="cb37-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb37-4" data-line-number="4"><span class="co">#figure out how much of each column &lt; observation</span></a>
-<a class="sourceLine" id="cb37-5" data-line-number="5">quants_kline &lt;-<span class="st"> </span><span class="kw">sapply</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(Kline), <span class="cf">function</span>(i){</a>
-<a class="sourceLine" id="cb37-6" data-line-number="6">  <span class="co">#what fraction of predictions &lt; the observation</span></a>
-<a class="sourceLine" id="cb37-7" data-line-number="7">  <span class="kw">sum</span>(kline_post_pred[,i] <span class="op">&lt;</span><span class="st"> </span>Kline<span class="op">$</span>total_tools[i])<span class="op">/</span><span class="kw">nrow</span>(kline_post_pred)</a>
-<a class="sourceLine" id="cb37-8" data-line-number="8">})</a>
-<a class="sourceLine" id="cb37-9" data-line-number="9"></a>
-<a class="sourceLine" id="cb37-10" data-line-number="10">gap<span class="op">::</span><span class="kw">qqunif</span>(quants_kline, <span class="dt">logscale=</span><span class="ot">FALSE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" data-line-number="1"><span class="co">#sim gets predictions</span></a>
+<a class="sourceLine" id="cb38-2" data-line-number="2">kline_post_pred &lt;-<span class="st"> </span><span class="kw">sim</span>(kline_fit, <span class="dt">refresh=</span><span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb38-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb38-4" data-line-number="4"><span class="co">#figure out how much of each column &lt; observation</span></a>
+<a class="sourceLine" id="cb38-5" data-line-number="5">quants_kline &lt;-<span class="st"> </span><span class="kw">sapply</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(Kline), <span class="cf">function</span>(i){</a>
+<a class="sourceLine" id="cb38-6" data-line-number="6">  <span class="co">#what fraction of predictions &lt; the observation</span></a>
+<a class="sourceLine" id="cb38-7" data-line-number="7">  <span class="kw">sum</span>(kline_post_pred[,i] <span class="op">&lt;</span><span class="st"> </span>Kline<span class="op">$</span>total_tools[i])<span class="op">/</span><span class="kw">nrow</span>(kline_post_pred)</a>
+<a class="sourceLine" id="cb38-8" data-line-number="8">})</a>
+<a class="sourceLine" id="cb38-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb38-10" data-line-number="10">gap<span class="op">::</span><span class="kw">qqunif</span>(quants_kline, <span class="dt">logscale=</span><span class="ot">FALSE</span>)</a></code></pre></div>
 </section>
 <section id="check-quantile-residuals-1" class="slide level2">
 <h2>Check Quantile Residuals</h2>
@@ -1065,28 +1077,28 @@ Chain 1:
 </section>
 <section id="outcomes-1" class="slide level2">
 <h2>Outcomes?</h2>
-<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" data-line-number="1"><span class="kw">precis</span>(kline_fit)</a></code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb39-1" data-line-number="1"><span class="kw">precis</span>(kline_fit)</a></code></pre></div>
 <pre><code>  Mean StdDev lower 0.89 upper 0.89 n_eff Rhat
 a 3.46   0.06       3.37       3.56   500 1.00
 b 0.26   0.03       0.21       0.31   516 1.01</code></pre>
 </section>
 <section id="should-the-link-really-be-linear" class="slide level2">
 <h2>Should the link really be linear?</h2>
-<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb40-1" data-line-number="1">Kline<span class="op">$</span>P &lt;-<span class="st"> </span><span class="kw">log</span>(Kline<span class="op">$</span>population) <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(<span class="kw">log</span>(Kline<span class="op">$</span>population))</a>
-<a class="sourceLine" id="cb40-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb40-3" data-line-number="3">kline_linear &lt;-<span class="st"> </span><span class="kw">alist</span>(</a>
-<a class="sourceLine" id="cb40-4" data-line-number="4">  <span class="co">#likelihood</span></a>
-<a class="sourceLine" id="cb40-5" data-line-number="5">  total_tools <span class="op">~</span><span class="st"> </span><span class="kw">dpois</span>(lambda),</a>
-<a class="sourceLine" id="cb40-6" data-line-number="6">  </a>
-<a class="sourceLine" id="cb40-7" data-line-number="7">  <span class="co">#DGP</span></a>
-<a class="sourceLine" id="cb40-8" data-line-number="8">  lambda &lt;-<span class="st"> </span>a <span class="op">+</span><span class="st"> </span>b <span class="op">*</span><span class="st"> </span>P,</a>
-<a class="sourceLine" id="cb40-9" data-line-number="9">  </a>
-<a class="sourceLine" id="cb40-10" data-line-number="10">  <span class="co">#priors</span></a>
-<a class="sourceLine" id="cb40-11" data-line-number="11">  a <span class="op">~</span><span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">3</span>,<span class="fl">0.5</span>),</a>
-<a class="sourceLine" id="cb40-12" data-line-number="12">  b <span class="op">~</span><span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">1</span>,<span class="fl">0.2</span>)</a>
-<a class="sourceLine" id="cb40-13" data-line-number="13">)</a>
-<a class="sourceLine" id="cb40-14" data-line-number="14"></a>
-<a class="sourceLine" id="cb40-15" data-line-number="15">kline_linear_fit &lt;-<span class="st"> </span><span class="kw">map2stan</span>(kline_linear, <span class="dt">data =</span> Kline)</a></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb41-1" data-line-number="1">Kline<span class="op">$</span>P &lt;-<span class="st"> </span><span class="kw">log</span>(Kline<span class="op">$</span>population) <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(<span class="kw">log</span>(Kline<span class="op">$</span>population))</a>
+<a class="sourceLine" id="cb41-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb41-3" data-line-number="3">kline_linear &lt;-<span class="st"> </span><span class="kw">alist</span>(</a>
+<a class="sourceLine" id="cb41-4" data-line-number="4">  <span class="co">#likelihood</span></a>
+<a class="sourceLine" id="cb41-5" data-line-number="5">  total_tools <span class="op">~</span><span class="st"> </span><span class="kw">dpois</span>(lambda),</a>
+<a class="sourceLine" id="cb41-6" data-line-number="6">  </a>
+<a class="sourceLine" id="cb41-7" data-line-number="7">  <span class="co">#DGP</span></a>
+<a class="sourceLine" id="cb41-8" data-line-number="8">  lambda &lt;-<span class="st"> </span>a <span class="op">+</span><span class="st"> </span>b <span class="op">*</span><span class="st"> </span>P,</a>
+<a class="sourceLine" id="cb41-9" data-line-number="9">  </a>
+<a class="sourceLine" id="cb41-10" data-line-number="10">  <span class="co">#priors</span></a>
+<a class="sourceLine" id="cb41-11" data-line-number="11">  a <span class="op">~</span><span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">3</span>,<span class="fl">0.5</span>),</a>
+<a class="sourceLine" id="cb41-12" data-line-number="12">  b <span class="op">~</span><span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">1</span>,<span class="fl">0.2</span>)</a>
+<a class="sourceLine" id="cb41-13" data-line-number="13">)</a>
+<a class="sourceLine" id="cb41-14" data-line-number="14"></a>
+<a class="sourceLine" id="cb41-15" data-line-number="15">kline_linear_fit &lt;-<span class="st"> </span><span class="kw">map2stan</span>(kline_linear, <span class="dt">data =</span> Kline)</a></code></pre></div>
 <pre><code>
 SAMPLING FOR MODEL &#39;total_tools ~ dpois(lambda)&#39; NOW (CHAIN 1).
 Chain 1: 
@@ -1108,15 +1120,15 @@ Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)
 Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
 Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
 Chain 1: 
-Chain 1:  Elapsed Time: 0.020466 seconds (Warm-up)
-Chain 1:                0.016715 seconds (Sampling)
-Chain 1:                0.037181 seconds (Total)
+Chain 1:  Elapsed Time: 0.020341 seconds (Warm-up)
+Chain 1:                0.016363 seconds (Sampling)
+Chain 1:                0.036704 seconds (Total)
 Chain 1: 
 
 SAMPLING FOR MODEL &#39;total_tools ~ dpois(lambda)&#39; NOW (CHAIN 1).
 Chain 1: 
-Chain 1: Gradient evaluation took 6e-06 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.06 seconds.
+Chain 1: Gradient evaluation took 7e-06 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.07 seconds.
 Chain 1: Adjust your expectations accordingly!
 Chain 1: 
 Chain 1: 
@@ -1126,8 +1138,8 @@ Chain 1:
 Chain 1: Iteration: 1 / 1 [100%]  (Sampling)
 Chain 1: 
 Chain 1:  Elapsed Time: 1e-06 seconds (Warm-up)
-Chain 1:                1.8e-05 seconds (Sampling)
-Chain 1:                1.9e-05 seconds (Total)
+Chain 1:                1.9e-05 seconds (Sampling)
+Chain 1:                2e-05 seconds (Total)
 Chain 1: 
 [ 100 / 1000 ]
 [ 200 / 1000 ]
@@ -1142,7 +1154,7 @@ Chain 1:
 </section>
 <section id="should-the-link-really-be-linear-1" class="slide level2">
 <h2>Should the link really be linear?</h2>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb42-1" data-line-number="1"><span class="kw">compare</span>(kline_fit, kline_linear_fit)</a></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb43-1" data-line-number="1"><span class="kw">compare</span>(kline_fit, kline_linear_fit)</a></code></pre></div>
 <pre><code>                  WAIC pWAIC dWAIC weight     SE    dSE
 kline_fit         85.6   4.3     0      1   9.39     NA
 kline_linear_fit 511.6  17.5   426      0 121.30 123.15</code></pre>
