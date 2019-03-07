@@ -1,0 +1,193 @@
+---
+title: 'Bayesian GLM: Your Turn'
+output:
+  html_document:
+    toc: true
+    toc_depth: 5
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1. Intro: Bayesian GLMs
+
+We've been considering models with a form lately where
+
+**Likelihood:**
+$Y_i \sim E(\mu_i, \theta)$  
+\
+**Data Generating Proess:**
+$f(\mu_i) = \beta  X_i$  
+\
+**Priors:**
+$\beta \sim D(...)$
+
+where E is some distribution from the exponential family with some mean and dispersion parameter - really, all distributions can ultimately fall here - see http://www.math.wm.edu/~leemis/2008amstat.pdf for a fun chart. f is a link function for some set of linear predictors and coefficients. And the priors in the model can take on any number of different distributions. For the lab today, I'd like you to take a look at five of the more common distributions and fit them to data using `rethinking`. For each of the datasets below, I'd like you to:  
+\
+A. Build an initial model.  You do not have to run this.  
+\
+B. Test out prior distributions to see if they are reasonable. Justify if they are or are not. This can include just looking at shapes and ranges or doing some comparison to data to see if they are at least plausible.  
+\
+C. Fit a finalized model.  
+\
+D. Evaluate whether this fit is valid.  This should include looking at convergence as well as model fit.  
+\
+E. Draw conclusions from the model and the question at hand. This can include visualizations of parameters and/or fit and prediction intervals.
+
+There will be some additional instructions for some sections.  
+\
+You'll also want to start with the following libraries:
+```{r library, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(readr)
+library(ggplot2)
+library(rethinking)
+library(gap) #for qqunif
+```
+
+## 2. Binomial for Trials
+
+We've gone over the binomial in great detail at this point, so, here, let's look at the crytosporidium data we've talked about only in a likelihood context before.  We'll use a logit link, although, note, there are a wide variety of others - [see here](http://cran.r-project.org/doc/Rnews/Rnews_2006-4.pdf) (page 32) or [here](https://www.sciencedirect.com/science/article/pii/S0304407609000207) for more info. Also, try saying "Scobit" without feeling silly. Heck, if you want, see if you can implement them and use MMI to compare models!
+
+As a reminder...
+```{r, message=FALSE}
+mouse <- read_csv("./glm_data/cryptoDATA.csv") %>%
+  mutate(Porportion = Y/N)
+
+mouse_plot <- ggplot(mouse,
+       aes(x = Dose, y = Porportion)) +
+  geom_point()
+
+mouse_plot
+```
+
+
+## 3. Beta for Bounded Data
+We often have data that is bounded, but is not drawn from a binomial - i.e., there are not independent "coin flips", if you will. This data can easily be accomodated by the beta distirbution. The Beta is often used to describe a distribution of probabilities (an overdispersed binomial glm is actually beta binomial - but more on that another time). But, it's also useful for things like porportional data, percent cover, and more. All of these can be logit transformed, but a beta provides a more natural fit.  
+
+Consider this analysis of porportion of sodium intake from different supplements when you exercise with different gym teachers.  2300 is your RDA, so we're standardizing to that.
+
+```{r sodium, message=FALSE}
+sodium <- read_csv("./glm_data/sodium_intake.csv")
+
+ggplot(sodium,
+       aes(x = Supplement, y = Porportion_Sodium_Intake,
+           fill = Instructor)) +
+  geom_boxplot()
+```
+
+Note, here we have TWO categorical predictors.  
+
+To use the beta distributions, we use `dbeta2` which is provided in the rethinking package. It takes two arguments. The first is, again, a probability (prob) and the second is a spread parameter, theta. If our data wasn't bounded between 0 and 1, we would simply rescale the data. Let's explore what different prob and theta combinations mean.
+
+```{r beta}
+beta_df <- crossing(prob = c(0.1, 0.5, 0.9),
+                    theta = c(0.5, 5, 30),
+                    x = seq(0,1,length.out=100)) %>%
+  mutate(density = dbeta2(x, prob, theta)) %>%
+  mutate(prob = str_c("prob = ", prob),
+         theta = str_c("theta = ", theta))
+
+ggplot(beta_df, 
+       aes(x = x, ymax = density, ymin = 0)) +
+  geom_ribbon(fill = "lightblue") +
+  facet_grid(theta ~ prob)
+```
+
+
+Now, taking porportion of sodium intake as your response variable, fit a model with instructor and supplement as predictors!
+
+## 4. Poisson for Counts
+Let's look at some count data. If we look at the train collisons with motor vehicle data from Agresti (1996, page 83), we see an interesting pattern.
+
+```{r trainplot, message=FALSE}
+train <- read_csv("./glm_data/trains_agresti.csv")
+
+train_plot <- ggplot(train,
+       aes(x = km_train_travel,
+           y = collisions)) +
+  geom_point()
+
+train_plot
+```
+
+A GLM with a Poisson error typically has a log link, although it can also have an identity link. To remind you, a poisson distribution is one for discrete data whose variance scales with it's mean. This one parameter, $\lambda$, encompasses both. So, for example,
+
+```{r pois}
+pois_tib <- tibble(x = rep(0:40,2),
+                   lambda = c(rep(5,41), rep(20, 41)),
+                   dens = dpois(x, lambda = lambda))
+
+ggplot(pois_tib, aes(x = x, y = dens, 
+                     fill = factor(lambda))) +
+  geom_col(position = position_dodge())
+```
+
+So, look at the relationship between km of train travel and number of collisions. Then - what happens if you incorporate time since 1975 into the relationship?
+
+
+## 5. Gamma for Continuous Data with Variance-Mean Scaling
+Sometimes we have variance-mean scaling with continuous data. Here, for example, we have a dataset on clams looking at ash free dry mass and clam size on harvest. How does AFD (ash free dry mass) relate to month and length? It's clear there's something nonlinear here.
+
+```{r clamplot}
+
+clams <- read_delim("./glm_data/clams.txt", delim = "\t") %>%
+  mutate(MONTH = as.character(MONTH))
+
+clam_plot <- ggplot(clams,
+                    aes(x = LENGTH, y = AFD, color = MONTH)) +
+  geom_point()
+
+clam_plot
+```
+
+The tricky thing about the gamma distribution is that it takes a shape and scale or rate parameter. We can summarize the relationship between them like so:  
+\
+shape = mu/scale  
+rate = shape/mu  
+scale = mu/shape  
+
+To use `dgamma`, we therefore need to supply a bit of tricky, and explicitly state this in dgamma. For example:
+\
+`dgamma(rate/mu, shape)`  
+\
+as dgamma takes shape and then rate. We would go on to specify a prior for shape What should that be? What's resonable? You try it out with this clam data!
+
+## 6. Scaling Variance with Means...but staying Gaussian!
+
+Note, there's no reason that you can't have both a log link AND model the variance as a function of the mean in a Bayesian model. For example, consider...
+
+```{r}
+fake_dat <- tibble(
+  x = 1:20,
+  y = rnorm(20, x, x/2)
+)
+
+qplot(x, y, data = fake_dat)
+```
+
+See how the variance expands with the mean? You can fit model this!
+
+```{r rethinkink_var_mean, messages=FALSE, results = "hide", cache=TRUE}
+mod <- alist(
+  #likelihood
+  y ~ dnorm(mu, s),
+  
+  #DGP
+  mu <- a1 + b1*x,
+  s <- b2*x,
+  
+  #reasonable priors
+  a1 ~ dnorm(0,1),
+  b1 ~ dnorm(0,3),
+  
+  b2 ~ dnorm(0,1)
+)
+
+#can also use map2stan here
+fit <- map(mod, data = as.data.frame(fake_dat))
+```
+
+Make this work with the clam data. Using `pairs` and other tools, how does b2 covary with b1 or a1? What do the fit and prediction intervals look like? Can you code a model that reproduces the mean-variance squared scaling relationship of a Gamma using a gaussian? And the correct link?
