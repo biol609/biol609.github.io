@@ -51,8 +51,8 @@ __Etherpad:__ https://etherpad.wikimedia.org/p/609-mcmc_entropy-2019
 ```
 `r datestring`   
 __Lecture__: [MaxEnt and GLMs - a review](lectures/09_generalized_linear_models.html), [Bayesian GLMs](./lectures/10_bayesian_glm.html), [GLM lab](lectures/11_bayesian_glm_lab.html)   
-__Reading:__ McElreath Chapter 9-10  
-__Additional Readings:__ [O'Hara 2009](http://byrneslab.net/classes/biol609/O'Hara_2009_glmm.pdf) through section on GLMs, [O'Hara and Kotze 2010](http://byrneslab.net/classes/biol609/o'hara_and_kotze_do_not_log_transform.pdf), [Wharton and Hui 2011](http://byrneslab.net/classes/biol609/Wharton_Hui_2011_Ecology.pdf), [ver Hoef and Boveng 2007 on overdispersion](http://byrneslab.net/classes/biol609/Ver_Hoef_and_Boveng_qp_neg binomial.pdf), [Hartig DHARMa vignette](https://cran.r-project.org/web/packages/DHARMa/vignettes/DHARMa.html)  
+__Reading:__ McElreath Chapter 9-10, [fitting Gamma models multiple ways](http://seananderson.ca/2014/04/08/gamma-glms.html), [Gamma hurdle model](http://seananderson.ca/2014/05/18/gamma-hurdle.html)    
+__Additional Readings:__ [O'Hara 2009](http://byrneslab.net/classes/biol609/O'Hara_2009_glmm.pdf) through section on GLMs, [O'Hara and Kotze 2010](http://byrneslab.net/classes/biol609/o'hara_and_kotze_do_not_log_transform.pdf), [Wharton and Hui 2011](http://byrneslab.net/classes/biol609/Wharton_Hui_2011_Ecology.pdf),  [Hartig DHARMa vignette](https://cran.r-project.org/web/packages/DHARMa/vignettes/DHARMa.html)  
 __Files:__  `usethis::use_course("https://biol609.github.io/lectures/glm_data.zip")`  
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-glm-2019    
 
@@ -62,7 +62,7 @@ __Etherpad:__ https://etherpad.wikimedia.org/p/609-glm-2019
 ```
 `r datestring`   
 __Lecture:__ [Overdispersed Models](./lectures/21_overdisp.html), [Zero Inflated Models](./lectures/20_zinfl.html)   
-__Reading:__ McElreath Chapter 11, [fitting Gamma models multiple ways](http://seananderson.ca/2014/04/08/gamma-glms.html), [Gamma hurdle model](http://seananderson.ca/2014/05/18/gamma-hurdle.html)  
+__Reading:__ McElreath Chapter 11, [ver Hoef and Boveng 2007 on overdispersion](http://byrneslab.net/classes/biol609/Ver_Hoef_and_Boveng_qp_neg binomial.pdf)  
 __Files:__ [Fishing Duration CSV](./lectures/data/20/fishing_duration.csv)  
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-zig_zag-2019    
 
