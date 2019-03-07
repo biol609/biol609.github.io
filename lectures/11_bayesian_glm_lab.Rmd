@@ -47,6 +47,14 @@ library(rethinking)
 library(gap) #for qqunif
 ```
 
+And to get the data, let's try `usethis`!
+
+```{r use, eval = FALSE}
+library(usethis)
+
+use_course("https://biol609.github.io/lectures/glm_data.zip")
+```
+
 ## 2. Binomial for Trials
 
 We've gone over the binomial in great detail at this point, so, here, let's look at the crytosporidium data we've talked about only in a likelihood context before.  We'll use a logit link, although, note, there are a wide variety of others - [see here](http://cran.r-project.org/doc/Rnews/Rnews_2006-4.pdf) (page 32) or [here](https://www.sciencedirect.com/science/article/pii/S0304407609000207) for more info. Also, try saying "Scobit" without feeling silly. Heck, if you want, see if you can implement them and use MMI to compare models!
