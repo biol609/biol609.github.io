@@ -422,7 +422,7 @@ ggplot(Kline,
 
 
 ## A Simple Model
-```{r kline_simp, eval = FALSE}
+```{r kline_simp, eval = FALSE, echo = TRUE}
 
 Kline$P <- log(Kline$population) - mean(log(Kline$population))
   
@@ -490,7 +490,7 @@ ggplot(b_priors %>% filter(s < 0.5),
 
 
 ## A Simple Model
-```{r kline_simp2, eval = TRUE, echo = TRUE, cache=FALSE}
+```{r kline_simp2, eval = TRUE, echo = TRUE, cache=TRUE}
 Kline$P <- log(Kline$population) - mean(log(Kline$population))
 
 kline_mod <- alist(
@@ -542,7 +542,7 @@ precis(kline_fit)
 ```
 
 ## Should the link really be linear?
-```{r kline_linear, eval = TRUE, echo = TRUE, cache=FALSE}
+```{r kline_linear, eval = TRUE, echo = TRUE, cache=TRUE}
 Kline$P <- log(Kline$population) - mean(log(Kline$population))
 
 kline_linear <- alist(
