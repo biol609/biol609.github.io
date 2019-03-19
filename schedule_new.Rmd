@@ -60,16 +60,18 @@ __Etherpad:__ https://etherpad.wikimedia.org/p/609-glm-2019
 ### Week 6.
 ```{r next_date, echo=FALSE}
 ```
+```{r next_date, echo=FALSE}
+```
 `r datestring`   
-__Lecture:__ [Overdispersed Models](./lectures/21_overdisp.html), [Zero Inflated Models](./lectures/20_zinfl.html)   
-__Reading:__ McElreath Chapter 11, [ver Hoef and Boveng 2007 on overdispersion](http://byrneslab.net/classes/biol609/Ver_Hoef_and_Boveng_qp_neg binomial.pdf)  
+__Lecture:__ [Overdispersed Models](./lectures/12_overdisp.html), [Zero Inflated Models](./lectures/20_zinfl.html)   
+__Reading:__ McElreath Chapter 11, [ver Hoef and Boveng 2007 on overdispersion](http://byrneslab.net/classes/biol609/Ver_Hoef_and_Boveng_qp_neg binomial.pdf), [Roset et al 2006 on Overdispersion](http://byrneslab.net/classes/biol609/Rose_et_al_2006_zero_inflation.pdf)  
+__Additional Reading:__ [Zuur chapter on zero inflation](http://byrneslab.net/classes/biol609/zuur_zero_inflation.pdf)  
 __Files:__ [Fishing Duration CSV](./lectures/data/20/fishing_duration.csv)  
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-zig_zag-2019    
 
 
 ### Week 7.
-```{r next_date, echo=FALSE}
-```
+
 
 ```{r next_date, echo=FALSE}
 ```
