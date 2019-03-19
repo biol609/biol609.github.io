@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <title>12_overdisp.utf8.md</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/reveal.css"/>
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/theme/white.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="style.css"/>
+
+<!-- Printing and PDF exports -->
+<script id="paper-css" type="application/dynamic-css">
+
+/* Default Print Stylesheet Template
+   by Rob Glazebrook of CSSnewbie.com
+   Last Updated: June 4, 2008
+
+   Feel free (nay, compelled) to edit, append, and
+   manipulate this file as you see fit. */
+
+
+@media print {
+
+	/* SECTION 1: Set default width, margin, float, and
+	   background. This prevents elements from extending
+	   beyond the edge of the printed page, and prevents
+	   unnecessary background images from printing */
+	html {
+		background: #fff;
+		width: auto;
+		height: auto;
+		overflow: visible;
+	}
+	body {
+		background: #fff;
+		font-size: 20pt;
+		width: auto;
+		height: auto;
+		border: 0;
+		margin: 0 5%;
+		padding: 0;
+		overflow: visible;
+		float: none !important;
+	}
+
+	/* SECTION 2: Remove any elements not needed in print.
+	   This would include navigation, ads, sidebars, etc. */
+	.nestedarrow,
+	.controls,
+	.fork-reveal,
+	.share-reveal,
+	.state-background,
+	.reveal .progress,
+	.reveal .backgrounds {
+		display: none !important;
+	}
+
+	/* SECTION 3: Set body font face, size, and color.
+	   Consider using a serif font for readability. */
+	body, p, td, li, div {
+		font-size: 20pt!important;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		color: #000;
+	}
+
+	/* SECTION 4: Set heading font face, sizes, and color.
+	   Differentiate your headings from your body text.
+	   Perhaps use a large sans-serif for distinction. */
+	h1,h2,h3,h4,h5,h6 {
+		color: #000!important;
+		height: auto;
+		line-height: normal;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		text-shadow: 0 0 0 #000 !important;
+		text-align: left;
+		letter-spacing: normal;
+	}
+	/* Need to reduce the size of the fonts for printing */
+	h1 { font-size: 28pt !important;  }
+	h2 { font-size: 24pt !important; }
+	h3 { font-size: 22pt !important; }
+	h4 { font-size: 22pt !important; font-variant: small-caps; }
+	h5 { font-size: 21pt !important; }
+	h6 { font-size: 20pt !important; font-style: italic; }
+
+	/* SECTION 5: Make hyperlinks more usable.
+	   Ensure links are underlined, and consider appending
+	   the URL to the end of the link for usability. */
+	a:link,
+	a:visited {
+		color: #000 !important;
+		font-weight: bold;
+		text-decoration: underline;
+	}
+	/*
+	.reveal a:link:after,
+	.reveal a:visited:after {
+		content: " (" attr(href) ") ";
+		color: #222 !important;
+		font-size: 90%;
+	}
+	*/
+
+
+	/* SECTION 6: more reveal.js specific additions by @skypanther */
+	ul, ol, div, p {
+		visibility: visible;
+		position: static;
+		width: auto;
+		height: auto;
+		display: block;
+		overflow: visible;
+		margin: 0;
+		text-align: left !important;
+	}
+	.reveal pre,
+	.reveal table {
+		margin-left: 0;
+		margin-right: 0;
+	}
+	.reveal pre code {
+		padding: 20px;
+		border: 1px solid #ddd;
+	}
+	.reveal blockquote {
+		margin: 20px 0;
+	}
+	.reveal .slides {
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 0 !important;
+		zoom: 1 !important;
+
+		overflow: visible !important;
+		display: block !important;
+
+		text-align: left !important;
+		-webkit-perspective: none;
+		   -moz-perspective: none;
+		    -ms-perspective: none;
+		        perspective: none;
+
+		-webkit-perspective-origin: 50% 50%;
+		   -moz-perspective-origin: 50% 50%;
+		    -ms-perspective-origin: 50% 50%;
+		        perspective-origin: 50% 50%;
+	}
+	.reveal .slides section {
+		visibility: visible !important;
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+		display: block !important;
+		overflow: visible !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 60px 20px !important;
+		z-index: auto !important;
+
+		opacity: 1 !important;
+
+		page-break-after: always !important;
+
+		-webkit-transform-style: flat !important;
+		   -moz-transform-style: flat !important;
+		    -ms-transform-style: flat !important;
+		        transform-style: flat !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+
+		-webkit-transition: none !important;
+		   -moz-transition: none !important;
+		    -ms-transition: none !important;
+		        transition: none !important;
+	}
+	.reveal .slides section.stack {
+		padding: 0 !important;
+	}
+	.reveal section:last-of-type {
+		page-break-after: avoid !important;
+	}
+	.reveal section .fragment {
+		opacity: 1 !important;
+		visibility: visible !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+	}
+	.reveal section img {
+		display: block;
+		margin: 15px 0px;
+		background: rgba(255,255,255,1);
+		border: 1px solid #666;
+		box-shadow: none;
+	}
+
+	.reveal section small {
+		font-size: 0.8em;
+	}
+
+}  
+</script>
+
+
+<script id="pdf-css" type="application/dynamic-css">
+    
+/**
+ * This stylesheet is used to print reveal.js
+ * presentations to PDF.
+ *
+ * https://github.com/hakimel/reveal.js#pdf-export
+ */
+
+* {
+	-webkit-print-color-adjust: exact;
+}
+
+body {
+	margin: 0 auto !important;
+	border: 0;
+	padding: 0;
+	float: none !important;
+	overflow: visible;
+}
+
+html {
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+/* Remove any elements not needed in print. */
+.nestedarrow,
+.reveal .controls,
+.reveal .progress,
+.reveal .playback,
+.reveal.overview,
+.fork-reveal,
+.share-reveal,
+.state-background {
+	display: none !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	text-shadow: 0 0 0 #000 !important;
+}
+
+.reveal pre code {
+	overflow: hidden !important;
+	font-family: Courier, 'Courier New', monospace !important;
+}
+
+ul, ol, div, p {
+	visibility: visible;
+	position: static;
+	width: auto;
+	height: auto;
+	display: block;
+	overflow: visible;
+	margin: auto;
+}
+.reveal {
+	width: auto !important;
+	height: auto !important;
+	overflow: hidden !important;
+}
+.reveal .slides {
+	position: static;
+	width: 100%;
+	height: auto;
+
+	left: auto;
+	top: auto;
+	margin: 0 !important;
+	padding: 0 !important;
+
+	overflow: visible;
+	display: block;
+
+	-webkit-perspective: none;
+	   -moz-perspective: none;
+	    -ms-perspective: none;
+	        perspective: none;
+
+	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
+	   -moz-perspective-origin: 50% 50%;
+	    -ms-perspective-origin: 50% 50%;
+	        perspective-origin: 50% 50%;
+}
+
+.reveal .slides section {
+	page-break-after: always !important;
+
+	visibility: visible !important;
+	position: relative !important;
+	display: block !important;
+	position: relative !important;
+
+	margin: 0 !important;
+	padding: 0 !important;
+	box-sizing: border-box !important;
+	min-height: 1px;
+
+	opacity: 1 !important;
+
+	-webkit-transform-style: flat !important;
+	   -moz-transform-style: flat !important;
+	    -ms-transform-style: flat !important;
+	        transform-style: flat !important;
+
+	-webkit-transform: none !important;
+	   -moz-transform: none !important;
+	    -ms-transform: none !important;
+	        transform: none !important;
+}
+
+.reveal section.stack {
+	margin: 0 !important;
+	padding: 0 !important;
+	page-break-after: avoid !important;
+	height: auto !important;
+	min-height: auto !important;
+}
+
+.reveal img {
+	box-shadow: none;
+}
+
+.reveal .roll {
+	overflow: visible;
+	line-height: 1em;
+}
+
+/* Slide backgrounds are placed inside of their slide when exporting to PDF */
+.reveal section .slide-background {
+	display: block !important;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: -1;
+}
+
+/* All elements should be above the slide-background */
+.reveal section>* {
+	position: relative;
+	z-index: 1;
+}
+
+/* Display slide speaker notes when 'showNotes' is enabled */
+.reveal .speaker-notes-pdf {
+	display: block;
+	width: 100%;
+	max-height: none;
+	left: auto;
+	top: auto;
+	z-index: 100;
+}
+
+/* Display slide numbers when 'slideNumber' is enabled */
+.reveal .slide-number-pdf {
+	display: block;
+	position: absolute;
+	font-size: 14px;
+}
+
+</script>
+
+
+<script>
+var style = document.createElement( 'style' );
+style.type = 'text/css';
+var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
+var style_script = document.getElementById(style_script_id).text;
+style.innerHTML = style_script;
+document.getElementsByTagName('head')[0].appendChild(style);
+</script>
+
+    <script src="libs/htmlwidgets-1.3/htmlwidgets.js"></script>
+    <script src="libs/viz-0.3/viz.js"></script>
+    <link href="libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet" />
+    <script src="libs/grViz-binding-1.0.0/grViz.js"></script>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+
+<section id="section" class="slide level2">
+<h2></h2>
+<p><img data-src="./images/overdispersion/overdispersion_distracted_girlfriend.png" /></p>
+</section>
+<section id="reed-frogs" class="slide level2">
+<h2>Reed frogs</h2>
+<p><img data-src="./images/overdispersion/Heterixalus_madagascariensis-1280x540.jpg" /></p>
+</section>
+<section id="reed-frogs-survival-analysis" class="slide level2">
+<h2>Reed frogs Survival Analysis</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(rethinking)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">data</span>(<span class="st">&quot;reedfrogs&quot;</span>)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="kw">head</span>(reedfrogs)</a></code></pre></div>
+<pre><code>##   density pred  size surv propsurv
+## 1      10   no   big    9      0.9
+## 2      10   no   big   10      1.0
+## 3      10   no   big    7      0.7
+## 4      10   no   big   10      1.0
+## 5      10   no small    9      0.9
+## 6      10   no small    9      0.9</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">reedfrog_analysis &lt;-<span class="st"> </span><span class="kw">glm</span>(<span class="kw">cbind</span>(surv, density<span class="op">-</span>surv) <span class="op">~</span><span class="st"> </span>density, </a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">                         <span class="dt">data =</span> reedfrogs,</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3">                         <span class="dt">family =</span> binomial)</a></code></pre></div>
+</section>
+<section id="but-those-qq-plots" class="slide level2">
+<h2>But those QQ plots…</h2>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">rfrog &lt;-<span class="st"> </span><span class="kw">simulateResiduals</span>(reedfrog_analysis)</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="kw">plot</span>(rfrog)</a></code></pre></div>
+<pre><code>## DHARMa::plotResiduals - low number of unique predictor values, consider setting asFactor = T
+## DHARMa::plotResiduals - low number of unique predictor values, consider setting asFactor = T</code></pre>
+<p><img src="12_overdisp_files/figure-revealjs/overdisp_reeds-1.png" width="768" /></p>
+</section>
+<section id="what-is-overdispersion" class="slide level2">
+<h2>What is Overdispersion</h2>
+<ul>
+<li>We expect Binomial, Poisson, and other relationships to have a fixed relationship with their variance.<br />
+<br />
+</li>
+<li>For Poisson, variance = mean. For Binomial, the variance is size*p(1-p).<br />
+<br />
+</li>
+<li>Overdispersion is when we use these distributions, but fail to meet the above assumption.</li>
+</ul>
+</section>
+<section id="overdispersed-binomial" class="slide level2">
+<h2>Overdispersed Binomial</h2>
+<p><img src="12_overdisp_files/figure-revealjs/over-1.png" width="768" /></p>
+</section>
+<section id="overdispersed-poisson" class="slide level2">
+<h2>Overdispersed Poisson</h2>
+<p><img src="12_overdisp_files/figure-revealjs/overpois-1.png" width="768" /></p>
+</section>
+<section id="what-could-overunderdispersion-indicate" class="slide level2">
+<h2>What could over/underdispersion indicate?</h2>
+<ol type="1">
+<li>We are missing key predictors<br />
+<br />
+</li>
+<li>We are failing to model heterogeneity in predictions due to autocorrelaiton
+<ul>
+<li>Random Effects<br />
+</li>
+<li>Temporal autocorrelation<br />
+</li>
+<li>Spatial autocorrelation<br />
+<br />
+</li>
+</ul></li>
+<li>We are using the wrong error distribution</li>
+</ol>
+</section>
+<section id="mixture-based-solutions" class="slide level2">
+<h2>Mixture-based solutions</h2>
+<div id="right">
+<p><img data-src="./images/overdispersion/boysenberry-kitchenaid-stand-mixers-ksm150psby-64_1000.jpg" /></p>
+</div>
+<div id="left">
+<ul>
+<li>We can mix distributions in two ways<br />
+<br />
+</li>
+<li>First, we can apply a scaling correction - a Quasi-distribution<br />
+<br />
+</li>
+<li>OR, we can mix together two distributions into one!</li>
+</ul>
+</div>
+</section>
+<section id="quasi-distributions-and-a-scaling-parameter" class="slide level2">
+<h2>Quasi-distributions and a Scaling Parameter</h2>
+<strong>Binomial pdf:</strong> <span class="math display">\[P(X=k)={n \choose k}p^{k}(1-p)^{n-k}\]</span><br />
+
+<div class="fragment">
+<p><strong>Quasi-binomial pdf:</strong> <span class="math display">\[P(X=k)={n \choose k}p(p+k\phi)^{k-1}(1-p-k\phi)^{n-k}\]</span></p>
+</div>
+</section>
+<section id="some-quasi-information" class="slide level2">
+<h2>Some Quasi-Information</h2>
+<ul>
+<li>Parameter estimates unaffected (same estimate of mean trend)<br />
+<br />
+</li>
+<li>SE might change<br />
+<br />
+</li>
+<li>Uses ‘quasi-likelihood’<br />
+<br />
+</li>
+<li>We need to use QAIC instead of AIC to account for overdispersion<br />
+<br />
+</li>
+<li>Really, we fit a model, then futz with <span class="math inline">\(\phi\)</span> to accomodate error</li>
+</ul>
+</section>
+<section id="quasibinomial-reed-frogs" class="slide level2">
+<h2>QuasiBinomial Reed Frogs</h2>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">reeds_qb &lt;-<span class="st"> </span><span class="kw">glm</span>(<span class="kw">cbind</span>(surv, density<span class="op">-</span>surv) <span class="op">~</span><span class="st"> </span>density, </a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">                         <span class="dt">data =</span> reedfrogs,</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3">                         <span class="dt">family =</span> quasibinomial)</a></code></pre></div>
+</section>
+<section id="compare-regular-and-quasi-binomial-coefficient-estimate" class="slide level2">
+<h2>Compare Regular and Quasi-Binomial Coefficient Estimate</h2>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">rbind</span>(<span class="kw">tidy</span>(reedfrog_analysis),</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">  <span class="kw">tidy</span>(reeds_qb)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="st">  </span><span class="kw">cbind</span>(<span class="kw">tibble</span>(<span class="dt">model =</span> <span class="kw">c</span>(<span class="st">&quot;Ordinary&quot;</span>, <span class="st">&quot;Ordinary&quot;</span>, <span class="st">&quot;Quasi&quot;</span>, <span class="st">&quot;Quasi&quot;</span>)), .) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="st">  </span>knitr<span class="op">::</span><span class="st"> </span><span class="kw">kable</span>()</a></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">model</th>
+<th style="text-align: left;">term</th>
+<th style="text-align: right;">estimate</th>
+<th style="text-align: right;">std.error</th>
+<th style="text-align: right;">statistic</th>
+<th style="text-align: right;">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Ordinary</td>
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">1.3486218</td>
+<td style="text-align: right;">0.2330848</td>
+<td style="text-align: right;">5.7859713</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ordinary</td>
+<td style="text-align: left;">density</td>
+<td style="text-align: right;">-0.0179729</td>
+<td style="text-align: right;">0.0078762</td>
+<td style="text-align: right;">-2.2819412</td>
+<td style="text-align: right;">0.0224928</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Quasi</td>
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">1.3486218</td>
+<td style="text-align: right;">0.6928823</td>
+<td style="text-align: right;">1.9463937</td>
+<td style="text-align: right;">0.0577302</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Quasi</td>
+<td style="text-align: left;">density</td>
+<td style="text-align: right;">-0.0179729</td>
+<td style="text-align: right;">0.0234132</td>
+<td style="text-align: right;">-0.7676423</td>
+<td style="text-align: right;">0.4466224</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="the-overdispersion-factor" class="slide level2">
+<h2>The overdispersion factor</h2>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw">summary</span>(reeds_qb)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## glm(formula = cbind(surv, density - surv) ~ density, family = quasibinomial, 
+##     data = reedfrogs)
+## 
+## Deviance Residuals: 
+##    Min      1Q  Median      3Q     Max  
+## -6.893  -2.075   1.117   2.594   5.270  
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)  
+## (Intercept)  1.34862    0.69288   1.946   0.0577 .
+## density     -0.01797    0.02341  -0.768   0.4466  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for quasibinomial family taken to be 8.836721)
+## 
+##     Null deviance: 448.11  on 47  degrees of freedom
+## Residual deviance: 442.75  on 46  degrees of freedom
+## AIC: NA
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+</section>
+<section id="pure-mixture-distributions" class="slide level2">
+<h2>Pure Mixture Distributions</h2>
+<div id="left">
+<p><img data-src="./images/overdispersion/flames_kitchenaid.jpg" /></p>
+</div>
+<div id="right">
+Consider…<br />
+    <span class="math inline">\(X \sim Bin(n,p)\)</span><br />
+<br />
+    <span class="math inline">\(p\sim Beta(\alpha,\beta)\)</span><br />
+<br />
+
+<div class="fragment">
+<p>or<br />
+<br />
+    <span class="math inline">\(p\sim Beta(\hat{p},\theta)\)</span></p>
+</div>
+</div>
+</section>
+<section id="the-beta" class="slide level2">
+<h2>The Beta</h2>
+<p><img src="12_overdisp_files/figure-revealjs/beta-1.png" width="768" /></p>
+</section>
+<section id="how-does-the-beta-binomial-change-things" class="slide level2">
+<h2>How does the beta binomial change things?</h2>
+<p><img src="12_overdisp_files/figure-revealjs/beta_binom_1-1.png" width="768" /></p>
+</section>
+<section id="how-does-the-beta-binomial-change-things-1" class="slide level2">
+<h2>How does the beta binomial change things?</h2>
+<p><img src="12_overdisp_files/figure-revealjs/beta_binom_2-1.png" width="768" /></p>
+</section>
+<section id="how-does-the-beta-binomial-change-things-2" class="slide level2">
+<h2>How does the beta binomial change things?</h2>
+<p><img src="12_overdisp_files/figure-revealjs/beta_binom_3-1.png" width="768" /></p>
+</section>
+<section id="how-does-the-beta-binomial-change-things-3" class="slide level2">
+<h2>How does the beta binomial change things?</h2>
+<p><img src="12_overdisp_files/figure-revealjs/beta_binom_5-1.png" width="768" /></p>
+</section>
+<section id="the-beta-binomial-in-action" class="slide level2">
+<h2>The Beta-Binomial in Action</h2>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="co">#LOAD AN AMAZING LIBRARY!</span></a>
+<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="kw">library</span>(glmmTMB)</a>
+<a class="sourceLine" id="cb10-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb10-4" data-line-number="4">reeds_bb_tmb &lt;-<span class="st"> </span><span class="kw">glmmTMB</span>(<span class="kw">cbind</span>(surv, density<span class="op">-</span>surv) <span class="op">~</span><span class="st"> </span>density, </a>
+<a class="sourceLine" id="cb10-5" data-line-number="5">                         <span class="dt">data =</span> reedfrogs,</a>
+<a class="sourceLine" id="cb10-6" data-line-number="6">                         <span class="dt">family =</span> betabinomial)</a></code></pre></div>
+</section>
+<section id="what-is-template-model-builder" class="slide level2">
+<h2>What is Template Model Builder?</h2>
+<ul>
+<li>Uses Automatic Differentation (AD) to fit likelihood models<br />
+<br />
+</li>
+<li>First deployed with AD Model Builder<br />
+<br />
+</li>
+<li>VERY fast for models like beta-binomials with underlying ‘latent’ variables<br />
+<br />
+</li>
+<li>Fits a WIDE variety of model structures (replacing nlme and lme4?)</li>
+</ul>
+</section>
+<section id="latent" class="slide level2">
+<h2>Latent?</h2>
+<div id="htmlwidget-85afef18a46c86f99d4c" style="width:768px;height:576px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-85afef18a46c86f99d4c">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"predicted\nprobability\", fixedsize = \"FALSE\", shape = \"circle\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"1,1!\"] \n  \"2\" [label = \"estimated p\", fixedsize = \"FALSE\", shape = \"box\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"3,1!\"] \n  \"3\" [label = \"observed\nvalues\", fixedsize = \"FALSE\", shape = \"box\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"5,1!\"] \n  \"1\"->\"2\" \n  \"2\"->\"3\" \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+</section>
+<section id="comparing-methods" class="slide level2">
+<h2>Comparing methods</h2>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">rbind</span>(<span class="kw">tidy</span>(reedfrog_analysis),</a>
+<a class="sourceLine" id="cb11-2" data-line-number="2">  <span class="kw">tidy</span>(reeds_qb),</a>
+<a class="sourceLine" id="cb11-3" data-line-number="3">  <span class="kw">tidy</span>(reeds_bb_tmb) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(<span class="op">-</span>effect, <span class="op">-</span>component)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb11-4" data-line-number="4"><span class="st">  </span><span class="kw">cbind</span>(<span class="kw">tibble</span>(<span class="dt">model =</span> <span class="kw">c</span>(<span class="st">&quot;Ordinary&quot;</span>, <span class="st">&quot;Ordinary&quot;</span>, <span class="st">&quot;Quasi&quot;</span>, <span class="st">&quot;Quasi&quot;</span>, <span class="st">&quot;BB&quot;</span>, <span class="st">&quot;BB&quot;</span>)), .) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="st">  </span>knitr<span class="op">::</span><span class="st"> </span><span class="kw">kable</span>()</a></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">model</th>
+<th style="text-align: left;">term</th>
+<th style="text-align: right;">estimate</th>
+<th style="text-align: right;">std.error</th>
+<th style="text-align: right;">statistic</th>
+<th style="text-align: right;">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Ordinary</td>
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">1.3486218</td>
+<td style="text-align: right;">0.2330848</td>
+<td style="text-align: right;">5.7859713</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ordinary</td>
+<td style="text-align: left;">density</td>
+<td style="text-align: right;">-0.0179729</td>
+<td style="text-align: right;">0.0078762</td>
+<td style="text-align: right;">-2.2819412</td>
+<td style="text-align: right;">0.0224928</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Quasi</td>
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">1.3486218</td>
+<td style="text-align: right;">0.6928823</td>
+<td style="text-align: right;">1.9463937</td>
+<td style="text-align: right;">0.0577302</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Quasi</td>
+<td style="text-align: left;">density</td>
+<td style="text-align: right;">-0.0179729</td>
+<td style="text-align: right;">0.0234132</td>
+<td style="text-align: right;">-0.7676423</td>
+<td style="text-align: right;">0.4466224</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BB</td>
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">1.2619432</td>
+<td style="text-align: right;">0.4348128</td>
+<td style="text-align: right;">2.9022677</td>
+<td style="text-align: right;">0.0037047</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BB</td>
+<td style="text-align: left;">density</td>
+<td style="text-align: right;">-0.0141839</td>
+<td style="text-align: right;">0.0163501</td>
+<td style="text-align: right;">-0.8675107</td>
+<td style="text-align: right;">0.3856623</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="comparing-methods-1" class="slide level2">
+<h2>Comparing methods</h2>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw">summary</span>(reeds_bb_tmb)</a></code></pre></div>
+<pre><code>##  Family: betabinomial  ( logit )
+## Formula:          cbind(surv, density - surv) ~ density
+## Data: reedfrogs
+## 
+##      AIC      BIC   logLik deviance df.resid 
+##    274.3    279.9   -134.2    268.3       45 
+## 
+## 
+## Overdispersion parameter for betabinomial family (): 2.64 
+## 
+## Conditional model:
+##             Estimate Std. Error z value Pr(&gt;|z|)   
+## (Intercept)  1.26194    0.43481   2.902   0.0037 **
+## density     -0.01418    0.01635  -0.868   0.3857   
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</section>
+<section id="a-bayesian-approach" class="slide level2">
+<h2>A Bayesian Approach</h2>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">reedfrogs<span class="op">$</span>d &lt;-<span class="st"> </span><span class="kw">scale</span>(reedfrogs<span class="op">$</span>density, <span class="dt">scale =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb14-2" data-line-number="2">reed_bb_mod &lt;-<span class="st"> </span><span class="kw">alist</span>(</a>
+<a class="sourceLine" id="cb14-3" data-line-number="3">  <span class="co">#likelihood</span></a>
+<a class="sourceLine" id="cb14-4" data-line-number="4">  surv <span class="op">~</span><span class="st"> </span><span class="kw">dbetabinom</span>(density, prob, theta),</a>
+<a class="sourceLine" id="cb14-5" data-line-number="5">  </a>
+<a class="sourceLine" id="cb14-6" data-line-number="6">  <span class="co">#DGP</span></a>
+<a class="sourceLine" id="cb14-7" data-line-number="7">  <span class="kw">logit</span>(prob) &lt;-<span class="st"> </span>a <span class="op">+</span><span class="st"> </span>b<span class="op">*</span>d,</a>
+<a class="sourceLine" id="cb14-8" data-line-number="8">  </a>
+<a class="sourceLine" id="cb14-9" data-line-number="9">  a <span class="op">~</span><span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">2</span>),</a>
+<a class="sourceLine" id="cb14-10" data-line-number="10">  b <span class="op">~</span><span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">2</span>),</a>
+<a class="sourceLine" id="cb14-11" data-line-number="11">  theta <span class="op">~</span><span class="st"> </span><span class="kw">dexp</span>(<span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb14-12" data-line-number="12">)</a>
+<a class="sourceLine" id="cb14-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb14-14" data-line-number="14">reed_bb_fit &lt;-<span class="st"> </span><span class="kw">map2stan</span>(reed_bb_mod, <span class="dt">data=</span>reedfrogs,</a>
+<a class="sourceLine" id="cb14-15" data-line-number="15">                        <span class="dt">chains =</span> <span class="dv">2</span>, <span class="dt">cores =</span> <span class="dv">2</span>, <span class="dt">iter=</span><span class="dv">4000</span>,</a>
+<a class="sourceLine" id="cb14-16" data-line-number="16">                        <span class="dt">warmup =</span> <span class="dv">1000</span>)</a></code></pre></div>
+<pre><code>## Warning in map2stan(reed_bb_mod, data = reedfrogs, chains = 2, cores = 2, :
+## Stripping scale attributes from variable d</code></pre>
+</section>
+<section id="an-exponential-prior" class="title-slide slide level1"><h1>An Exponential Prior?</h1></section>
+<section><section id="or-an-cauchy-prior" class="title-slide slide level1"><h1>Or An Cauchy Prior?</h1></section><section id="lets-look-at-an-estimate" class="slide level2">
+<h2>Let’s look at an estimate!</h2>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="co">#get samples of parameters</span></a>
+<a class="sourceLine" id="cb16-2" data-line-number="2">samp &lt;-<span class="st"> </span><span class="kw">extract.samples</span>(reed_bb_fit)</a>
+<a class="sourceLine" id="cb16-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb16-4" data-line-number="4"><span class="co">#Calculate predicted survival probabilities for density = 50</span></a>
+<a class="sourceLine" id="cb16-5" data-line-number="5">surv &lt;-<span class="st"> </span><span class="kw">logistic</span>(samp<span class="op">$</span>a <span class="op">+</span><span class="st"> </span>samp<span class="op">$</span>b<span class="op">*</span><span class="dv">50</span>)</a>
+<a class="sourceLine" id="cb16-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb16-7" data-line-number="7"><span class="co">#And the answer is...</span></a>
+<a class="sourceLine" id="cb16-8" data-line-number="8"><span class="kw">quantile</span>(surv)</a></code></pre></div>
+<pre><code>##         0%        25%        50%        75%       100% 
+## 0.06372596 0.40869280 0.54824934 0.68115522 0.97063846</code></pre>
+</section><section id="but-what-about-the-overdispersion" class="slide level2">
+<h2>But What about the Overdispersion?</h2>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">surv_bb &lt;-<span class="st"> </span><span class="kw">rbeta2</span>(<span class="kw">length</span>(surv), surv, samp<span class="op">$</span>theta)</a>
+<a class="sourceLine" id="cb18-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb18-3" data-line-number="3"><span class="kw">quantile</span>(surv_bb, <span class="dt">na.rm=</span><span class="ot">TRUE</span>)</a></code></pre></div>
+<pre><code>##           0%          25%          50%          75%         100% 
+## 6.961648e-08 2.593437e-01 5.620024e-01 8.226571e-01 1.000000e+00</code></pre>
+</section><section id="lets-see-it" class="slide level2">
+<h2>Let’s see it!</h2>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">samp_df &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="st">`</span><span class="dt">Mean Survivorship</span><span class="st">`</span> =<span class="st"> </span>surv,</a>
+<a class="sourceLine" id="cb20-2" data-line-number="2">                  <span class="st">`</span><span class="dt">Survivorship Distribution</span><span class="st">`</span> =<span class="st"> </span>surv_bb) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb20-3" data-line-number="3"><span class="st">  </span><span class="kw">gather</span>(type, value)</a>
+<a class="sourceLine" id="cb20-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb20-5" data-line-number="5"><span class="kw">ggplot</span>(samp_df, <span class="kw">aes</span>(<span class="dt">x =</span> value, <span class="dt">fill =</span> type)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb20-6" data-line-number="6"><span class="st">  </span><span class="kw">geom_density</span>(<span class="dt">alpha =</span> <span class="fl">0.5</span>)</a></code></pre></div>
+</section><section id="lets-see-it-1" class="slide level2">
+<h2>Let’s see it!</h2>
+<p><img src="12_overdisp_files/figure-revealjs/show_surv-1.png" width="768" /></p>
+</section><section id="or-from-samples" class="slide level2">
+<h2>Or, from Samples</h2>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="co">#what is the mean distribution of  survivorshop</span></a>
+<a class="sourceLine" id="cb21-2" data-line-number="2">mean_surv &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">x =</span> <span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dt">by =</span> <span class="fl">0.001</span>),</a>
+<a class="sourceLine" id="cb21-3" data-line-number="3">                    <span class="dt">mean_surv_dens =</span> <span class="kw">dbeta2</span>(x, <span class="kw">mean</span>(surv), <span class="kw">mean</span>(samp<span class="op">$</span>theta)))</a>
+<a class="sourceLine" id="cb21-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb21-5" data-line-number="5"><span class="co">#now, get 100 sample density curves</span></a>
+<a class="sourceLine" id="cb21-6" data-line-number="6">surv_<span class="dv">100</span> &lt;-<span class="st"> </span><span class="kw">crossing</span>(<span class="dt">x =</span> <span class="kw">seq</span>(<span class="fl">0.01</span>,<span class="fl">0.99</span>,<span class="dt">by =</span> <span class="fl">0.01</span>),</a>
+<a class="sourceLine" id="cb21-7" data-line-number="7">                     <span class="dt">surv =</span> surv[<span class="dv">1</span><span class="op">:</span><span class="dv">100</span>],</a>
+<a class="sourceLine" id="cb21-8" data-line-number="8">                     <span class="dt">theta =</span> samp<span class="op">$</span>theta[<span class="dv">1</span><span class="op">:</span><span class="dv">100</span>]) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb21-9" data-line-number="9"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">surv_dens =</span> <span class="kw">dbeta2</span>(x, surv, theta))</a></code></pre></div>
+</section><section id="or-from-samples-1" class="slide level2">
+<h2>Or, from Samples</h2>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1"><span class="kw">ggplot</span>()<span class="op">+</span></a>
+<a class="sourceLine" id="cb22-2" data-line-number="2"><span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">data =</span> surv_<span class="dv">100</span>,</a>
+<a class="sourceLine" id="cb22-3" data-line-number="3">       <span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> surv_dens, <span class="dt">group =</span> <span class="kw">paste</span>(theta, surv)), <span class="dt">alpha =</span> <span class="fl">0.005</span>)  <span class="op">+</span></a>
+<a class="sourceLine" id="cb22-4" data-line-number="4"><span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">data =</span> mean_surv,</a>
+<a class="sourceLine" id="cb22-5" data-line-number="5">       <span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> mean_surv_dens), <span class="dt">lwd =</span> <span class="fl">1.3</span>, <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb22-6" data-line-number="6"><span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;Density&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Survivorship&quot;</span>)</a></code></pre></div>
+<p><img src="12_overdisp_files/figure-revealjs/plot_samp-1.png" width="768" /></p>
+</section><section id="did-this-solve-our-overdispersion-problem" class="slide level2">
+<h2>Did this solve our overdispersion problem?</h2>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="kw">par</span>(<span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">2</span>))</a>
+<a class="sourceLine" id="cb23-2" data-line-number="2"><span class="kw">postcheck</span>(reed_bb_fit)</a></code></pre></div>
+<pre><code>## [ 100 / 1000 ]
+[ 200 / 1000 ]
+[ 300 / 1000 ]
+[ 400 / 1000 ]
+[ 500 / 1000 ]
+[ 600 / 1000 ]
+[ 700 / 1000 ]
+[ 800 / 1000 ]
+[ 900 / 1000 ]
+[ 1000 / 1000 ]
+## [ 100 / 1000 ]
+[ 200 / 1000 ]
+[ 300 / 1000 ]
+[ 400 / 1000 ]
+[ 500 / 1000 ]
+[ 600 / 1000 ]
+[ 700 / 1000 ]
+[ 800 / 1000 ]
+[ 900 / 1000 ]
+[ 1000 / 1000 ]</code></pre>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="kw">par</span>(<span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</a></code></pre></div>
+<p><img src="12_overdisp_files/figure-revealjs/unnamed-chunk-4-1.png" width="768" /></p>
+</section><section id="a-brief-note-on-ic" class="slide level2">
+<h2>A brief note on IC</h2>
+<ul>
+<li>Because of the underlying latent nature of a beta-binomial, use WAIC with care<br />
+<br />
+</li>
+<li>DIC more reliable, but stay tuned</li>
+</ul>
+</section><section id="overdispersion-and-binomials" class="slide level2">
+<h2>Overdispersion and Binomials</h2>
+<ul>
+<li>Can easily check by looking at quasibinomial - is the overdispersion parameter large?<br />
+<br />
+</li>
+<li>Quasi-likelihood as one fix
+<ul>
+<li>But, problems in what is prediction intervals<br />
+</li>
+<li>Also, it’s kind of a hack?<br />
+<br />
+</li>
+</ul></li>
+<li>Compound distributions provide easy solution
+<ul>
+<li>Beta-binomial<br />
+</li>
+<li>Implemented in glmmTMB and rethinking<br />
+</li>
+<li>With Bayes, can look at variability in posterior due to overdispersion</li>
+</ul></li>
+</ul>
+</section><section id="beta-binomial-exercise" class="slide level2">
+<h2>2.5 Beta-Binomial Exercise</h2>
+<p>A. Fit the model with B. What does WAIC tell you about betabinomial models with versus without one or more predictor? C. Going back to the binomial model, does including one or more predictor alleviate the overdispersion problem in the orignal model?</p>
+</section><section id="hurricanes-and-gamma-poisson" class="slide level2">
+<h2>Hurricanes and Gamma Poisson</h2>
+<img data-src="./images/overdispersion/hurricanes-names.jpg" />
+<div class="small-code">
+Discover Magazine
+</div>
+</section><section id="overdispersed-hurricanes" class="slide level2">
+<h2>Overdispersed hurricanes</h2>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="kw">data</span>(Hurricanes)</a>
+<a class="sourceLine" id="cb26-2" data-line-number="2"><span class="kw">head</span>(Hurricanes)</a></code></pre></div>
+<pre><code>##       name year deaths category min_pressure damage_norm female femininity
+## 1     Easy 1950      2        3          960        1590      1    6.77778
+## 2     King 1950      4        3          955        5350      0    1.38889
+## 3     Able 1952      3        1          985         150      0    3.83333
+## 4  Barbara 1953      1        1          987          58      1    9.83333
+## 5 Florence 1953      0        1          985          15      1    8.33333
+## 6    Carol 1954     60        3          960       19321      1    8.11111</code></pre>
+</section><section id="overdispersed-hurricanes-1" class="slide level2">
+<h2>Overdispersed hurricanes</h2>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="kw">ggplot</span>(Hurricanes,</a>
+<a class="sourceLine" id="cb28-2" data-line-number="2">       <span class="kw">aes</span>(<span class="dt">x =</span> femininity, <span class="dt">y =</span> deaths)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb28-3" data-line-number="3"><span class="st">  </span><span class="kw">geom_point</span>()</a></code></pre></div>
+<p><img src="12_overdisp_files/figure-revealjs/unnamed-chunk-5-1.png" width="768" /></p>
+</section><section id="poisson" class="slide level2">
+<h2>Poisson?</h2>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1">hur_mod &lt;-<span class="st"> </span><span class="kw">glm</span>(deaths <span class="op">~</span><span class="st"> </span>femininity, <span class="dt">family =</span> poisson,</a>
+<a class="sourceLine" id="cb29-2" data-line-number="2">               <span class="dt">data =</span> Hurricanes)</a>
+<a class="sourceLine" id="cb29-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb29-4" data-line-number="4"><span class="kw">plot</span>(<span class="kw">simulateResiduals</span>(hur_mod))</a></code></pre></div>
+<p><img src="12_overdisp_files/figure-revealjs/unnamed-chunk-6-1.png" width="768" /></p>
+</section><section id="options-for-overdispersed-poisson" class="slide level2">
+<h2>Options for Overdispersed Poisson</h2>
+<ul>
+<li>Quasi-poisson
+<ul>
+<li><span class="math inline">\(var(Y) = \theta \mu\)</span><br />
+</li>
+<li>Post-hoc fitting of dispersion parameter<br />
+<br />
+</li>
+</ul></li>
+<li>Gamma-poisson mixture
+<ul>
+<li><span class="math inline">\(Y \sim Pois(\lambda)\)</span><br />
+</li>
+<li>$Gamma(, )</li>
+<li>Equivalent to a Negative Binomial<br />
+</li>
+<li>Variance increases with square of mean</li>
+</ul></li>
+</ul>
+</section><section id="the-gamma-poisson" class="slide level2">
+<h2>The Gamma Poisson</h2>
+<ul>
+<li>One of the most useful distributions you will run into is the Gamma Poison.<br />
+<br />
+</li>
+<li>It’s just another name for the negative binomial.<br />
+<br />
+</li>
+<li><p>Distribution for count data whose variance increases faster than its mean</p></li>
+<li><p>The <span class="math inline">\(\lambda\)</span> parameter of your standard Poisson is Gamma distribted.</p></li>
+</ul>
+</section><section id="the-distribution-mean-of-40" class="slide level2">
+<h2>The Distribution (mean of 40)</h2>
+<p><img src="12_overdisp_files/figure-revealjs/gampois-1.png" width="768" /></p>
+</section><section id="two-approaches-to-hurricanes" class="slide level2">
+<h2>Two approaches to hurricanes</h2>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1">hur_qp&lt;-<span class="st"> </span><span class="kw">glm</span>(deaths <span class="op">~</span><span class="st"> </span>femininity, </a>
+<a class="sourceLine" id="cb30-2" data-line-number="2">             <span class="dt">family =</span> quasipoisson,</a>
+<a class="sourceLine" id="cb30-3" data-line-number="3">               <span class="dt">data =</span> Hurricanes)</a>
+<a class="sourceLine" id="cb30-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb30-5" data-line-number="5"><span class="kw">library</span>(MASS)</a>
+<a class="sourceLine" id="cb30-6" data-line-number="6">hur_nb &lt;-<span class="st"> </span><span class="kw">glm.nb</span>(deaths <span class="op">~</span><span class="st"> </span>femininity, </a>
+<a class="sourceLine" id="cb30-7" data-line-number="7">               <span class="dt">data =</span> Hurricanes)</a></code></pre></div>
+</section><section id="another-look-at-overdispersion" class="slide level2">
+<h2>Another look at overdispersion</h2>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1"><span class="kw">summary</span>(hur_qp)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## glm(formula = deaths ~ femininity, family = quasipoisson, data = Hurricanes)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -7.1429  -5.3716  -3.8288  -0.5364  27.4230  
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  2.50037    0.54371   4.599 1.38e-05 ***
+## femininity   0.07387    0.06778   1.090    0.279    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for quasipoisson family taken to be 73.78494)
+## 
+##     Null deviance: 4031.9  on 91  degrees of freedom
+## Residual deviance: 3937.5  on 90  degrees of freedom
+## AIC: NA
+## 
+## Number of Fisher Scoring iterations: 6</code></pre>
+</section><section id="how-did-the-gamma-poisson-nb-compare" class="slide level2">
+<h2>How did the Gamma Poisson (NB) Compare?</h2>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1"><span class="kw">summary</span>(hur_nb)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## glm.nb(formula = deaths ~ femininity, data = Hurricanes, init.theta = 0.454664691, 
+##     link = log)
+## 
+## Deviance Residuals: 
+##      Min        1Q    Median        3Q       Max  
+## -1.91503  -1.13091  -0.70723  -0.06953   2.59040  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  2.53050    0.36685   6.898 5.28e-12 ***
+## femininity   0.06965    0.04882   1.427    0.154    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for Negative Binomial(0.4547) family taken to be 1)
+## 
+##     Null deviance: 111.15  on 91  degrees of freedom
+## Residual deviance: 109.10  on 90  degrees of freedom
+## AIC: 708.63
+## 
+## Number of Fisher Scoring iterations: 1
+## 
+## 
+##               Theta:  0.4547 
+##           Std. Err.:  0.0625 
+## 
+##  2 x log-likelihood:  -702.6260</code></pre>
+</section><section id="lets-look-at-the-residuals" class="slide level2">
+<h2>Let’s look at the residuals</h2>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" data-line-number="1">res_nb &lt;-<span class="st"> </span><span class="kw">simulateResiduals</span>(hur_nb)</a>
+<a class="sourceLine" id="cb35-2" data-line-number="2"><span class="kw">plot</span>(res_nb)</a></code></pre></div>
+<p><img src="12_overdisp_files/figure-revealjs/unnamed-chunk-10-1.png" width="768" /> ## A Fully Bayesian Gamma Poisson</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" data-line-number="1">Hurricanes<span class="op">$</span>f &lt;-<span class="st"> </span><span class="kw">scale</span>(Hurricanes<span class="op">$</span>femininity)</a>
+<a class="sourceLine" id="cb36-2" data-line-number="2">huric_mod_gp &lt;-<span class="st"> </span><span class="kw">alist</span>(</a>
+<a class="sourceLine" id="cb36-3" data-line-number="3">  <span class="co">#likelihood</span></a>
+<a class="sourceLine" id="cb36-4" data-line-number="4">  deaths <span class="op">~</span><span class="st"> </span><span class="kw">dgampois</span>(lambda, scale),</a>
+<a class="sourceLine" id="cb36-5" data-line-number="5">  </a>
+<a class="sourceLine" id="cb36-6" data-line-number="6">  <span class="co">#Data generating process</span></a>
+<a class="sourceLine" id="cb36-7" data-line-number="7">  <span class="kw">log</span>(lambda) &lt;-<span class="st"> </span>a <span class="op">+</span><span class="st"> </span>b<span class="op">*</span>f,</a>
+<a class="sourceLine" id="cb36-8" data-line-number="8">  </a>
+<a class="sourceLine" id="cb36-9" data-line-number="9">  <span class="co">#priors</span></a>
+<a class="sourceLine" id="cb36-10" data-line-number="10">  a <span class="op">~</span><span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">10</span>),</a>
+<a class="sourceLine" id="cb36-11" data-line-number="11">  b <span class="op">~</span><span class="st"> </span><span class="kw">dnorm</span>(<span class="dv">0</span>,<span class="dv">10</span>),</a>
+<a class="sourceLine" id="cb36-12" data-line-number="12">  scale <span class="op">~</span><span class="st"> </span><span class="kw">dexp</span>(<span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb36-13" data-line-number="13">)</a>
+<a class="sourceLine" id="cb36-14" data-line-number="14"></a>
+<a class="sourceLine" id="cb36-15" data-line-number="15">huric_fit_gp &lt;-<span class="st"> </span><span class="kw">map</span>(huric_mod_gp, <span class="dt">data=</span>Hurricanes)</a></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" data-line-number="1"><span class="kw">postcheck</span>(huric_fit_gp)</a></code></pre></div>
+<p><img src="12_overdisp_files/figure-revealjs/gp_qq-1.png" width="768" /><img src="12_overdisp_files/figure-revealjs/gp_qq-2.png" width="768" /><img src="12_overdisp_files/figure-revealjs/gp_qq-3.png" width="768" /><img src="12_overdisp_files/figure-revealjs/gp_qq-4.png" width="768" /><img src="12_overdisp_files/figure-revealjs/gp_qq-5.png" width="768" /></p>
+</section><section id="evaluating-posterior-predictions" class="slide level2">
+<h2>Evaluating Posterior Predictions</h2>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" data-line-number="1">huric_coefs_gp &lt;-<span class="st"> </span><span class="kw">extract.samples</span>(huric_fit_gp, <span class="dt">n=</span><span class="dv">50</span>)</a>
+<a class="sourceLine" id="cb38-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb38-3" data-line-number="3">h_coef_dens &lt;-<span class="st"> </span><span class="kw">crossing</span>(<span class="dt">femininity =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">11</span>),</a>
+<a class="sourceLine" id="cb38-4" data-line-number="4">                        <span class="dt">f =</span> (femininity <span class="op">-</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb38-5" data-line-number="5"><span class="st">                          </span><span class="kw">mean</span>(Hurricanes<span class="op">$</span>femininity))<span class="op">/</span><span class="kw">sd</span>(Hurricanes<span class="op">$</span>femininity), </a>
+<a class="sourceLine" id="cb38-6" data-line-number="6">                        <span class="dt">x=</span><span class="dv">0</span><span class="op">:</span><span class="dv">20</span>, <span class="kw">data.frame</span>(huric_coefs_gp)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb38-7" data-line-number="7"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">dens =</span> <span class="kw">dgampois</span>(x, <span class="kw">exp</span>(a <span class="op">+</span><span class="st"> </span>b<span class="op">*</span>femininity), scale))</a>
+<a class="sourceLine" id="cb38-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb38-9" data-line-number="9"><span class="kw">ggplot</span>(h_coef_dens, <span class="kw">aes</span>(<span class="dt">x=</span>x, <span class="dt">y=</span>dens, <span class="dt">color=</span><span class="kw">factor</span>(femininity), <span class="dt">group=</span><span class="kw">factor</span>(<span class="kw">paste</span>(scale, femininity, a, b)))) <span class="op">+</span></a>
+<a class="sourceLine" id="cb38-10" data-line-number="10"><span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">alpha=</span><span class="fl">0.2</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb38-11" data-line-number="11"><span class="st">  </span><span class="kw">facet_wrap</span>(<span class="op">~</span>femininity, <span class="dt">labeller=</span><span class="st">&quot;label_both&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb38-12" data-line-number="12"><span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">values=</span><span class="kw">c</span>(<span class="st">&quot;red&quot;</span>, <span class="st">&quot;blue&quot;</span>), <span class="dt">guide=</span><span class="st">&quot;none&quot;</span>)</a></code></pre></div>
+<p><img src="12_overdisp_files/figure-revealjs/plot_gp_coefs-1.png" width="768" /></p>
+</section><section id="section-1" class="slide level2">
+<h2></h2>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb39-1" data-line-number="1">newdat &lt;-<span class="st">  </span><span class="kw">data.frame</span>(<span class="dt">femininity =</span> <span class="kw">seq</span>(<span class="dv">1</span>,<span class="dv">11</span>,<span class="dt">length.out=</span><span class="dv">100</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb39-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">f =</span> (femininity <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(Hurricanes<span class="op">$</span>femininity))<span class="op">/</span><span class="kw">sd</span>(Hurricanes<span class="op">$</span>femininity))</a>
+<a class="sourceLine" id="cb39-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb39-4" data-line-number="4">hur_fitted &lt;-<span class="st"> </span><span class="kw">link</span>(huric_fit_gp, <span class="dt">data =</span> newdat)</a></code></pre></div>
+<pre><code>## [ 100 / 1000 ]
+[ 200 / 1000 ]
+[ 300 / 1000 ]
+[ 400 / 1000 ]
+[ 500 / 1000 ]
+[ 600 / 1000 ]
+[ 700 / 1000 ]
+[ 800 / 1000 ]
+[ 900 / 1000 ]
+[ 1000 / 1000 ]</code></pre>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb41-1" data-line-number="1">hur_predicted &lt;-<span class="st"> </span><span class="kw">sim</span>(huric_fit_gp, <span class="dt">data =</span> newdat)</a></code></pre></div>
+<pre><code>## [ 100 / 1000 ]
+[ 200 / 1000 ]
+[ 300 / 1000 ]
+[ 400 / 1000 ]
+[ 500 / 1000 ]
+[ 600 / 1000 ]
+[ 700 / 1000 ]
+[ 800 / 1000 ]
+[ 900 / 1000 ]
+[ 1000 / 1000 ]</code></pre>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb43-1" data-line-number="1">hur &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">femininity =</span> <span class="kw">seq</span>(<span class="dv">1</span>,<span class="dv">11</span>,<span class="dt">length.out=</span><span class="dv">100</span>),</a>
+<a class="sourceLine" id="cb43-2" data-line-number="2">              <span class="dt">deaths =</span> <span class="kw">apply</span>(hur_fitted, <span class="dv">2</span>, mean),</a>
+<a class="sourceLine" id="cb43-3" data-line-number="3">              <span class="dt">fit_lwr =</span> <span class="kw">apply</span>(hur_fitted, <span class="dv">2</span>, HPDI)[<span class="dv">1</span>,],</a>
+<a class="sourceLine" id="cb43-4" data-line-number="4">              <span class="dt">fit_upr =</span> <span class="kw">apply</span>(hur_fitted, <span class="dv">2</span>, HPDI)[<span class="dv">2</span>,],</a>
+<a class="sourceLine" id="cb43-5" data-line-number="5">              <span class="dt">pred_lwr =</span> <span class="kw">apply</span>(hur_predicted, <span class="dv">2</span>, HPDI)[<span class="dv">1</span>,],</a>
+<a class="sourceLine" id="cb43-6" data-line-number="6">              <span class="dt">pred_upr =</span> <span class="kw">apply</span>(hur_predicted, <span class="dv">2</span>, HPDI)[<span class="dv">2</span>,])</a>
+<a class="sourceLine" id="cb43-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb43-8" data-line-number="8"><span class="kw">ggplot</span>(hur,</a>
+<a class="sourceLine" id="cb43-9" data-line-number="9">       <span class="kw">aes</span>(<span class="dt">x =</span> femininity, <span class="dt">y =</span> deaths)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb43-10" data-line-number="10"><span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> pred_lwr, <span class="dt">ymax =</span> pred_upr), <span class="dt">alpha =</span> <span class="fl">0.1</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb43-11" data-line-number="11"><span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> fit_lwr, <span class="dt">ymax =</span> fit_upr), <span class="dt">fill =</span> <span class="st">&quot;lightblue&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb43-12" data-line-number="12"><span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">lwd =</span> <span class="fl">1.4</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb43-13" data-line-number="13"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data =</span> Hurricanes)</a></code></pre></div>
+<p><img src="12_overdisp_files/figure-revealjs/unnamed-chunk-11-1.png" width="768" /></p>
+</section><section id="exercises" class="slide level2">
+<h2>3.4 Exercises</h2>
+<p>A. Plot model predictions! What does this show? B. What does WAIC tell you about models with additional predictors? What about an offset for damage? C. Going back to the poisson model, does including one or more predictor alleviate the overdispersion problem in the orignal model? Particularly the offset of initial damage?</p>
+</section></section>
+    </div>
+  </div>
+
+  <script src="libs/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
+  <script src="libs/reveal.js-3.3.0.1/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display the page number of the current slide
+        slideNumber: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: false,
+        // Opens links in an iframe preview overlay
+        previewLinks: true,
+        // Transition style
+        transition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+
+
+
+        // Optional reveal.js plugins
+        dependencies: [
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>
