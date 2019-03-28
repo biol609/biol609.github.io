@@ -82,7 +82,7 @@ __Reading:__ [Gelman and Hill Ch. 12](http://byrneslab.net/classes/biol609/gelma
 __Writings on visualization:__ <a href="http://anythingbutrbitrary.blogspot.com/2012/06/random-regression-coefficients-using.html">Random regression coefficients using lme4</a>, <a href="http://stackoverflow.com/questions/13847936/in-r-plotting-random-effects-from-lmer-lme4-package-using-qqmath-or-dotplot">Making mixed model plots look fancy</a>  
 __A Little More Reading:__ <a href="http://jonlefcheck.net/2013/03/13/r2-for-linear-mixed-effects-models/">R<sup>2</sup> for mixed models (from Jon Lefcheck)</a>  
   __Your One Stop FAQ:__ [Ben Bolker's Mixed Model's FAQ](https://bbolker.github.io/mixedmodels-misc/)  
-__Files:__ [Mussels](./lectures/data/07/mussels.csv), [Uneven  Mussels](./lectures/data/07/mussels_ragged.csv), [RIKZ Beach data](./lectures/data/08/rikz.csv), [growth data](./lectures/data/07nestedGrowth.csv)    
+__Files:__ [Mussels](./lectures/data/07/mussels.csv), [Uneven  Mussels](./lectures/data/07/mussels_ragged.csv), [RIKZ Beach data](./lectures/data/08/rikz.csv), [growth data](./lectures/data/08/nestedGrowth.csv)    
 __R Packages:__ lme4, lmerTest, [merTools](https://github.com/jknowles/merTools), RLRsim, cAIC4  
   
 ### Week 8.

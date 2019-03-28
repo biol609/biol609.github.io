@@ -96,6 +96,9 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
@@ -110,7 +113,6 @@ body {
   padding-top: 59px;
   margin-top: -59px;
 }
-
 .section h2 {
   padding-top: 59px;
   margin-top: -59px;
@@ -130,6 +132,43 @@ body {
 .section h6 {
   padding-top: 59px;
   margin-top: -59px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
 }
 </style>
 
@@ -151,18 +190,77 @@ $(document).ready(function () {
 });
 </script>
 
-
 <div class="container-fluid main-container">
 
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -284,7 +382,7 @@ To see the code of a lecture, load the slides, then change the file extension in
 <strong>Writings on visualization:</strong> <a href="http://anythingbutrbitrary.blogspot.com/2012/06/random-regression-coefficients-using.html">Random regression coefficients using lme4</a>, <a href="http://stackoverflow.com/questions/13847936/in-r-plotting-random-effects-from-lmer-lme4-package-using-qqmath-or-dotplot">Making mixed model plots look fancy</a><br />
 <strong>A Little More Reading:</strong> <a href="http://jonlefcheck.net/2013/03/13/r2-for-linear-mixed-effects-models/">R<sup>2</sup> for mixed models (from Jon Lefcheck)</a><br />
 <strong>Your One Stop FAQ:</strong> <a href="https://bbolker.github.io/mixedmodels-misc/">Ben Bolker’s Mixed Model’s FAQ</a><br />
-<strong>Files:</strong> <a href="./lectures/data/07/mussels.csv">Mussels</a>, <a href="./lectures/data/07/mussels_ragged.csv">Uneven Mussels</a>, <a href="./lectures/data/08/rikz.csv">RIKZ Beach data</a>, <a href="./lectures/data/07nestedGrowth.csv">growth data</a><br />
+<strong>Files:</strong> <a href="./lectures/data/07/mussels.csv">Mussels</a>, <a href="./lectures/data/07/mussels_ragged.csv">Uneven Mussels</a>, <a href="./lectures/data/08/rikz.csv">RIKZ Beach data</a>, <a href="./lectures/data/08/nestedGrowth.csv">growth data</a><br />
 <strong>R Packages:</strong> lme4, lmerTest, <a href="https://github.com/jknowles/merTools">merTools</a>, RLRsim, cAIC4</p>
 </div>
 <div id="week-8." class="section level3">
