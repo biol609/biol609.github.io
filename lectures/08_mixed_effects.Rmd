@@ -34,13 +34,14 @@ library(broom)
 
 library(lme4)
 library(RLRsim)
-library(sjPlot)
+library(mvtnorm)
+library(merTools)
 ```
 
 ## Today
-1. Brief review  
+1. Moving to Mixed Models  
 \
-2. Evaluating models  
+2. Fitting and Evaluating models  
 \
 3. Visualizing different types of mixed models  
 \
@@ -90,10 +91,24 @@ $$\begin{pmatrix}
 \
 $$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
 
+## Why MVN?
+
+```{r mvn}
+ab <- rmvnorm(50, c(0,1), sigma = matrix(c(1,-0.7, -0.7, 1), nrow=2, byrow=TRUE)) %>%
+  as_tibble()
+
+ggplot(ab) +
+  geom_abline(aes(slope = V2, intercept = V1), alpha = 0.3) +
+  geom_abline(slope = 1, intercept = 0, color = "red", lwd = 2) +
+  xlim(c(-10,10)) +
+  ylim(c(-10,10))
+
+```
+
 ## Today
-1. Brief review  
+1. Moving to Mixedl Models 
 \
-2. **Evaluating models**  
+2. **Fitting and Evaluating models**  
 \
 3. Visualizing different types of mixed models  
 \
@@ -246,6 +261,16 @@ Need to include a model with ONLY the random effect being tested
 ```{r rlrt_mer_sum, echo=FALSE}
 ```
 
+## Evaluating Random Effects: Final Thoughts
+- If your random effect is by design, include it!  
+\
+- If you suspect random effects, nature is variable, include them!  
+\
+- Carefully consider your RE *a priori*!  
+     - Worst case, your design is not sufficient  
+     - In which case, you drop some you cannot estimate  
+     - And/or try alternate fitting methods  
+
 ## Testing fixed effects
 - RLRT tests for fixed effects are conservative  
 \
@@ -257,9 +282,12 @@ Need to include a model with ONLY the random effect being tested
 ## DF for Fixed Effect Testing
 - Satterthwaite approximation
         - Based on sample sizes and variances within groups  
+        - `lmerTest` (which is kinda broken at the moment)
 \
 - Kenward-Roger's approximation  
-        - Based on estimate of variance-covariance matrix of fixed effects and a scaling factor
+        - Based on estimate of variance-covariance matrix of fixed effects and a scaling factor  
+        - More conservative
+        - in `car::Anova` and `pbkrtest`
 
 
 ## With no Correction
@@ -268,32 +296,31 @@ plants_mer_ml <- lmer(Growth ~ Treatment +
                   (1|Pot) + (1|Chamber),
                    data= plants, REML=FALSE)
 
-anova(plants_mer, type=2)
+anova(plants_mer_ml, type = 2)
 ```
 
-## Satterhwaite Approximation with lmerTest
-```{r anova_mer_ws, echo=TRUE}
-library(lmerTest)
+Note the F test - Chi Sq tests can be biased.
 
-#have to refit
-plants_mer_testme <- lmer(Growth ~ Treatment +
-                  (1|Pot) + (1|Chamber),
-                   data= plants, REML=FALSE)
-  
-anova(plants_mer_testme, type=2)
-```
-
-## KR Approximation with lmerTest
+## Kenward-Roger Approximation with car::Anova
 ```{r anova_me_krr, echo=TRUE}
-anova(plants_mer_testme, ddf="Kenward-Roger", type=2)
+Anova(plants_mer,  test.statistic="F")
 ```
 
-Note that DenDF are 6. Were 8 with Satterthwaite.
+Note that DenDF are 6. Other methods (Satterweith) say 8, lm would have been 33! But only without pot and chamber
 
-## Wald Tests with lmerTest
+## Can get Coefficient tests, but...
 ```{r wald_me_krr, echo=TRUE}
-summary(plants_mer_testme)$coef
+summary(plants_mer)$coef
 ```
+
+## But...Confidence intervals
+```{r, message=FALSE, echo = TRUE}
+confint(plants_mer)
+
+confint(plants_mer, method = "Wald")
+
+```
+
 
 ## AIC
 - Yes, you can use AIC...carefully  
@@ -344,8 +371,8 @@ cAIC(plants_mer_nochamber)$caic - cAIC(plants_mer)$caic
 \
 - See Schielzeth and Nakagawa 2013 MEE and `piecewiseSEM`'s implementation
 
-## Getting Fit
-```{r r2, echo=TRUE}
+## Getting Fit: Marginal v. Conditional R^2
+```{r r2, echo=TRUE, message=FALSE}
 library(piecewiseSEM)
 
 rsquared(plants_mer)
@@ -354,24 +381,29 @@ rsquared(plants_mer_nochamber)
 
 ```
 
-## Posthocs from lmerTest
+## Get Treatment Estimates from emmeans
 
-```{r posthoc, echo=TRUE}
-lsmeans(plants_mer_nochamber)
+```{r emmeans, echo=TRUE}
+library(emmeans)
+trt_means <- emmeans(plants_mer, specs = ~Treatment)
+
+trt_means
 ```
 
+## Posthocs from emmeans
 
-## General Protocol for Model Fitting
+```{r posthoc, echo=TRUE}
+contrast(trt_means, "pairwise")
+```
 
-1.  Start with model with all fixed and random effects that may be important. Evaluate with diagnostics.  
+## So, what was different?
+- Maybe you want to look at random effects structure?  
 \
-2.  Evaluate random effects with full model of all fixed effects using REML($\chi^2$, RLRT, cAIC, etc.)  
+- Diagnostics are still key!  
 \
-3.  Evaluate fixed effects with reduced random effects (F Tests using ML fit)  
-\
-4.  Model diagnostics again...  
-\
-5.  Draw inference from model using Wald tests, lsmeans, visualization, etc.
+- You can be fiddly with tests, or...  
+\ 
+- You can evaluate model implications with posthoc simulations of predictions!!
 
 ## Today
 1. Brief review  
@@ -485,12 +517,15 @@ $$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
 ## Variable Slope-Intercept Model
 \
 \
-```{r rikz_varslopeint, echo=TRUE}
+```{r rikz_varslopeint, echo=TRUE, warning=FALSE}
+#Note use of different optimizer!
 rikz_varslopeint <- lmer(Richness ~ NAP + 
                            
                            (NAP + 1|Beach), 
                          
-                    data=rikz)
+                         data=rikz,
+                         
+                         control=lmerControl(optimizer="bobyqa"))
 ```
 
 ## Variable Slope Intercept Model
@@ -507,36 +542,20 @@ rikz_plot_base +
               size=2.5)
 ```
 
-## Variable Slope-Intercept Model with No Covariance
-\
-\
-```{r rikz_varslopeint_nocov, echo=TRUE}
-rikz_varslopeint_nocov <- lmer(Richness ~ NAP + 
-                                 
-                                 (NAP-1|Beach) + 
-                                 
-                                 (1|Beach),
-                               
-                               data=rikz)
-```
 
-## Testing the vcov assumption
-```{r test_vcov, echo=TRUE}
-anova(rikz_varslopeint, rikz_varslopeint_nocov, refit=FALSE)
-```
-
-## Look at al of those variances
-```{r show_varint}
+## Which Random Effects do I need - Look at al of those variances!
+```{r show_varint, warning=FALSE}
 knitr::kable(broom::tidy(rikz_varslopeint))
 ```
 
-## Testing Variable Intercept assumption
-```{r test_varint, echo=TRUE}
+## Testing Variable Intercept structure
+```{r test_varint, echo=TRUE, warning=FALSE}
+#refit = FALSE as anova defaults to refitting models with REML=FALSE
 anova(rikz_varslopeint, rikz_varslope, refit=FALSE)
 ```
 
 
-## Testing Variable Slope assumption
+## Testing Variable Slope structure
 ```{r test_varslope, echo=TRUE}
 anova(rikz_varslopeint, rikz_varint, refit=FALSE)
 ```
@@ -550,7 +569,7 @@ anova(rikz_varslopeint, rikz_varint, refit=FALSE)
 \
 4. **Uncertainty**
 
-## Plotting Uncertainty via Simulation
+## Plotting Uncertainty in Fixed Effects via Simulation
 ```{r uncertain, echo=TRUE, eval=TRUE}
 library(merTools)
 #The fit values
@@ -597,14 +616,44 @@ rikz_plot_base +
 
 ```
 
-## Getting the Full Range of Uncertainty
-```{r all_uncertain, echo=TRUE, eval=TRUE, cache=TRUE}
+
+## Getting the Uncertainty due to Random Effects: Generalization
+```{r re_uncertain, echo=TRUE, eval=TRUE, cache=TRUE}
 #new data for all beaches
 uncDF <- data.frame(expand.grid(Beach = levels(rikz$Beach),
                     NAP = seq(min(rikz$NAP), max(rikz$NAP), 
                                                  length.out=200)))
 
 #fit values
+pred_re_df <- predictInterval(rikz_varslopeint,
+                          newdata=uncDF,
+                          which="full",
+                          include.resid.var = FALSE)
+
+#get the wide range
+fit_re_df <- cbind(uncDF, pred_re_df) %>%
+  group_by(NAP) %>%
+  summarize(fit=mean(fit), lwr = min(lwr), upr = max(upr)) %>%
+  ungroup()
+  
+```
+
+
+## Fit and Random Error
+```{r plot_all_re, warning=FALSE}
+rikz_plot_base +
+  geom_abline(slope=fixef(rikz_varslopeint)[2],
+              intercept=fixef(rikz_varslopeint)[1],
+              size=2.5, color="blue") +
+  geom_ribbon(data=predDF, mapping=aes(y = fit, ymin=lwr, ymax=upr), 
+              alpha=0.3, color="grey") +
+  geom_ribbon(data=fit_re_df, mapping=aes(y = fit, ymin=lwr, ymax=upr), 
+              alpha=0.3, color="grey")
+```
+
+## Getting the Full Range of Uncertainty
+```{r all_uncertain, echo=TRUE, eval=TRUE, cache=TRUE, warning=FALSE}
+#fit values with full uncertainty
 pred_unc_df <- predictInterval(rikz_varslopeint,
                           newdata=uncDF,
                           which="full",
@@ -619,29 +668,19 @@ fit_unc_df <- cbind(uncDF, pred_unc_df) %>%
 ```
 
 ## Getting the Full Range of Uncertainty
-```{r plot_all_unc}
-rikz_plot_base +
-  geom_abline(slope=fixef(rikz_varslopeint)[2],
-              intercept=fixef(rikz_varslopeint)[1],
-              size=2.5, color="blue") +
-  geom_ribbon(data=fit_unc_df, mapping=aes(y = fit, ymin=lwr, ymax=upr), 
-              alpha=0.3, color="grey")
-```
-
-## Here be Uncertainty
-```{r plot_all_types_unc}
-
+```{r plot_all_unc, warning=FALSE}
 rikz_plot_base +
   geom_abline(slope=fixef(rikz_varslopeint)[2],
               intercept=fixef(rikz_varslopeint)[1],
               size=2.5, color="blue") +
   geom_ribbon(data=predDF, mapping=aes(y = fit, ymin=lwr, ymax=upr), 
-              alpha=0.3, color="blue", fill="blue")+
-  geom_ribbon(data=predDF_pred, mapping=aes(y = fit, ymin=lwr, ymax=upr), 
-              alpha=0.3, color="grey")+
+              alpha=0.3, color="grey") +
+  geom_ribbon(data=fit_re_df, mapping=aes(y = fit, ymin=lwr, ymax=upr), 
+              alpha=0.3, color="grey") +
   geom_ribbon(data=fit_unc_df, mapping=aes(y = fit, ymin=lwr, ymax=upr), 
-              alpha=0.3, color="grey")
+              alpha=0.3, color="darkgrey")
 ```
+
 
 Need all three for extrapolation
 
