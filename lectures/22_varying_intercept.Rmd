@@ -377,8 +377,11 @@ postcheck(kline_mixed_fit)
 ## Exercise
 - Revisit the Reed Frog survivorship  
 \
-- Fit models with predation, tank size, both acting additively, and both interacting  
+- Fit models with 1) predation and frog size acting additively, 2) both interacting, and 3) a null model.  
+     - All should have tank as a random effect.  
 \
-- Compare with WAIC  
+- Feel free to try with `lme4` first just to get your bearings  
+\
+- Compare all three with WAIC  
 \
 - How does `sigma_tank` change across the different models?

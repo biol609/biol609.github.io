@@ -899,10 +899,16 @@ scale 2.22   0.94       0.86       3.57   356 1.01</code></pre>
 <li>Revisit the Reed Frog survivorship<br />
 <br />
 </li>
-<li>Fit models with predation, tank size, both acting additively, and both interacting<br />
+<li>Fit models with 1) predation and frog size acting additively, 2) both interacting, and 3) a null model.
+<ul>
+<li>All should have tank as a random effect.<br />
 <br />
 </li>
-<li>Compare with WAIC<br />
+</ul></li>
+<li>Feel free to try with <code>lme4</code> first just to get your bearings<br />
+<br />
+</li>
+<li>Compare all three with WAIC<br />
 <br />
 </li>
 <li>How does <code>sigma_tank</code> change across the different models?</li>
