@@ -307,7 +307,7 @@ kline_fit <- map(kline_mod, data=Kline)
 ```
 
 ## Overdispersion?
-```{r show_overdisp}
+```{r show_overdisp, message=FALSE, results="hide"}
 qq_posterior(kline_fit, Kline$total_tools)
 ```
 \
@@ -337,7 +337,7 @@ kline_over_fit <- map2stan(kline_over, data=Kline)
 
 
 ## Overdispersion needed
-```{r kline_show, results="hide"}
+```{r kline_show}
 precis(kline_over_fit)
 ```
 
