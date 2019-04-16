@@ -1,0 +1,506 @@
+---
+title: Moving to BRMS and tidybayes for mixed model predictions
+css: style.css
+output:
+  html_document:
+    toc: true
+    toc_depth: 5
+    toc_float: true
+---
+## 1. Why this move?
+
+While rethinking is awesome when it comes to flexibility of model building, the syntax and keeping track of all of the additional parameters can get tedious. That, and there may be optimization tricks when it comes to STAN code that you might not be aware of.  For this reason, we're going to move away from `rethinking` for a bit and try out `brms`.  `brms` has a syntax very similar to `lme4` and `glmmTMB` which we've been using for likelihood.  
+
+Moreover, generating predictions when it comes to mixed models can become... complicated. Fortunately, there's been some recent movement in making tidy tools for Bayesian analyses - `tidybayes` and `broom` both do a great job here.
+
+We're today going to work through fitting a model with `brms` and then plotting the three types of predictions from said model using `tidybayes`. Along the way, we'll look at coefficients and diagnostics with `broom` and `bayesplot`.
+
+For more, I highly recommend checking out [Statistical Rethinking with brms, ggplot2, and the tidyverse](https://bookdown.org/ajkurz/Statistical_Rethinking_recoded/) by [A. Solomon Kurz](https://twitter.com/solomonkurz?lang=en).
+
+## 2. Moving from `rethinking` to `brms`
+
+### 2.1 Our model  
+
+We'll begin with the binomial regression model looking at gender bias in UCB Admissions.
+
+```{r}
+library(rethinking)
+library(ggplot2)
+library(ggridges)
+library(dplyr)
+library(tidyr)
+data("UCBadmit")
+
+ggplot(UCBadmit,
+       aes(x = applicant.gender, y = admit/applications,
+           color = dept, group = dept)) +
+  geom_point() +
+  geom_line() +
+  xlab("Fraction of Applicants Admitted")
+
+```
+
+Last week, we fit a model where both the intercept and effect of being male varied by department. Let's see it again.
+
+```{r mod_rethinking, cache = TRUE, message=FALSE, results="hide"}
+UCBadmit <- UCBadmit  %>%
+  mutate(isMale    = as.numeric(applicant.gender == "male"),
+         dept_id = as.numeric(factor(dept)))
+
+mod_gender_dept_nc <- alist(
+  #likelihood
+  admit ~ dbinom(applications, p),
+  
+  #Data generating process
+  logit(p) <- a_hat + a[dept_id] + b_hat*isMale + b[dept_id]*isMale,
+  
+  c(a,b)[dept_id] ~ dmvnormNC(sigma_dept, Rho),
+  
+  #priors
+  a_hat ~ dnorm(0,10),
+  b_hat ~ dnorm(0,10),
+  
+  sigma_dept ~ dcauchy(0,2),
+  Rho ~ dlkjcorr(2)
+)
+
+fit_gender_dept_nc <- map2stan(mod_gender_dept_nc, data = UCBadmit,
+                          iter=5000, chains = 3)
+```
+
+### 2.2 Recoding our model into `brms`
+
+`brms` uses an lmer-like syntax. There are some subtle differences, as we'll see in a moment. But generally, a linear mixed model with a random slope and intercept would look something like
+
+```{r demo, eval=FALSE}
+library(brms)
+
+fit <- brm(y ~ x + (x|group), data = dat)
+```
+
+Differences come in with 
+
+1. Zero inflation - you would add a `zi ~` argument or `hi ~ ` for a hurdle model.  
+2. You can have multiple relationships you're fitting, wrapping in `bf`, e.g.
+
+```{r demo2, eval = FALSE}
+mods <- bf(y1 ~ y2, y2 ~ x1 + x2)
+
+fit <- brm(mods, data = dat)
+```
+
+3. `brms` allows you to specify additional information about your y variable, or easily incorporate things like autocorrelation, splines, and more into your x. More in the coming weeks.
+
+For a binomial model, we specify the number of trials in a slightly different way than before - which I like as it avoids the awkward `cbind` and weighting syntax.
+
+```{r demo_binom, eval=FALSE}
+binom_fit <- brm(successes | trial(n) ~ x, family = binomial, data = dat)
+```
+
+We can begin recoding our current model, therefore, like so:
+
+```{r first_brm_fit, results = "hide", cache=TRUE}
+library(brms)
+
+fit_gender_dept_brm <- brm(admit | trials(applications) ~
+                             applicant.gender + (applicant.gender|dept),
+                           family = binomial,
+                           data = UCBadmit,
+                           iter = 5000, chains = 3) 
+```
+
+Note that we didn't have to recode any of the groupings into indices, etc. Nice, huh? Also, note that brms uses non-centered parameterization by default. Let's look at the results:
+
+```{r compare_1}
+precis(fit_gender_dept_nc)
+summary(fit_gender_dept_brm)$fixed
+```
+
+Huh - some differences in effective samples and estimates - but OH WAIT! PRIORS!
+
+### 2.3 Priors in `brms`
+
+Priors come in a few flavors in brms. You can specify priors for whole classes of coefficints (e.g., one prior for all slopes), or you can specify which coefficient you want to address.  In general, you'll work with three `class` types of prior - `"Intercept"`, `"b"`, and `"sd"`. 
+
+
+To see the current model priors
+```{r prior_see}
+prior_summary(fit_gender_dept_brm)
+```
+
+This is pretty different from what we had before, which was:
+
+```{r eval=FALSE}
+  #priors
+  a_hat ~ dnorm(0,10),
+  b_hat ~ dnorm(0,10),
+  
+  sigma_dept ~ dcauchy(0,2),
+  Rho ~ dlkjcorr(2)
+```
+
+So, a prior in `brms` for a fixed effect like `a_hat` would look like
+```{r prior}
+prior(normal(0,10), class = "intercept")
+```
+
+We can setup our priors as a vector of priors and then feed it into our model. Note the above coefficient names to help you out figuring out what names to fill in. We'll also just specify a general `sd` prior, as both are the same, but you could do otherwise.
+
+```{r set_prior}
+priors_ucb <- c(prior(normal(0,10), class = "Intercept"),
+                prior(normal(0,10), class = "b", coef = "applicant.gendermale"),
+                prior(cauchy(0,2), class = "sd"),
+                prior(lkj(2), class = "cor"))
+                
+```
+
+And then refit our model
+
+```{r results = "hide", cache = TRUE}
+fit_gender_dept_brm_prior <- brm(admit | trials(applications) ~
+                             applicant.gender + (applicant.gender|dept),
+                           family = binomial,
+                           data = UCBadmit,
+                           prior = priors_ucb,
+                           iter = 5000, chains = 3) 
+```
+
+How does it compare?
+
+```{r compare_2}
+precis(fit_gender_dept_nc)
+summary(fit_gender_dept_brm_prior)$fixed
+```
+
+MUCH better.
+
+### 2.4 Evaluating `brms` models
+
+With `rethinking` we would typically   
+  
+1. Look at the chains and Rhat for convergence.
+2. Evaluate the quantile residuals.  
+3. Make sure our observed data points fell within the 95% CI of our predictions, for the most part.  
+  
+We can do all of that and more with `brms` and `bayesplot`!
+
+### 2.4.1 Assessing convergence
+
+For the first level of fit assessment, we want to make sure our chains have converged. `brms` has a plot method, much like `rethinking` such that we can simply do
+
+```{r plot_chains}
+plot(fit_gender_dept_brm_prior)
+```
+
+Note that we don't see the random effects. If we want to look at them, we need to do some additional work and use the excellent `bayesplot` library. We'll need to extract our sample and plot them using `mcmc_trace()`. And let's get rid of the things we've already looked at
+
+```{r plot_chains_2, message=FALSE}
+library(bayesplot)
+color_scheme_set("red") #from bayesplot
+theme_set(ggthemes::theme_gdocs())
+
+post_ranef <- posterior_samples(fit_gender_dept_brm_prior, add_chain = T) %>% 
+  select(-lp__, -iter, -contains("b_"), -contains("sd_"), -contains("Intercept_"))
+
+mcmc_trace(post_ranef)
+```
+
+Looks good, but let's look at the densities
+
+```{r dens_ranef}
+mcmc_dens(post_ranef)
+```
+
+Last, what about the Rhat values? `bayesplot` has you covered.
+
+```{r rhat}
+rhat_vals <- rhat(fit_gender_dept_brm_prior)
+mcmc_rhat_data(rhat_vals)
+mcmc_rhat(rhat_vals) + theme_bw()
+```
+
+This is useful, and shows us we're doing pretty good. We might also want to look at the number of effective samples. Now, this has little absolute meaning without reference to the total number of samples in our chain. For that, we can use `neff_ratio`. The closer the ratio to 1, the better. 
+
+```{r neff}
+neff_vals <- neff_ratio(fit_gender_dept_brm_prior)
+mcmc_neff_data(neff_vals)
+mcmc_neff(neff_vals)  + theme_bw()
+```
+
+So, we could be doing better on some of our estimates, but, at least we are not < 0.1.
+
+Last, you might want to look at autocorrelation in your chains. For that, there's `mcmc_aff()` which takes posterior samples and goes from there.
+
+```{r}
+mcmc_acf(posterior_samples(fit_gender_dept_brm_prior))
+```
+
+### 2.4.2  Residuals
+
+First, we want to look at our quantile residuals. As we have mcmc samples, we can do this by hand if we want... but, the `tidybayes` library provides a nice way to get predicted simulations using `add_predicted_draws()` which we can then summarise to get the fraction of predictions less than (or greater than - either way) the observed value. This is our quantile residual.
+
+```{r dharma, message=TRUE}
+library(tidybayes)
+
+qres <- UCBadmit %>%
+  add_predicted_draws(fit_gender_dept_brm_prior) %>%
+  summarise(
+    quant_residual = mean(.prediction < admit)
+  ) 
+```
+
+We can then use two geoms in `ggplot2` we haven't before for the qqplots with a Uniform distribution.
+
+```{r plot_qqunif}
+ggplot(qres,
+         aes(sample = quant_residual)) +
+  geom_qq(distribution = stats::qunif) +
+  geom_qq_line(distribution = stats::qunif)
+```
+
+Hrm. Something funky at the upper end, so this might give us some pause and think about our distribution.
+
+### 2.4.3 Assessing Fit
+
+To assess fit, previously we used `pp_check` to visualize the individual data points, their 95% CI and where our observations fit into that. Fortunately, `tidybayes` has a great stat function to help with that - `stat_pointinterval` which visualizes parameter estimates and 95% CLs. We can mesh that with plotting our points, and see how things go.
+
+```{r ppcheck}
+preds <- UCBadmit %>%
+  add_predicted_draws(fit_gender_dept_brm_prior)
+
+ggplot(preds) + 
+  stat_pointinterval(aes(x = .row, y = .prediction)) +
+  geom_point(aes(x = .row, y = admit), color = "red")
+```
+
+Looks great!
+
+We can also look at the distibution of data summarized using a comparison of the observed to predicted distribution with `pp_check` from `brms`
+
+```{r plot_obspred, cache = TRUE}
+pp_check(fit_gender_dept_brm_prior, nsamples = 500)
+```
+
+See anything wrong? If not, continue!
+
+Last, we might want a measure of fit. We can also look at the Bayesian R2 which looks at the model expeted variance / (expected variance + residual variance). See a great paper [here](http://www.stat.columbia.edu/~gelman/research/published/bayes_R2_v3.pdf)
+
+```{r br2}
+bayes_R2(fit_gender_dept_brm_prior)
+```
+
+### 2.5 Exercise: Dinosaurs
+
+Last week, you fit the dinosaurs model in class using rethinking
+
+```{r dino}
+data(Dinosaurs)
+
+ggplot(Dinosaurs,
+       aes(x = age, y = log(mass), color = species)) +
+  geom_point()
+```
+
+A) Fit this using `brms`.  Specify priors.
+B) Evaluate your fit. Anything you can do to make it better.  
+C) Visualize your fit.
+
+## 3 Prediction with `brms` and mixed models
+
+Let's look at the different way we can visualize mixed models with `brms`. For this, we're going to use a visually more striking example - the kline data. 
+
+```{r kline}
+data(Kline)
+head(Kline)
+```
+
+Let's make a model where total tools depends on population size with a random intercept of culture.
+
+```{r kline_brms, cache = TRUE}
+
+Kline$log_pop <- log(Kline$population)
+
+kline_fit <- brm(total_tools ~ log_pop + (1|culture),
+                 family = poisson,
+                 data = Kline,
+                 iter = 5000,
+                 prior = c(prior(normal(0,1), class = "b"),
+                           prior(normal(0,10), class = "Intercept"),
+                           prior(cauchy(0,2), class = "sd")))
+```
+
+### 3.1 Fixed Effects Only
+The first thing we often want to do with mixed models is just look at average trends. With a binomial model, this can be particularly tricky, as we need to account for different admissions sizes, etc.  To use just the fixed effect, we can use `add_fitted_draws` from `tidybayes` with new data giving the population size. 
+
+```{r fixed}
+
+fe_only <- tibble(log_pop = seq(min(Kline$log_pop), 
+                                max(Kline$log_pop), length.out=100)) %>%
+  add_fitted_draws(kline_fit,
+                   re_formula = NA,
+                   scale = "response", n = 1e3)
+
+fe_only_mean <- fe_only %>% 
+  group_by(log_pop) %>%
+  summarize(.value = mean(.value))
+```
+
+Great! We can now visualize this using the simulated lines and the mean of the fixed effect.
+
+```{r}
+ggplot(fe_only,
+       aes(x = log_pop, y = .value,
+           group = .draw)) +
+  geom_line(alpha = 0.1) +
+  geom_line(data = fe_only_mean, color = "red", lwd = 2, group = 1)
+```
+
+Or, we could use something else to make it more gradient-y.
+
+
+```{r}
+ggplot(fe_only,
+       aes(x = log_pop, y = .value)) +
+  stat_interval(alpha = 0.5) +
+  geom_line(data = fe_only_mean, 
+            color = "red", lwd = 2)
+```
+
+Which shows uncertainty in the fixed effects in a different way.
+
+### 3.2 Fixed and Random Effects
+This is great, but what about the random effects?
+
+### 3.2.1 Fixed and Random Effects from the Model
+
+`tidybayes` actually gets the random effects from the model by default. If we want to visualize the fixed and random effects from the model, we merely remove the `re_form` argument from `add_fitted_draws` 
+
+```{r re_model_only}
+
+re_model_only <- crossing(log_pop = seq(min(Kline$log_pop), 
+                                max(Kline$log_pop), length.out=100),
+                          culture = unique(Kline$culture)) %>%
+  add_fitted_draws(kline_fit,
+                   scale = "response", n = 1e3)
+
+re_model_summary <- re_model_only %>%
+  group_by(culture, log_pop) %>%
+  summarize(.value = mean(.value))
+```
+
+We can then plot the BLUPs and the fixed effect together
+
+```{r}
+ggplot(re_model_summary,
+       aes(x = log_pop, y = .value)) +
+  geom_line(aes( group = culture), alpha = 0.8) +
+  geom_line(data = fe_only_mean, color = "red", lwd = 2)
+```
+
+This is great, but we might want to look at the individual random effects. For that, we can use faceting.
+
+```{r}
+ggplot(re_model_only,
+       aes(x = log_pop, y = .value)) +
+  facet_wrap(~culture) +
+  stat_interval() 
+
+```
+
+Or, to look at simulations
+
+```{r}
+ggplot(re_model_only,
+       aes(x = log_pop, y = .value)) +
+  geom_line(aes(group = .draw), alpha = 0.1) +
+  geom_line(data = re_model_summary, alpha = 0.8, 
+            color = "red", lwd = 1) +
+  facet_wrap(~culture)
+```
+
+We can also look at the whole of variability from fixed and random effects as well as their estimation error here.
+
+```{r}
+ggplot(re_model_only,
+       aes(x = log_pop, y = .value)) +
+  stat_interval() 
+```
+
+### 3.2.1.2 Exercise
+
+Try the above with the dinosaurs model! With the fit model, visualize the fixed effects only, and then using `facet_wrap`, look at the random effects.
+
+
+### 3.2.2 Fixed and New Random Effects
+To get new random effects, we need only include `allow_new_levels=T`
+
+
+```{r}
+
+re_all <- tibble(log_pop = seq(min(Kline$log_pop), 
+                                max(Kline$log_pop), length.out=100)) %>%
+  add_fitted_draws(kline_fit,
+                   scale = "response", n = 1e3,
+                   re_formula =~1|culture,
+                   allow_new_levels = TRUE)
+```
+
+So, now we have new levels, where each `.draw` represents one draw from the posterior - and hence one random effect that is new.  So, we can visualize all of this uncertainty like so.
+
+```{r}
+re_plot <- ggplot(re_all,
+       aes(x = log_pop, y = .value, group = .draw)) +
+  geom_line(alpha = 0.05)
+
+re_plot
+```
+
+Note how this differs from the fixed effects with error
+
+```{r}
+re_plot +
+  geom_line(data = fe_only, alpha = 0.05, color = "red")
+```
+
+Neat, right! You can of course come up with all sorts of other ideas here.
+
+### 3.3 All Sources of Variation
+
+To look at all sources of variation, we use `add_predicted_draws` instead of `add_fitted_draws`. From that point on, it's basically the same with respect to random effects, etc. For example, here's the whole megillah.
+
+```{r all}
+all_pred <- tibble(log_pop = seq(min(Kline$log_pop), 
+                                max(Kline$log_pop), length.out=100)) %>%
+  add_predicted_draws(kline_fit,
+                      allow_new_levels = TRUE,
+                      n = 1e3)
+
+```
+
+Let's use this and plot fixed, random, and all uncertainty. Note that instead of `.value` we now use `.prediction`
+
+```{r uncertain}
+ggplot(all_pred,
+       aes(x = log_pop, y = .prediction, group = .draw)) +
+  geom_line(alpha = 0.1) +
+  geom_line(data = re_all, mapping = aes(y = .value),
+            color = "blue", alpha = 0.05) +
+  geom_line(data = fe_only, mapping = aes(y = .value), 
+            color = "red", alpha = 0.05) 
+```
+
+We can also do fun things like use intervals, and more!
+
+```{r uncertain_2}
+ggplot(all_pred,
+       aes(x = log_pop, y = .prediction, group = .draw)) +
+  stat_interval(alpha = 0.1) +
+  geom_line(data = re_all, mapping = aes(y = .value),
+            color = "blue", alpha = 0.05) +
+  geom_line(data = fe_only, mapping = aes(y = .value), 
+            color = "red", alpha = 0.05) 
+```
+
+### 3.3.4 Exercise
+
+OK, take all of this and apply it to the dinosaurs example. What do you see?

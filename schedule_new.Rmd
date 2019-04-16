@@ -98,7 +98,7 @@ __Additional Reading:__ [Gelman and Hill Ch. 12](http://byrneslab.net/classes/bi
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
-__Lecture:__ Fully Hierarchical Models, [Prediction with Mixed Models](./lectures/23b_prediction.html), Group-Mean Centering and Other Model Structures  
+__Lecture:__  [brms and Prediction with Mixed Models](./lectures/23c_brms_prediction.html), Group-Mean Centering and Other Model Structures  
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-mixed_bayesian-2019   
 __Reading:__ [McNeish and Kelly 2018](./Readings/McNeish_Kelley_PsychMethods_2019.pdf), [Causal Model Structures and Random Effects](http://rpubs.com/jebyrnes/causal_mods), [Poe Lecture Slides](./Readings/2018-11-02_wim_poe_clustered_slides.pdf), [Bell et al. 2018a](./Readings/Bell2018_Article_UnderstandingAndMisunderstandi.pdf)  
 __Additional Reading:__ [Bell et al 2018b](./Bell 2018 Qual Quant.pdf)
