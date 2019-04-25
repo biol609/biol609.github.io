@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <title>20_spatial.utf8.md</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/reveal.css"/>
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/theme/white.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="style.css"/>
+
+<!-- Printing and PDF exports -->
+<script id="paper-css" type="application/dynamic-css">
+
+/* Default Print Stylesheet Template
+   by Rob Glazebrook of CSSnewbie.com
+   Last Updated: June 4, 2008
+
+   Feel free (nay, compelled) to edit, append, and
+   manipulate this file as you see fit. */
+
+
+@media print {
+
+	/* SECTION 1: Set default width, margin, float, and
+	   background. This prevents elements from extending
+	   beyond the edge of the printed page, and prevents
+	   unnecessary background images from printing */
+	html {
+		background: #fff;
+		width: auto;
+		height: auto;
+		overflow: visible;
+	}
+	body {
+		background: #fff;
+		font-size: 20pt;
+		width: auto;
+		height: auto;
+		border: 0;
+		margin: 0 5%;
+		padding: 0;
+		overflow: visible;
+		float: none !important;
+	}
+
+	/* SECTION 2: Remove any elements not needed in print.
+	   This would include navigation, ads, sidebars, etc. */
+	.nestedarrow,
+	.controls,
+	.fork-reveal,
+	.share-reveal,
+	.state-background,
+	.reveal .progress,
+	.reveal .backgrounds {
+		display: none !important;
+	}
+
+	/* SECTION 3: Set body font face, size, and color.
+	   Consider using a serif font for readability. */
+	body, p, td, li, div {
+		font-size: 20pt!important;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		color: #000;
+	}
+
+	/* SECTION 4: Set heading font face, sizes, and color.
+	   Differentiate your headings from your body text.
+	   Perhaps use a large sans-serif for distinction. */
+	h1,h2,h3,h4,h5,h6 {
+		color: #000!important;
+		height: auto;
+		line-height: normal;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		text-shadow: 0 0 0 #000 !important;
+		text-align: left;
+		letter-spacing: normal;
+	}
+	/* Need to reduce the size of the fonts for printing */
+	h1 { font-size: 28pt !important;  }
+	h2 { font-size: 24pt !important; }
+	h3 { font-size: 22pt !important; }
+	h4 { font-size: 22pt !important; font-variant: small-caps; }
+	h5 { font-size: 21pt !important; }
+	h6 { font-size: 20pt !important; font-style: italic; }
+
+	/* SECTION 5: Make hyperlinks more usable.
+	   Ensure links are underlined, and consider appending
+	   the URL to the end of the link for usability. */
+	a:link,
+	a:visited {
+		color: #000 !important;
+		font-weight: bold;
+		text-decoration: underline;
+	}
+	/*
+	.reveal a:link:after,
+	.reveal a:visited:after {
+		content: " (" attr(href) ") ";
+		color: #222 !important;
+		font-size: 90%;
+	}
+	*/
+
+
+	/* SECTION 6: more reveal.js specific additions by @skypanther */
+	ul, ol, div, p {
+		visibility: visible;
+		position: static;
+		width: auto;
+		height: auto;
+		display: block;
+		overflow: visible;
+		margin: 0;
+		text-align: left !important;
+	}
+	.reveal pre,
+	.reveal table {
+		margin-left: 0;
+		margin-right: 0;
+	}
+	.reveal pre code {
+		padding: 20px;
+		border: 1px solid #ddd;
+	}
+	.reveal blockquote {
+		margin: 20px 0;
+	}
+	.reveal .slides {
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 0 !important;
+		zoom: 1 !important;
+
+		overflow: visible !important;
+		display: block !important;
+
+		text-align: left !important;
+		-webkit-perspective: none;
+		   -moz-perspective: none;
+		    -ms-perspective: none;
+		        perspective: none;
+
+		-webkit-perspective-origin: 50% 50%;
+		   -moz-perspective-origin: 50% 50%;
+		    -ms-perspective-origin: 50% 50%;
+		        perspective-origin: 50% 50%;
+	}
+	.reveal .slides section {
+		visibility: visible !important;
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+		display: block !important;
+		overflow: visible !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 60px 20px !important;
+		z-index: auto !important;
+
+		opacity: 1 !important;
+
+		page-break-after: always !important;
+
+		-webkit-transform-style: flat !important;
+		   -moz-transform-style: flat !important;
+		    -ms-transform-style: flat !important;
+		        transform-style: flat !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+
+		-webkit-transition: none !important;
+		   -moz-transition: none !important;
+		    -ms-transition: none !important;
+		        transition: none !important;
+	}
+	.reveal .slides section.stack {
+		padding: 0 !important;
+	}
+	.reveal section:last-of-type {
+		page-break-after: avoid !important;
+	}
+	.reveal section .fragment {
+		opacity: 1 !important;
+		visibility: visible !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+	}
+	.reveal section img {
+		display: block;
+		margin: 15px 0px;
+		background: rgba(255,255,255,1);
+		border: 1px solid #666;
+		box-shadow: none;
+	}
+
+	.reveal section small {
+		font-size: 0.8em;
+	}
+
+}  
+</script>
+
+
+<script id="pdf-css" type="application/dynamic-css">
+    
+/**
+ * This stylesheet is used to print reveal.js
+ * presentations to PDF.
+ *
+ * https://github.com/hakimel/reveal.js#pdf-export
+ */
+
+* {
+	-webkit-print-color-adjust: exact;
+}
+
+body {
+	margin: 0 auto !important;
+	border: 0;
+	padding: 0;
+	float: none !important;
+	overflow: visible;
+}
+
+html {
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+/* Remove any elements not needed in print. */
+.nestedarrow,
+.reveal .controls,
+.reveal .progress,
+.reveal .playback,
+.reveal.overview,
+.fork-reveal,
+.share-reveal,
+.state-background {
+	display: none !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	text-shadow: 0 0 0 #000 !important;
+}
+
+.reveal pre code {
+	overflow: hidden !important;
+	font-family: Courier, 'Courier New', monospace !important;
+}
+
+ul, ol, div, p {
+	visibility: visible;
+	position: static;
+	width: auto;
+	height: auto;
+	display: block;
+	overflow: visible;
+	margin: auto;
+}
+.reveal {
+	width: auto !important;
+	height: auto !important;
+	overflow: hidden !important;
+}
+.reveal .slides {
+	position: static;
+	width: 100%;
+	height: auto;
+
+	left: auto;
+	top: auto;
+	margin: 0 !important;
+	padding: 0 !important;
+
+	overflow: visible;
+	display: block;
+
+	-webkit-perspective: none;
+	   -moz-perspective: none;
+	    -ms-perspective: none;
+	        perspective: none;
+
+	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
+	   -moz-perspective-origin: 50% 50%;
+	    -ms-perspective-origin: 50% 50%;
+	        perspective-origin: 50% 50%;
+}
+
+.reveal .slides section {
+	page-break-after: always !important;
+
+	visibility: visible !important;
+	position: relative !important;
+	display: block !important;
+	position: relative !important;
+
+	margin: 0 !important;
+	padding: 0 !important;
+	box-sizing: border-box !important;
+	min-height: 1px;
+
+	opacity: 1 !important;
+
+	-webkit-transform-style: flat !important;
+	   -moz-transform-style: flat !important;
+	    -ms-transform-style: flat !important;
+	        transform-style: flat !important;
+
+	-webkit-transform: none !important;
+	   -moz-transform: none !important;
+	    -ms-transform: none !important;
+	        transform: none !important;
+}
+
+.reveal section.stack {
+	margin: 0 !important;
+	padding: 0 !important;
+	page-break-after: avoid !important;
+	height: auto !important;
+	min-height: auto !important;
+}
+
+.reveal img {
+	box-shadow: none;
+}
+
+.reveal .roll {
+	overflow: visible;
+	line-height: 1em;
+}
+
+/* Slide backgrounds are placed inside of their slide when exporting to PDF */
+.reveal section .slide-background {
+	display: block !important;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: -1;
+}
+
+/* All elements should be above the slide-background */
+.reveal section>* {
+	position: relative;
+	z-index: 1;
+}
+
+/* Display slide speaker notes when 'showNotes' is enabled */
+.reveal .speaker-notes-pdf {
+	display: block;
+	width: 100%;
+	max-height: none;
+	left: auto;
+	top: auto;
+	z-index: 100;
+}
+
+/* Display slide numbers when 'slideNumber' is enabled */
+.reveal .slide-number-pdf {
+	display: block;
+	position: absolute;
+	font-size: 14px;
+}
+
+</script>
+
+
+<script>
+var style = document.createElement( 'style' );
+style.type = 'text/css';
+var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
+var style_script = document.getElementById(style_script_id).text;
+style.innerHTML = style_script;
+document.getElementsByTagName('head')[0].appendChild(style);
+</script>
+
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+
+<section id="section" class="slide level2">
+<h2></h2>
+<h3>
+Spatial Autocorrelation with GLS
+</h3>
+<p><img data-src="./images/spatial/why-are-plots.jpg" /></p>
+</section>
+<section id="much-of-our-data-is-spatial" class="slide level2">
+<h2>Much of our data is spatial</h2>
+<p><img src="20_spatial_files/figure-revealjs/plot_boreal_raw-1.jpeg" width="672" /></p>
+</section>
+<section id="much-of-our-data-is-spatial-1" class="slide level2">
+<h2>Much of our data is spatial</h2>
+<p><img src="20_spatial_files/figure-revealjs/plot_smoking-1.jpeg" width="672" /></p>
+</section>
+<section id="a-note-up-front" class="slide level2">
+<h2>A note up front</h2>
+<ul>
+<li class="fragment">Spatial data analysis is… a big topic.<br />
+<br />
+</li>
+<li class="fragment">Start by learning how to make maps (<code>sf</code> library)<br />
+<br />
+</li>
+<li class="fragment">Be prepared to dive in. Deep.</li>
+</ul>
+</section>
+<section id="to-space-and-beyond" class="slide level2">
+<h2>To Space and Beyond</h2>
+<ol type="1">
+<li><p>How do we assess spatial autocorrelation?</p></li>
+<li><p>What are the possible patterns of spatial autocorrelation?</p></li>
+<li><p>How do we assess point spatial data?</p></li>
+<li><p>How do we assess polygon spatial data?</p></li>
+</ol>
+</section>
+<section id="how-correlated-is-ndvi-across-space" class="slide level2">
+<h2>How correlated is NDVI across space?</h2>
+<p><img src="20_spatial_files/figure-revealjs/plot_boreal_raw-1.jpeg" width="672" /></p>
+</section>
+<section id="spatial-autocorrelation-and-morans-i" class="slide level2">
+<h2>Spatial Autocorrelation and Moran’s I</h2>
+<p><span class="math display">\[I = \frac{N}{W}\frac{\sum\sum w_{ij}(x_i - \bar{x})(x_j - \bar(x))}{\sum(x_i - \bar{x})^2}\]</span></p>
+<ul>
+<li>W is a weight matrix (1/pairwise distance) with diagonals of 0<br />
+</li>
+<li>I = 1, perfect positive correlation, I = -1, perfect anti-correlation<br />
+</li>
+<li><span class="math inline">\(E_i = \frac{-1}{N-1}\)</span> and can be tested</li>
+</ul>
+</section>
+<section id="calculating-morans-i" class="slide level2">
+<h2>Calculating Moran’s I</h2>
+<ol type="1">
+<li><p>Make a distance matrix</p></li>
+<li><p>Convert it to a weight matrix</p></li>
+<li><p>Run <code>spdep::moran.test</code></p></li>
+</ol>
+</section>
+<section id="making-a-weight-matrix" class="slide level2">
+<h2>Making a Weight Matrix</h2>
+<p>Yes, this is a PITA…</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co">#first, mke a distance matrix of points</span></a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">boreal_dists &lt;-<span class="st"> </span>boreal <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(x,y) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="st">  </span><span class="kw">dist</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="st">  </span><span class="kw">as.matrix</span>()</a>
+<a class="sourceLine" id="cb1-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb1-7" data-line-number="7"><span class="co">#inverse of distance is weight</span></a>
+<a class="sourceLine" id="cb1-8" data-line-number="8">boreal_dists_weights &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">/</span>boreal_dists</a>
+<a class="sourceLine" id="cb1-9" data-line-number="9"><span class="kw">diag</span>(boreal_dists_weights) &lt;-<span class="st"> </span><span class="dv">0</span></a>
+<a class="sourceLine" id="cb1-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb1-11" data-line-number="11"><span class="co">#turn into a weights list</span></a>
+<a class="sourceLine" id="cb1-12" data-line-number="12">boreal_w &lt;-<span class="st"> </span><span class="kw">mat2listw</span>(boreal_dists_weights)</a></code></pre></div>
+<ul>
+<li>NB, use projections with true distances (e.g., UTM, not latlong)</li>
+</ul>
+</section>
+<section id="morans-i" class="slide level2">
+<h2>Moran’s I</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">library</span>(spdep)</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw">moran.test</span>(boreal<span class="op">$</span>NDVI, boreal_w)</a></code></pre></div>
+<pre><code>
+    Moran I test under randomisation
+
+data:  boreal$NDVI  
+weights: boreal_w    
+
+Moran I statistic standard deviate = 45.157, p-value &lt; 2.2e-16
+alternative hypothesis: greater
+sample estimates:
+Moran I statistic       Expectation          Variance 
+     1.834024e-01     -1.879699e-03      1.683501e-05 </code></pre>
+</section>
+<section id="what-does-this-look-like" class="slide level2">
+<h2>What does this look like?</h2>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">library</span>(ncf)</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">boreal_cor &lt;-<span class="st"> </span><span class="kw">spline.correlog</span>(<span class="dt">x=</span>boreal<span class="op">$</span>x, <span class="dt">y=</span>boreal<span class="op">$</span>y,</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3">                         <span class="dt">z=</span>boreal<span class="op">$</span>NDVI, <span class="dt">resamp=</span><span class="dv">100</span>, <span class="dt">quiet=</span><span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb4-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="kw">plot</span>(boreal_cor)</a></code></pre></div>
+<p><img src="20_spatial_files/figure-revealjs/spstat-1.jpeg" width="672" /></p>
+</section>
+<section id="to-space-and-beyond-1" class="slide level2">
+<h2>To Space and Beyond</h2>
+<ol type="1">
+<li><p>How do we assess spatial autocorrelation?</p></li>
+<li><p><font color = "red">What are the possible patterns of spatial autocorrelation?</font></p></li>
+<li><p>How do we assess point spatial data?</p></li>
+<li><p>How do we assess polygon spatial data?</p></li>
+</ol>
+</section>
+<section id="sar-versus-car" class="slide level2">
+<h2>SAR versus CAR</h2>
+<p><strong>SAR:</strong><br />
+Simultaneous Autoregressive Process <span class="math inline">\(y_i = BX_i + \sum Sy_ij + \epsilon_{i}\)</span><br />
+<br />
+<strong>CAR:</strong><br />
+Conditional Autoregressive Process <span class="math inline">\(y_i | y_{-i} ~\sim \mathcalc{N}{ BX_i + \sum S_{ij}yj, m_{ij}\)</span></p>
+</section>
+<section id="sar-versus-car-1" class="slide level2">
+<h2>SAR versus CAR</h2>
+<p>from <a href="https://stats.stackexchange.com/a/9983" class="uri">https://stats.stackexchange.com/a/9983</a><br />
+<br />
+</p>
+<p><strong>Non-spatial model</strong><br />
+My House Value is a function of my home Gardening Investment.<br />
+<br />
+</p>
+<p><strong>SAR model</strong><br />
+My House Value is a function of the House Values of my neighbours.<br />
+<br />
+</p>
+<p><strong>CAR model</strong><br />
+My House Value is a function of the Gardening Investment of my neighbours.</p>
+</section>
+<section id="variograms" class="slide level2">
+<h2>Variograms</h2>
+<ul>
+<li>(Semi)variograms allow us to look at variance of squared difference between points at different distances<br />
+<br />
+</li>
+<li>Computationally intensive<br />
+<br />
+</li>
+<li>Shape tells us what the correlation structure should be<br />
+<br />
+</li>
+<li>With a fit covariance function, can estimate the whole surface</li>
+</ul>
+</section>
+<section id="our-variogram" class="slide level2">
+<h2>Our Variogram</h2>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">library</span>(gstat)</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb5-3" data-line-number="3">v_boreal &lt;-<span class="st"> </span><span class="kw">variogram</span>(NDVI <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">loc=</span> <span class="op">~</span>x<span class="op">+</span>y, <span class="dt">data =</span> boreal)</a>
+<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="kw">plot</span>(v_boreal)</a></code></pre></div>
+<p><img src="20_spatial_files/figure-revealjs/vario-1.jpeg" width="672" /></p>
+</section>
+<section id="anatomy-of-a-variogram" class="slide level2">
+<h2>Anatomy of a Variogram</h2>
+<p><img data-src="./images/spatial/variogram.jpg" /></p>
+</section>
+<section id="spatial-correlation-matrix" class="slide level2">
+<h2>Spatial Correlation Matrix</h2>
+<p><span class="math display">\[ cor(\epsilon) = \begin{pmatrix}
+1 &amp; \rho_{ij} &amp;\rho_{ik} &amp; ... \\ 
+\rho_{ji} &amp;  1&amp; \rho_jk &amp; ...\\ 
+\rho_{ki} &amp; \rho_{kj} &amp; 1 &amp; ... \\
+. &amp; . &amp; . &amp; ... \\
+. &amp; . &amp; . &amp; ... \\
+. &amp; . &amp; . &amp; ... \\
+\end{pmatrix}\]</span><br />
+<br />
+<span class="math display">\[\rho{ij} = f(x_i, x_j)\]</span> e.g., <span class="math display">\[\rho{ij} = exp(-Distance/range)\]</span></p>
+</section>
+<section id="different-shapes-of-autocorrelation" class="slide level2">
+<h2>Different Shapes of Autocorrelation</h2>
+<p><img data-src="./images/spatial/autocor_shape.jpg" /></p>
+</section>
+<section id="how-do-you-tell-the-difference" class="slide level2">
+<h2>How do you tell the difference?</h2>
+<ol type="1">
+<li>Biology<br />
+<br />
+</li>
+<li>Fit all structures and evaluate<br />
+<br />
+</li>
+<li>Visual examination of variogram shape</li>
+</ol>
+</section>
+<section id="what-model-best-describes-our-variogram" class="slide level2">
+<h2>What model best describes our variogram?</h2>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">best_vario &lt;-<span class="st"> </span><span class="kw">fit.variogram</span>(v_boreal, </a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">              <span class="dt">model =</span> <span class="kw">vgm</span>(<span class="kw">c</span>(<span class="st">&quot;Exp&quot;</span>, <span class="st">&quot;Gau&quot;</span>, <span class="st">&quot;Mat&quot;</span>, <span class="st">&quot;Sph&quot;</span>)))</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb6-4" data-line-number="4">best_vario</a></code></pre></div>
+<pre><code>  model        psill    range
+1   Nug 0.0009415914    0.000
+2   Sph 0.0072401874 1412.745</code></pre>
+</section>
+<section id="see-the-fit-variogram" class="slide level2">
+<h2>See the Fit Variogram</h2>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw">plot</span>(v_boreal, <span class="dt">model =</span> best_vario)</a></code></pre></div>
+<p><img src="20_spatial_files/figure-revealjs/vario2-1.jpeg" width="672" /></p>
+</section>
+<section id="what-are-the-implications-of-our-variogram-krigging" class="slide level2">
+<h2>What are the Implications of our Variogram: Krigging</h2>
+<ol type="1">
+<li>Determine a model of the data (variogram!)<br />
+<br />
+</li>
+<li>Build a grid covering the space you are interested in<br />
+<br />
+</li>
+<li>Use your model to predict points between those you have measured</li>
+</ol>
+</section>
+<section id="what-are-the-implications-of-our-variogram-krigging-1" class="slide level2">
+<h2>What are the Implications of our Variogram: Krigging</h2>
+<!-- http://gsp.humboldt.edu/OLM/R/04_01_Variograms.html -->
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="co">#1. Make a gstat object (model)</span></a>
+<a class="sourceLine" id="cb9-2" data-line-number="2">boreal_gstat &lt;-<span class="st"> </span><span class="kw">gstat</span>(<span class="dt">formula =</span> NDVI <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">loc=</span> <span class="op">~</span>x<span class="op">+</span>y, </a>
+<a class="sourceLine" id="cb9-3" data-line-number="3">                      <span class="dt">data =</span> boreal, <span class="dt">model =</span> best_vario)</a>
+<a class="sourceLine" id="cb9-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb9-5" data-line-number="5"><span class="co">#2. Create a grid of &quot;Pixels&quot; using x as columns and y as rows</span></a>
+<a class="sourceLine" id="cb9-6" data-line-number="6">TheGrid &lt;-<span class="st"> </span><span class="kw">expand.grid</span>(<span class="dt">x=</span><span class="kw">seq</span>(<span class="dv">1</span>,<span class="dv">3000</span>, <span class="dv">100</span>),<span class="dt">y=</span><span class="kw">seq</span>(<span class="dv">1</span>,<span class="dv">7000</span>, <span class="dv">100</span>))</a>
+<a class="sourceLine" id="cb9-7" data-line-number="7"><span class="kw">coordinates</span>(TheGrid)&lt;-<span class="st"> </span><span class="er">~</span><span class="st"> </span>x<span class="op">+</span>y</a>
+<a class="sourceLine" id="cb9-8" data-line-number="8"><span class="co">#coordinates(boreal)&lt;- ~ x+y</span></a>
+<a class="sourceLine" id="cb9-9" data-line-number="9"><span class="kw">gridded</span>(TheGrid) &lt;-<span class="st"> </span><span class="ot">TRUE</span></a>
+<a class="sourceLine" id="cb9-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb9-11" data-line-number="11"><span class="co">#3. Make a predicted surface</span></a>
+<a class="sourceLine" id="cb9-12" data-line-number="12">TheSurface &lt;-<span class="st"> </span><span class="kw">predict</span>(boreal_gstat, <span class="dt">model=</span>best_vario, <span class="dt">newdata=</span>TheGrid)</a>
+<a class="sourceLine" id="cb9-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb9-14" data-line-number="14"><span class="co">#plot</span></a>
+<a class="sourceLine" id="cb9-15" data-line-number="15"><span class="kw">image</span>(TheSurface, <span class="dt">col=</span><span class="kw">terrain.colors</span>(<span class="dv">20</span>),</a>
+<a class="sourceLine" id="cb9-16" data-line-number="16">      <span class="dt">xlim =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="fl">3e3</span>), <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="fl">7e3</span>))</a></code></pre></div>
+</section>
+<section id="what-are-the-implications-of-our-variogram-krigging-2" class="slide level2">
+<h2>What are the Implications of our Variogram: Krigging</h2>
+<pre><code>[using ordinary kriging]</code></pre>
+<p><img src="20_spatial_files/figure-revealjs/krig-1.jpeg" width="672" /></p>
+</section>
+<section id="this-is-all-very-cool-but" class="slide level2">
+<h2>This is all very cool, but…</h2>
+<br><br><br>
+<h2>
+None of this involves biological processes
+</h2>
+</section>
+<section id="model-of-where-space-enters-in" class="slide level2">
+<h2>Model of Where Space Enters In</h2>
+<p><img src="20_spatial_files/figure-revealjs/unnamed-chunk-2-1.jpeg" width="672" /></p>
+</section>
+<section id="how-do-we-translate-this-to-correlation" class="slide level2">
+<h2>How do we translate this to correlation?</h2>
+<p><img data-src="./images/spatial/autocor_shape.jpg" /></p>
+</section>
+<section id="and" class="slide level2">
+<h2>And…</h2>
+<br><br><br>
+<h3>
+Once we build a process-based understanding, we can krig even better!
+</h3>
+</section>
+<section id="to-space-and-beyond-2" class="slide level2">
+<h2>To Space and Beyond</h2>
+<ol type="1">
+<li><p>How do we assess spatial autocorrelation?</p></li>
+<li><p>What are the possible patterns of spatial autocorrelation?</p></li>
+<li><p>How do we assess point spatial data?</p></li>
+<li><p>How do we assess polygon spatial data?</p></li>
+</ol>
+</section>
+<section id="to-space-and-beyond-3" class="slide level2">
+<h2>To Space and Beyond</h2>
+<ol type="1">
+<li><p>How do we assess spatial autocorrelation?</p></li>
+<li><p>What are the possible patterns of spatial autocorrelation?</p></li>
+<li><p><font color = "red">How do we assess point spatial data?</font></p></li>
+<li><p>How do we assess polygon spatial data?</p></li>
+</ol>
+</section>
+<section id="analysis-of-point-pattern-data" class="slide level2">
+<h2>Analysis of Point Pattern Data</h2>
+<p><img src="20_spatial_files/figure-revealjs/plot_boreal_raw-1.jpeg" width="672" /></p>
+</section>
+<section id="naieve-analysis-of-point-pattern-data" class="slide level2">
+<h2>Naieve Analysis of Point Pattern Data</h2>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">boreal_mod &lt;-<span class="st"> </span><span class="kw">lm</span>(NDVI <span class="op">~</span><span class="st"> </span>Wet, <span class="dt">data =</span> <span class="kw">as.data.frame</span>(boreal))</a></code></pre></div>
+</section>
+<section id="plot-of-residuals" class="slide level2">
+<h2>Plot of Residuals</h2>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw">ggplot</span>(boreal <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">resid =</span> <span class="kw">residuals</span>(boreal_mod)),</a>
+<a class="sourceLine" id="cb12-2" data-line-number="2">       <span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> y, <span class="dt">color =</span> resid)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb12-3" data-line-number="3"><span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb12-4" data-line-number="4"><span class="st">  </span><span class="kw">scale_color_viridis_c</span>(<span class="dt">option =</span> <span class="st">&quot;B&quot;</span>)</a></code></pre></div>
+<p><img src="20_spatial_files/figure-revealjs/plot_resid-1.jpeg" width="672" /></p>
+</section>
+<section id="analysis-of-residuals" class="slide level2">
+<h2>Analysis of Residuals</h2>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="kw">moran.test</span>(<span class="kw">residuals</span>(boreal_mod), boreal_w)</a></code></pre></div>
+<pre><code>
+    Moran I test under randomisation
+
+data:  residuals(boreal_mod)  
+weights: boreal_w    
+
+Moran I statistic standard deviate = 30.255, p-value &lt; 2.2e-16
+alternative hypothesis: greater
+sample estimates:
+Moran I statistic       Expectation          Variance 
+     1.217804e-01     -1.879699e-03      1.670611e-05 </code></pre>
+</section>
+<section id="whats-the-variogram-of-residuals" class="slide level2">
+<h2>What’s the Variogram of Residuals?</h2>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">v_bor_resid &lt;-<span class="st"> </span><span class="kw">variogram</span>(<span class="kw">residuals</span>(boreal_mod) <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">loc=</span> <span class="op">~</span>x<span class="op">+</span>y, <span class="dt">data =</span> boreal)</a>
+<a class="sourceLine" id="cb15-2" data-line-number="2"><span class="kw">plot</span>(v_bor_resid)</a></code></pre></div>
+<p><img src="20_spatial_files/figure-revealjs/bor_resid_var-1.jpeg" width="672" /></p>
+</section>
+<section id="what-model-best-describes-our-residuals" class="slide level2">
+<h2>What model best describes our residuals?</h2>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">best_resid_vario &lt;-<span class="st"> </span><span class="kw">fit.variogram</span>(v_bor_resid, </a>
+<a class="sourceLine" id="cb16-2" data-line-number="2">              <span class="dt">model =</span> <span class="kw">vgm</span>(<span class="kw">c</span>(<span class="st">&quot;Exp&quot;</span>, <span class="st">&quot;Gau&quot;</span>, <span class="st">&quot;Mat&quot;</span>, <span class="st">&quot;Sph&quot;</span>)))</a>
+<a class="sourceLine" id="cb16-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb16-4" data-line-number="4">best_vario</a></code></pre></div>
+<pre><code>  model        psill    range
+1   Nug 0.0009415914    0.000
+2   Sph 0.0072401874 1412.745</code></pre>
+</section>
+<section id="compensating-with-car-model" class="slide level2">
+<h2>Compensating with CAR Model</h2>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw">library</span>(brms)</a>
+<a class="sourceLine" id="cb18-2" data-line-number="2">bor_brms  &lt;-<span class="st"> </span><span class="kw">brm</span>(NDVI <span class="op">~</span><span class="st"> </span>Wet,</a>
+<a class="sourceLine" id="cb18-3" data-line-number="3">                 <span class="dt">family =</span> <span class="kw">gaussian</span>(),</a>
+<a class="sourceLine" id="cb18-4" data-line-number="4">                 <span class="dt">autocor =</span> <span class="kw">cor_car</span>(<span class="dt">W =</span> boreal_dists),</a>
+<a class="sourceLine" id="cb18-5" data-line-number="5">                 <span class="dt">data =</span> boreal)</a></code></pre></div>
+</section>
+<section id="compensating-with-car-model-glmmtmb" class="slide level2">
+<h2>Compensating with CAR Model: glmmTMB</h2>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="kw">library</span>(glmmTMB)</a>
+<a class="sourceLine" id="cb19-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb19-3" data-line-number="3"><span class="co">#get things prepped</span></a>
+<a class="sourceLine" id="cb19-4" data-line-number="4">boreal &lt;-<span class="st"> </span>boreal <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb19-5" data-line-number="5"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">position =</span> <span class="kw">numFactor</span>(x, y),</a>
+<a class="sourceLine" id="cb19-6" data-line-number="6">         <span class="dt">group =</span> <span class="kw">factor</span>(<span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb19-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb19-8" data-line-number="8">bor_tmb  &lt;-<span class="st"> </span><span class="kw">glmmTMB</span>(NDVI <span class="op">~</span><span class="st"> </span>Wet <span class="op">+</span><span class="st"> </span><span class="kw">exp</span>(position <span class="op">+</span><span class="st"> </span><span class="dv">0</span> <span class="op">|</span><span class="st"> </span>group),</a>
+<a class="sourceLine" id="cb19-9" data-line-number="9">                 <span class="dt">family =</span> <span class="kw">gaussian</span>(),</a>
+<a class="sourceLine" id="cb19-10" data-line-number="10">                 <span class="dt">data =</span> boreal)</a></code></pre></div>
+</section>
+<section id="compensating-with-car-model-gls" class="slide level2">
+<h2>Compensating with CAR Model: gls</h2>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw">library</span>(nlme)</a>
+<a class="sourceLine" id="cb20-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb20-3" data-line-number="3">bor_gls  &lt;-<span class="st"> </span><span class="kw">gls</span>(NDVI <span class="op">~</span><span class="st"> </span>Wet,</a>
+<a class="sourceLine" id="cb20-4" data-line-number="4">                <span class="dt">correlation =</span> <span class="kw">corSpher</span>(<span class="dt">form =</span> <span class="op">~</span><span class="st"> </span>x<span class="op">+</span>y),</a>
+<a class="sourceLine" id="cb20-5" data-line-number="5">                 <span class="dt">data =</span> boreal)</a></code></pre></div>
+</section>
+<section id="differences" class="slide level2">
+<h2>Differences?</h2>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw">library</span>(broom.mixed)</a>
+<a class="sourceLine" id="cb21-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb21-3" data-line-number="3"><span class="kw">tidy</span>(boreal_mod)</a></code></pre></div>
+<pre><code># A tibble: 2 x 5
+  term        estimate std.error statistic   p.value
+  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+1 (Intercept)    0.327   0.00552      59.3 1.95e-236
+2 Wet           -4.88    0.154       -31.6 3.05e-124</code></pre>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="kw">tidy</span>(bor_gls)</a></code></pre></div>
+<pre><code># A tibble: 2 x 5
+  term        estimate std.error statistic  p.value
+  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+1 (Intercept)    0.402     9.19     0.0437 9.65e- 1
+2 Wet           -3.04      0.168  -18.1    1.62e-57</code></pre>
+</section>
+<section id="predictions-across-landscape" class="slide level2">
+<h2>Predictions Across Landscape</h2>
+<ol type="1">
+<li>Requires predictions of wetness across landscape<br />
+<br />
+</li>
+<li>So, variogram and krig away!<br />
+<br />
+</li>
+<li>Then make a new grid.<br />
+<br />
+</li>
+<li>Use wetness values and spatial values to simulate new landscape with <code>predict</code> and <code>brms</code> or <code>glmmTMB</code> model</li>
+</ol>
+</section>
+<section id="to-space-and-beyond-4" class="slide level2">
+<h2>To Space and Beyond</h2>
+<ol type="1">
+<li><p>How do we assess spatial autocorrelation?</p></li>
+<li><p>What are the possible patterns of spatial autocorrelation?</p></li>
+<li><p>How do we assess point spatial data?</p></li>
+<li><p><font color = "red">How do we assess polygon spatial data?</font></p></li>
+</ol>
+</section>
+<section id="analysis-of-polygons" class="slide level2">
+<h2>Analysis of Polygons</h2>
+<p><img src="20_spatial_files/figure-revealjs/plot_smoking-1.jpeg" width="672" /></p>
+</section>
+<section id="we-need-distances---so-lets-make-a-mesh" class="slide level2">
+<h2>We need distances - So let’s Make a Mesh</h2>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1">penn_mesh &lt;-<span class="st"> </span><span class="kw">poly2nb</span>(penn)</a>
+<a class="sourceLine" id="cb25-2" data-line-number="2">coords &lt;-<span class="st"> </span><span class="kw">st_centroid</span>(<span class="kw">st_geometry</span>(penn))</a>
+<a class="sourceLine" id="cb25-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb25-4" data-line-number="4"><span class="kw">plot</span>(penn_mesh, coords, <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>)</a></code></pre></div>
+<p><img src="20_spatial_files/figure-revealjs/meshmaker-1.jpeg" width="672" /></p>
+</section>
+<section id="analysis-of-autocorrelation-says." class="slide level2">
+<h2>Analysis of Autocorrelation Says….</h2>
+<pre><code>
+    Moran I test under randomisation
+
+data:  residuals(penn_mod)  
+weights: penn_weights    
+
+Moran I statistic standard deviate = 0.60877, p-value = 0.2713
+alternative hypothesis: greater
+sample estimates:
+Moran I statistic       Expectation          Variance 
+      0.030083778      -0.015151515       0.005521394 </code></pre>
+</section>
+<section id="really" class="slide level2">
+<h2>Really?</h2>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">penn_v &lt;-<span class="st"> </span><span class="kw">variogram</span>(<span class="kw">residuals</span>(penn_mod) <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb27-2" data-line-number="2">          <span class="op">~</span>x<span class="op">+</span>y, </a>
+<a class="sourceLine" id="cb27-3" data-line-number="3">          <span class="dt">data =</span> <span class="kw">as.data.frame</span>(penn) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb27-4" data-line-number="4"><span class="st">            </span><span class="kw">mutate</span>(<span class="dt">x =</span> <span class="kw">st_coordinates</span>(coords)[,<span class="dv">1</span>],</a>
+<a class="sourceLine" id="cb27-5" data-line-number="5">                   <span class="dt">y =</span> <span class="kw">st_coordinates</span>(coords)[,<span class="dv">2</span>]))</a>
+<a class="sourceLine" id="cb27-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb27-7" data-line-number="7"><span class="kw">plot</span>(penn_v)</a></code></pre></div>
+<p><img src="20_spatial_files/figure-revealjs/unnamed-chunk-4-1.jpeg" width="672" /></p>
+</section>
+<section id="fitting-a-sar-model-anyway" class="slide level2">
+<h2>Fitting A SAR Model Anyway…</h2>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="kw">library</span>(spatialreg)</a>
+<a class="sourceLine" id="cb28-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb28-3" data-line-number="3">penn_sar &lt;-<span class="st"> </span><span class="kw">spautolm</span>(rate <span class="op">~</span><span class="st"> </span>smoking, </a>
+<a class="sourceLine" id="cb28-4" data-line-number="4">                     <span class="dt">data =</span> penn,</a>
+<a class="sourceLine" id="cb28-5" data-line-number="5">                     <span class="dt">listw =</span> penn_weights)</a></code></pre></div>
+</section>
+<section id="compare" class="slide level2">
+<h2>compare</h2>
+<pre><code>             Estimate Std. Error  t value   Pr(&gt;|t|)
+(Intercept)  3.621208   2.135931 1.695377 0.09478954
+smoking     18.345216   8.944603 2.050982 0.04430385</code></pre>
+<pre><code>             Estimate Std. Error  z value   Pr(&gt;|z|)
+(Intercept)  3.715435   2.161831 1.718652 0.08567779
+smoking     17.919386   9.048019 1.980476 0.04765004</code></pre>
+</section>
+<section id="predictions" class="slide level2">
+<h2>Predictions?</h2>
+<p><img src="20_spatial_files/figure-revealjs/unnamed-chunk-7-1.jpeg" width="672" /></p>
+</section>
+<section id="example" class="slide level2">
+<h2>Example</h2>
+<ol type="1">
+<li>Irish forest data<br />
+<br />
+</li>
+<li>Goal is to model lake Ph<br />
+<br />
+</li>
+<li>Possible influences:
+<ul>
+<li>Sodium Dominance Index (SDI)<br />
+</li>
+<li>Status as forested or not</li>
+<li>Altitude<br />
+<br />
+</li>
+</ul></li>
+<li>Spatial autocorrelation possible</li>
+</ol>
+</section>
+    </div>
+  </div>
+
+  <script src="libs/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
+  <script src="libs/reveal.js-3.3.0.1/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display the page number of the current slide
+        slideNumber: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: false,
+        // Opens links in an iframe preview overlay
+        previewLinks: true,
+        // Transition style
+        transition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+
+
+
+        // Optional reveal.js plugins
+        dependencies: [
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>
