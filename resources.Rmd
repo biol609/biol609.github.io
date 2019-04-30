@@ -1,0 +1,98 @@
+---
+title: "Resources, Blogs, and More"
+---
+For more basic resources, see [this list from Biol 607](https://biol607.github.io/resources.html)  
+\
+
+### Bayes   
+[Bayesian Basics](https://m-clark.github.io/bayesian-basics/) by Michael Clarke  
+[Statistical Rethinking Recoded](https://bookdown.org/connect/#/apps/1850/access)  
+[recoding Introduction to Mediation, Moderation, and Conditional Process Analysis](https://bookdown.org/ajkurz/recoding_Hayes_2018/) from A. Solomon Kurz  
+[tidybayes](http://mjskay.github.io/tidybayes/)  
+[Prior Choice Recommendation Wiki](https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations)  
+[Bayesian Data Analysis](https://www.amazon.com/Bayesian-Analysis-Chapman-Statistical-Science/dp/1439840954) by Gelman et al.
+\
+
+### Mixed Models  
+[Data Analysis Using Regression and Multilevel/Hierarchical Models](https://www.amazon.com/Analysis-Regression-Multilevel-Hierarchical-Models/dp/052168689X/) by Gelman and Hill. My bible.  
+\
+
+### Timeseries   
+[Forecasting: Principles and Practice](http://otexts.org/fpp2/). 2018. Rob Hyndman and George Athanasaopoules. A great intro to timeseries and forecasting in R.  
+[A Tour of Time Series Analysis with R](http://tts.smac-group.com/)  
+\
+
+### Spatial Analysis (GIS and Modeling)  
+[Geocomputation with R](https://geocompr.robinlovelace.net/)  
+[R-spatial.org](https://www.r-spatial.org/) with forthcoming [book](https://keen-swartz-3146c4.netlify.com/)!  
+[Data Carpentry Geospatial Workshop](https://datacarpentry.org/geospatial-workshop/)  
+[GIS Resources from University of Chicago](https://spatial.uchicago.edu/content/giscience-education)  
+[Intro to Spatial Econometrics in R](http://www.econ.uiuc.edu/~lab/workshop/Spatial_in_R.html)  
+[Applied Spatial Data Analysis with R](https://asdar-book.org/)  
+[Introduction to R for Spatial Analysis and Mapping](https://www.amazon.com/Introduction-Spatial-Analysis-Mapping/dp/1446272958/) - uses `sp` instead of `sf` but very useful  
+[R Spatial Workshop Notes](https://spatialanalysis.github.io/workshop-notes/)  
+[Spatial Data Handling](https://spatialanalysis.github.io/lab_tutorials/1_R_Spatial_Data_Handling.html)  
+\
+
+### SEM, Causality, and All That
+[Structural Equation Modeling for Ecology and Evolutionary Biology](https://jebyrnes.github.io/semclass/) My week long workshop in SEM with slides, code, and readings  
+[Jon Lefcheck's Notes in SEM in EEB](https://jslefche.github.io/sem_book/)  
+[Jim Grace's SEM tutorials](https://www.usgs.gov/centers/wetland-and-aquatic-research-center/science/quantitative-analysis-using-structural-equation?qt-science_center_objects=0#qt-science_center_objects)  
+[The Book of Why](https://www.amazon.com/Book-Why-Science-Cause-Effect/dp/046509760X) Judea Pearl's intro to causal thinking from an approachable general audience perspective
+\
+
+### Econometrics  
+[Principles of Econometrics with  R](https://bookdown.org/ccolonescu/RPoE4/) 2016. Constantin Colonescu. Yes, it's econometrics, but there's a lot here that's very generalizable to biological data analysis in R as well.  
+[Introduction to Econometrics with R](https://bookdown.org/machar1991/ITER/)  
+\
+
+### R
+[Advanced R](http://adv-r.had.co.nz/). 2014. Great walkthrough of the details and guts of R. From novices to R wizards, you will learn things you never thought possible (or the actual reasoning behind that hacky stuff you've been doing for years).  
+[Tidy evaluation: The Bookdown](https://tidyeval.tidyverse.org/)  
+\
+
+### Github
+[Using Git and Github with Rstudio](http://www.molecularecologist.com/2013/11/using-github-with-r-and-rstudio/)\
+[Git and Github in Rstudio](http://www.datasurg.net/2015/07/13/rstudio-and-github/)\
+[Happy with Git](http://happygitwithr.com/index.html). 2006. Jenny Bryan. Introduction to Git and Github for her class. Very detailed and walks you through each step.  
+
+
+### Blogs
+[R Weekly](https://rweekly.org/) A weekly newsletter\
+[R bloggers](http://www.r-bloggers.com/) R Blogger aggregator\
+[RStudio Blog](https://blog.rstudio.org/)\
+[Simply Statistics](http://simplystatistics.org/)\
+[Statistical modeling, causal inference, and social science](http://www.stat.columbia.edu/~gelman/blog/): Andrew Gelman's research group\
+[R-statistics blog](http://www.r-statistics.com/)\
+[Error Statistics Philosophy](http://errorstatistics.com/)\ Great source of information on philosophy of statistics and data analysis\
+[Quantum Forest ](http://www.quantumforest.com/) A shoebox for scribbles on data analysis by Luis Apiolaza  
+[Inundata](http://inundata.org/) from Karthik Ram of ROpenSci  
+[ROpenSci](https://ropensci.org/blog/)\
+[Xi'an's Og](http://xianblog.wordpress.com/)\
+[Civil Statistician](http://civilstat.com/) Former census statistician\
+[Citizen Statistician](http://citizen-statistician.org/) Various stats faculty
+
+### Podcasts
+[Not So Standard Deviations](https://soundcloud.com/nssd-podcast) Listen to this! #Rcatladies  
+[FiveThirtyEight Elections Podcast](http://fivethirtyeight.com/tag/fivethirtyeight-podcasts/): How we use data analysis to forecast elections.  
+[What's the Point](http://fivethirtyeight.com/tag/fivethirtyeight-podcasts/): Data in society. From FiveThirtyEight.  
+
+### Twitter Feeds
+[Karthik Ram](https://twitter.com/_inundata)\
+[ROpenSci](https://twitter.com/ropensci)\
+[Hilary Parker](https://twitter.com/hspter)\
+[#RCatLadies](https://twitter.com/rcatladies)\
+[Hadley Wickham](https://twitter.com/hadleywickham)\
+[Jenny Bryan](https://twitter.com/JennyBryan)\
+[STAT545](https://twitter.com/STAT545)\
+[Roger D. Peng](https://twitter.com/rdpeng)\
+[Emily Robinson](https://twitter.com/robinson_es)\
+[Scott Chamberlain](https://twitter.com/sckottie)\
+[R-Ladies Boston](https://twitter.com/RLadiesBoston)\
+[Carly Strasser](https://twitter.com/carlystrasser)  
+
+### Philosophy
+[The Logic of Scientific Discovery](https://www.amazon.com/Logic-Scientific-Discovery-Routledge-Classics/dp/0415278449/ref=sr_1_2?ie=UTF8&qid=1474044878&sr=8-2&keywords=karl+popper). 1934. Karl Popper.\
+[The Methodology of Scientific Research Programs](https://www.amazon.com/Methodology-Scientific-Research-Programmes-Philosophical/dp/0521280311/ref=sr_1_5?ie=UTF8&qid=1474044943&sr=8-5&keywords=lakatos) Collected works of Irme Lakatos\
+[Against Method](https://www.amazon.com/Against-Method-Paul-Feyerabend/dp/1844674428/ref=sr_1_1?ie=UTF8&qid=1474045065&sr=8-1&keywords=Against+Method) Paul Feyerabend's provocative take on sciene in context. \
+[For and Against Method](https://www.amazon.com/Against-Method-Scientific-Lakatos-Feyerabend-Correspondence/dp/0226467759/ref=sr_1_2?ie=UTF8&qid=1474044943&sr=8-2&keywords=lakatos)  Collected correspondence/dialogue of Imre Lakatos and Paul Feyerabend\ 

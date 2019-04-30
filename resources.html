@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>Resources, Blogs, and More</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 54px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h2 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h3 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h4 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h5 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h6 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="overview.html">Overview</a>
+</li>
+<li>
+  <a href="schedule_new.html">Schedule</a>
+</li>
+<li>
+  <a href="final.html">Final</a>
+</li>
+<li>
+  <a href="error.html">R Errors</a>
+</li>
+<li>
+  <a href="texts.html">Texts</a>
+</li>
+<li>
+  <a href="syllabus/adv_data_analysis_syllabus_2016a.doc">Syllabus</a>
+</li>
+<li>
+  <a href="resources.html">Resources</a>
+</li>
+<li>
+  <a href="http://byrneslab.net/resources/boston-area-data-science-groups/">Local Meetups</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Resources, Blogs, and More</h1>
+
+</div>
+
+
+<p>For more basic resources, see <a href="https://biol607.github.io/resources.html">this list from Biol 607</a><br />
+<br />
+</p>
+<div id="bayes" class="section level3">
+<h3>Bayes</h3>
+<p><a href="https://m-clark.github.io/bayesian-basics/">Bayesian Basics</a> by Michael Clarke<br />
+<a href="https://bookdown.org/connect/#/apps/1850/access">Statistical Rethinking Recoded</a><br />
+<a href="https://bookdown.org/ajkurz/recoding_Hayes_2018/">recoding Introduction to Mediation, Moderation, and Conditional Process Analysis</a> from A. Solomon Kurz<br />
+<a href="http://mjskay.github.io/tidybayes/">tidybayes</a><br />
+<a href="https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations">Prior Choice Recommendation Wiki</a><br />
+<a href="https://www.amazon.com/Bayesian-Analysis-Chapman-Statistical-Science/dp/1439840954">Bayesian Data Analysis</a> by Gelman et al.<br />
+</p>
+</div>
+<div id="mixed-models" class="section level3">
+<h3>Mixed Models</h3>
+<p><a href="https://www.amazon.com/Analysis-Regression-Multilevel-Hierarchical-Models/dp/052168689X/">Data Analysis Using Regression and Multilevel/Hierarchical Models</a> by Gelman and Hill. My bible.<br />
+<br />
+</p>
+</div>
+<div id="timeseries" class="section level3">
+<h3>Timeseries</h3>
+<p><a href="http://otexts.org/fpp2/">Forecasting: Principles and Practice</a>. 2018. Rob Hyndman and George Athanasaopoules. A great intro to timeseries and forecasting in R.<br />
+<a href="http://tts.smac-group.com/">A Tour of Time Series Analysis with R</a><br />
+<br />
+</p>
+</div>
+<div id="spatial-analysis-gis-and-modeling" class="section level3">
+<h3>Spatial Analysis (GIS and Modeling)</h3>
+<p><a href="https://geocompr.robinlovelace.net/">Geocomputation with R</a><br />
+<a href="https://www.r-spatial.org/">R-spatial.org</a> with forthcoming <a href="https://keen-swartz-3146c4.netlify.com/">book</a>!<br />
+<a href="https://datacarpentry.org/geospatial-workshop/">Data Carpentry Geospatial Workshop</a><br />
+<a href="https://spatial.uchicago.edu/content/giscience-education">GIS Resources from University of Chicago</a><br />
+<a href="http://www.econ.uiuc.edu/~lab/workshop/Spatial_in_R.html">Intro to Spatial Econometrics in R</a><br />
+<a href="https://asdar-book.org/">Applied Spatial Data Analysis with R</a><br />
+<a href="https://www.amazon.com/Introduction-Spatial-Analysis-Mapping/dp/1446272958/">Introduction to R for Spatial Analysis and Mapping</a> - uses <code>sp</code> instead of <code>sf</code> but very useful<br />
+<a href="https://spatialanalysis.github.io/workshop-notes/">R Spatial Workshop Notes</a><br />
+<a href="https://spatialanalysis.github.io/lab_tutorials/1_R_Spatial_Data_Handling.html">Spatial Data Handling</a><br />
+<br />
+</p>
+</div>
+<div id="sem-causality-and-all-that" class="section level3">
+<h3>SEM, Causality, and All That</h3>
+<p><a href="https://jebyrnes.github.io/semclass/">Structural Equation Modeling for Ecology and Evolutionary Biology</a> My week long workshop in SEM with slides, code, and readings<br />
+<a href="https://jslefche.github.io/sem_book/">Jon Lefcheck’s Notes in SEM in EEB</a><br />
+<a href="https://www.usgs.gov/centers/wetland-and-aquatic-research-center/science/quantitative-analysis-using-structural-equation?qt-science_center_objects=0#qt-science_center_objects">Jim Grace’s SEM tutorials</a><br />
+<a href="https://www.amazon.com/Book-Why-Science-Cause-Effect/dp/046509760X">The Book of Why</a> Judea Pearl’s intro to causal thinking from an approachable general audience perspective<br />
+</p>
+</div>
+<div id="econometrics" class="section level3">
+<h3>Econometrics</h3>
+<p><a href="https://bookdown.org/ccolonescu/RPoE4/">Principles of Econometrics with R</a> 2016. Constantin Colonescu. Yes, it’s econometrics, but there’s a lot here that’s very generalizable to biological data analysis in R as well.<br />
+<a href="https://bookdown.org/machar1991/ITER/">Introduction to Econometrics with R</a><br />
+<br />
+</p>
+</div>
+<div id="r" class="section level3">
+<h3>R</h3>
+<p><a href="http://adv-r.had.co.nz/">Advanced R</a>. 2014. Great walkthrough of the details and guts of R. From novices to R wizards, you will learn things you never thought possible (or the actual reasoning behind that hacky stuff you’ve been doing for years).<br />
+<a href="https://tidyeval.tidyverse.org/">Tidy evaluation: The Bookdown</a><br />
+<br />
+</p>
+</div>
+<div id="github" class="section level3">
+<h3>Github</h3>
+<p><a href="http://www.molecularecologist.com/2013/11/using-github-with-r-and-rstudio/">Using Git and Github with Rstudio</a><br />
+<a href="http://www.datasurg.net/2015/07/13/rstudio-and-github/">Git and Github in Rstudio</a><br />
+<a href="http://happygitwithr.com/index.html">Happy with Git</a>. 2006. Jenny Bryan. Introduction to Git and Github for her class. Very detailed and walks you through each step.</p>
+</div>
+<div id="blogs" class="section level3">
+<h3>Blogs</h3>
+<p><a href="https://rweekly.org/">R Weekly</a> A weekly newsletter<br />
+<a href="http://www.r-bloggers.com/">R bloggers</a> R Blogger aggregator<br />
+<a href="https://blog.rstudio.org/">RStudio Blog</a><br />
+<a href="http://simplystatistics.org/">Simply Statistics</a><br />
+<a href="http://www.stat.columbia.edu/~gelman/blog/">Statistical modeling, causal inference, and social science</a>: Andrew Gelman’s research group<br />
+<a href="http://www.r-statistics.com/">R-statistics blog</a><br />
+<a href="http://errorstatistics.com/">Error Statistics Philosophy</a> Great source of information on philosophy of statistics and data analysis<br />
+<a href="http://www.quantumforest.com/">Quantum Forest</a> A shoebox for scribbles on data analysis by Luis Apiolaza<br />
+<a href="http://inundata.org/">Inundata</a> from Karthik Ram of ROpenSci<br />
+<a href="https://ropensci.org/blog/">ROpenSci</a><br />
+<a href="http://xianblog.wordpress.com/">Xi’an’s Og</a><br />
+<a href="http://civilstat.com/">Civil Statistician</a> Former census statistician<br />
+<a href="http://citizen-statistician.org/">Citizen Statistician</a> Various stats faculty</p>
+</div>
+<div id="podcasts" class="section level3">
+<h3>Podcasts</h3>
+<p><a href="https://soundcloud.com/nssd-podcast">Not So Standard Deviations</a> Listen to this! #Rcatladies<br />
+<a href="http://fivethirtyeight.com/tag/fivethirtyeight-podcasts/">FiveThirtyEight Elections Podcast</a>: How we use data analysis to forecast elections.<br />
+<a href="http://fivethirtyeight.com/tag/fivethirtyeight-podcasts/">What’s the Point</a>: Data in society. From FiveThirtyEight.</p>
+</div>
+<div id="twitter-feeds" class="section level3">
+<h3>Twitter Feeds</h3>
+<p><a href="https://twitter.com/_inundata">Karthik Ram</a><br />
+<a href="https://twitter.com/ropensci">ROpenSci</a><br />
+<a href="https://twitter.com/hspter">Hilary Parker</a><br />
+<a href="https://twitter.com/rcatladies">#RCatLadies</a><br />
+<a href="https://twitter.com/hadleywickham">Hadley Wickham</a><br />
+<a href="https://twitter.com/JennyBryan">Jenny Bryan</a><br />
+<a href="https://twitter.com/STAT545">STAT545</a><br />
+<a href="https://twitter.com/rdpeng">Roger D. Peng</a><br />
+<a href="https://twitter.com/robinson_es">Emily Robinson</a><br />
+<a href="https://twitter.com/sckottie">Scott Chamberlain</a><br />
+<a href="https://twitter.com/RLadiesBoston">R-Ladies Boston</a><br />
+<a href="https://twitter.com/carlystrasser">Carly Strasser</a></p>
+</div>
+<div id="philosophy" class="section level3">
+<h3>Philosophy</h3>
+<p><a href="https://www.amazon.com/Logic-Scientific-Discovery-Routledge-Classics/dp/0415278449/ref=sr_1_2?ie=UTF8&amp;qid=1474044878&amp;sr=8-2&amp;keywords=karl+popper">The Logic of Scientific Discovery</a>. 1934. Karl Popper.<br />
+<a href="https://www.amazon.com/Methodology-Scientific-Research-Programmes-Philosophical/dp/0521280311/ref=sr_1_5?ie=UTF8&amp;qid=1474044943&amp;sr=8-5&amp;keywords=lakatos">The Methodology of Scientific Research Programs</a> Collected works of Irme Lakatos<br />
+<a href="https://www.amazon.com/Against-Method-Paul-Feyerabend/dp/1844674428/ref=sr_1_1?ie=UTF8&amp;qid=1474045065&amp;sr=8-1&amp;keywords=Against+Method">Against Method</a> Paul Feyerabend’s provocative take on sciene in context.<br />
+<a href="https://www.amazon.com/Against-Method-Scientific-Lakatos-Feyerabend-Correspondence/dp/0226467759/ref=sr_1_2?ie=UTF8&amp;qid=1474044943&amp;sr=8-2&amp;keywords=lakatos">For and Against Method</a> Collected correspondence/dialogue of Imre Lakatos and Paul Feyerabend </p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

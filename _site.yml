@@ -1,4 +1,4 @@
-name: "Biol 607 - Intro to Computational Data Analysis for Biology"
+name: "Biol 609 - Advanced Data Analysis for Biology"
 
 navbar:
  title: ""
@@ -18,7 +18,7 @@ navbar:
   - text: "Syllabus"
     href: syllabus/adv_data_analysis_syllabus_2016a.doc
   - text: "Resources"
-    href: http://biol607.github.io/resources.html
+    href: resources.html
   - text: "Local Meetups"
     href: http://byrneslab.net/resources/boston-area-data-science-groups/
 

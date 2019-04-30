@@ -69,9 +69,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -96,6 +94,9 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
@@ -110,7 +111,6 @@ body {
   padding-top: 59px;
   margin-top: -59px;
 }
-
 .section h2 {
   padding-top: 59px;
   margin-top: -59px;
@@ -130,6 +130,43 @@ body {
 .section h6 {
   padding-top: 59px;
   margin-top: -59px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
 }
 </style>
 
@@ -151,19 +188,85 @@ $(document).ready(function () {
 });
 </script>
 
-
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
 });
 </script>
 
 <!-- code folding -->
 
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
 
 
 
@@ -202,7 +305,7 @@ $(document).ready(function () {
   <a href="syllabus/adv_data_analysis_syllabus_2016a.doc">Syllabus</a>
 </li>
 <li>
-  <a href="http://biol607.github.io/resources.html">Resources</a>
+  <a href="resources.html">Resources</a>
 </li>
 <li>
   <a href="http://byrneslab.net/resources/boston-area-data-science-groups/">Local Meetups</a>
@@ -233,7 +336,7 @@ I will be drawing on examples and materials from a few other sources. They inclu
 <li><p>Gelman, A., and Hill, J. (2006) Data Analysis Using Regression and Multilevel/Hierarchical Models. <a href="https://www.amazon.com/Analysis-Regression-Multilevel-Hierarchical-Models/dp/052168689X" class="uri">https://www.amazon.com/Analysis-Regression-Multilevel-Hierarchical-Models/dp/052168689X</a></p></li>
 <li><p>Song, S. Qian (2009) Environmental and Ecological Statistics with R. Chapman and Hall/CRC Press, London. <a href="http://www.amazon.com/Environmental-Ecological-Statistics-Chapman-Applied-ebook/dp/B005H6YDPU" class="uri">http://www.amazon.com/Environmental-Ecological-Statistics-Chapman-Applied-ebook/dp/B005H6YDPU</a></p></li>
 <li><p>Wickham, H. 2014. Advanced R. The book can be found online at <a href="http://adv-r.had.co.nz/" class="uri">http://adv-r.had.co.nz/</a></p></li>
-<li><p>Zuur, A. et al. (2009) Mixed Effects Models and Extensions in Ecology with R. <a href="https://www.amazon.com/Effects-Extensions-Ecology-Statistics-Biology-ebook/dp/B008CLYMQW/ref=sr_1_1?ie=UTF8&amp;qid=1485273094&amp;sr=8-1&amp;keywords=zuur" class="uri">https://www.amazon.com/Effects-Extensions-Ecology-Statistics-Biology-ebook/dp/B008CLYMQW/ref=sr_1_1?ie=UTF8&amp;qid=1485273094&amp;sr=8-1&amp;keywords=zuur</a></p></li>
+<li><p>Zuur, A. et al. (2009) Mixed Effects Models and Extensions in Ecology with R. <a href="https://www.amazon.com/Effects-Extensions-Ecology-Statistics-Biology-ebook/dp/B008CLYMQW/ref=sr_1_1?ie=UTF8&amp;qid=1485273094&amp;sr=8-1&amp;keywords=zuur" class="uri">https://www.amazon.com/Effects-Extensions-Ecology-Statistics-Biology-ebook/dp/B008CLYMQW/ref=sr_1_1?ie=UTF8&amp;qid=1485273094&amp;sr=8-1&amp;keywords=zuur</a></p></li>
 </ul>
 <p><strong>Software</strong></p>
 <ul>
