@@ -119,7 +119,7 @@ __R Packages:__ nlme
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
-__Lecture:__ [Gaussian Proces Models](./lectures/24_gaussian_process.html), [Generalized Additive Models (GAMs)](not_here_yet) 
+__Lecture:__ [Gaussian Proces Models](./lectures/24_gaussian_process.html), [Generalized Additive Models (GAMs)](./lectures/22_gams.html) 
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-beyond-2019   
 __Files:__ [predicted GP script](./lectures/data/gp/predict_gpl2.R)  
 __Reading:__ [Spatial autoregressive models for statistical inference from ecological data](./Readings/verHoef_spatial_autocorrelation.pdf), McElreath Chapter 14, [Roberts et al. 2012](http://byrneslab.net/classes/biol609/Roberts_et_al_2012_gaussian_process.pdf), [GAMs: an Introduction](http://environmentalcomputing.net/intro-to-gams/), [Michael Clark's GAM Introduction](https://m-clark.github.io/generalized-additive-models/), [Hierarchical Generalized Additive Models in ecology: an introduction with mgcv](./Readings/Pedersen-2019-Hierarchical Generalized Additive Models in ecology.pdf)  

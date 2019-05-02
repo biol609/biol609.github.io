@@ -1,0 +1,498 @@
+---
+title:
+css: style.css
+output:
+  revealjs::revealjs_presentation:
+    reveal_options:
+      slideNumber: true
+      previewLinks: true
+    theme: white
+    center: false
+    transition: fade
+    self_contained: false
+    lib_dir: libs
+---
+  
+## 
+
+<h3>Generalized Additive Models</h3>
+\
+![](images/gams/gam_gam_style.jpg)  
+
+```{r prep, echo=FALSE, cache=FALSE, message=FALSE, warning=FALSE}
+library(knitr)
+opts_chunk$set(fig.height=5, fig.width=7, comment=NA, 
+               warning=FALSE, message=FALSE, 
+               dev="jpeg", echo=FALSE)
+
+library(nlme)
+library(dplyr)
+library(tidyr)
+library(readr)
+
+library(brms)
+library(sf)
+library(spdep)
+library(raster)
+library(SpatialEpi)
+
+library(ggplot2)
+library(ggfortify)
+library(patchwork)
+#center plot titles
+theme_set(theme_bw(base_size=14))
+theme_update(plot.title = element_text(hjust = 0.5))
+
+library(SpatialTools)
+library(tidybayes)
+library(mgcv)
+
+```
+
+## Outline
+1.  Smoothing  
+\
+2. GAMS and Basis Functions  
+\
+3. Evaluating your GAM  
+\
+4. GAMs, Space, Time  
+
+## A Wiggly Problem: Temperature and Oxygen in Seawater Vertical Profiles
+```{r read_squid, message=FALSE}
+squid <- read.table("./data/gams/gamTrix_Squid_2013_01_07.txt", header=T) %>%
+  as_tibble() %>%
+  dplyr::filter(!is.na(Oxy))%>%
+  dplyr::filter(!is.na(Temp))
+```
+
+```{r plot_quid}
+temp_oxy <- ggplot(squid,
+       aes(x = Temp, y = Oxy)) +
+  geom_point(alpha = 0.1)
+```
+
+```{r temp_depth}
+temp_oxy +
+  aes(color = Depth) +
+  scale_color_viridis_c()
+```
+
+
+## A Linear Fit
+```{r temp_linear}
+temp_oxy +
+  stat_smooth(method = "lm")
+```
+
+## Bad Diagnostics!
+```{r diag}
+autoplot(lm(Oxy ~ Temp, data = squid), which =c(1,2))
+```
+
+## What about a Polynomial?
+```{r temp_2}
+temp_oxy +
+  stat_smooth(method = "lm", formula = y ~ poly(x, 2), color = "blue", fill = NA) +
+  stat_smooth(method = "lm", formula = y ~ poly(x, 3), color = "red", fill = NA) +
+  stat_smooth(method = "lm", formula = y ~ poly(x, 4), color = "orange", fill = NA) +
+  stat_smooth(method = "lm", formula = y ~ poly(x, 5), color = "purple", fill = NA) 
+```
+
+## Bad Diagnostics, even at the 5th order!
+```{r diag_5}
+autoplot(lm(Oxy ~ poly(Temp,5), data = squid), which =c(1,2), add.smooth=T)
+```
+
+## LOESS
+```{r temp_loess}
+temp_oxy +
+  geom_smooth(method = "loess")
+```
+
+
+## LOESS Takes Chunks
+```{r temp_loess1}
+lplot <- temp_oxy +
+  geom_vline(xintercept = 5, lty = 2, color = "darkgrey") +
+  geom_vline(xintercept = 5.25, lty = 2, color = "darkgrey")
+
+lplot
+```
+
+## LOESS Takes Chunks
+```{r lchunk}
+ggplot(squid %>% filter(Temp >=5) %>% filter(Temp <=5.25),
+       aes(x = Temp, y = Oxy)) +
+  geom_point(alpha = 0.1) +
+  stat_smooth(method = "lm", color = "red", fill = NA) + ylim(c(0,1))
+```
+
+## LOESS Takes Chunks
+```{r temp_loess_chunk_full}
+tmpfit <- lm(Oxy ~ Temp, data = squid %>% filter(Temp >=5) %>% filter(Temp <=5.25))
+seg <- data.frame(Temp = c(5, 5.25), 
+                  Oxy = predict(tmpfit, newdata = data.frame(Temp = c(5, 5.25))))
+
+lplot +
+  geom_line(data = seg, color = "red")
+```
+
+## LOESS Takes Chunks
+```{r l2}
+temp_oxy +
+  stat_smooth(method = "loess", color = "darkgrey") +
+  geom_line(data = seg, color = "red", lwd = 1.5)
+```
+
+## Smooth Splines Use Local Area Means
+```{r spline}
+ss_fit <- data.frame(Temp = squid$Temp,
+                     Oxy = fitted(smooth.spline(squid$Temp, squid$Oxy)))
+
+temp_oxy +
+  geom_line(data = ss_fit, color = "blue") 
+```
+
+## Problems with these techniques
+- LM or GLM: We do not meet assumptions, and crazy residuals  
+\
+- Polynomial: What polynomial to choose? Often misfit.  
+\
+- LOESS: Not based on formula - purely phenomenological  
+\
+- Splines: Just smoothed data. No real mechanism.
+
+## Outline
+1.  Smoothing  
+\
+2. GAMS and Basis Functions  
+\
+3. Evaluating your GAM  
+\
+4. GAMs, Space, Time 
+
+
+## The Central Idea Behind GAMs
+- Standard Linear Model
+$$y\sim \mathcal{N}(\mu, \sigma^{2})$$
+$$\mu = b_{0}+b_{1}X_{1}$$
+\
+- Polynomial Regression
+$$y\sim \mathcal{N}(\mu, \sigma^{2})$$
+$$\mu = b_{0}+b_{1}X_{1}+b_{2}X^2$$
+\
+- GLM formulation
+$$y\sim \mathcal{N}(\mu, \sigma^{2})$$
+$$g(\mu) = b_{0}+b_{1}X_{1}+b_{2}X$$ 
+\
+- GAM formulation
+$$y\sim \mathcal{N}(\mu, \sigma^{2})$$
+$$g(\mu) = f(X)$$  
+
+## The GAM Formulation in More Detail
+$$y\sim \mathcal{N}(\mu, \sigma^{2})$$
+\
+$$g(\mu) = f(X)$$  
+\
+$$ f(X) = \sum_{j=1}^{d}\gamma_jB_j(x)$$
+
+## The Cental Idea Behind GAMs
+![](./images/gams/fig1_ultithread_stitchfix.svg)
+
+
+## Basis Functions: You've seen them before
+$$f(X) = \sum_{j=1}^{d}\gamma_jB_j(x)$$
+\
+\
+Linear Regression as a Basis Function:  
+$$d = 1$$
+
+$$B_j(x) = x$$
+
+<div class = "fragment">
+So....
+$$f(x) = \gamma_j x$$
+</div>
+
+
+## Basis Functions: You've seen them before
+$$f(X) = \sum_{j=1}^{d}\gamma_jB_j(x)$$
+\
+\
+Polynomial Regression as a Basis Function:  
+$$f(x) = \gamma_0 + \gamma_1\cdot x^1 \ldots +\gamma_d\cdot x^d$$
+
+## Basis Functions in GAMs
+- You can think of every $B_j(x)$ as a transformation of x  
+\
+- In GAMs, we base j off of K knots  
+\
+- A knot is a place where we split our data into pieces  
+     - We optimize knot choice, but let's just split evenly for a demo
+\
+- For each segment of the data, we fit a seprate function, then add them together
+
+## Consider our data
+```{r knotplot}
+l <- 5
+knots <- seq(min(squid$Temp),  max(squid$Temp), length.out = l+1)[-(l+1)]
+temp_oxy +
+  geom_vline(xintercept = knots)
+```
+
+## Consider our data
+```{r knot_fit_plot}
+get_knot <- function(x, k = knots){
+  k_0 <- k
+  k <- k[k <= x]
+  ret <- k[length(k)]
+  if(length(ret)==0)k[ret <- k_0length(k_0)]
+  ret
+}
+
+squid <- squid %>%
+  rowwise() %>%
+  mutate(knot_place = get_knot(Temp, knots)) %>%
+  ungroup()
+
+temp_oxy +
+  geom_vline(xintercept = knots) +
+  stat_smooth(data = squid, mapping = aes(color = factor(knot_place)), method = "lm") +
+  guides(color = FALSE)
+```
+
+
+## A Square Fit
+```{r knotploly_plot}
+cfit <- temp_oxy +
+  stat_smooth(data = squid, mapping = aes(color = factor(knot_place)), method = "lm",
+              formula = y ~ poly(x,2)) +
+  guides(color = FALSE)
+
+cfit +   geom_vline(xintercept = knots) 
+```
+
+## A Cubic GAM
+```{r knotploly_plot_gam}
+gamplot <- temp_oxy +
+  stat_smooth() +
+  guides(color = FALSE)
+
+cfit + gamplot
+```
+
+## How do we fit
+- Use penalized likelihood  
+$$l_p(\beta)= l(\beta) - \color{darkred}{\mathcal{penalty}}$$  
+\
+- Penality adjust for 'wiggliness'  
+$$l_p(\beta)= l(\beta) - \color{#b2001d}{\lambda B'SB}$$
+\
+- S is a penalty matrix, and $\lambda$
+     - $\lambda$ = 2 by default, but play with it!
+
+
+## Fitting As a Gam
+```{r gam_fit, echo = TRUE}
+library(mgcv)
+
+fit <- gam(Oxy ~ s(Temp, bs = "cr"), data = squid)
+
+```
+
+## Many Different Kind of Basis Functions  
+- Thin Plate Regression Splines  
+    - `bs = "tp"`  
+    - Default  
+    - Analgous to looking at bending within each region of basis  
+    \
+- Cubic Regression
+    - `bs = "cr"`  
+    - Raises (x-k)  to up to the 3rd power  
+\    
+## Many Different Kind of Basis Functions  
+- Random Effects  
+    - `bs = "re"`  
+\
+- P-Splines  
+    - `bs = "ps"`  
+    - Penalized B-spline  
+    - Flexible bands passing through several points  
+
+## Interaction Effect Basis Functions via Tensor Products  
+- `bs = "ts"`  
+    - One set of penalties per marginal basis  
+    \
+    
+- `bs = "ti"`  
+    - Excludes main effects  
+\    
+- `bs = "t2"`  
+    - One penalty set per term  
+        
+
+## GAMs and Causal Inference
+- We are fitting something to a mean structure, not error  
+\
+- More direct control of partial correlations  
+\
+- BUT - estimating many terms for the basis  
+\
+- So, more akin to mixed models  
+\
+- Causal implications less clear than fixed effects
+
+## Outline
+1.  Smoothing  
+\
+2. GAMS and Basis Functions  
+\
+3. Evaluating your GAM  
+\
+4. GAMs, Space, Time 
+
+
+## Evaluating Assumptions
+```{r, echo = TRUE, results = "hide"}
+par(mfrow=c(2,2))
+gam.check(fit,  k.rep=1000)
+par(mfrow = c(1,1))
+```
+
+## Evaluating Assumptions
+```{r echo = TRUE, eval = FALSE}
+>gam.check(fit,  k.rep=1000)
+
+Method: GCV   Optimizer: magic
+Smoothing parameter selection converged after 4 iterations.
+The RMS GCV score gradient at convergence was 2.959763e-07 .
+The Hessian was positive definite.
+Model rank =  10 / 10 
+
+Basis dimension (k) checking results. Low p-value (k-index<1) may
+indicate that k is too low, especially if edf is close to k'.
+
+          k'  edf k-index p-value    
+s(Temp) 9.00 6.89    0.93   0.001 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+```
+
+
+## Model Evaluation
+Effective DF = DF adjusted for penalty  
+
+```{r, echo = TRUE}
+anova(fit)
+```
+
+## Assessing Fit
+```{r fit, echo = TRUE}
+summary(fit)
+```
+
+## Visualizing
+```{r, echo = TRUE, eval = FALSE}
+squid$pred <- predict(fit)
+
+temp_oxy +
+  geom_line(data = squid, mapping = aes(y = pred),
+            color = "red", lwd = 1.5)
+```
+
+## Visualizing
+```{r, echo = FALSE, eval = TRUE}
+```
+
+## Peeking Inside the Black Box
+```{r, echo = TRUE}
+predict(fit, type = "lpmatrix") %>%
+  as_tibble()
+```
+
+## Visualizing the Black Box
+```{r}
+p2 <- predict(fit, type = "lpmatrix") %>%
+  as_tibble() %>%
+  dplyr::select(-`(Intercept)`) %>%
+  mutate(Temp = squid$Temp) %>%
+  tidyr::gather(Element, Oxy, -Temp)
+
+ggplot(p2,
+       aes(x = Temp, y = Oxy, color = Element)) +
+  geom_line() +
+  geom_line(data = squid, color = "black", y = fitted(fit), lwd = 2)
+```
+
+## Outline
+1.  Smoothing  
+\
+2. GAMS and Basis Functions  
+\
+3. Evaluating your GAM  
+\
+4. GAMs, Space, Time 
+
+## Basis Functions for Space and Time
+- Gaussian Process  
+     - `bs = "gp"`
+     - Can choose the model with mod = 1:5  
+     - An approximation, but close enough!  
+     - For point processes, time series, etc.
+     - Models the mean  
+\
+- Modeling error  
+      - Can use corAR1 or anything  
+      - Not causal  
+\
+- Discrete places (e.g., polygons)  
+    - `bs = 'mrf'`: Markov Random Field
+    - Like SAR
+
+
+## Global Temperature Example
+```{r hadcrut}
+gtemp = read.table("https://crudata.uea.ac.uk/cru/data/temperature/HadCRUT4-gl.dat", 
+                   fill = TRUE)
+save(gtemp, file='data/global_temperatures.RData')
+load('data/global_temperatures.RData')
+## Drop the even rows
+gtemp = gtemp %>% drop_na()
+## Add colnames
+colnames(gtemp) <- c("Year", month.abb, "Annual")
+# Create a long format for later; Also set year to start at 0
+gtemp_long = gtemp %>% 
+  mutate(Year0 = Year-1850) %>% 
+  gather(key = Month, value=Anomaly, -Year, -Annual)
+
+temp_plot <- ggplot(gtemp,
+       aes(x=Year, y = Annual)) +
+  geom_line() +
+  ylab(
+    "Temperature Anomaly"
+  )
+temp_plot
+```
+
+## Any ACF from a Linear Fit?
+```{r, echo = TRUE}
+acf(residuals(lm(Annual ~ Year, data = gtemp)))
+```
+
+## A GAM Timeseries Fit
+```{r echo = TRUE}
+temp_gam <- gam(Annual ~ s(Year, bs = "gp"), data = gtemp)
+```
+
+## Did it Blend?
+```{r}
+acf(residuals(temp_gam))
+```
+
+## The Fit
+```{r}
+temp_plot +
+  geom_line(y = fitted(temp_gam), color = "red", lwd = 1.5)
+```
+
