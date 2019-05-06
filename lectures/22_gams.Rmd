@@ -14,6 +14,14 @@ output:
 ---
   
 ## 
+<!-- for next time, 
+  - more on knots, k, and what different basis functions are
+  - show comparison b/t spacetime method and gams 
+  - show different GP shapes (matern, spherical, etc)
+  - bayesian gam
+  - interaction (bs = "te") and visualization
+  - Explain fit indices
+  -->
 
 <h3>Generalized Additive Models</h3>
 \
@@ -39,6 +47,7 @@ library(SpatialEpi)
 library(ggplot2)
 library(ggfortify)
 library(patchwork)
+library(GGally)
 #center plot titles
 theme_set(theme_bw(base_size=14))
 theme_update(plot.title = element_text(hjust = 0.5))
@@ -46,6 +55,7 @@ theme_update(plot.title = element_text(hjust = 0.5))
 library(SpatialTools)
 library(tidybayes)
 library(mgcv)
+library(gstat)
 
 ```
 
@@ -57,6 +67,12 @@ library(mgcv)
 3. Evaluating your GAM  
 \
 4. GAMs, Space, Time  
+
+## Humboldt Squid data from Julie Stewart Lowndes
+![](./images/gams/hum_squid.jpg)
+
+## 
+![](./images/gams/squid_range.jpg)
 
 ## A Wiggly Problem: Temperature and Oxygen in Seawater Vertical Profiles
 ```{r read_squid, message=FALSE}
@@ -393,7 +409,7 @@ summary(fit)
 ```
 
 ## Visualizing
-```{r, echo = TRUE, eval = FALSE}
+```{r vis_gam_squid, echo = TRUE, eval = FALSE}
 squid$pred <- predict(fit)
 
 temp_oxy +
@@ -402,7 +418,7 @@ temp_oxy +
 ```
 
 ## Visualizing
-```{r, echo = FALSE, eval = TRUE}
+```{r vis_gam_squid, echo = FALSE, eval = TRUE}
 ```
 
 ## Peeking Inside the Black Box
@@ -413,6 +429,8 @@ predict(fit, type = "lpmatrix") %>%
 
 ## Visualizing the Black Box
 ```{r}
+squid$pred <- predict(fit)
+
 p2 <- predict(fit, type = "lpmatrix") %>%
   as_tibble() %>%
   dplyr::select(-`(Intercept)`) %>%
@@ -422,7 +440,7 @@ p2 <- predict(fit, type = "lpmatrix") %>%
 ggplot(p2,
        aes(x = Temp, y = Oxy, color = Element)) +
   geom_line() +
-  geom_line(data = squid, color = "black", y = fitted(fit), lwd = 2)
+  geom_line(data = squid, color = "black", mapping = aes(y = pred), lwd = 2)
 ```
 
 ## Outline
@@ -452,7 +470,7 @@ ggplot(p2,
 
 
 ## Global Temperature Example
-```{r hadcrut}
+```{r hadcrut, cache=TRUE}
 gtemp = read.table("https://crudata.uea.ac.uk/cru/data/temperature/HadCRUT4-gl.dat", 
                    fill = TRUE)
 save(gtemp, file='data/global_temperatures.RData')
@@ -496,3 +514,288 @@ temp_plot +
   geom_line(y = fitted(temp_gam), color = "red", lwd = 1.5)
 ```
 
+## What about Space?
+```{r read_boreal}
+boreal <- read.table("./data/spatial/Boreality.txt", header=T)
+```
+```{r plot_boreal_raw}
+raw_boreal <- qplot(x, y, data=boreal, color=NDVI) +
+  geom_point(size = 3) +
+  theme_bw() + 
+  scale_color_gradient("NDVI", low="lightgreen", high="darkgreen")
+
+raw_boreal + 
+  aes(size = Wet)
+  scale_size_continuous("Index of Wetness", range=c(0,7)) 
+```
+
+## But there are drivers
+```{r pairs}
+ggpairs(boreal %>% dplyr::select(NDVI, T61, Wet),
+        lower = list(continuous = "smooth_loess"))
+```
+
+## Naieve Analysis of Point Pattern Data with GAMs!
+```{r gam_bor, echo = TRUE}
+boreal_mod <- gam(NDVI ~ s(Wet) + s(T61), 
+                  data = boreal)
+```
+
+## But...spatial autocorrelation
+```{r bor_resid_var, echo = TRUE}
+library(gstat)
+v_bor_resid <- variogram(residuals(boreal_mod) ~ 1, 
+                         loc= ~x+y, data = boreal)
+plot(v_bor_resid)
+```
+
+## What's the Shape?
+```{r best_vario_resid, echo = TRUE}
+best_resid_vario <- fit.variogram(v_bor_resid, 
+              model = vgm(c("Gau", "Mat", "Sph")))
+
+best_resid_vario
+```
+
+## Spherical Autocorrelation!
+```{r}
+plot(v_bor_resid, model = best_resid_vario)
+```
+
+## A Spatial GAM
+```{r spatiallm_bor, echo = TRUE}
+boreal_mod_spatial <- gam(NDVI ~ s(Wet) + s(T61) +
+                    s(x, y, bs = "gp", m = 1), 
+                  data = boreal)
+```
+
+## Did It Blend?
+```{r}
+gam.check(boreal_mod_spatial)
+```
+
+## Refit with Higher K for Space
+```{r spatiallm_bor_refit, echo = TRUE}
+boreal_mod_spatial <- gam(NDVI ~ s(Wet) + s(T61) +
+                    s(x, y, bs = "gp", m = 1, k = 100), 
+                  data = boreal)
+```
+
+## Did It Blend?
+```{r}
+gam.check(boreal_mod_spatial)
+```
+
+## Compare Point Results to Observed Results
+```{r plot_bor_fit}
+boreal <- boreal %>%
+  mutate(pred_gam = fitted(boreal_mod_spatial),
+         resid = residuals(boreal_mod_spatial, type = "pearson"))
+
+predplot <- qplot(x,y,color = pred_gam, data = boreal) +
+  geom_point(size = 3) +
+  theme_bw() + 
+  scale_color_gradient("Predicted\nNDVI", low="lightgreen", high="darkgreen")
+  
+raw_boreal + predplot
+```
+
+## Residuals
+```{r resid_gam}
+qplot(x,y,color = resid>0, 
+      size =  abs(resid), 
+      alpha = abs(resid),
+      data = boreal) +
+  theme_minimal() + 
+  scale_color_manual(values = c("orange", "purple"))+
+  labs(color = "Pearson Residual",
+       size = "Abs Residual",
+       alpha = "Abs Residual")
+```
+
+## Make this into a Map (Krig by Gam)
+
+1. Come up with a spatial model of predictors  
+\
+2. Make a grid of coordinates  
+\
+3. Get krigged value of predictors at coordinates  
+\
+4. Krig, baby, krig! With your gam.
+
+## Spatial Model of Predictors
+```{r, echo = TRUE}
+
+fit.variogram(variogram(Wet ~ 1, 
+              loc= ~x+y, data = boreal), 
+              model = vgm(c("Gau", "Mat", "Sph")))
+
+
+fit.variogram(variogram(T61 ~ 1, 
+              loc= ~x+y, data = boreal), 
+              model = vgm(c("Gau", "Mat", "Sph")))
+```
+
+## Spatial Model of Predictors
+```{r gam_predictors, echo = TRUE}
+#spherical
+wet_mod <- gam(Wet ~ s(x,y, bs = "gp", m = 1, k=100), data = boreal)
+
+#matern with low kappa
+t_mod <- gam(T61 ~ s(x,y, bs = "gp", m = 3, k=100), data = boreal)
+```
+
+## Make a Surface and Krig!
+```{r surf, echo = TRUE}
+grid <- crossing(x = seq(min(boreal$x), max(boreal$x), length.out=100),
+                 y = seq(min(boreal$y), max(boreal$y), length.out=100)
+                 ) %>%
+  
+  #predictors
+  mutate(Wet = predict(wet_mod, newdata = .),
+         T61 = predict(t_mod, newdata = .)) %>%
+  
+  #response
+  mutate(`Predicted NDVI` = predict(boreal_mod_spatial, newdata = .))
+```
+
+## What's it look like?
+```{r}
+krig_map <- ggplot(grid,
+       aes(x = x, y = y, color = `Predicted NDVI`, fill = `Predicted NDVI`)) +
+  geom_raster(interpolate=TRUE) +
+  scale_color_gradient("Predicted\nNDVI", low="lightgreen", high="darkgreen") +
+  scale_fill_gradient("Predicted\nNDVI", low="lightgreen", high="darkgreen")
+
+krig_map
+```
+
+## Compare to fit
+```{r}
+krig_map + raw_boreal 
+  #geom_point(data = boreal, aes(color = NDVI, fill = NDVI),
+         #    size = 5)
+```
+
+## What about Polygons?
+```{r penn}
+library(SpatialEpi)
+penn_sf <- st_as_sf(pennLC$spatial.polygon) %>%
+  mutate(county = unique(pennLC$data$county)) %>%
+  left_join(pennLC$data) %>%
+  mutate(rate = cases/population) %>%
+  st_transform(3724) %>%
+  filter(population > 0)  #one bad row
+
+
+
+
+#aggregated
+penn <- penn_sf %>%
+ group_by(county) %>%
+  summarize(cases = sum(cases), 
+            population = sum(population),
+            rate = cases/population*1000)
+```
+
+```{r}
+penn_canc_poly <- ggplot(penn) +
+  geom_sf(aes(fill = cases)) +
+  scale_fill_viridis_c(option = "D", guide = guide_colorbar("Cancer Rate")) +
+  theme_minimal() + theme(legend.position="bottom")
+
+penn_canc_poly
+```
+
+## Many Things Underlying This Pattern
+```{r}
+penn_sf %>% as_tibble %>% dplyr::select(-geometry)
+```
+
+
+## We need a neighborhood matrix
+We use the aggregated data, as there are 67 counties, not 1072!
+
+```{r neighborhood, echo = TRUE}
+library(spdep)
+
+nb <- poly2nb(penn,  row.names = as.character(as.numeric(penn$county)))
+names(nb) <- penn$county
+```
+
+## Let's Fit a Model!
+```{r, echo = TRUE}
+# use 2 parallel threads, reduce if fewer physical CPU cores
+ctrl <- gam.control(nthreads = 2) 
+
+
+#The Binomial GAM
+gam_mrf <- gam(cases/population ~ s(county, bs = 'mrf', 
+                         xt = list(nb = nb)) +
+                 race + gender + age, # define MRF smooth
+               data = penn_sf,
+               family = binomial(),
+               weights = population) 
+```
+
+## Did it work out?
+```{r dharma, echo = TRUE}
+library(DHARMa)
+plot(simulateResiduals(gam_mrf))
+```
+
+## Do aggregated predictions match?
+```{r big_predict, echo = TRUE, eval = FALSE}
+penn_sf <- penn_sf %>%
+  mutate(pred_cases = fitted(gam_mrf)*population,
+         pred_rate = fitted(gam_mrf))
+
+#aggregate
+penn_predict_agg <- penn_sf %>%
+  group_by(county) %>%
+  summarise(population = sum(population), 
+            pred_cases = sum(pred_cases),
+            pred_rate = sum(pred_cases)/population*1000,
+            observed_rate = sum(cases)/population*1000) 
+
+#plot side by side
+pred_predict_plot <- ggplot(penn_predict_agg) +
+  geom_sf(aes(fill = pred_cases)) +
+  scale_fill_viridis_c(option = "D", guide = guide_colorbar("Cancer Cases")) +
+  theme_minimal() + theme(legend.position="bottom")
+
+
+penn_canc_poly + pred_predict_plot
+```
+
+## Do aggregated predictions match?
+```{r big_predict, echo = FALSE, eval = TRUE}
+```
+
+## What About Individual Predictions?
+```{r}
+penn_sf_long <- penn_sf %>% 
+  dplyr::select(-rate, -pred_rate) %>%
+  gather(type, cases, cases, pred_cases)
+
+ggplot(penn_sf_long %>% 
+         group_by(county, gender, type) %>% 
+         summarize(cases = sum(cases))) +
+  geom_sf(aes(fill = cases)) +
+  scale_fill_viridis_c(option = "D", guide = guide_colorbar("Cancer Cases")) +
+  theme_minimal() + theme(legend.position="bottom") +
+  facet_grid(gender  ~ type)
+```
+
+
+## Comparing Rates
+Looks like it's underpredicting, although pattern is ok - 
+
+```{r}
+ ggplot(penn_predict_agg %>%
+          gather("type", "rate", observed_rate, pred_rate)) +
+  geom_sf(aes(fill = rate)) +
+  scale_fill_viridis_c(option = "D", guide = guide_colorbar("Cancer Cases")) +
+  theme_minimal() + theme(legend.position="bottom") +
+  facet_wrap(~type)
+```

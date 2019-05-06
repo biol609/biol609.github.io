@@ -28,7 +28,7 @@ a.sourceLine { text-indent: -1em; padding-left: 1em; }
 pre.numberSource a.sourceLine
   { position: relative; left: -4em; }
 pre.numberSource a.sourceLine::before
-  { content: attr(title);
+  { content: attr(data-line-number);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
     border: none; pointer-events: all; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
@@ -514,6 +514,14 @@ document.getElementsByTagName('head')[0].appendChild(style);
 
 <section id="section" class="slide level2">
 <h2></h2>
+<!-- for next time, 
+  - more on knots, k, and what different basis functions are
+  - show comparison b/t spacetime method and gams 
+  - show different GP shapes (matern, spherical, etc)
+  - bayesian gam
+  - interaction (bs = "te") and visualization
+  - Explain fit indices
+  -->
 <h3>
 Generalized Additive Models
 </h3>
@@ -534,6 +542,14 @@ Generalized Additive Models
 </li>
 <li>GAMs, Space, Time</li>
 </ol>
+</section>
+<section id="humboldt-squid-data-from-julie-stewart-lowndes" class="slide level2">
+<h2>Humboldt Squid data from Julie Stewart Lowndes</h2>
+<p><img data-src="./images/gams/hum_squid.jpg" /></p>
+</section>
+<section id="section-1" class="slide level2">
+<h2></h2>
+<p><img data-src="./images/gams/squid_range.jpg" /></p>
 </section>
 <section id="a-wiggly-problem-temperature-and-oxygen-in-seawater-vertical-profiles" class="slide level2">
 <h2>A Wiggly Problem: Temperature and Oxygen in Seawater Vertical Profiles</h2>
@@ -701,16 +717,16 @@ Polynomial Regression as a Basis Function:<br />
 </section>
 <section id="fitting-as-a-gam" class="slide level2">
 <h2>Fitting As a Gam</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(mgcv)</a>
-<a class="sourceLine" id="cb1-2" title="2"></a>
-<a class="sourceLine" id="cb1-3" title="3">fit &lt;-<span class="st"> </span><span class="kw">gam</span>(Oxy <span class="op">~</span><span class="st"> </span><span class="kw">s</span>(Temp, <span class="dt">bs =</span> <span class="st">&quot;cr&quot;</span>), <span class="dt">data =</span> squid)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(mgcv)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb1-3" data-line-number="3">fit &lt;-<span class="st"> </span><span class="kw">gam</span>(Oxy <span class="op">~</span><span class="st"> </span><span class="kw">s</span>(Temp, <span class="dt">bs =</span> <span class="st">&quot;cr&quot;</span>), <span class="dt">data =</span> squid)</a></code></pre></div>
 </section>
 <section id="many-different-kind-of-basis-functions" class="slide level2">
 <h2>Many Different Kind of Basis Functions</h2>
 <ul>
 <li>Thin Plate Regression Splines
 <ul>
-<li><code>bs = "tp"</code><br />
+<li><code>bs = &quot;tp&quot;</code><br />
 </li>
 <li>Default<br />
 </li>
@@ -720,7 +736,7 @@ Polynomial Regression as a Basis Function:<br />
 </ul></li>
 <li>Cubic Regression
 <ul>
-<li><code>bs = "cr"</code><br />
+<li><code>bs = &quot;cr&quot;</code><br />
 </li>
 <li>Raises (x-k) to up to the 3rd power<br />
  <br />
@@ -729,13 +745,13 @@ Polynomial Regression as a Basis Function:<br />
 </ul></li>
 <li>Random Effects
 <ul>
-<li><code>bs = "re"</code><br />
+<li><code>bs = &quot;re&quot;</code><br />
 <br />
 </li>
 </ul></li>
 <li>P-Splines
 <ul>
-<li><code>bs = "ps"</code><br />
+<li><code>bs = &quot;ps&quot;</code><br />
 </li>
 <li>Penalized B-spline<br />
 </li>
@@ -746,19 +762,19 @@ Polynomial Regression as a Basis Function:<br />
 <section id="interaction-effect-basis-functions-via-tensor-products" class="slide level2">
 <h2>Interaction Effect Basis Functions via Tensor Products</h2>
 <ul>
-<li><code>bs = "ts"</code>
+<li><code>bs = &quot;ts&quot;</code>
 <ul>
 <li>One set of penalties per marginal basis<br />
 <br />
 </li>
 </ul></li>
-<li><code>bs = "ti"</code>
+<li><code>bs = &quot;ti&quot;</code>
 <ul>
 <li>Excludes main effects<br />
  <br />
 </li>
 </ul></li>
-<li><code>bs = "t2"</code>
+<li><code>bs = &quot;t2&quot;</code>
 <ul>
 <li>One penalty set per term</li>
 </ul></li>
@@ -799,33 +815,33 @@ Polynomial Regression as a Basis Function:<br />
 </section>
 <section id="evaluating-assumptions" class="slide level2">
 <h2>Evaluating Assumptions</h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">par</span>(<span class="dt">mfrow=</span><span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">2</span>))</a>
-<a class="sourceLine" id="cb2-2" title="2"><span class="kw">gam.check</span>(fit,  <span class="dt">k.rep=</span><span class="dv">1000</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">par</span>(<span class="dt">mfrow=</span><span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">2</span>))</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw">gam.check</span>(fit,  <span class="dt">k.rep=</span><span class="dv">1000</span>)</a></code></pre></div>
 <p><img src="22_gams_files/figure-revealjs/unnamed-chunk-1-1.jpeg" width="672" /></p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">par</span>(<span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">par</span>(<span class="dt">mfrow =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</a></code></pre></div>
 </section>
 <section id="evaluating-assumptions-1" class="slide level2">
 <h2>Evaluating Assumptions</h2>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="op">&gt;</span><span class="kw">gam.check</span>(fit,  <span class="dt">k.rep=</span><span class="dv">1000</span>)</a>
-<a class="sourceLine" id="cb4-2" title="2"></a>
-<a class="sourceLine" id="cb4-3" title="3">Method<span class="op">:</span><span class="st"> </span>GCV   Optimizer<span class="op">:</span><span class="st"> </span>magic</a>
-<a class="sourceLine" id="cb4-4" title="4">Smoothing parameter selection converged after <span class="dv">4</span> iterations.</a>
-<a class="sourceLine" id="cb4-5" title="5">The RMS GCV score gradient at convergence was <span class="fl">2.959763e-07</span> .</a>
-<a class="sourceLine" id="cb4-6" title="6">The Hessian was positive definite.</a>
-<a class="sourceLine" id="cb4-7" title="7">Model rank =<span class="st">  </span><span class="dv">10</span> <span class="op">/</span><span class="st"> </span><span class="dv">10</span> </a>
-<a class="sourceLine" id="cb4-8" title="8"></a>
-<a class="sourceLine" id="cb4-9" title="9">Basis <span class="kw">dimension</span> (k) checking results. Low p<span class="op">-</span><span class="kw">value</span> (k<span class="op">-</span>index<span class="op">&lt;</span><span class="dv">1</span>) may</a>
-<a class="sourceLine" id="cb4-10" title="10">indicate that k is too low, especially <span class="cf">if</span> edf is close to k<span class="st">&#39;.</span></a>
-<a class="sourceLine" id="cb4-11" title="11"></a>
-<a class="sourceLine" id="cb4-12" title="12"><span class="st">          k&#39;</span>  edf k<span class="op">-</span>index p<span class="op">-</span>value    </a>
-<a class="sourceLine" id="cb4-13" title="13"><span class="kw">s</span>(Temp) <span class="fl">9.00</span> <span class="fl">6.89</span>    <span class="fl">0.93</span>   <span class="fl">0.001</span> <span class="op">**</span><span class="er">*</span></a>
-<a class="sourceLine" id="cb4-14" title="14"><span class="op">---</span></a>
-<a class="sourceLine" id="cb4-15" title="15">Signif. codes<span class="op">:</span><span class="st">  </span><span class="dv">0</span> ‘<span class="op">**</span><span class="er">*</span>’ <span class="fl">0.001</span> ‘<span class="op">**</span>’ <span class="fl">0.01</span> ‘<span class="op">*</span>’ <span class="fl">0.05</span> ‘.’ <span class="fl">0.1</span> ‘ ’ <span class="dv">1</span></a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="op">&gt;</span><span class="kw">gam.check</span>(fit,  <span class="dt">k.rep=</span><span class="dv">1000</span>)</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb4-3" data-line-number="3">Method<span class="op">:</span><span class="st"> </span>GCV   Optimizer<span class="op">:</span><span class="st"> </span>magic</a>
+<a class="sourceLine" id="cb4-4" data-line-number="4">Smoothing parameter selection converged after <span class="dv">4</span> iterations.</a>
+<a class="sourceLine" id="cb4-5" data-line-number="5">The RMS GCV score gradient at convergence was <span class="fl">2.959763e-07</span> .</a>
+<a class="sourceLine" id="cb4-6" data-line-number="6">The Hessian was positive definite.</a>
+<a class="sourceLine" id="cb4-7" data-line-number="7">Model rank =<span class="st">  </span><span class="dv">10</span> <span class="op">/</span><span class="st"> </span><span class="dv">10</span> </a>
+<a class="sourceLine" id="cb4-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb4-9" data-line-number="9">Basis <span class="kw">dimension</span> (k) checking results. Low p<span class="op">-</span><span class="kw">value</span> (k<span class="op">-</span>index<span class="op">&lt;</span><span class="dv">1</span>) may</a>
+<a class="sourceLine" id="cb4-10" data-line-number="10">indicate that k is too low, especially <span class="cf">if</span> edf is close to k<span class="st">&#39;.</span></a>
+<a class="sourceLine" id="cb4-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb4-12" data-line-number="12"><span class="st">          k&#39;</span>  edf k<span class="op">-</span>index p<span class="op">-</span>value    </a>
+<a class="sourceLine" id="cb4-13" data-line-number="13"><span class="kw">s</span>(Temp) <span class="fl">9.00</span> <span class="fl">6.89</span>    <span class="fl">0.93</span>   <span class="fl">0.001</span> <span class="op">**</span><span class="er">*</span></a>
+<a class="sourceLine" id="cb4-14" data-line-number="14"><span class="op">---</span></a>
+<a class="sourceLine" id="cb4-15" data-line-number="15">Signif. codes<span class="op">:</span><span class="st">  </span><span class="dv">0</span> ‘<span class="op">**</span><span class="er">*</span>’ <span class="fl">0.001</span> ‘<span class="op">**</span>’ <span class="fl">0.01</span> ‘<span class="op">*</span>’ <span class="fl">0.05</span> ‘.’ <span class="fl">0.1</span> ‘ ’ <span class="dv">1</span></a></code></pre></div>
 </section>
 <section id="model-evaluation" class="slide level2">
 <h2>Model Evaluation</h2>
 <p>Effective DF = DF adjusted for penalty</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">anova</span>(fit)</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">anova</span>(fit)</a></code></pre></div>
 <pre><code>
 Family: gaussian 
 Link function: identity 
@@ -839,7 +855,7 @@ s(Temp) 6.888  7.726 1233  &lt;2e-16</code></pre>
 </section>
 <section id="assessing-fit" class="slide level2">
 <h2>Assessing Fit</h2>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="kw">summary</span>(fit)</a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">summary</span>(fit)</a></code></pre></div>
 <pre><code>
 Family: gaussian 
 Link function: identity 
@@ -864,19 +880,20 @@ GCV = 0.11108  Scale est. = 0.11093   n = 5868</code></pre>
 </section>
 <section id="visualizing" class="slide level2">
 <h2>Visualizing</h2>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">squid<span class="op">$</span>pred &lt;-<span class="st"> </span><span class="kw">predict</span>(fit)</a>
-<a class="sourceLine" id="cb9-2" title="2"></a>
-<a class="sourceLine" id="cb9-3" title="3">temp_oxy <span class="op">+</span></a>
-<a class="sourceLine" id="cb9-4" title="4"><span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">data =</span> squid, <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">y =</span> pred),</a>
-<a class="sourceLine" id="cb9-5" title="5">            <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">lwd =</span> <span class="fl">1.5</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">squid<span class="op">$</span>pred &lt;-<span class="st"> </span><span class="kw">predict</span>(fit)</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb9-3" data-line-number="3">temp_oxy <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="st">  </span><span class="kw">geom_line</span>(<span class="dt">data =</span> squid, <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">y =</span> pred),</a>
+<a class="sourceLine" id="cb9-5" data-line-number="5">            <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">lwd =</span> <span class="fl">1.5</span>)</a></code></pre></div>
 </section>
 <section id="visualizing-1" class="slide level2">
 <h2>Visualizing</h2>
+<p><img src="22_gams_files/figure-revealjs/vis_gam_squid-1.jpeg" width="672" /></p>
 </section>
 <section id="peeking-inside-the-black-box" class="slide level2">
 <h2>Peeking Inside the Black Box</h2>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1"><span class="kw">predict</span>(fit, <span class="dt">type =</span> <span class="st">&quot;lpmatrix&quot;</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb10-2" title="2"><span class="st">  </span><span class="kw">as_tibble</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">predict</span>(fit, <span class="dt">type =</span> <span class="st">&quot;lpmatrix&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="st">  </span><span class="kw">as_tibble</span>()</a></code></pre></div>
 <pre><code># A tibble: 5,868 x 10
    `(Intercept)` `s(Temp).1` `s(Temp).2` `s(Temp).3` `s(Temp).4`
            &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;
@@ -896,7 +913,7 @@ GCV = 0.11108  Scale est. = 0.11093   n = 5868</code></pre>
 </section>
 <section id="visualizing-the-black-box" class="slide level2">
 <h2>Visualizing the Black Box</h2>
-<p><img src="22_gams_files/figure-revealjs/unnamed-chunk-7-1.jpeg" width="672" /></p>
+<p><img src="22_gams_files/figure-revealjs/unnamed-chunk-5-1.jpeg" width="672" /></p>
 </section>
 <section id="outline-3" class="slide level2">
 <h2>Outline</h2>
@@ -918,7 +935,7 @@ GCV = 0.11108  Scale est. = 0.11093   n = 5868</code></pre>
 <ul>
 <li>Gaussian Process
 <ul>
-<li><code>bs = "gp"</code></li>
+<li><code>bs = &quot;gp&quot;</code></li>
 <li>Can choose the model with mod = 1:5<br />
 </li>
 <li>An approximation, but close enough!<br />
@@ -946,20 +963,260 @@ GCV = 0.11108  Scale est. = 0.11093   n = 5868</code></pre>
 </section>
 <section id="any-acf-from-a-linear-fit" class="slide level2">
 <h2>Any ACF from a Linear Fit?</h2>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="kw">acf</span>(<span class="kw">residuals</span>(<span class="kw">lm</span>(Annual <span class="op">~</span><span class="st"> </span>Year, <span class="dt">data =</span> gtemp)))</a></code></pre></div>
-<p><img src="22_gams_files/figure-revealjs/unnamed-chunk-8-1.jpeg" width="672" /></p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw">acf</span>(<span class="kw">residuals</span>(<span class="kw">lm</span>(Annual <span class="op">~</span><span class="st"> </span>Year, <span class="dt">data =</span> gtemp)))</a></code></pre></div>
+<p><img src="22_gams_files/figure-revealjs/unnamed-chunk-6-1.jpeg" width="672" /></p>
 </section>
 <section id="a-gam-timeseries-fit" class="slide level2">
 <h2>A GAM Timeseries Fit</h2>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">temp_gam &lt;-<span class="st"> </span><span class="kw">gam</span>(Annual <span class="op">~</span><span class="st"> </span><span class="kw">s</span>(Year, <span class="dt">bs =</span> <span class="st">&quot;gp&quot;</span>), <span class="dt">data =</span> gtemp)</a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">temp_gam &lt;-<span class="st"> </span><span class="kw">gam</span>(Annual <span class="op">~</span><span class="st"> </span><span class="kw">s</span>(Year, <span class="dt">bs =</span> <span class="st">&quot;gp&quot;</span>), <span class="dt">data =</span> gtemp)</a></code></pre></div>
 </section>
 <section id="did-it-blend" class="slide level2">
 <h2>Did it Blend?</h2>
-<p><img src="22_gams_files/figure-revealjs/unnamed-chunk-10-1.jpeg" width="672" /></p>
+<p><img src="22_gams_files/figure-revealjs/unnamed-chunk-8-1.jpeg" width="672" /></p>
 </section>
 <section id="the-fit" class="slide level2">
 <h2>The Fit</h2>
+<p><img src="22_gams_files/figure-revealjs/unnamed-chunk-9-1.jpeg" width="672" /></p>
+</section>
+<section id="what-about-space" class="slide level2">
+<h2>What about Space?</h2>
+<p><img src="22_gams_files/figure-revealjs/plot_boreal_raw-1.jpeg" width="672" /></p>
+<pre><code>&lt;ScaleContinuous&gt;
+ Range:  
+ Limits:    0 --    1</code></pre>
+</section>
+<section id="but-there-are-drivers" class="slide level2">
+<h2>But there are drivers</h2>
+<p><img src="22_gams_files/figure-revealjs/pairs-1.jpeg" width="672" /></p>
+</section>
+<section id="naieve-analysis-of-point-pattern-data-with-gams" class="slide level2">
+<h2>Naieve Analysis of Point Pattern Data with GAMs!</h2>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">boreal_mod &lt;-<span class="st"> </span><span class="kw">gam</span>(NDVI <span class="op">~</span><span class="st"> </span><span class="kw">s</span>(Wet) <span class="op">+</span><span class="st"> </span><span class="kw">s</span>(T61), </a>
+<a class="sourceLine" id="cb15-2" data-line-number="2">                  <span class="dt">data =</span> boreal)</a></code></pre></div>
+</section>
+<section id="butspatial-autocorrelation" class="slide level2">
+<h2>But…spatial autocorrelation</h2>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw">library</span>(gstat)</a>
+<a class="sourceLine" id="cb16-2" data-line-number="2">v_bor_resid &lt;-<span class="st"> </span><span class="kw">variogram</span>(<span class="kw">residuals</span>(boreal_mod) <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb16-3" data-line-number="3">                         <span class="dt">loc=</span> <span class="op">~</span>x<span class="op">+</span>y, <span class="dt">data =</span> boreal)</a>
+<a class="sourceLine" id="cb16-4" data-line-number="4"><span class="kw">plot</span>(v_bor_resid)</a></code></pre></div>
+<p><img src="22_gams_files/figure-revealjs/bor_resid_var-1.jpeg" width="672" /></p>
+</section>
+<section id="whats-the-shape" class="slide level2">
+<h2>What’s the Shape?</h2>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">best_resid_vario &lt;-<span class="st"> </span><span class="kw">fit.variogram</span>(v_bor_resid, </a>
+<a class="sourceLine" id="cb17-2" data-line-number="2">              <span class="dt">model =</span> <span class="kw">vgm</span>(<span class="kw">c</span>(<span class="st">&quot;Gau&quot;</span>, <span class="st">&quot;Mat&quot;</span>, <span class="st">&quot;Sph&quot;</span>)))</a>
+<a class="sourceLine" id="cb17-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb17-4" data-line-number="4">best_resid_vario</a></code></pre></div>
+<pre><code>  model        psill    range
+1   Nug 0.0011640961    0.000
+2   Sph 0.0005326058 1066.352</code></pre>
+</section>
+<section id="spherical-autocorrelation" class="slide level2">
+<h2>Spherical Autocorrelation!</h2>
+<p><img src="22_gams_files/figure-revealjs/unnamed-chunk-10-1.jpeg" width="672" /></p>
+</section>
+<section id="a-spatial-gam" class="slide level2">
+<h2>A Spatial GAM</h2>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">boreal_mod_spatial &lt;-<span class="st"> </span><span class="kw">gam</span>(NDVI <span class="op">~</span><span class="st"> </span><span class="kw">s</span>(Wet) <span class="op">+</span><span class="st"> </span><span class="kw">s</span>(T61) <span class="op">+</span></a>
+<a class="sourceLine" id="cb19-2" data-line-number="2"><span class="st">                    </span><span class="kw">s</span>(x, y, <span class="dt">bs =</span> <span class="st">&quot;gp&quot;</span>, <span class="dt">m =</span> <span class="dv">1</span>), </a>
+<a class="sourceLine" id="cb19-3" data-line-number="3">                  <span class="dt">data =</span> boreal)</a></code></pre></div>
+</section>
+<section id="did-it-blend-1" class="slide level2">
+<h2>Did It Blend?</h2>
 <p><img src="22_gams_files/figure-revealjs/unnamed-chunk-11-1.jpeg" width="672" /></p>
+<pre><code>
+Method: GCV   Optimizer: magic
+Smoothing parameter selection converged after 11 iterations.
+The RMS GCV score gradient at convergence was 8.119027e-08 .
+The Hessian was positive definite.
+Model rank =  51 / 51 
+
+Basis dimension (k) checking results. Low p-value (k-index&lt;1) may
+indicate that k is too low, especially if edf is close to k&#39;.
+
+          k&#39;   edf k-index p-value    
+s(Wet)  9.00  2.87    1.02    0.64    
+s(T61)  9.00  8.54    0.89  &lt;2e-16 ***
+s(x,y) 32.00 22.83    0.83  &lt;2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</section>
+<section id="refit-with-higher-k-for-space" class="slide level2">
+<h2>Refit with Higher K for Space</h2>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">boreal_mod_spatial &lt;-<span class="st"> </span><span class="kw">gam</span>(NDVI <span class="op">~</span><span class="st"> </span><span class="kw">s</span>(Wet) <span class="op">+</span><span class="st"> </span><span class="kw">s</span>(T61) <span class="op">+</span></a>
+<a class="sourceLine" id="cb21-2" data-line-number="2"><span class="st">                    </span><span class="kw">s</span>(x, y, <span class="dt">bs =</span> <span class="st">&quot;gp&quot;</span>, <span class="dt">m =</span> <span class="dv">1</span>, <span class="dt">k =</span> <span class="dv">100</span>), </a>
+<a class="sourceLine" id="cb21-3" data-line-number="3">                  <span class="dt">data =</span> boreal)</a></code></pre></div>
+</section>
+<section id="did-it-blend-2" class="slide level2">
+<h2>Did It Blend?</h2>
+<p><img src="22_gams_files/figure-revealjs/unnamed-chunk-12-1.jpeg" width="672" /></p>
+<pre><code>
+Method: GCV   Optimizer: magic
+Smoothing parameter selection converged after 13 iterations.
+The RMS GCV score gradient at convergence was 1.047426e-07 .
+The Hessian was positive definite.
+Model rank =  118 / 118 
+
+Basis dimension (k) checking results. Low p-value (k-index&lt;1) may
+indicate that k is too low, especially if edf is close to k&#39;.
+
+          k&#39;   edf k-index p-value
+s(Wet)  9.00  2.73    1.00    0.49
+s(T61)  9.00  2.45    0.98    0.26
+s(x,y) 99.00 70.30    1.01    0.59</code></pre>
+</section>
+<section id="compare-point-results-to-observed-results" class="slide level2">
+<h2>Compare Point Results to Observed Results</h2>
+<p><img src="22_gams_files/figure-revealjs/plot_bor_fit-1.jpeg" width="672" /></p>
+</section>
+<section id="residuals" class="slide level2">
+<h2>Residuals</h2>
+<p><img src="22_gams_files/figure-revealjs/resid_gam-1.jpeg" width="672" /></p>
+</section>
+<section id="make-this-into-a-map-krig-by-gam" class="slide level2">
+<h2>Make this into a Map (Krig by Gam)</h2>
+<ol type="1">
+<li>Come up with a spatial model of predictors<br />
+<br />
+</li>
+<li>Make a grid of coordinates<br />
+<br />
+</li>
+<li>Get krigged value of predictors at coordinates<br />
+<br />
+</li>
+<li>Krig, baby, krig! With your gam.</li>
+</ol>
+</section>
+<section id="spatial-model-of-predictors" class="slide level2">
+<h2>Spatial Model of Predictors</h2>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="kw">fit.variogram</span>(<span class="kw">variogram</span>(Wet <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb23-2" data-line-number="2">              <span class="dt">loc=</span> <span class="op">~</span>x<span class="op">+</span>y, <span class="dt">data =</span> boreal), </a>
+<a class="sourceLine" id="cb23-3" data-line-number="3">              <span class="dt">model =</span> <span class="kw">vgm</span>(<span class="kw">c</span>(<span class="st">&quot;Gau&quot;</span>, <span class="st">&quot;Mat&quot;</span>, <span class="st">&quot;Sph&quot;</span>)))</a></code></pre></div>
+<pre><code>  model        psill    range
+1   Nug 5.328932e-05    0.000
+2   Sph 1.772570e-04 1461.766</code></pre>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="kw">fit.variogram</span>(<span class="kw">variogram</span>(T61 <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb25-2" data-line-number="2">              <span class="dt">loc=</span> <span class="op">~</span>x<span class="op">+</span>y, <span class="dt">data =</span> boreal), </a>
+<a class="sourceLine" id="cb25-3" data-line-number="3">              <span class="dt">model =</span> <span class="kw">vgm</span>(<span class="kw">c</span>(<span class="st">&quot;Gau&quot;</span>, <span class="st">&quot;Mat&quot;</span>, <span class="st">&quot;Sph&quot;</span>)))</a></code></pre></div>
+<pre><code>  model     psill    range kappa
+1   Nug 0.0000000   0.0000   0.0
+2   Mat 0.7272499 723.8632   0.5</code></pre>
+</section>
+<section id="spatial-model-of-predictors-1" class="slide level2">
+<h2>Spatial Model of Predictors</h2>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1"><span class="co">#spherical</span></a>
+<a class="sourceLine" id="cb27-2" data-line-number="2">wet_mod &lt;-<span class="st"> </span><span class="kw">gam</span>(Wet <span class="op">~</span><span class="st"> </span><span class="kw">s</span>(x,y, <span class="dt">bs =</span> <span class="st">&quot;gp&quot;</span>, <span class="dt">m =</span> <span class="dv">1</span>, <span class="dt">k=</span><span class="dv">100</span>), <span class="dt">data =</span> boreal)</a>
+<a class="sourceLine" id="cb27-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb27-4" data-line-number="4"><span class="co">#matern with low kappa</span></a>
+<a class="sourceLine" id="cb27-5" data-line-number="5">t_mod &lt;-<span class="st"> </span><span class="kw">gam</span>(T61 <span class="op">~</span><span class="st"> </span><span class="kw">s</span>(x,y, <span class="dt">bs =</span> <span class="st">&quot;gp&quot;</span>, <span class="dt">m =</span> <span class="dv">3</span>, <span class="dt">k=</span><span class="dv">100</span>), <span class="dt">data =</span> boreal)</a></code></pre></div>
+</section>
+<section id="make-a-surface-and-krig" class="slide level2">
+<h2>Make a Surface and Krig!</h2>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1">grid &lt;-<span class="st"> </span><span class="kw">crossing</span>(<span class="dt">x =</span> <span class="kw">seq</span>(<span class="kw">min</span>(boreal<span class="op">$</span>x), <span class="kw">max</span>(boreal<span class="op">$</span>x), <span class="dt">length.out=</span><span class="dv">100</span>),</a>
+<a class="sourceLine" id="cb28-2" data-line-number="2">                 <span class="dt">y =</span> <span class="kw">seq</span>(<span class="kw">min</span>(boreal<span class="op">$</span>y), <span class="kw">max</span>(boreal<span class="op">$</span>y), <span class="dt">length.out=</span><span class="dv">100</span>)</a>
+<a class="sourceLine" id="cb28-3" data-line-number="3">                 ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-4" data-line-number="4"><span class="st">  </span></a>
+<a class="sourceLine" id="cb28-5" data-line-number="5"><span class="st">  </span><span class="co">#predictors</span></a>
+<a class="sourceLine" id="cb28-6" data-line-number="6"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Wet =</span> <span class="kw">predict</span>(wet_mod, <span class="dt">newdata =</span> .),</a>
+<a class="sourceLine" id="cb28-7" data-line-number="7">         <span class="dt">T61 =</span> <span class="kw">predict</span>(t_mod, <span class="dt">newdata =</span> .)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb28-8" data-line-number="8"><span class="st">  </span></a>
+<a class="sourceLine" id="cb28-9" data-line-number="9"><span class="st">  </span><span class="co">#response</span></a>
+<a class="sourceLine" id="cb28-10" data-line-number="10"><span class="st">  </span><span class="kw">mutate</span>(<span class="st">`</span><span class="dt">Predicted NDVI</span><span class="st">`</span> =<span class="st"> </span><span class="kw">predict</span>(boreal_mod_spatial, <span class="dt">newdata =</span> .))</a></code></pre></div>
+</section>
+<section id="whats-it-look-like" class="slide level2">
+<h2>What’s it look like?</h2>
+<p><img src="22_gams_files/figure-revealjs/unnamed-chunk-14-1.jpeg" width="672" /></p>
+</section>
+<section id="compare-to-fit" class="slide level2">
+<h2>Compare to fit</h2>
+<p><img src="22_gams_files/figure-revealjs/unnamed-chunk-15-1.jpeg" width="672" /></p>
+</section>
+<section id="what-about-polygons" class="slide level2">
+<h2>What about Polygons?</h2>
+<p><img src="22_gams_files/figure-revealjs/unnamed-chunk-16-1.jpeg" width="672" /></p>
+</section>
+<section id="many-things-underlying-this-pattern" class="slide level2">
+<h2>Many Things Underlying This Pattern</h2>
+<pre><code># A tibble: 1,071 x 7
+   county cases population race  gender age          rate
+   &lt;fct&gt;  &lt;int&gt;      &lt;int&gt; &lt;fct&gt; &lt;fct&gt;  &lt;fct&gt;       &lt;dbl&gt;
+ 1 adams      0       1492 o     f      Under.40 0       
+ 2 adams      0        365 o     f      40.59    0       
+ 3 adams      1         68 o     f      60.69    0.0147  
+ 4 adams      0         73 o     f      70+      0       
+ 5 adams      0      23351 w     f      Under.40 0       
+ 6 adams      5      12136 w     f      40.59    0.000412
+ 7 adams      5       3609 w     f      60.69    0.00139 
+ 8 adams     18       5411 w     f      70+      0.00333 
+ 9 adams      0       1697 o     m      Under.40 0       
+10 adams      0        387 o     m      40.59    0       
+# … with 1,061 more rows</code></pre>
+</section>
+<section id="we-need-a-neighborhood-matrix" class="slide level2">
+<h2>We need a neighborhood matrix</h2>
+<p>We use the aggregated data, as there are 67 counties, not 1072!</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1"><span class="kw">library</span>(spdep)</a>
+<a class="sourceLine" id="cb30-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb30-3" data-line-number="3">nb &lt;-<span class="st"> </span><span class="kw">poly2nb</span>(penn,  <span class="dt">row.names =</span> <span class="kw">as.character</span>(<span class="kw">as.numeric</span>(penn<span class="op">$</span>county)))</a>
+<a class="sourceLine" id="cb30-4" data-line-number="4"><span class="kw">names</span>(nb) &lt;-<span class="st"> </span>penn<span class="op">$</span>county</a></code></pre></div>
+</section>
+<section id="lets-fit-a-model" class="slide level2">
+<h2>Let’s Fit a Model!</h2>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1"><span class="co"># use 2 parallel threads, reduce if fewer physical CPU cores</span></a>
+<a class="sourceLine" id="cb31-2" data-line-number="2">ctrl &lt;-<span class="st"> </span><span class="kw">gam.control</span>(<span class="dt">nthreads =</span> <span class="dv">2</span>) </a>
+<a class="sourceLine" id="cb31-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb31-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb31-5" data-line-number="5"><span class="co">#The Binomial GAM</span></a>
+<a class="sourceLine" id="cb31-6" data-line-number="6">gam_mrf &lt;-<span class="st"> </span><span class="kw">gam</span>(cases<span class="op">/</span>population <span class="op">~</span><span class="st"> </span><span class="kw">s</span>(county, <span class="dt">bs =</span> <span class="st">&#39;mrf&#39;</span>, </a>
+<a class="sourceLine" id="cb31-7" data-line-number="7">                         <span class="dt">xt =</span> <span class="kw">list</span>(<span class="dt">nb =</span> nb)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb31-8" data-line-number="8"><span class="st">                 </span>race <span class="op">+</span><span class="st"> </span>gender <span class="op">+</span><span class="st"> </span>age, <span class="co"># define MRF smooth</span></a>
+<a class="sourceLine" id="cb31-9" data-line-number="9">               <span class="dt">data =</span> penn_sf,</a>
+<a class="sourceLine" id="cb31-10" data-line-number="10">               <span class="dt">family =</span> <span class="kw">binomial</span>(),</a>
+<a class="sourceLine" id="cb31-11" data-line-number="11">               <span class="dt">weights =</span> population) </a></code></pre></div>
+</section>
+<section id="did-it-work-out" class="slide level2">
+<h2>Did it work out?</h2>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1"><span class="kw">library</span>(DHARMa)</a>
+<a class="sourceLine" id="cb32-2" data-line-number="2"><span class="kw">plot</span>(<span class="kw">simulateResiduals</span>(gam_mrf))</a></code></pre></div>
+<p><img src="22_gams_files/figure-revealjs/dharma-1.jpeg" width="672" /></p>
+</section>
+<section id="do-aggregated-predictions-match" class="slide level2">
+<h2>Do aggregated predictions match?</h2>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1">penn_sf &lt;-<span class="st"> </span>penn_sf <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb33-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">pred_cases =</span> <span class="kw">fitted</span>(gam_mrf)<span class="op">*</span>population,</a>
+<a class="sourceLine" id="cb33-3" data-line-number="3">         <span class="dt">pred_rate =</span> <span class="kw">fitted</span>(gam_mrf))</a>
+<a class="sourceLine" id="cb33-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb33-5" data-line-number="5"><span class="co">#aggregate</span></a>
+<a class="sourceLine" id="cb33-6" data-line-number="6">penn_predict_agg &lt;-<span class="st"> </span>penn_sf <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb33-7" data-line-number="7"><span class="st">  </span><span class="kw">group_by</span>(county) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb33-8" data-line-number="8"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">population =</span> <span class="kw">sum</span>(population), </a>
+<a class="sourceLine" id="cb33-9" data-line-number="9">            <span class="dt">pred_cases =</span> <span class="kw">sum</span>(pred_cases),</a>
+<a class="sourceLine" id="cb33-10" data-line-number="10">            <span class="dt">pred_rate =</span> <span class="kw">sum</span>(pred_cases)<span class="op">/</span>population<span class="op">*</span><span class="dv">1000</span>,</a>
+<a class="sourceLine" id="cb33-11" data-line-number="11">            <span class="dt">observed_rate =</span> <span class="kw">sum</span>(cases)<span class="op">/</span>population<span class="op">*</span><span class="dv">1000</span>) </a>
+<a class="sourceLine" id="cb33-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb33-13" data-line-number="13"><span class="co">#plot side by side</span></a>
+<a class="sourceLine" id="cb33-14" data-line-number="14">pred_predict_plot &lt;-<span class="st"> </span><span class="kw">ggplot</span>(penn_predict_agg) <span class="op">+</span></a>
+<a class="sourceLine" id="cb33-15" data-line-number="15"><span class="st">  </span><span class="kw">geom_sf</span>(<span class="kw">aes</span>(<span class="dt">fill =</span> pred_cases)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb33-16" data-line-number="16"><span class="st">  </span><span class="kw">scale_fill_viridis_c</span>(<span class="dt">option =</span> <span class="st">&quot;D&quot;</span>, <span class="dt">guide =</span> <span class="kw">guide_colorbar</span>(<span class="st">&quot;Cancer Cases&quot;</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb33-17" data-line-number="17"><span class="st">  </span><span class="kw">theme_minimal</span>() <span class="op">+</span><span class="st"> </span><span class="kw">theme</span>(<span class="dt">legend.position=</span><span class="st">&quot;bottom&quot;</span>)</a>
+<a class="sourceLine" id="cb33-18" data-line-number="18"></a>
+<a class="sourceLine" id="cb33-19" data-line-number="19"></a>
+<a class="sourceLine" id="cb33-20" data-line-number="20">penn_canc_poly <span class="op">+</span><span class="st"> </span>pred_predict_plot</a></code></pre></div>
+</section>
+<section id="do-aggregated-predictions-match-1" class="slide level2">
+<h2>Do aggregated predictions match?</h2>
+<p><img src="22_gams_files/figure-revealjs/big_predict-1.jpeg" width="672" /></p>
+</section>
+<section id="what-about-individual-predictions" class="slide level2">
+<h2>What About Individual Predictions?</h2>
+<p><img src="22_gams_files/figure-revealjs/unnamed-chunk-19-1.jpeg" width="672" /></p>
+</section>
+<section id="comparing-rates" class="slide level2">
+<h2>Comparing Rates</h2>
+<p>Looks like it’s underpredicting, although pattern is ok -</p>
+<p><img src="22_gams_files/figure-revealjs/unnamed-chunk-20-1.jpeg" width="672" /></p>
 </section>
     </div>
   </div>
