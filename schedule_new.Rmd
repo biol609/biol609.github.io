@@ -98,7 +98,7 @@ __Further Reading:__ [Gelman and Hill Ch. 12](http://byrneslab.net/classes/biol6
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
-__Lecture:__  [brms and Prediction with Mixed Models](./lectures/23c_brms_prediction.html), Group-Mean Centering and Other Model Structures  
+__Lecture:__  [brms and Prediction with Mixed Models](./lectures/23c_brms_prediction.html), Group-Mean Centering and Other Model Structures    
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-mixed_bayesian-2019   
 __Reading:__ [McNeish and Kelly 2018](./Readings/McNeish_Kelley_PsychMethods_2019.pdf), [Causal Model Structures and Random Effects](http://rpubs.com/jebyrnes/causal_mods), [Poe Lecture Slides](./Readings/2018-11-02_wim_poe_clustered_slides.pdf), [Bell et al. 2018a](./Readings/Bell2018_Article_UnderstandingAndMisunderstandi.pdf), [Bell et al 2018b](./Bell_2018_Qual_Quant.pdf)  
 
@@ -119,7 +119,7 @@ __R Packages:__ nlme
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
-__Lecture:__ [Gaussian Proces Models](./lectures/24_gaussian_process.html), [Generalized Additive Models (GAMs)](./lectures/22_gams.html) 
+__Lecture:__ [Gaussian Proces Models](./lectures/24_gaussian_process.html), [Generalized Additive Models (GAMs)](./lectures/22_gams.html)   
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-beyond-2019   
 __Files:__ [predicted GP script](./lectures/data/gp/predict_gpl2.R)  
 __Reading:__ [Spatial autoregressive models for statistical inference from ecological data](./Readings/verHoef_spatial_autocorrelation.pdf), McElreath Chapter 14, [Roberts et al. 2012](http://byrneslab.net/classes/biol609/Roberts_et_al_2012_gaussian_process.pdf), [GAMs: an Introduction](http://environmentalcomputing.net/intro-to-gams/), [Michael Clark's GAM Introduction](https://m-clark.github.io/generalized-additive-models/), [Hierarchical Generalized Additive Models in ecology: an introduction with mgcv](./Readings/Pedersen-2019-Hierarchical Generalized Additive Models in ecology.pdf)  
@@ -140,16 +140,20 @@ __R Packages:__ Quantreg
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
-__Lecture:__ Causal Modeling
+__Lecture:__ Causal Modeling  
+__Readings:__ [A Second Change to Get Causal Inference Right](./Readings/Hernán_and_Healey_2019.pdf), [Causal analysis in control impact studies](./Readings/Larsen_et_al_2019.pdf), [Pearl 2010](Pearl_2010_causal_inference.pdf)    
+__Additional Reading:__ [Causal Inference](https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/)
   
 ### Week 14.
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
-__Lecture:__ [Intro to Structural Equation Models](https://1drv.ms/p/s!AvOIsObbweOroNIqHiVxra6SIrp4gw), [Implementing Piecewise SEM](https://1drv.ms/f/s!AvOIsObbweOroNIitg7KpsLhgffJrw)  
+<!-- __Lecture:__ [Intro to Structural Equation Models](https://1drv.ms/p/s!AvOIsObbweOroNIqHiVxra6SIrp4gw), [Implementing Piecewise SEM](https://1drv.ms/f/s!AvOIsObbweOroNIitg7KpsLhgffJrw)  -->
+__Lecture:__ [Intro to Structural Equation Models](https://www.dropbox.com/s/l7z6sbs16jk2y0s/23_SEM_Intro.pptx?dl=0), [SEM Implementation](https://www.dropbox.com/s/j59oodlmcx53tiw/24_Estimation_in_SEM.pptx?dl=0)  
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-sem-2019  
-__Reading:__ [Grace et al 2012 Ecosphere](http://byrneslab.net/classes/biol609/Grace_et_al-2012-Ecosphere.pdf)  
-__R packages:__ piecewiseSEM  
+__Reading:__ [Grace et al 2012 Ecosphere](http://byrneslab.net/classes/biol609/Grace_et_al-2012-Ecosphere.pdf), [Lefcheck 2016](./Readings/Lefcheck_2016_SEM.pdf)   
+__Additional Reading:__ [Notes from Jon Lefcheck](https://jslefche.github.io/sem_book/)  
+__Helpful Websites:__ [piecewiseSEM](http://jslefche.github.io/piecewiseSEM/), [lavaan](http://lavaan.ugent.be/), [Jim Grace's Tutorials](https://www.usgs.gov/centers/wetland-and-aquatic-research-center/science/quantitative-analysis-using-structural-equation)    
 
 ### Week 15.
 ```{r next_date, echo=FALSE}
