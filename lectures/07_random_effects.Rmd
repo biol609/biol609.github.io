@@ -67,9 +67,6 @@ library(DHARMa)
 ## What is the Sample Size?
 ![](./images/07/plants_leaves.jpg)
 
-## Is there a problem with using SLR to determine effect of temperature here?
-![](./images/07/states_temp.jpg)
-
 ## Pseudoreplication
 ![](./images/07/kinds_of_pseudoreplication.jpg){width=60%}
 
@@ -80,7 +77,8 @@ Hurlbert 1985
 $$Y_i = \beta X_i + \epsilon_i$$
 \
 
-$$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
+$$\epsilon \sim \mathcal{N} (0, \sigma^2)$$
+
 \
 \
 This assumes that all replicates are independent and identically distributed
@@ -108,7 +106,7 @@ This assumes that all replicates are independent and identically distributed
 
 ## Let's Say You're Sampling Mussel Lengths...
 ```{r mussel_hist}
-mussels <- read.csv("./data/07/mussels.csv")
+mussels <- read.csv("lectures/data/07/mussels.csv")
 
 mussel_ggplot <- ggplot(data=mussels, 
                         mapping=aes(mussel_length, ..count..))
@@ -317,10 +315,10 @@ Where $\tau^2$ is the variance of the random effect, and $n_j$ is the group samp
 
 ## For example, unbalanced sample sizes
 ```{r unbalanced}
-mussels_ragged <- read.csv("./data/07/mussels_ragged.csv")
+mussels_ragged <- read.csv("lectures/data/07/mussels_ragged.csv")
 mussels_ragged_mer <- lmer(mussel_length ~ (1|site)-1, data=mussels_ragged)
 
-adf <- data.frame(site = levels(mussels_ragged$site),
+adf <- data.frame(site = unique(mussels_ragged$site),
                   mussel_length = ranef(mussels_ragged_mer)$site[,1] + fixef(mussels_ragged_mer)[1])
 
 mussel_unbal <- ggplot(data=mussels_ragged, mapping=aes(x=site, y=mussel_length)) +
@@ -364,13 +362,13 @@ effs <- rbind(predictInterval(mussels_ragged_mer,
                 level = 0.95, include.resid.var = FALSE) %>%
   mutate(upr = upr, lwr = lwr, 
          type = "Random Effect Model",
-         site = levels(mussels_ragged$site)),
+         site = unique(mussels_ragged$site)),
 
 predict(mussels_ragged_lm, interval = "confidence",
         newdata = data.frame(site = unique(mussels_ragged$site))) %>%
   as_tibble() %>%
   mutate(type = "Fixed Effect Model", 
-         site = levels(mussels_ragged$site)))
+         site = unique(mussels_ragged$site)))
 
 ggplot(effs, 
        aes(x=site, y = fit, ymin = lwr, ymax = upr)) +

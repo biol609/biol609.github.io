@@ -245,6 +245,8 @@ anova(plants_mer, plants_mer_nochamber)
 ## A Test of Random Effects via Simulation
 Need to include a model with ONLY the random effect being tested
 ```{r rlrt_mer_sum, echo=TRUE, eval=FALSE}
+library(RLRsim)
+        
 #No Pot, Only Chamber
 plants_mer_only_chamber <- update(plants_mer, . ~ . - (1|Pot))
 

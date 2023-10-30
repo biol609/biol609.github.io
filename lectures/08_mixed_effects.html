@@ -742,15 +742,17 @@ plants_mer               0.6791</code></pre>
 <section id="a-test-of-random-effects-via-simulation" class="slide level2">
 <h2>A Test of Random Effects via Simulation</h2>
 <p>Need to include a model with ONLY the random effect being tested</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co">#No Pot, Only Chamber</span></a>
-<a class="sourceLine" id="cb5-2" data-line-number="2">plants_mer_only_chamber &lt;-<span class="st"> </span><span class="kw">update</span>(plants_mer, . <span class="op">~</span><span class="st"> </span>. <span class="op">-</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>Pot))</a>
-<a class="sourceLine" id="cb5-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="co">#The Simulation Test</span></a>
-<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="kw">exactRLRT</span>(<span class="dt">m0 =</span> plants_mer_nochamber,</a>
-<a class="sourceLine" id="cb5-6" data-line-number="6">          </a>
-<a class="sourceLine" id="cb5-7" data-line-number="7">          <span class="dt">m =</span> plants_mer_only_chamber, </a>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">library</span>(RLRsim)</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">        </a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="co">#No Pot, Only Chamber</span></a>
+<a class="sourceLine" id="cb5-4" data-line-number="4">plants_mer_only_chamber &lt;-<span class="st"> </span><span class="kw">update</span>(plants_mer, . <span class="op">~</span><span class="st"> </span>. <span class="op">-</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>Pot))</a>
+<a class="sourceLine" id="cb5-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="co">#The Simulation Test</span></a>
+<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="kw">exactRLRT</span>(<span class="dt">m0 =</span> plants_mer_nochamber,</a>
 <a class="sourceLine" id="cb5-8" data-line-number="8">          </a>
-<a class="sourceLine" id="cb5-9" data-line-number="9">          <span class="dt">mA =</span> plants_mer)</a></code></pre></div>
+<a class="sourceLine" id="cb5-9" data-line-number="9">          <span class="dt">m =</span> plants_mer_only_chamber, </a>
+<a class="sourceLine" id="cb5-10" data-line-number="10">          </a>
+<a class="sourceLine" id="cb5-11" data-line-number="11">          <span class="dt">mA =</span> plants_mer)</a></code></pre></div>
 </section>
 <section id="a-test-of-random-effects-via-simulation-1" class="slide level2">
 <h2>A Test of Random Effects via Simulation</h2>
@@ -761,7 +763,7 @@ plants_mer               0.6791</code></pre>
     (p-value based on 10000 simulated values)
 
 data:  
-RLRT = 0.12832, p-value = 0.2765</code></pre>
+RLRT = 0.12832, p-value = 0.2826</code></pre>
 </section>
 <section id="evaluating-random-effects-final-thoughts" class="slide level2">
 <h2>Evaluating Random Effects: Final Thoughts</h2>
@@ -886,7 +888,7 @@ TreatmentControl 0.7679793  9.834616</code></pre>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="kw">cAIC</span>(plants_mer)<span class="op">$</span>caic</a></code></pre></div>
 <pre><code>[1] 166.6205</code></pre>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw">cAIC</span>(plants_mer, <span class="dt">method=</span><span class="st">&quot;conditionalBootstrap&quot;</span>)<span class="op">$</span>caic</a></code></pre></div>
-<pre><code>[1] 163.6619</code></pre>
+<pre><code>[1] 163.1498</code></pre>
 </section>
 <section id="caic-in-action" class="slide level2">
 <h2>cAIC in Action</h2>

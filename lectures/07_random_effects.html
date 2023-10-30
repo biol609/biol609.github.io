@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="generator" content="pandoc">
-  <title>07_random_effects.utf8.md</title>
+  <title>07_random_effects.knit</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -11,26 +11,28 @@
 
 
 <style type="text/css">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -39,15 +41,15 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
 code span.at { color: #7d9029; } /* Attribute */
 code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
+code span.bu { color: #008000; } /* BuiltIn */
 code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
 code span.ch { color: #4070a0; } /* Char */
 code span.cn { color: #880000; } /* Constant */
@@ -60,7 +62,7 @@ code span.er { color: #ff0000; font-weight: bold; } /* Error */
 code span.ex { } /* Extension */
 code span.fl { color: #40a070; } /* Float */
 code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
+code span.im { color: #008000; font-weight: bold; } /* Import */
 code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 code span.kw { color: #007020; font-weight: bold; } /* Keyword */
 code span.op { color: #666666; } /* Operator */
@@ -506,10 +508,11 @@ style.innerHTML = style_script;
 document.getElementsByTagName('head')[0].appendChild(style);
 </script>
 
-    <script src="libs/htmlwidgets-1.3/htmlwidgets.js"></script>
-    <script src="libs/viz-0.3/viz.js"></script>
+    <script src="libs/header-attrs-2.25/header-attrs.js"></script>
+    <script src="libs/htmlwidgets-1.6.2/htmlwidgets.js"></script>
+    <script src="libs/viz-1.8.2/viz.js"></script>
     <link href="libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet" />
-    <script src="libs/grViz-binding-1.0.0/grViz.js"></script>
+    <script src="libs/grViz-binding-1.0.10/grViz.js"></script>
 </head>
 <body>
   <div class="reveal">
@@ -526,16 +529,17 @@ document.getElementsByTagName('head')[0].appendChild(style);
 Random Effects
 </h2>
 <p><br />
-<img data-src="./images/07/pseudorep_walken.jpg" /></p>
+<img data-src="images/07/pseudorep_walken.jpg" /></p>
 </section>
 <section id="the-problem-of-independence" class="slide level2">
 <h2>The Problem of Independence</h2>
 <div id="left">
-<p><img data-src="./images/07/300px-Isles_of_Shoals_Map.png" /></p>
+<p><img data-src="images/07/300px-Isles_of_Shoals_Map.png" /></p>
 </div>
 <div id="right">
 <ul>
-<li class="fragment">Let’s say you are sampling juvenile mussel lengths<br />
+<li class="fragment">Let’s say you are sampling juvenile mussel
+lengths<br />
 <br />
 </li>
 <li class="fragment">You sample at 10 sites around each island<br />
@@ -548,36 +552,42 @@ Random Effects
 </ul>
 </div>
 </section>
-<section id="how-would-you-handle-measuring-the-same-subjects-in-an-experiment-over-time" class="slide level2">
-<h2>How would you handle measuring the same subjects in an experiment over time?</h2>
-<p><img data-src="./images/07/cats_repeated_measurs.jpg" /></p>
+<section
+id="how-would-you-handle-measuring-the-same-subjects-in-an-experiment-over-time"
+class="slide level2">
+<h2>How would you handle measuring the same subjects in an experiment
+over time?</h2>
+<p><img data-src="images/07/cats_repeated_measurs.jpg" /></p>
 </section>
 <section id="what-is-the-sample-size" class="slide level2">
 <h2>What is the Sample Size?</h2>
-<p><img data-src="./images/07/plants.jpg" /></p>
+<p><img data-src="images/07/plants.jpg" /></p>
 </section>
 <section id="what-is-the-sample-size-1" class="slide level2">
 <h2>What is the Sample Size?</h2>
-<p><img data-src="./images/07/plants_leaves.jpg" /></p>
-</section>
-<section id="is-there-a-problem-with-using-slr-to-determine-effect-of-temperature-here" class="slide level2">
-<h2>Is there a problem with using SLR to determine effect of temperature here?</h2>
-<p><img data-src="./images/07/states_temp.jpg" /></p>
+<p><img data-src="images/07/plants_leaves.jpg" /></p>
 </section>
 <section id="pseudoreplication" class="slide level2">
 <h2>Pseudoreplication</h2>
-<p><img data-src="./images/07/kinds_of_pseudoreplication.jpg" style="width:60.0%" /></p>
+<p><img data-src="images/07/kinds_of_pseudoreplication.jpg"
+style="width:60.0%" /></p>
 <p>Hurlbert 1985</p>
 </section>
-<section id="what-is-the-problem-with-pseudoreplication" class="slide level2">
+<section id="what-is-the-problem-with-pseudoreplication"
+class="slide level2">
 <h2>What is the problem with Pseudoreplication?</h2>
-<p><span class="math display">\[Y_i = \beta X_i + \epsilon_i\]</span><br />
+<p><span class="math display">\[Y_i = \beta X_i +
+\epsilon_i\]</span><br />
 </p>
-<p><span class="math display">\[\epsilon \sim \mathcal{N}(0, \sigma^2)\]</span><br />
+<p><span class="math display">\[\epsilon \sim \mathcal{N} (0,
+\sigma^2)\]</span></p>
+<p><br />
 <br />
-This assumes that all replicates are independent and identically distributed</p>
+This assumes that all replicates are independent and identically
+distributed</p>
 </section>
-<section id="how-to-deal-with-violation-of-independence" class="slide level2">
+<section id="how-to-deal-with-violation-of-independence"
+class="slide level2">
 <h2>How to deal with violation of Independence</h2>
 <ul>
 <li class="fragment">Average at group level<br />
@@ -589,7 +599,8 @@ This assumes that all replicates are independent and identically distributed</p>
 - Many parameters to estimate = higher coef SE<br />
 <br />
 </li>
-<li class="fragment">Model hierarchy explicitly with <strong>Random effects</strong><br />
+<li class="fragment">Model hierarchy explicitly with <strong>Random
+effects</strong><br />
 - Mixed models if fixed and random effects<br />
 - Models correlation within groups<br />
 - Creates correct error structure<br />
@@ -607,7 +618,8 @@ This assumes that all replicates are independent and identically distributed</p>
 What is a random effect?
 </h1>
 </section>
-<section id="lets-say-youre-sampling-mussel-lengths" class="slide level2">
+<section id="lets-say-youre-sampling-mussel-lengths"
+class="slide level2">
 <h2>Let’s Say You’re Sampling Mussel Lengths…</h2>
 <p><img src="07_random_effects_files/figure-revealjs/mussel_hist-1.jpeg" width="672" /></p>
 </section>
@@ -619,11 +631,13 @@ What is a random effect?
 <h2>Are different islands that different?</h2>
 <p><img src="07_random_effects_files/figure-revealjs/mussel_plot_2-1.jpeg" width="672" /></p>
 </section>
-<section id="are-different-islands-that-different-1" class="slide level2">
+<section id="are-different-islands-that-different-1"
+class="slide level2">
 <h2>Are different islands that different?</h2>
 <p><img src="07_random_effects_files/figure-revealjs/mussel_plot_mean-1.jpeg" width="672" /></p>
 </section>
-<section id="are-different-islands-that-different-2" class="slide level2">
+<section id="are-different-islands-that-different-2"
+class="slide level2">
 <h2>Are different islands that different?</h2>
 <p><img src="07_random_effects_files/figure-revealjs/mussel_site_mean_plot-1.jpeg" width="672" /></p>
 </section>
@@ -631,14 +645,17 @@ What is a random effect?
 <h2>You Could Try a Fixed Effects Model…</h2>
 <br />
 <br />
-<span class="math display">\[Y_{ij} = \beta_{j} + \epsilon_i\]</span><br />
-<span class="math display">\[\epsilon \sim \mathcal{N}(0, \sigma^2)\]</span><br />
+<span class="math display">\[Y_{ij} = \beta_{j} +
+\epsilon_i\]</span><br />
+<span class="math display">\[\epsilon \sim \mathcal{N}(0,
+\sigma^2)\]</span><br />
 
 <div class="fragment">
 But this only tells you about <strong>these</strong> islands
 </div>
 </section>
-<section id="what-is-the-distribution-of-site-means" class="slide level2">
+<section id="what-is-the-distribution-of-site-means"
+class="slide level2">
 <h2>What is the distribution of site means?</h2>
 <p><img src="07_random_effects_files/figure-revealjs/site_hist-1.jpeg" width="672" /></p>
 <div class="fragment">
@@ -648,16 +665,20 @@ A nice normal distribution
 <section id="random-effects" class="slide level2">
 <h2>Random Effects</h2>
 <ul>
-<li>A <em>random effect</em> is a parameter that varies across groups following a distribution<br />
+<li>A <em>random effect</em> is a parameter that varies across groups
+following a distribution<br />
 <br />
 </li>
-<li>Implies that, while there is a grand mean <em>fixed</em> effect (slope or intercept), each group deviates randomly<br />
+<li>Implies that, while there is a grand mean <em>fixed</em> effect
+(slope or intercept), each group deviates randomly<br />
 <br />
 </li>
-<li>Implies that there is no one <em>true</em> value of a parameter in the world<br />
+<li>Implies that there is no one <em>true</em> value of a parameter in
+the world<br />
 <br />
 </li>
-<li>Allows us to estimate <strong>variability</strong> in how effects manifest<br />
+<li>Allows us to estimate <strong>variability</strong> in how effects
+manifest<br />
 <br />
 </li>
 <li>We pull apart <em>variance components</em> driving our response</li>
@@ -666,49 +687,65 @@ A nice normal distribution
 <section id="fixed-versus-random-effects-model" class="slide level2">
 <h2>Fixed Versus Random Effects Model</h2>
 <span id="left">Fixed:</span><br />
-<span class="math display">\[Y_{ij} =  \beta_{j} + \epsilon_i\]</span><br />
-<span class="math display">\[\epsilon \sim \mathcal{N}(0, \sigma^2)\]</span><br />
+<span class="math display">\[Y_{ij} =  \beta_{j} +
+\epsilon_i\]</span><br />
+<span class="math display">\[\epsilon \sim \mathcal{N}(0,
+\sigma^2)\]</span><br />
 <br />
 
 <div class="fragment">
 <p><span id="left">Random:</span><br />
-<span class="math display">\[Y_{ij} =  \beta_{j} + \epsilon_i\]</span><br />
-<span class="math display">\[\beta_{j} \sim \mathcal{N}(\beta, \sigma^2_{site})\]</span><br />
-<span class="math display">\[\epsilon \sim \mathcal{N}(0, \sigma^2)\]</span></p>
+<span class="math display">\[Y_{ij} =  \beta_{j} +
+\epsilon_i\]</span><br />
+<span class="math display">\[\beta_{j} \sim \mathcal{N}(\beta,
+\sigma^2_{site})\]</span><br />
+<span class="math display">\[\epsilon \sim \mathcal{N}(0,
+\sigma^2)\]</span></p>
 </div>
 </section>
-<section id="consider-what-random-effects-mean---1-model-2-ways" class="slide level2">
+<section id="consider-what-random-effects-mean---1-model-2-ways"
+class="slide level2">
 <h2>Consider what random effects mean - 1 model, 2 ways</h2>
-<span class="math display">\[Y_{ij} =  \beta_{j} + \epsilon_i\]</span><br />
-<span class="math display">\[\beta_{j} \sim \mathcal{N}(\alpha, \sigma^2_{site})\]</span><br />
-<span class="math display">\[\epsilon \sim \mathcal{N}(0, \sigma^2)\]</span>
+<span class="math display">\[Y_{ij} =  \beta_{j} +
+\epsilon_i\]</span><br />
+<span class="math display">\[\beta_{j} \sim \mathcal{N}(\alpha,
+\sigma^2_{site})\]</span><br />
+<span class="math display">\[\epsilon \sim \mathcal{N}(0,
+\sigma^2)\]</span>
 <hr>
 <br />
 
 <div class="fragment">
-<p><span class="math display">\[Y_{ij} =  \alpha + \beta_{j} + \epsilon_i\]</span><br />
-<span class="math display">\[\beta_{j} \sim \mathcal{N}(0, \sigma^2_{site})\]</span><br />
-<span class="math display">\[\epsilon \sim \mathcal{N}(0, \sigma^2)\]</span></p>
+<p><span class="math display">\[Y_{ij} =  \alpha + \beta_{j} +
+\epsilon_i\]</span><br />
+<span class="math display">\[\beta_{j} \sim \mathcal{N}(0,
+\sigma^2_{site})\]</span><br />
+<span class="math display">\[\epsilon \sim \mathcal{N}(0,
+\sigma^2)\]</span></p>
 </div>
 </section>
-<section id="fixed-versus-random-effects-model-visually" class="slide level2">
+<section id="fixed-versus-random-effects-model-visually"
+class="slide level2">
 <h2>Fixed Versus Random Effects Model Visually</h2>
 <div id="left">
-<div id="htmlwidget-308871c719934a695fc5" style="width:672px;height:480px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-308871c719934a695fc5">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\",\n       label = \"Fixed\",\n       labelloc = \"t\",\n       labeljust = \"c\",\n       fontname = \"Helvetica\",\n       fontcolor = \"gray30\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"site\", shape = \"rectangle\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"1,1!\"] \n  \"2\" [label = \"length\", shape = \"rectangle\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,1!\"] \n  \"3\" [label = \"error\", shape = \"circle\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,2!\"] \n  \"1\"->\"2\" \n  \"3\"->\"2\" \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-0512a8eef9b762d0fa4e" style="width:672px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-0512a8eef9b762d0fa4e">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\",\n       label = \"Fixed\",\n       labelloc = \"t\",\n       labeljust = \"c\",\n       fontname = \"Helvetica\",\n       fontcolor = \"gray30\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"site\", shape = \"rectangle\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"1,1!\"] \n  \"2\" [label = \"length\", shape = \"rectangle\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,1!\"] \n  \"3\" [label = \"error\", shape = \"circle\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,2!\"] \n  \"1\"->\"2\" \n  \"3\"->\"2\" \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div id="right">
-<div id="htmlwidget-c9086e8ef11d3ceda5d8" style="width:672px;height:480px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-c9086e8ef11d3ceda5d8">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\",\n       label = \"Random\",\n       labelloc = \"t\",\n       labeljust = \"c\",\n       fontname = \"Helvetica\",\n       fontcolor = \"gray30\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"site\", shape = \"circle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"1,2!\"] \n  \"2\" [label = \"length\", shape = \"rectangle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,1!\"] \n  \"3\" [label = \"residual\nerror\", shape = \"circle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,3!\"] \n  \"4\" [label = \"total\nerror\", shape = \"circle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,2!\"] \n  \"1\"->\"4\" \n  \"3\"->\"4\" \n  \"4\"->\"2\" \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-a3afb4200c44a7268b05" style="width:672px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-a3afb4200c44a7268b05">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\",\n       label = \"Random\",\n       labelloc = \"t\",\n       labeljust = \"c\",\n       fontname = \"Helvetica\",\n       fontcolor = \"gray30\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"site\", shape = \"circle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"1,2!\"] \n  \"2\" [label = \"length\", shape = \"rectangle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,1!\"] \n  \"3\" [label = \"residual\nerror\", shape = \"circle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,3!\"] \n  \"4\" [label = \"total\nerror\", shape = \"circle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,2!\"] \n  \"1\"->\"4\" \n  \"3\"->\"4\" \n  \"4\"->\"2\" \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </section>
-<section id="wait-but-what-about-good-old-blocks-and-fixed-effects" class="slide level2">
+<section id="wait-but-what-about-good-old-blocks-and-fixed-effects"
+class="slide level2">
 <h2>Wait, but what about good old blocks and fixed effects?</h2>
 <ul>
-<li class="fragment">We used to model blocks via estimation of means/parameters within a block<br />
+<li class="fragment">We used to model blocks via estimation of
+means/parameters within a block<br />
 <br />
 </li>
-<li class="fragment">But - there was no distribution of parameters assumed<br />
+<li class="fragment">But - there was no distribution of parameters
+assumed<br />
 <br />
 </li>
 <li class="fragment">Assumed blocks could take any value<br />
@@ -724,39 +761,51 @@ A nice normal distribution
 <section id="shrinkage" class="slide level2">
 <h2>Shrinkage</h2>
 <ul>
-<li>Random effects assume each observation is drawn from a grand mean<br />
+<li>Random effects assume each observation is drawn from a grand
+mean<br />
 <br />
 </li>
-<li>This we can <strong>draw strength</strong> from samples in other groups to estimate a group mean<br />
+<li>This we can <strong>draw strength</strong> from samples in other
+groups to estimate a group mean<br />
 <br />
 </li>
-<li>It <strong>reduces variance</strong> between groups by biasing results towards grand mean<br />
+<li>It <strong>reduces variance</strong> between groups by biasing
+results towards grand mean<br />
 <br />
 </li>
-<li>Philosophically, group means are always likely to be incorrect due to sampling</li>
+<li>Philosophically, group means are always likely to be incorrect due
+to sampling</li>
 </ul>
 </section>
-<section id="shrunken-group-mean---note-influence-of-sample-size" class="slide level2">
+<section id="shrunken-group-mean---note-influence-of-sample-size"
+class="slide level2">
 <h2>Shrunken Group Mean - Note influence of sample size</h2>
-<span class="math display">\[\hat{Y_j} = \rho_j\bar{y_j} + (1-\rho_j)\bar{y}\]</span><br />
-where <span class="math inline">\(\rho_j\)</span> is the shrinkage coefficient<br />
+<span class="math display">\[\hat{Y_j} = \rho_j\bar{y_j} +
+(1-\rho_j)\bar{y}\]</span><br />
+where <span class="math inline">\(\rho_j\)</span> is the shrinkage
+coefficient<br />
 <br />
 <br />
 
 <div class="fragment">
-<p><span class="math display">\[\rho_j = \frac{\tau^2}{\tau^2 + \frac{\sigma^2}{n_j}}\]</span><br />
-Where <span class="math inline">\(\tau^2\)</span> is the variance of the random effect, and <span class="math inline">\(n_j\)</span> is the group sample size</p>
+<p><span class="math display">\[\rho_j = \frac{\tau^2}{\tau^2 +
+\frac{\sigma^2}{n_j}}\]</span><br />
+Where <span class="math inline">\(\tau^2\)</span> is the variance of the
+random effect, and <span class="math inline">\(n_j\)</span> is the group
+sample size</p>
 </div>
 </section>
 <section id="for-example-unbalanced-sample-sizes" class="slide level2">
 <h2>For example, unbalanced sample sizes</h2>
 <p><img src="07_random_effects_files/figure-revealjs/unbalanced-1.jpeg" width="672" /></p>
 </section>
-<section id="for-example-unbalanced-sample-sizes-1" class="slide level2">
+<section id="for-example-unbalanced-sample-sizes-1"
+class="slide level2">
 <h2>For example, unbalanced sample sizes</h2>
 <p><img src="07_random_effects_files/figure-revealjs/unbalanced_2-1.jpeg" width="672" /></p>
 </section>
-<section id="it-effects-more-than-means---confidence" class="slide level2">
+<section id="it-effects-more-than-means---confidence"
+class="slide level2">
 <h2>It effects more than means - Confidence!</h2>
 <p><img src="07_random_effects_files/figure-revealjs/showShirnk-1.jpeg" width="672" /></p>
 </section>
@@ -764,20 +813,27 @@ Where <span class="math inline">\(\tau^2\)</span> is the variance of the random 
 <h2>Fixed versus Random Effects</h2>
 <div style="text-align:left">
 <div class="fragment">
-<p><strong>Fixed Effect:</strong> Effects that are constant across populations.<br />
-<strong>Random Effect:</strong> Effects that vary are random outcomes of underlying processes.<br />
+<p><strong>Fixed Effect:</strong> Effects that are constant across
+populations.<br />
+<strong>Random Effect:</strong> Effects that vary are random outcomes of
+underlying processes.<br />
 </p>
 </div>
 <br />
 
 <div class="fragment">
-<p>Gelman and Hill (2007) see the distinction as artificial. Fixed effects are special cases of random effects where the variance is infinite. The model is what you should focus on.<br />
+<p>Gelman and Hill (2007) see the distinction as artificial. Fixed
+effects are special cases of random effects where the variance is
+infinite. The model is what you should focus on.<br />
 </p>
 </div>
 <br />
 
 <div class="fragment">
-<p>You will also hear that ’random effects’ are effects with many levels, but that you have not sampled all of them, wheras with fixed effects, you have sampled across the entire range of variation. This is subtly different, and artificial.</p>
+<p>You will also hear that ’random effects’ are effects with many
+levels, but that you have not sampled all of them, wheras with fixed
+effects, you have sampled across the entire range of variation. This is
+subtly different, and artificial.</p>
 </div>
 </div>
 </section>
@@ -792,55 +848,67 @@ The Random Effect is Uncorrelated with Any Fixed Effects
 </section>
 <section id="a-visual-explanation-fixed-effects" class="slide level2">
 <h2>A Visual Explanation: Fixed Effects</h2>
-<div id="htmlwidget-c55ad80a18208fb9907d" style="width:672px;height:480px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-c55ad80a18208fb9907d">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"site\", shape = \"rectangle\", width = \"0.5\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"1,1!\"] \n  \"2\" [label = \"length\", shape = \"rectangle\", width = \"0.5\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,1!\"] \n  \"3\" [label = \"error\", shape = \"circle\", width = \"0.5\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,2!\"] \n  \"4\" [label = \"predictor\", shape = \"rectangle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"1,0!\"] \n\"1\"->\"2\" [dir = \"forward\"] \n\"3\"->\"2\" [dir = \"forward\"] \n\"4\"->\"1\" [dir = \"both\"] \n\"4\"->\"2\" [dir = \"forward\"] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-9e3e2a21bb0451a78355" style="width:672px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-9e3e2a21bb0451a78355">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"site\", shape = \"rectangle\", width = \"0.5\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"1,1!\"] \n  \"2\" [label = \"length\", shape = \"rectangle\", width = \"0.5\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,1!\"] \n  \"3\" [label = \"error\", shape = \"circle\", width = \"0.5\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,2!\"] \n  \"4\" [label = \"predictor\", shape = \"rectangle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"1,0!\"] \n\"1\"->\"2\" [dir = \"forward\"] \n\"3\"->\"2\" [dir = \"forward\"] \n\"4\"->\"1\" [dir = \"both\"] \n\"4\"->\"2\" [dir = \"forward\"] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </section>
 <section id="a-visual-explanation-random-effects" class="slide level2">
 <h2>A Visual Explanation: Random Effects</h2>
-<div id="htmlwidget-79774c925e8e481ab1a9" style="width:672px;height:480px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-79774c925e8e481ab1a9">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"site\", shape = \"circle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"1,2!\"] \n  \"2\" [label = \"length\", shape = \"rectangle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,1!\"] \n  \"3\" [label = \"residual\nerror\", shape = \"circle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,3!\"] \n  \"4\" [label = \"total\nerror\", shape = \"circle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,2!\"] \n  \"5\" [label = \"predictor\", shape = \"rectangle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"1,1!\"] \n\"1\"->\"4\" [dir = \"forward\"] \n\"3\"->\"4\" [dir = \"forward\"] \n\"4\"->\"2\" [dir = \"forward\"] \n\"5\"->\"2\" [dir = \"forward\"] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-816d6a913d0106f1e3ee" style="width:672px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-816d6a913d0106f1e3ee">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"site\", shape = \"circle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"1,2!\"] \n  \"2\" [label = \"length\", shape = \"rectangle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,1!\"] \n  \"3\" [label = \"residual\nerror\", shape = \"circle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,3!\"] \n  \"4\" [label = \"total\nerror\", shape = \"circle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,2!\"] \n  \"5\" [label = \"predictor\", shape = \"rectangle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"1,1!\"] \n\"1\"->\"4\" [dir = \"forward\"] \n\"3\"->\"4\" [dir = \"forward\"] \n\"4\"->\"2\" [dir = \"forward\"] \n\"5\"->\"2\" [dir = \"forward\"] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 <div class="fragment">
 Note the lack of correlation
 </div>
 </section>
-<section id="fixed-versus-random-effects-revisited" class="slide level2">
+<section id="fixed-versus-random-effects-revisited"
+class="slide level2">
 <h2>Fixed versus Random Effects Revisited</h2>
 <ul>
-<li class="fragment">If your groups are correlated with predictors, use fixed effects
+<li class="fragment">If your groups are correlated with predictors, use
+fixed effects
 <ul>
 <li class="fragment">See also upcoming lecture<br />
 <br />
 </li>
 </ul></li>
-<li class="fragment">If your groups are not “exchangeable”, use fixed effects<br />
+<li class="fragment">If your groups are not “exchangeable”, use fixed
+effects<br />
 <br />
 </li>
-<li class="fragment">Fixed effects aren’t <strong>bad</strong>, they’re just inefficient<br />
+<li class="fragment">Fixed effects aren’t <strong>bad</strong>, they’re
+just inefficient<br />
 <br />
 </li>
-<li class="fragment">However, fixed effects are harder to generalize from</li>
+<li class="fragment">However, fixed effects are harder to generalize
+from</li>
 </ul>
 </section>
-<section id="more-on-when-to-avoid-random-effects-estimation-concerns" class="slide level2">
+<section id="more-on-when-to-avoid-random-effects-estimation-concerns"
+class="slide level2">
 <h2>More on when to avoid random effects: estimation concerns</h2>
 <ol type="1">
-<li class="fragment">Do you have &lt;4 blocks? <strong>Fixed</strong><br />
+<li class="fragment">Do you have &lt;4 blocks?
+<strong>Fixed</strong><br />
 <br />
 </li>
-<li class="fragment">Do you have &lt;3 points per block? <strong>Fixed</strong><br />
+<li class="fragment">Do you have &lt;3 points per block?
+<strong>Fixed</strong><br />
 <br />
 </li>
-<li class="fragment">Is your ‘blocking’ variable continuous? <strong>Fixed</strong><br />
+<li class="fragment">Is your ‘blocking’ variable continuous?
+<strong>Fixed</strong><br />
 
 <ul>
-<li class="fragment">But slope can vary by discrete blocks - wait for it!<br />
+<li class="fragment">But slope can vary by discrete blocks - wait for
+it!<br />
 <br />
 </li>
 </ul></li>
-<li class="fragment">Do you have lots of blocks, but few/variable points per block? <strong>Random</strong><br />
+<li class="fragment">Do you have lots of blocks, but few/variable points
+per block? <strong>Random</strong><br />
 
 <ul>
-<li class="fragment">Save DF as you only estimate <span class="math inline">\(\sigma^2\)</span><br />
+<li class="fragment">Save DF as you only estimate <span
+class="math inline">\(\sigma^2\)</span><br />
 </li>
 </ul></li>
 </ol>
@@ -848,7 +916,8 @@ Note the lack of correlation
 <section id="other-ways-to-avoid-random-effects" class="slide level2">
 <h2>Other Ways to Avoid Random Effects</h2>
 <ul>
-<li class="fragment">Are you not interested in within subjects variability?<br />
+<li class="fragment">Are you not interested in within subjects
+variability?<br />
 - AVERAGE at the block level<br />
 - But, loss of power<br />
 <br />
@@ -874,22 +943,31 @@ Estimating Random Effects
 <section id="restricted-maximum-likelihood" class="slide level2">
 <h2>Restricted Maximum Likelihood</h2>
 <ul>
-<li>We typically estimate a <span class="math inline">\(\sigma^2\)</span> of random effects, not the effect of each block<br />
-- But later can derive Best Least Unbiased Predictors of each block (<strong>BLUPs</strong>)<br />
+<li>We typically estimate a <span
+class="math inline">\(\sigma^2\)</span> of random effects, not the
+effect of each block<br />
+- But later can derive Best Least Unbiased Predictors of each block
+(<strong>BLUPs</strong>)<br />
  <br />
 </li>
-<li>ML estimation can underestimate random effects variation (<span class="math inline">\(\sigma^2_{block}\)</span>)<br />
+<li>ML estimation can underestimate random effects variation (<span
+class="math inline">\(\sigma^2_{block}\)</span>)<br />
 </li>
-<li>REML seeks to decompose out fixed effects to estimate random effects<br />
+<li>REML seeks to decompose out fixed effects to estimate random
+effects<br />
 <br />
 </li>
-<li>Works iteratively - estimates random effects, then fixed, then back, and converges<br />
+<li>Works iteratively - estimates random effects, then fixed, then back,
+and converges<br />
 - Lots of algorithms, computationally expensive</li>
 </ul>
 </section>
-<section id="what-other-methods-are-available-to-fit-glmms" class="slide level2">
+<section id="what-other-methods-are-available-to-fit-glmms"
+class="slide level2">
 <h2>What other methods are available to fit GLMMs?</h2>
-<p><font size = "-1">(adapted from Bolker et al TREE 2009 and <a href="https://bbolker.github.io/mixedmodels-misc/glmmFAQ.html" class="uri">https://bbolker.github.io/mixedmodels-misc/glmmFAQ.html</a>)</font></p>
+<p><font size = "-1">(adapted from Bolker et al TREE 2009 and <a
+href="https://bbolker.github.io/mixedmodels-misc/glmmFAQ.html"
+class="uri">https://bbolker.github.io/mixedmodels-misc/glmmFAQ.html</a>)</font></p>
 <table>
 <colgroup>
 <col style="width: 23%" />
@@ -909,20 +987,24 @@ Estimating Random Effects
 <tr class="odd">
 <td style="text-align: left;">Penalized quasi-likelihood</td>
 <td style="text-align: left;">Flexible, widely implemented</td>
-<td style="text-align: left;">Likelihood inference may be inappropriate; biased for large variance or small means</td>
+<td style="text-align: left;">Likelihood inference may be inappropriate;
+biased for large variance or small means</td>
 <td style="text-align: left;">glmmPQL (R:MASS), ASREML-R</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Laplace approximation</td>
 <td style="text-align: left;">More accurate than PQL</td>
 <td style="text-align: left;">Slower and less flexible than PQL</td>
-<td style="text-align: left;">glmer (R:lme4), glmm.admb (R:glmmADMB), INLA, glmmTMB</td>
+<td style="text-align: left;">glmer (R:lme4), glmm.admb (R:glmmADMB),
+INLA, glmmTMB</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Gauss-Hermite quadrature</td>
 <td style="text-align: left;">More accurate than Laplace</td>
-<td style="text-align: left;">Slower than Laplace; limited to 2‑3 random effects</td>
-<td style="text-align: left;">glmer (R:lme4, lme4a), glmmML (R:glmmML)</td>
+<td style="text-align: left;">Slower than Laplace; limited to 2‑3 random
+effects</td>
+<td style="text-align: left;">glmer (R:lme4, lme4a), glmmML
+(R:glmmML)</td>
 </tr>
 </tbody>
 </table>
@@ -930,7 +1012,8 @@ Estimating Random Effects
 <section id="in-r." class="slide level2">
 <h2>In R….</h2>
 <br />
-<img data-src="./images/07/lmer_lemur_tim_doherty.jpg" style="width:55.0%" />
+<img data-src="images/07/lmer_lemur_tim_doherty.jpg"
+style="width:55.0%" />
 <div style="text-align:left">
 <font size = "-1">Thank you Tim Doherty</font>
 </div>
@@ -939,13 +1022,15 @@ Estimating Random Effects
 <h2>THE ONE SOURCE</h2>
 <br><br><br>
 <center>
-<a href="https://bbolker.github.io/mixedmodels-misc/" class="uri">https://bbolker.github.io/mixedmodels-misc/</a>
+<a href="https://bbolker.github.io/mixedmodels-misc/"
+class="uri">https://bbolker.github.io/mixedmodels-misc/</a>
 </center>
 </section>
 <section id="nlme-and-lmer" class="slide level2">
 <h2>NLME and LMER</h2>
 <ul>
-<li><code>nlme</code> was created by Pinhero and Bates for linear and nonlinear mixed models<br />
+<li><code>nlme</code> was created by Pinhero and Bates for linear and
+nonlinear mixed models<br />
 - Also fits <code>gls</code> models with REML<br />
 - Enables very flexible correlation structures<br />
 - Uses Satterthwaite corrected DF<br />
@@ -963,7 +1048,8 @@ Estimating Random Effects
 <h2>Other R packages (functions) fit GLMMs?</h2>
 <ul>
 <li>MASS::glmmPQL (penalized quasi-likelihood)</li>
-<li>lme4::glmer (Laplace approximation and adaptive Gauss-Hermite quadrature [AGHQ])</li>
+<li>lme4::glmer (Laplace approximation and adaptive Gauss-Hermite
+quadrature [AGHQ])</li>
 <li>glmmML (AGHQ)</li>
 <li>glmmAK (AGHQ?)</li>
 <li>glmmADMB (Laplace)</li>
@@ -972,7 +1058,9 @@ Estimating Random Effects
 <li>gamlss.mx</li>
 <li>ASREML-R</li>
 <li>sabreR<br />
-<font size = "-1">(from <a href="https://bbolker.github.io/mixedmodels-misc/glmmFAQ.html" class="uri">https://bbolker.github.io/mixedmodels-misc/glmmFAQ.html</a>)</font></li>
+<font size = "-1">(from <a
+href="https://bbolker.github.io/mixedmodels-misc/glmmFAQ.html"
+class="uri">https://bbolker.github.io/mixedmodels-misc/glmmFAQ.html</a>)</font></li>
 </ul>
 </section>
 <section id="dont-you-forget-about-bayes" class="slide level2">
@@ -984,18 +1072,19 @@ Estimating Random Effects
 <li><code>brms</code> uses <code>lme4</code> syntax and more<br />
 <br />
 </li>
-<li>Once a mixed model gets to sufficient complexity, it’s Bayes, baby!</li>
+<li>Once a mixed model gets to sufficient complexity, it’s Bayes,
+baby!</li>
 </ul>
 </section>
 <section id="fitting-a-mixed-model-with-lme4" class="slide level2">
 <h2>Fitting a Mixed Model with lme4</h2>
 <p><br />
 </p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(lme4)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb1-3" data-line-number="3">mussels_mer &lt;-<span class="st"> </span><span class="kw">lmer</span>(mussel_length <span class="op">~</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">|</span>site), </a>
-<a class="sourceLine" id="cb1-4" data-line-number="4">                    </a>
-<a class="sourceLine" id="cb1-5" data-line-number="5">                    <span class="dt">data =</span> mussels)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>mussels_mer <span class="ot">&lt;-</span> <span class="fu">lmer</span>(mussel_length <span class="sc">~</span> (<span class="dv">1</span> <span class="sc">|</span>site), </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>                    </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data =</span> mussels)</span></code></pre></div>
 <div class="fragment" style="text-align:left">
 Note <code>1 | group</code> syntax!
 </div>
@@ -1004,80 +1093,84 @@ Note <code>1 | group</code> syntax!
 <h2>Fitting a Mixed Model with nlme</h2>
 <p><br />
 </p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">library</span>(nlme)</a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb2-3" data-line-number="3">mussels_lme &lt;-<span class="st"> </span><span class="kw">lme</span>(mussel_length <span class="op">~</span><span class="st"> </span><span class="dv">1</span>,</a>
-<a class="sourceLine" id="cb2-4" data-line-number="4">                   </a>
-<a class="sourceLine" id="cb2-5" data-line-number="5">                   <span class="dt">random =</span><span class="op">~</span><span class="st"> </span><span class="dv">1</span> <span class="op">|</span>site, </a>
-<a class="sourceLine" id="cb2-6" data-line-number="6">                    </a>
-<a class="sourceLine" id="cb2-7" data-line-number="7">                    <span class="dt">data =</span> mussels)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>mussels_lme <span class="ot">&lt;-</span> <span class="fu">lme</span>(mussel_length <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                   </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>                   <span class="at">random =</span><span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span>site, </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                    </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data =</span> mussels)</span></code></pre></div>
 <div class="fragment" style="text-align:left">
 We could include correlations, etc.
 </div>
 </section>
 <section id="evaluating" class="slide level2">
 <h2>Evaluating…</h2>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">plot</span>(mussels_mer)</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mussels_mer)</span></code></pre></div>
 <p><img src="07_random_effects_files/figure-revealjs/lmer%20resid-1.jpeg" width="672" /></p>
 </section>
 <section id="evaluating-1" class="slide level2">
 <h2>Evaluating…</h2>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">lattice<span class="op">::</span><span class="kw">qqmath</span>(mussels_mer)</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>lattice<span class="sc">::</span><span class="fu">qqmath</span>(mussels_mer)</span></code></pre></div>
 <p><img src="07_random_effects_files/figure-revealjs/lmer_resid_qq-1.jpeg" width="672" /></p>
 </section>
 <section id="evaluating-groups" class="slide level2">
 <h2>Evaluating Groups</h2>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">plot</span>(<span class="kw">ranef</span>(mussels_mer))</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">ranef</span>(mussels_mer))</span></code></pre></div>
 <pre><code>$site</code></pre>
 <p><img src="07_random_effects_files/figure-revealjs/lmer_group_qq-1.jpeg" width="672" /></p>
 </section>
 <section id="evaluating-groups-1" class="slide level2">
 <h2>Evaluating Groups</h2>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">lattice<span class="op">::</span><span class="kw">qqmath</span>(<span class="kw">ranef</span>(mussels_mer, <span class="dt">condVar=</span><span class="ot">TRUE</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>lattice<span class="sc">::</span><span class="fu">qqmath</span>(<span class="fu">ranef</span>(mussels_mer, <span class="at">condVar=</span><span class="cn">TRUE</span>))</span></code></pre></div>
 <pre><code>$site</code></pre>
 <p><img src="07_random_effects_files/figure-revealjs/lmer_group-1.jpeg" width="672" /></p>
 </section>
 <section id="evaluatingquantile-residuals" class="slide level2">
 <h2>Evaluating…quantile residuals</h2>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">library</span>(DHARMa)</a>
-<a class="sourceLine" id="cb9-2" data-line-number="2">r &lt;-<span class="st"> </span><span class="kw">simulateResiduals</span>(mussels_mer)</a>
-<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="kw">plot</span>(r, <span class="dt">asFactor=</span><span class="ot">TRUE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DHARMa)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">simulateResiduals</span>(mussels_mer)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(r, <span class="at">asFactor=</span><span class="cn">TRUE</span>)</span></code></pre></div>
 <p><img src="07_random_effects_files/figure-revealjs/lmer_quantiles-1.jpeg" width="672" /></p>
 </section>
 <section id="evaluating-coefficients" class="slide level2">
 <h2>Evaluating Coefficients</h2>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">knitr<span class="op">::</span><span class="kw">kable</span>(broom<span class="op">::</span><span class="kw">tidy</span>(mussels_mer))</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(broom<span class="sc">::</span><span class="fu">tidy</span>(mussels_mer))</span></code></pre></div>
 <table>
 <thead>
 <tr class="header">
+<th style="text-align: left;">effect</th>
+<th style="text-align: left;">group</th>
 <th style="text-align: left;">term</th>
 <th style="text-align: right;">estimate</th>
 <th style="text-align: right;">std.error</th>
 <th style="text-align: right;">statistic</th>
-<th style="text-align: left;">group</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
+<td style="text-align: left;">fixed</td>
+<td style="text-align: left;">NA</td>
 <td style="text-align: left;">(Intercept)</td>
 <td style="text-align: right;">23.971873</td>
 <td style="text-align: right;">1.034508</td>
 <td style="text-align: right;">23.17224</td>
-<td style="text-align: left;">fixed</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">sd_(Intercept).site</td>
+<td style="text-align: left;">ran_pars</td>
+<td style="text-align: left;">site</td>
+<td style="text-align: left;">sd__(Intercept)</td>
 <td style="text-align: right;">3.291326</td>
 <td style="text-align: right;">NA</td>
 <td style="text-align: right;">NA</td>
-<td style="text-align: left;">site</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">sd_Observation.Residual</td>
+<td style="text-align: left;">ran_pars</td>
+<td style="text-align: left;">Residual</td>
+<td style="text-align: left;">sd__Observation</td>
 <td style="text-align: right;">7.225154</td>
 <td style="text-align: right;">NA</td>
 <td style="text-align: right;">NA</td>
-<td style="text-align: left;">Residual</td>
 </tr>
 </tbody>
 </table>
@@ -1097,7 +1190,8 @@ Note the lack of p-values
 <li>All depend on assumptions of ‘effective sample size’<br />
 <br />
 </li>
-<li>Requires knowing distribution of variability around random effects<br />
+<li>Requires knowing distribution of variability around random
+effects<br />
 <br />
 </li>
 <li>This is only ‘natural’ in Bayes<br />
@@ -1110,13 +1204,13 @@ Note the lack of p-values
 </section>
 <section id="seeing-the-fixed-effects" class="slide level2">
 <h2>Seeing the Fixed Effects</h2>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">fixef</span>(mussels_mer)</a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fixef</span>(mussels_mer)</span></code></pre></div>
 <pre><code>(Intercept) 
    23.97187 </code></pre>
 </section>
 <section id="seeing-the-random-effects" class="slide level2">
 <h2>Seeing the Random Effects</h2>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="kw">ranef</span>(mussels_mer)</a></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ranef</span>(mussels_mer)</span></code></pre></div>
 <pre><code>$site
   (Intercept)
 a -4.33497614
@@ -1129,15 +1223,17 @@ g  0.25130706
 h  0.03927292
 i  0.78803340
 j  1.48409865
-k  4.72979282
-l  2.42732357
+k  4.72979281
+l  2.42732356
 m  0.83801263
 n  3.55773499
-o  2.04542473</code></pre>
+o  2.04542473
+
+with conditional variances for &quot;site&quot; </code></pre>
 </section>
 <section id="combined-effects" class="slide level2">
 <h2>Combined Effects</h2>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="kw">coef</span>(mussels_mer)</a></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(mussels_mer)</span></code></pre></div>
 <pre><code>$site
   (Intercept)
 a    19.63690
@@ -1161,20 +1257,20 @@ attr(,&quot;class&quot;)
 </section>
 <section id="visualizing" class="slide level2">
 <h2>Visualizing</h2>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="kw">library</span>(merTools)</a>
-<a class="sourceLine" id="cb17-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb17-3" data-line-number="3"><span class="co">#make data for coefficients</span></a>
-<a class="sourceLine" id="cb17-4" data-line-number="4">test_data &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">site =</span> <span class="kw">unique</span>(mussels<span class="op">$</span>site))</a>
-<a class="sourceLine" id="cb17-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb17-6" data-line-number="6"><span class="co">#get simulated predictions</span></a>
-<a class="sourceLine" id="cb17-7" data-line-number="7">coef_df &lt;-<span class="st"> </span><span class="kw">predictInterval</span>(mussels_mer, <span class="dt">newdata =</span> test_data,</a>
-<a class="sourceLine" id="cb17-8" data-line-number="8">                           <span class="dt">level =</span> <span class="fl">0.95</span>, <span class="dt">include.resid.var =</span> <span class="ot">FALSE</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb17-9" data-line-number="9"><span class="st">  </span><span class="kw">cbind</span>(test_data)</a>
-<a class="sourceLine" id="cb17-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb17-11" data-line-number="11"><span class="co">#plot</span></a>
-<a class="sourceLine" id="cb17-12" data-line-number="12"><span class="kw">ggplot</span>(coef_df, <span class="kw">aes</span>(<span class="dt">x =</span> site, <span class="dt">y =</span> fit, <span class="dt">ymin =</span> lwr, <span class="dt">ymax =</span> upr)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb17-13" data-line-number="13"><span class="st">  </span><span class="kw">geom_pointrange</span>() <span class="op">+</span><span class="st"> </span><span class="kw">coord_flip</span>()<span class="op">+</span></a>
-<a class="sourceLine" id="cb17-14" data-line-number="14"><span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="dv">0</span>, <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">lty =</span> <span class="dv">2</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(merTools)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co">#make data for coefficients</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>test_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">site =</span> <span class="fu">unique</span>(mussels<span class="sc">$</span>site))</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co">#get simulated predictions</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>coef_df <span class="ot">&lt;-</span> <span class="fu">predictInterval</span>(mussels_mer, <span class="at">newdata =</span> test_data,</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>                           <span class="at">level =</span> <span class="fl">0.95</span>, <span class="at">include.resid.var =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(test_data)</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="co">#plot</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(coef_df, <span class="fu">aes</span>(<span class="at">x =</span> site, <span class="at">y =</span> fit, <span class="at">ymin =</span> lwr, <span class="at">ymax =</span> upr)) <span class="sc">+</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>() <span class="sc">+</span> <span class="fu">coord_flip</span>()<span class="sc">+</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">&quot;red&quot;</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span></code></pre></div>
 </section>
 <section id="visualizing-1" class="slide level2">
 <h2>Visualizing</h2>
@@ -1182,15 +1278,15 @@ attr(,&quot;class&quot;)
 </section>
 <section id="visualizing-random-effects" class="slide level2">
 <h2>Visualizing Random Effects</h2>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">ranef_df &lt;-<span class="st"> </span><span class="kw">predictInterval</span>(mussels_mer, <span class="dt">which =</span> <span class="st">&quot;random&quot;</span>, </a>
-<a class="sourceLine" id="cb18-2" data-line-number="2">                            <span class="dt">newdata =</span> test_data,</a>
-<a class="sourceLine" id="cb18-3" data-line-number="3">                           <span class="dt">level =</span> <span class="fl">0.95</span>, <span class="dt">include.resid.var =</span> <span class="ot">FALSE</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb18-4" data-line-number="4"><span class="st">  </span><span class="kw">cbind</span>(test_data)</a>
-<a class="sourceLine" id="cb18-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb18-6" data-line-number="6"><span class="co">#plot</span></a>
-<a class="sourceLine" id="cb18-7" data-line-number="7"><span class="kw">ggplot</span>(ranef_df, <span class="kw">aes</span>(<span class="dt">x =</span> site, <span class="dt">y =</span> fit, <span class="dt">ymin =</span> lwr, <span class="dt">ymax =</span> upr)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb18-8" data-line-number="8"><span class="st">  </span><span class="kw">geom_pointrange</span>() <span class="op">+</span><span class="st"> </span><span class="kw">coord_flip</span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb18-9" data-line-number="9"><span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="dv">0</span>, <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">lty =</span> <span class="dv">2</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>ranef_df <span class="ot">&lt;-</span> <span class="fu">predictInterval</span>(mussels_mer, <span class="at">which =</span> <span class="st">&quot;random&quot;</span>, </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>                            <span class="at">newdata =</span> test_data,</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">level =</span> <span class="fl">0.95</span>, <span class="at">include.resid.var =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(test_data)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="co">#plot</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(ranef_df, <span class="fu">aes</span>(<span class="at">x =</span> site, <span class="at">y =</span> fit, <span class="at">ymin =</span> lwr, <span class="at">ymax =</span> upr)) <span class="sc">+</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>() <span class="sc">+</span> <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">&quot;red&quot;</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span></code></pre></div>
 </section>
 <section id="visualizing-random-effects-1" class="slide level2">
 <h2>Visualizing Random Effects</h2>
@@ -1198,15 +1294,15 @@ attr(,&quot;class&quot;)
 </section>
 <section id="visualizing-fixed-effects" class="slide level2">
 <h2>Visualizing Fixed Effects</h2>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">fixed_df &lt;-<span class="st"> </span><span class="kw">predictInterval</span>(mussels_mer, <span class="dt">which =</span> <span class="st">&quot;fixed&quot;</span>, </a>
-<a class="sourceLine" id="cb19-2" data-line-number="2">                            <span class="dt">newdata =</span> test_data,</a>
-<a class="sourceLine" id="cb19-3" data-line-number="3">                           <span class="dt">level =</span> <span class="fl">0.95</span>, <span class="dt">include.resid.var =</span> <span class="ot">FALSE</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb19-4" data-line-number="4"><span class="st">  </span><span class="kw">cbind</span>(test_data)</a>
-<a class="sourceLine" id="cb19-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb19-6" data-line-number="6"><span class="co">#plot</span></a>
-<a class="sourceLine" id="cb19-7" data-line-number="7"><span class="kw">ggplot</span>(fixed_df, <span class="kw">aes</span>(<span class="dt">x =</span> site, <span class="dt">y =</span> fit, <span class="dt">ymin =</span> lwr, <span class="dt">ymax =</span> upr)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb19-8" data-line-number="8"><span class="st">  </span><span class="kw">geom_pointrange</span>() <span class="op">+</span><span class="st"> </span><span class="kw">coord_flip</span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb19-9" data-line-number="9"><span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="dv">0</span>, <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">lty =</span> <span class="dv">2</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>fixed_df <span class="ot">&lt;-</span> <span class="fu">predictInterval</span>(mussels_mer, <span class="at">which =</span> <span class="st">&quot;fixed&quot;</span>, </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>                            <span class="at">newdata =</span> test_data,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">level =</span> <span class="fl">0.95</span>, <span class="at">include.resid.var =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(test_data)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co">#plot</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fixed_df, <span class="fu">aes</span>(<span class="at">x =</span> site, <span class="at">y =</span> fit, <span class="at">ymin =</span> lwr, <span class="at">ymax =</span> upr)) <span class="sc">+</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>() <span class="sc">+</span> <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">&quot;red&quot;</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span></code></pre></div>
 </section>
 <section id="visualizing-fixed-effects-1" class="slide level2">
 <h2>Visualizing Fixed Effects</h2>
@@ -1244,18 +1340,43 @@ attr(,&quot;class&quot;)
       // Full list of configuration options available at:
       // https://github.com/hakimel/reveal.js#configuration
       Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+        // Display a presentation progress bar
+        progress: true,
         // Display the page number of the current slide
         slideNumber: true,
         // Push each slide change to the browser history
         history: true,
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+        // Enable the slide overview mode
+        overview: true,
         // Vertical centering of slides
         center: false,
+        // Enables touch navigation on devices with touch input
+        touch: true,
+        // Turns fragments on and off globally
+        fragments: true,
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
         // Opens links in an iframe preview overlay
         previewLinks: true,
         // Transition style
         transition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Transition speed
+        transitionSpeed: 'default', // default/fast/slow
         // Transition style for full page slide backgrounds
         backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
 
 
 
