@@ -17,11 +17,10 @@ output:
   
 ## 
 \
+<center><h2>Random Effects</h2>
 \
-\
-<h2>Random Effects</h2>
-\
-![](./images/07/pseudorep_walken.jpg)
+![](./images/23/mixed_models_walken.jpg)
+</center>
 
 ```{r prep, echo=FALSE, cache=FALSE, message=FALSE, warning=FALSE}
 library(knitr)
@@ -77,7 +76,7 @@ Hurlbert 1985
 $$Y_i = \beta X_i + \epsilon_i$$
 \
 
-$$\epsilon \sim \mathcal{N} (0, \sigma^2)$$
+$$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
 
 \
 \
@@ -399,8 +398,10 @@ different, and artificial.
 ## BUT - The big assumption
 <br><br>
 <h2><center>The Random Effect is Uncorrelated with Any Fixed Effects</center></h2>
+<br><br>
+<h3><center>Violating this is a violation of the assumption of endogeneity (aka the Random Effects assumption)</center></h3>
 
-## A Visual Explanation: Fixed Effects
+## A Visual Explanation of Endogeneity Problems: Fixed Effects
 ```{r visual_fixef_assume}
 
 
@@ -415,7 +416,7 @@ fixed %>%
 render_graph()
 ```
 
-## A Visual Explanation: Random Effects
+## A Visual Explanation of Endogeneity Problems: Random Effects
 ```{r visual_random_assume}
 
 
