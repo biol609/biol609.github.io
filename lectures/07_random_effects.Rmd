@@ -30,6 +30,7 @@ opts_chunk$set(fig.height=5, fig.width=7, comment=NA,
                dev="jpeg", echo=FALSE)
 
 library(ggplot2)
+library(patchwork)
 library(car)
 theme_set(theme_bw(base_size=17))
 
@@ -80,7 +81,8 @@ $$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
 
 \
 \
-This assumes that all replicates are independent and identically distributed
+This assumes that all replicates are **independent** and identically distributed
+
 
 ## How to deal with violation of Independence
 > - Average at group level  
@@ -108,7 +110,7 @@ This assumes that all replicates are independent and identically distributed
 mussels <- read.csv("lectures/data/07/mussels.csv")
 
 mussel_ggplot <- ggplot(data=mussels, 
-                        mapping=aes(mussel_length, ..count..))
+                        mapping=aes(mussel_length, after_stat(count)))
 
 mussel_ggplot +
   geom_histogram(bins=25)
@@ -135,10 +137,97 @@ mussel_scatter
 
 ## Are different islands that different?
 ```{r mussel_plot_mean}
-mussel_scatter <- mussel_scatter +
+mussel_scatter_mean <- mussel_scatter +
   geom_hline(yintercept=mean(mussels$mussel_length), color="blue", lty=2)
 
-mussel_scatter
+mussel_scatter_mean
+```
+
+## The Problem with Pseudoreplication - Confidence Intervals
+
+```{r, fig.width=9}
+m_mussel <- mean(mussels$mussel_length)
+
+se_mussel <- sd(mussels$mussel_length)/sqrt(nrow(mussels))
+
+#simple CI
+simple_ci <- mussel_scatter_mean +
+  geom_rect(ymin = m_mussel - 2*se_mussel,
+              ymax = m_mussel + 2*se_mussel,
+            xmin = 0, xmax = 16,
+            fill = "grey", alpha = 0.01) +
+  labs(subtitle = "Mean and CI Across All Samples")
+
+#avg CI
+mussels_group <- mussels |>
+  group_by(site) |>
+  summarize(mussel_length = mean(mussel_length)) |>
+  ungroup()
+
+mussel_se_group <- sd(mussels_group$mussel_length)/sqrt(nrow(mussels_group))
+
+group_ci <- mussel_scatter_mean +
+  geom_rect(ymin = m_mussel - 2*mussel_se_group,
+              ymax = m_mussel + 2*mussel_se_group,
+            xmin = 0, xmax = 16,
+            fill = "grey", alpha = 0.01) +
+  labs(subtitle = "Mean and CI Across Site Means")
+
+#the plots
+simple_ci + group_ci
+
+```
+
+
+## The Problem with Pseudoreplication - Unbalanced Samples and Bias
+
+
+```{r, fig.width=7}
+set.seed(609)
+
+mussels_ragged <- mussels |>
+  slice_sample(n = 30)
+
+
+mussel_scatter_ragged <- ggplot(data=mussels_ragged,
+                         mapping=aes(x=site, y=mussel_length)) +
+                           geom_point() +
+  theme_bw(base_size=17)
+
+m_mussel <- mean(mussels_ragged$mussel_length)
+
+se_mussel <- sd(mussels_ragged$mussel_length)/sqrt(nrow(mussels))
+
+#simple CI
+simple_ci <- mussel_scatter_ragged +
+  geom_hline(yintercept = m_mussel, color = "blue", lty = 2) +
+  geom_rect(ymin = m_mussel - 2*se_mussel,
+              ymax = m_mussel + 2*se_mussel,
+            xmin = 0, xmax = 16,
+            fill = "grey", alpha = 0.01) +
+  labs(subtitle = "Mean and CI Across All Samples")
+
+#avg CI
+mussels_group_ragged <- mussels_ragged |>
+  group_by(site) |>
+  summarize(mussel_length = mean(mussel_length)) |>
+  ungroup()
+
+m_mussel_group_ragged <- mean(mussels_group_ragged$mussel_length)
+
+mussel_se_group_ragged <- sd(mussels_group_ragged$mussel_length)/sqrt(nrow(mussels_group_ragged))
+
+group_ci <- mussel_scatter_ragged +
+  geom_hline(yintercept = m_mussel_group_ragged, color = "blue", lty = 2) +
+  geom_rect(ymin = m_mussel_group_ragged - 2*mussel_se_group_ragged,
+              ymax = m_mussel_group_ragged + 2*mussel_se_group_ragged,
+            xmin = 0, xmax = 16,
+            fill = "grey", alpha = 0.01) +
+  labs(subtitle = "Mean and CI Across Site Means")
+
+#the plots
+simple_ci + group_ci
+
 ```
 
 ## Are different islands that different?
@@ -222,6 +311,21 @@ $$\beta_{j} \sim \mathcal{N}(0, \sigma^2_{site})$$
 \
 $$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
 </div>
+
+
+## Consider what random effects mean - GLMM Notation
+(yes, Generalized Linear Mixed Models - we will get there)
+
+$$\large \eta_{ij} =  \alpha + \beta_{j} + \epsilon_i$$
+\
+$$\ \beta_{j} \sim \mathcal{N}(0, \sigma^2_{site})$$
+\
+\
+$$\large f(\widehat{Y_{ij}}) = \eta_{ij}$$
+\
+
+$$\large Y_{ij} \sim \mathcal{D}(\widehat{Y_{ij}}, \theta)$$
+where D is a distribution in the exponential family
 
 ## Fixed Versus Random Effects Model Visually
 ```{r visual_ranef}

@@ -583,8 +583,8 @@ class="slide level2">
 \sigma^2)\]</span></p>
 <p><br />
 <br />
-This assumes that all replicates are independent and identically
-distributed</p>
+This assumes that all replicates are <strong>independent</strong> and
+identically distributed</p>
 </section>
 <section id="how-to-deal-with-violation-of-independence"
 class="slide level2">
@@ -635,6 +635,18 @@ class="slide level2">
 class="slide level2">
 <h2>Are different islands that different?</h2>
 <p><img src="07_random_effects_files/figure-revealjs/mussel_plot_mean-1.jpeg" width="672" /></p>
+</section>
+<section id="the-problem-with-pseudoreplication---confidence-intervals"
+class="slide level2">
+<h2>The Problem with Pseudoreplication - Confidence Intervals</h2>
+<p><img src="07_random_effects_files/figure-revealjs/unnamed-chunk-1-1.jpeg" width="864" /></p>
+</section>
+<section
+id="the-problem-with-pseudoreplication---unbalanced-samples-and-bias"
+class="slide level2">
+<h2>The Problem with Pseudoreplication - Unbalanced Samples and
+Bias</h2>
+<p><img src="07_random_effects_files/figure-revealjs/unnamed-chunk-2-1.jpeg" width="672" /></p>
 </section>
 <section id="are-different-islands-that-different-2"
 class="slide level2">
@@ -724,16 +736,32 @@ class="slide level2">
 \sigma^2)\]</span></p>
 </div>
 </section>
+<section id="consider-what-random-effects-mean---glmm-notation"
+class="slide level2">
+<h2>Consider what random effects mean - GLMM Notation</h2>
+<p>(yes, Generalized Linear Mixed Models - we will get there)</p>
+<p><span class="math display">\[\large \eta_{ij} =  \alpha + \beta_{j} +
+\epsilon_i\]</span><br />
+<span class="math display">\[\ \beta_{j} \sim \mathcal{N}(0,
+\sigma^2_{site})\]</span><br />
+<br />
+<span class="math display">\[\large f(\widehat{Y_{ij}}) =
+\eta_{ij}\]</span><br />
+</p>
+<p><span class="math display">\[\large Y_{ij} \sim
+\mathcal{D}(\widehat{Y_{ij}}, \theta)\]</span> where D is a distribution
+in the exponential family</p>
+</section>
 <section id="fixed-versus-random-effects-model-visually"
 class="slide level2">
 <h2>Fixed Versus Random Effects Model Visually</h2>
 <div id="left">
-<div class="grViz html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-3e6fb3a35ca12fb70475" style="width:672px;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-3e6fb3a35ca12fb70475">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\",\n       label = \"Fixed\",\n       labelloc = \"t\",\n       labeljust = \"c\",\n       fontname = \"Helvetica\",\n       fontcolor = \"gray30\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"site\", shape = \"rectangle\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"1,1!\"] \n  \"2\" [label = \"length\", shape = \"rectangle\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,1!\"] \n  \"3\" [label = \"error\", shape = \"circle\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,2!\"] \n  \"1\"->\"2\" \n  \"3\"->\"2\" \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-b12bc9af42b4b58d9aa3" style="width:672px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-b12bc9af42b4b58d9aa3">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\",\n       label = \"Fixed\",\n       labelloc = \"t\",\n       labeljust = \"c\",\n       fontname = \"Helvetica\",\n       fontcolor = \"gray30\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"site\", shape = \"rectangle\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"1,1!\"] \n  \"2\" [label = \"length\", shape = \"rectangle\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,1!\"] \n  \"3\" [label = \"error\", shape = \"circle\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,2!\"] \n  \"1\"->\"2\" \n  \"3\"->\"2\" \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div id="right">
-<div class="grViz html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-5414468e2a180de38e49" style="width:672px;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-5414468e2a180de38e49">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\",\n       label = \"Random\",\n       labelloc = \"t\",\n       labeljust = \"c\",\n       fontname = \"Helvetica\",\n       fontcolor = \"gray30\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"site\", shape = \"circle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"1,2!\"] \n  \"2\" [label = \"length\", shape = \"rectangle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,1!\"] \n  \"3\" [label = \"residual\nerror\", shape = \"circle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,3!\"] \n  \"4\" [label = \"total\nerror\", shape = \"circle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,2!\"] \n  \"1\"->\"4\" \n  \"3\"->\"4\" \n  \"4\"->\"2\" \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-73e896387ff0e8d76da8" style="width:672px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-73e896387ff0e8d76da8">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\",\n       label = \"Random\",\n       labelloc = \"t\",\n       labeljust = \"c\",\n       fontname = \"Helvetica\",\n       fontcolor = \"gray30\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"site\", shape = \"circle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"1,2!\"] \n  \"2\" [label = \"length\", shape = \"rectangle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,1!\"] \n  \"3\" [label = \"residual\nerror\", shape = \"circle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,3!\"] \n  \"4\" [label = \"total\nerror\", shape = \"circle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,2!\"] \n  \"1\"->\"4\" \n  \"3\"->\"4\" \n  \"4\"->\"2\" \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </section>
 <section id="wait-but-what-about-good-old-blocks-and-fixed-effects"
@@ -856,15 +884,15 @@ Random Effects assumption)
 <section id="a-visual-explanation-of-endogeneity-problems-fixed-effects"
 class="slide level2">
 <h2>A Visual Explanation of Endogeneity Problems: Fixed Effects</h2>
-<div class="grViz html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-60d63f69a814cb17f444" style="width:672px;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-60d63f69a814cb17f444">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"site\", shape = \"rectangle\", width = \"0.5\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"1,1!\"] \n  \"2\" [label = \"length\", shape = \"rectangle\", width = \"0.5\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,1!\"] \n  \"3\" [label = \"error\", shape = \"circle\", width = \"0.5\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,2!\"] \n  \"4\" [label = \"predictor\", shape = \"rectangle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"1,0!\"] \n\"1\"->\"2\" [dir = \"forward\"] \n\"3\"->\"2\" [dir = \"forward\"] \n\"4\"->\"1\" [dir = \"both\"] \n\"4\"->\"2\" [dir = \"forward\"] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-d711abd98777b54105b6" style="width:672px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-d711abd98777b54105b6">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"site\", shape = \"rectangle\", width = \"0.5\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"1,1!\"] \n  \"2\" [label = \"length\", shape = \"rectangle\", width = \"0.5\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,1!\"] \n  \"3\" [label = \"error\", shape = \"circle\", width = \"0.5\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,2!\"] \n  \"4\" [label = \"predictor\", shape = \"rectangle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"1,0!\"] \n\"1\"->\"2\" [dir = \"forward\"] \n\"3\"->\"2\" [dir = \"forward\"] \n\"4\"->\"1\" [dir = \"both\"] \n\"4\"->\"2\" [dir = \"forward\"] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </section>
 <section
 id="a-visual-explanation-of-endogeneity-problems-random-effects"
 class="slide level2">
 <h2>A Visual Explanation of Endogeneity Problems: Random Effects</h2>
-<div class="grViz html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-4f239c22d491edb9bff0" style="width:672px;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-4f239c22d491edb9bff0">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"site\", shape = \"circle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"1,2!\"] \n  \"2\" [label = \"length\", shape = \"rectangle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,1!\"] \n  \"3\" [label = \"residual\nerror\", shape = \"circle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,3!\"] \n  \"4\" [label = \"total\nerror\", shape = \"circle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,2!\"] \n  \"5\" [label = \"predictor\", shape = \"rectangle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"1,1!\"] \n\"1\"->\"4\" [dir = \"forward\"] \n\"3\"->\"4\" [dir = \"forward\"] \n\"4\"->\"2\" [dir = \"forward\"] \n\"5\"->\"2\" [dir = \"forward\"] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-55c4e28db38792dc4b54" style="width:672px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-55c4e28db38792dc4b54">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"site\", shape = \"circle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"1,2!\"] \n  \"2\" [label = \"length\", shape = \"rectangle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,1!\"] \n  \"3\" [label = \"residual\nerror\", shape = \"circle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,3!\"] \n  \"4\" [label = \"total\nerror\", shape = \"circle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"2,2!\"] \n  \"5\" [label = \"predictor\", shape = \"rectangle\", width = \"0.6\", fillcolor = \"#F0F8FF\", fontcolor = \"#000000\", pos = \"1,1!\"] \n\"1\"->\"4\" [dir = \"forward\"] \n\"3\"->\"4\" [dir = \"forward\"] \n\"4\"->\"2\" [dir = \"forward\"] \n\"5\"->\"2\" [dir = \"forward\"] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 <div class="fragment">
 Note the lack of correlation
 </div>
