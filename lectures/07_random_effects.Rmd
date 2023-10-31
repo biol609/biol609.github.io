@@ -77,7 +77,7 @@ Hurlbert 1985
 $$Y_i = \beta X_i + \epsilon_i$$
 \
 
-$$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
+$$\epsilon_i \sim \mathcal{N}(0, \sigma^2)$$
 
 \
 \
@@ -252,7 +252,7 @@ mussel_scatter
 \
 $$Y_{ij} = \beta_{j} + \epsilon_i$$
 \
-$$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
+$$\epsilon_i \sim \mathcal{N}(0, \sigma^2)$$
 \
 <div class="fragment">But this only tells you about **these** islands</div>
 
@@ -283,7 +283,7 @@ ggplot(data=mussels_summary,
 <span id="left">Fixed:</span>\
 $$Y_{ij} =  \beta_{j} + \epsilon_i$$
 \
-$$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
+$$\epsilon_i \sim \mathcal{N}(0, \sigma^2)$$
 \
 \
 <div class="fragment">
@@ -292,7 +292,7 @@ $$Y_{ij} =  \beta_{j} + \epsilon_i$$
 \
 $$\beta_{j} \sim \mathcal{N}(\beta, \sigma^2_{site})$$
 \
-$$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
+$$\epsilon_i \sim \mathcal{N}(0, \sigma^2)$$
 </div>
 
 ## Consider what random effects mean - 1 model, 2 ways
@@ -301,7 +301,7 @@ $$Y_{ij} =  \beta_{j} + \epsilon_i$$
 \
 $$\beta_{j} \sim \mathcal{N}(\alpha, \sigma^2_{site})$$
 \
-$$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
+$$\epsilon_i \sim \mathcal{N}(0, \sigma^2)$$
 <hr>
 \
 <div class="fragment">
@@ -309,14 +309,14 @@ $$Y_{ij} =  \alpha + \beta_{j} + \epsilon_i$$
 \
 $$\beta_{j} \sim \mathcal{N}(0, \sigma^2_{site})$$
 \
-$$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
+$$\epsilon_i \sim \mathcal{N}(0, \sigma^2)$$
 </div>
 
 
 ## Consider what random effects mean - GLMM Notation
 (yes, Generalized Linear Mixed Models - we will get there)
 
-$$\large \eta_{ij} =  \alpha + \beta_{j} + \epsilon_i$$
+$$\large \eta_{ij} =  \alpha + \beta_{j}$$
 \
 $$\ \beta_{j} \sim \mathcal{N}(0, \sigma^2_{site})$$
 \
