@@ -142,7 +142,7 @@ __R Packages:__ Quantreg
 `r datestring`   
 __Lecture:__ Causal Modeling  
 __Readings:__ [A Second Change to Get Causal Inference Right](./Readings/Hernán_and_Healey_2019.pdf), [Causal analysis in control impact studies](./Readings/Larsen_et_al_2019.pdf), [Pearl 2010](Pearl_2010_causal_inference.pdf)    
-__Additional Reading:__ [Causal Inference](https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/)
+__Further Reading:__ [Causal Inference](https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/)
   
 ### Week 14.
 ```{r next_date, echo=FALSE}
@@ -152,7 +152,7 @@ __Additional Reading:__ [Causal Inference](https://www.hsph.harvard.edu/miguel-h
 __Lecture:__ [Intro to Structural Equation Models](https://www.dropbox.com/s/l7z6sbs16jk2y0s/23_SEM_Intro.pptx?dl=0), [SEM Implementation](https://www.dropbox.com/s/j59oodlmcx53tiw/24_Estimation_in_SEM.pptx?dl=0)  
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-sem-2019  
 __Reading:__ [Grace et al 2012 Ecosphere](http://byrneslab.net/classes/biol609/Grace_et_al-2012-Ecosphere.pdf), [Lefcheck 2016](./Readings/Lefcheck_2016_SEM.pdf)   
-__Additional Reading:__ [Notes from Jon Lefcheck](https://jslefche.github.io/sem_book/)  
+___Further Reading:__ [Notes from Jon Lefcheck](https://jslefche.github.io/sem_book/)  
 __Helpful Websites:__ [piecewiseSEM](http://jslefche.github.io/piecewiseSEM/), [lavaan](http://lavaan.ugent.be/), [Jim Grace's Tutorials](https://www.usgs.gov/centers/wetland-and-aquatic-research-center/science/quantitative-analysis-using-structural-equation)    
 
 ### Week 15.
