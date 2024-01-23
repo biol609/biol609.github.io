@@ -8,7 +8,7 @@ navbar:
   - text: "Overview"
     href: overview.html
   - text: "Schedule"
-    href: schedule_new.html
+    href: schedule.html
   - text: "Final"
     href: final.html
   - text: "R Errors"
