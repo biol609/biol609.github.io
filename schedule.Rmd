@@ -13,7 +13,7 @@ datestring <- paste(month(current_date), day(current_date), year(current_date), 
 
 ### Week 1.
 `r datestring`   
-__Lecture__: [Why Advanced Data Analysis?](lectures/01_intro.html),  [Re-Introduction to Bayes](lectures/02_Bayesian_Intro.html)   
+__Lecture__: [Why Advanced Data Analysis?](lectures/01_intro.html),  [Introduction to Bayes](lectures/02_Bayesian_Intro.html)   
 __Reading:__ McElreath Ch. 1-2  
 __Deeper Reading:__ [Bayes' Rules](https://www.bayesrulesbook.com/chapter-2)  
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-bayes-2024  
