@@ -15,7 +15,7 @@ output:
 
 ---
 
-## {data-background="images/01/gorgeous-wildflowers-37110-37953-hd-wallpapers.jpg"}
+## {data-background="images/01/bayesian-2048x685.png" data-background-size="cover"}
 
 <br><br><center><div style="font-size: 2em;font-weight: bold; color:black;background-color:white;opacity:0.8;"> Advanced Data Analysis for Biology</div>  
   
@@ -32,24 +32,6 @@ opts_chunk$set(fig.height=4.5, comment=NA,
 library(tidyverse)
 library(ggplot2)
 ```
-
-
-## First, SomeNew Technology
-https://etherpad.wikimedia.org/p/609-intro-2019
-
-- This class will use collaborative note-taking
-
-- Research shows that this enhances learning!
-
-- It's also a way to ask me a question during class
-
-## Second, Some Old Technology
-![](images/01/sticky-note-color-clipart.jpeg){width="30%"}
-
-> - Green: Party on, Wayne 
-> - Red: I fell off the understanding wagon  
-> - Yellow: Slow down, Mister Teacher  
-> - Blue: Write a question/Other
 
 
 ## Outline for Today
@@ -79,14 +61,40 @@ https://etherpad.wikimedia.org/p/609-intro-2019
   
 4. Rethinking everything 
 
-## Lecture and Lab
- - 1 Hour Lecutre on Concepts with code
- - 1/2 Hour work on problem
- - Occasional Paper/Chapter Discussion
+## Etherpads are Where it's at!
+https://etherpad.wikimedia.org/p/609-intro-2024
+
+- To share polls and code
+
+- Can use for collaborative note-taking
+
+- Research shows that this enhances learning!
+
+- It's also a way to ask me a question during class
+
+## Second, Some Old Technology
+![](images/01/sticky-note-color-clipart.jpeg){width="30%"}
+
+> - Green: Party on, Wayne 
+> - Red: I fell off the understanding wagon  
+> - Yellow: Slow down, Mister Teacher  
+> - Blue: Write a question/Other
+
+
+## What Are We Covering?
+<br><br><br>
+<center><h3>You tell me!<br> 
+https://etherpad.wikimedia.org/p/609-intro-2024</h3></center>
+
+## How will this work?
+<br><br><br>
+<center><h3>You tell me!<br> 
+https://etherpad.wikimedia.org/p/609-intro-2024</h3></center>
+
  
 
 ## Lectures are Coded
-R Markdown sometimes with Reveal.js
+R Markdown sometimes with Reveal.js or Xaringan
 &nbsp;  
 <center><img src="images/01/lecture_code.jpg"></center>
 http://github.com/biol609/biol609.github.io
@@ -99,47 +107,23 @@ http://github.com/biol609/biol609.github.io
 
 
 
-## The Book: Statistical Rethinking
+## The Book: Statistical Rethinking 2nd Edition
 ![](./images/01/book.jpg){width="40%"}
+## Some Scaffolding Reading
+![](images/01/bayes_rules.jpg){width="40%"}
 
-## Monthly Problem Sets
-1. 2-3 Problems covering topics from the month  
+## Before Every Class
+**The Questions I Will Ask About Readings at Random**
+- What did you not get? (Don't be shy!) (This might be all we talk about). 
   
-2. We will go over them in 1/2 hour of the next class, self-graded
+- What blew your mind?  
+  
+- How do you apply this to your own work?
 
 ## Final Paper
 <br><br><br>
 <h3>Do your research</h3>
-(but be statsy about it)
-
-## Extra Credit 1: Be Me
-- I have a few meetings this semester  
-  
-- Will have some guest lectures
-  
-- BUT - you can be that guest lecturer
-
-## Extra Credit 2: Livin' La Vida Data Science
-|                       |                       |
-|-----------------------|-----------------------|
-|![](images/01/nssd.jpg)|![](images/01/hadley.jpg)|
-
-## Extra Credit 3: Do Something Local!
-- Go to meetup.com  
-  
-- Search out data science, stan, or R meetups
-
-## Extra Credit 4: Stats Lunch
-<h3>Tuesdays 12-1 in M-2-628</h3>  
-  
-It's mostly psychologists, so let's start interacting!
-
-## Extra Credit 5: Help make the UMBRUG personal
-![](images/01/umbrug.jpg)
-
-- We have online infrastructure  
-  
-- Need someone to help coordinate actual meetings, etc!
+(but be Bayesian about it)
 
 
 ## Outline for Today
@@ -158,7 +142,7 @@ It's mostly psychologists, so let's start interacting!
 
 ## Enter The Reverend
   
-**Objective 2)**	To understand how to build and fit hierarchical/multilevel models in a likelihood and Bayesian framework.
+**Objective 2)**	To understand how to build and fit complex models in a Bayesian framework.
 
 ## The Rest of Your Life
 
@@ -166,74 +150,29 @@ It's mostly psychologists, so let's start interacting!
   
 **Objective 4)**	Allow students to gain the knowledge necessary to become life-long learners of data analysis techniques, able to incorporate new techniques into their analytic toolbelt as needed.
 
-## Modeling So Far: General Linear Models
-$$\boldsymbol{Y} = \boldsymbol{b X} + \boldsymbol{\epsilon}$$
 
-```{r iris_plot}
-ggplot(iris, mapping=aes(y=Sepal.Width, x=Sepal.Length, color=Species)) +
-  geom_point() +
-  stat_smooth(method="lm") +
-  theme_bw(base_size=17)
+## My True Goal in this Class
+
+```{r tiktok}
+library(tiktokrmd)
+
+tt_url <- "https://www.tiktok.com/@juliaprogramming/video/7075431028772343086?q=bayesian&t=1706028065333"
+tt <- tiktok_embed(tt_url)
+
+tiktok_html(tt, include_player = TRUE)
+
+
 ```
 
-## Foundational Modeling Approach
 
-1. What is your data generating process?  
+## Outline for Today
+1. Who are you?  
   
-2. What is your error generating process?
-
-## Philosophical Approach
-
-> - **Frequentist Inference:** Correct conclusion drawn from repeated experiments  
->     - Uses p-values and CIs as inferential engine  
-\
-> - **Information Theoretic Inference:** Evaluate the weight of evidence for different hypotheses  
->     - Derivative of frequentist mode of thinking  
->     - Uses model comparison (sometimes with p-values...)  
-\
-> - **Bayesian Inference:** Probability of belief that is constantly updated  
->     - Uses explicit statements of probability and degree of belief for inferences  
-
-
-
-## The Foci of the Course
+2. How will this course work?   
   
-1.  More realistic/complex **Generative Models**    
+3. **What are we doing here?**  
   
-2.  Thinking with Care about **Error Structures**  
-  
-3. Bayesian Inference and the Freedom it Brings for Process-Based Models  
-  
-4.  Causal Inference   
-
-
-## New Process-Based Models: Zero Inflated Models
-```{r z}
-a <- rpois(300, 5)
-a <- c(a, rep(0,200))
-hist(a)
-```
-
-## Mixed Models
-![](./images/01/repeated_measures.png)
-
-## Mixed Models
-![](./images/01/mixed_models_walken.jpg)
-
-## Heterogeneous Error Structure
-![](./images/01/Fig-1-Linear-models-fi-tted-using-the-generalized-least-squares-GLS-method-corrected.png)
-
-## Spatial Autocorrelation
-![](./images/01/spatial_auto.png){width="70%"}
-
-## Temporal Autocorrelation
-![](./images/01/dfs_autocorrelation_sm.gif)
-
-## Deep Dives into Bayes
-![](./images/01/052816_bayesian-opener_free.jpg)
-
-## Causal Modeling with Graph Theory
-![](./images/01/process.jpg){width="80%"}
+4. Rethinking everything 
 
 ## Outline for Today
 1. Who are you?  
@@ -245,6 +184,11 @@ hist(a)
 4. **Rethinking everything** 
 
 ## How do You View Data Analysis?
+
+<center><h3>You tell me!<br> 
+https://etherpad.wikimedia.org/p/609-intro-2024</h3></center>
+
+## A Common Way to Think about Data Analysis
 ![](./images/11/many_paths.jpg)
 <div class = "fragment">NO!</div>
 
@@ -277,15 +221,15 @@ hist(a)
 > - Frequentist: p(x &le; D &#x7c; H)  
 \
 \
-> - Likelhoodist: p( D &#x7c; H)  
+> - Likelihood-ist: p( D &#x7c; H)  
 \
 \
 > -  Bayesian: p(H &#x7c; D)
 
 </h1>
 
-## Why is this approach inherently Bayesian?
-![](./images/01/multiple_models.jpg)
+<div class = "fragment">What is the difference between these?</div>
+
 
 ## Let's see how Bayes works
 \

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="generator" content="pandoc">
-  <title>01_intro.utf8.md</title>
+  <title>01_intro.knit</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -11,26 +11,28 @@
 
 
 <style type="text/css">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -39,15 +41,15 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
 code span.at { color: #7d9029; } /* Attribute */
 code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
+code span.bu { color: #008000; } /* BuiltIn */
 code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
 code span.ch { color: #4070a0; } /* Char */
 code span.cn { color: #880000; } /* Constant */
@@ -60,7 +62,7 @@ code span.er { color: #ff0000; font-weight: bold; } /* Error */
 code span.ex { } /* Extension */
 code span.fl { color: #40a070; } /* Float */
 code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
+code span.im { color: #008000; font-weight: bold; } /* Import */
 code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 code span.kw { color: #007020; font-weight: bold; } /* Keyword */
 code span.op { color: #666666; } /* Operator */
@@ -506,45 +508,30 @@ style.innerHTML = style_script;
 document.getElementsByTagName('head')[0].appendChild(style);
 </script>
 
+    <script src="libs/header-attrs-2.25/header-attrs.js"></script>
 </head>
 <body>
   <div class="reveal">
     <div class="slides">
 
 
-<section id="section" class="slide level2" data-background="images/01/gorgeous-wildflowers-37110-37953-hd-wallpapers.jpg">
-<h2></h2>
+<section id="section" class="slide level2"
+data-background="images/01/bayesian-2048x685.png"
+data-background-size="cover">
+<h2 data-background="images/01/bayesian-2048x685.png"
+data-background-size="cover"></h2>
 <br><br>
 <center>
-<div style="font-size: 2em;font-weight: bold; color:black;background-color:white;opacity:0.8;">
+<div
+style="font-size: 2em;font-weight: bold; color:black;background-color:white;opacity:0.8;">
 Advanced Data Analysis for Biology
 </div>
 <div style="background-color:white;font-size:1em;opacity:0.8;">
 Jarrett Byrnes<br />
 UMass Boston<br />
-<a href="https://biol609.github.io/" class="uri">https://biol609.github.io/</a></span>
+<a href="https://biol609.github.io/"
+class="uri">https://biol609.github.io/</a></span>
 </center>
-</section>
-<section id="first-somenew-technology" class="slide level2">
-<h2>First, SomeNew Technology</h2>
-<p><a href="https://etherpad.wikimedia.org/p/609-intro-2019" class="uri">https://etherpad.wikimedia.org/p/609-intro-2019</a></p>
-<ul>
-<li><p>This class will use collaborative note-taking</p></li>
-<li><p>Research shows that this enhances learning!</p></li>
-<li><p>It’s also a way to ask me a question during class</p></li>
-</ul>
-</section>
-<section id="second-some-old-technology" class="slide level2">
-<h2>Second, Some Old Technology</h2>
-<p><img data-src="images/01/sticky-note-color-clipart.jpeg" style="width:30.0%" /></p>
-<ul>
-<li class="fragment">Green: Party on, Wayne</li>
-<li class="fragment">Red: I fell off the understanding wagon<br />
-</li>
-<li class="fragment">Yellow: Slow down, Mister Teacher<br />
-</li>
-<li class="fragment">Blue: Write a question/Other</li>
-</ul>
 </section>
 <section id="outline-for-today" class="slide level2">
 <h2>Outline for Today</h2>
@@ -573,22 +560,61 @@ UMass Boston<br />
 <li><p>Rethinking everything</p></li>
 </ol>
 </section>
-<section id="lecture-and-lab" class="slide level2">
-<h2>Lecture and Lab</h2>
+<section id="etherpads-are-where-its-at" class="slide level2">
+<h2>Etherpads are Where it’s at!</h2>
+<p><a href="https://etherpad.wikimedia.org/p/609-intro-2024"
+class="uri">https://etherpad.wikimedia.org/p/609-intro-2024</a></p>
 <ul>
-<li>1 Hour Lecutre on Concepts with code</li>
-<li>1/2 Hour work on problem</li>
-<li>Occasional Paper/Chapter Discussion</li>
+<li><p>To share polls and code</p></li>
+<li><p>Can use for collaborative note-taking</p></li>
+<li><p>Research shows that this enhances learning!</p></li>
+<li><p>It’s also a way to ask me a question during class</p></li>
 </ul>
+</section>
+<section id="second-some-old-technology" class="slide level2">
+<h2>Second, Some Old Technology</h2>
+<p><img data-src="images/01/sticky-note-color-clipart.jpeg"
+style="width:30.0%" /></p>
+<ul>
+<li class="fragment">Green: Party on, Wayne</li>
+<li class="fragment">Red: I fell off the understanding wagon<br />
+</li>
+<li class="fragment">Yellow: Slow down, Mister Teacher<br />
+</li>
+<li class="fragment">Blue: Write a question/Other</li>
+</ul>
+</section>
+<section id="what-are-we-covering" class="slide level2">
+<h2>What Are We Covering?</h2>
+<br><br><br>
+<center>
+<h3>
+You tell me!<br> <a
+href="https://etherpad.wikimedia.org/p/609-intro-2024"
+class="uri">https://etherpad.wikimedia.org/p/609-intro-2024</a>
+</h3>
+</center>
+</section>
+<section id="how-will-this-work" class="slide level2">
+<h2>How will this work?</h2>
+<br><br><br>
+<center>
+<h3>
+You tell me!<br> <a
+href="https://etherpad.wikimedia.org/p/609-intro-2024"
+class="uri">https://etherpad.wikimedia.org/p/609-intro-2024</a>
+</h3>
+</center>
 </section>
 <section id="lectures-are-coded" class="slide level2">
 <h2>Lectures are Coded</h2>
-R Markdown sometimes with Reveal.js  <br />
+R Markdown sometimes with Reveal.js or Xaringan  <br />
 
 <center>
 <img src="images/01/lecture_code.jpg">
 </center>
-<p><a href="http://github.com/biol609/biol609.github.io" class="uri">http://github.com/biol609/biol609.github.io</a></p>
+<p><a href="http://github.com/biol609/biol609.github.io"
+class="uri">http://github.com/biol609/biol609.github.io</a></p>
 </section>
 <section id="interact-via-slack" class="slide level2">
 <h2>Interact via Slack</h2>
@@ -596,20 +622,27 @@ R Markdown sometimes with Reveal.js  <br />
 <ul>
 <li>Join the #Biol609 channel
 <ul>
-<li><a href="https://umbrug.slack.com/" class="uri">https://umbrug.slack.com/</a> <br>  </li>
+<li><a href="https://umbrug.slack.com/"
+class="uri">https://umbrug.slack.com/</a> <br>  </li>
 </ul></li>
 </ul>
 </section>
-<section id="the-book-statistical-rethinking" class="slide level2">
-<h2>The Book: Statistical Rethinking</h2>
-<p><img data-src="./images/01/book.jpg" style="width:40.0%" /></p>
+<section id="the-book-statistical-rethinking-2nd-edition"
+class="slide level2">
+<h2>The Book: Statistical Rethinking 2nd Edition</h2>
+<p><img data-src="images/01/book.jpg" style="width:40.0%" /> ## Some
+Scaffolding Reading <img data-src="images/01/bayes_rules.jpg"
+style="width:40.0%" /></p>
 </section>
-<section id="monthly-problem-sets" class="slide level2">
-<h2>Monthly Problem Sets</h2>
-<ol type="1">
-<li><p>2-3 Problems covering topics from the month</p></li>
-<li><p>We will go over them in 1/2 hour of the next class, self-graded</p></li>
-</ol>
+<section id="before-every-class" class="slide level2">
+<h2>Before Every Class</h2>
+<p><strong>The Questions I Will Ask About Readings at Random</strong> -
+What did you not get? (Don’t be shy!) (This might be all we talk
+about).</p>
+<ul>
+<li><p>What blew your mind?</p></li>
+<li><p>How do you apply this to your own work?</p></li>
+</ul>
 </section>
 <section id="final-paper" class="slide level2">
 <h2>Final Paper</h2>
@@ -617,48 +650,7 @@ R Markdown sometimes with Reveal.js  <br />
 <h3>
 Do your research
 </h3>
-<p>(but be statsy about it)</p>
-</section>
-<section id="extra-credit-1-be-me" class="slide level2">
-<h2>Extra Credit 1: Be Me</h2>
-<ul>
-<li><p>I have a few meetings this semester</p></li>
-<li><p>Will have some guest lectures</p></li>
-<li><p>BUT - you can be that guest lecturer</p></li>
-</ul>
-</section>
-<section id="extra-credit-2-livin-la-vida-data-science" class="slide level2">
-<h2>Extra Credit 2: Livin’ La Vida Data Science</h2>
-<table>
-<tbody>
-<tr class="odd">
-<td><img data-src="images/01/nssd.jpg" /></td>
-<td><img data-src="images/01/hadley.jpg" /></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="extra-credit-3-do-something-local" class="slide level2">
-<h2>Extra Credit 3: Do Something Local!</h2>
-<ul>
-<li><p>Go to meetup.com</p></li>
-<li><p>Search out data science, stan, or R meetups</p></li>
-</ul>
-</section>
-<section id="extra-credit-4-stats-lunch" class="slide level2">
-<h2>Extra Credit 4: Stats Lunch</h2>
-<h3>
-Tuesdays 12-1 in M-2-628
-</h3>
-<p>It’s mostly psychologists, so let’s start interacting!</p>
-</section>
-<section id="extra-credit-5-help-make-the-umbrug-personal" class="slide level2">
-<h2>Extra Credit 5: Help make the UMBRUG personal</h2>
-<p><img data-src="images/01/umbrug.jpg" /></p>
-<ul>
-<li><p>We have online infrastructure</p></li>
-<li><p>Need someone to help coordinate actual meetings, etc!</p></li>
-</ul>
+<p>(but be Bayesian about it)</p>
 </section>
 <section id="outline-for-today-2" class="slide level2">
 <h2>Outline for Today</h2>
@@ -671,94 +663,42 @@ Tuesdays 12-1 in M-2-628
 </section>
 <section id="model-a-palooza" class="slide level2">
 <h2>Model-A-Palooza</h2>
-<p><strong>Objective 1)</strong> To learn how to think about your study system and research question of interest in a systematic way and match it with a realistic process-based model.</p>
+<p><strong>Objective 1)</strong> To learn how to think about your study
+system and research question of interest in a systematic way and match
+it with a realistic process-based model.</p>
 </section>
 <section id="enter-the-reverend" class="slide level2">
 <h2>Enter The Reverend</h2>
-<p><strong>Objective 2)</strong> To understand how to build and fit hierarchical/multilevel models in a likelihood and Bayesian framework.</p>
+<p><strong>Objective 2)</strong> To understand how to build and fit
+complex models in a Bayesian framework.</p>
 </section>
 <section id="the-rest-of-your-life" class="slide level2">
 <h2>The Rest of Your Life</h2>
-<p><strong>Objective 3)</strong> Provide the grounding needed to effectively collaborate with statistical experts.</p>
-<p><strong>Objective 4)</strong> Allow students to gain the knowledge necessary to become life-long learners of data analysis techniques, able to incorporate new techniques into their analytic toolbelt as needed.</p>
+<p><strong>Objective 3)</strong> Provide the grounding needed to
+effectively collaborate with statistical experts.</p>
+<p><strong>Objective 4)</strong> Allow students to gain the knowledge
+necessary to become life-long learners of data analysis techniques, able
+to incorporate new techniques into their analytic toolbelt as
+needed.</p>
 </section>
-<section id="modeling-so-far-general-linear-models" class="slide level2">
-<h2>Modeling So Far: General Linear Models</h2>
-<p><span class="math display">\[\boldsymbol{Y} = \boldsymbol{b X} + \boldsymbol{\epsilon}\]</span></p>
-<p><img src="01_intro_files/figure-revealjs/iris_plot-1.jpeg" width="768" /></p>
-</section>
-<section id="foundational-modeling-approach" class="slide level2">
-<h2>Foundational Modeling Approach</h2>
-<ol type="1">
-<li><p>What is your data generating process?</p></li>
-<li><p>What is your error generating process?</p></li>
-</ol>
-</section>
-<section id="philosophical-approach" class="slide level2">
-<h2>Philosophical Approach</h2>
-<ul>
-<li class="fragment"><strong>Frequentist Inference:</strong> Correct conclusion drawn from repeated experiments
-<ul>
-<li class="fragment">Uses p-values and CIs as inferential engine<br />
-<br />
-</li>
-</ul></li>
-<li class="fragment"><strong>Information Theoretic Inference:</strong> Evaluate the weight of evidence for different hypotheses
-<ul>
-<li class="fragment">Derivative of frequentist mode of thinking<br />
-</li>
-<li class="fragment">Uses model comparison (sometimes with p-values…)<br />
-<br />
-</li>
-</ul></li>
-<li class="fragment"><strong>Bayesian Inference:</strong> Probability of belief that is constantly updated
-<ul>
-<li class="fragment">Uses explicit statements of probability and degree of belief for inferences</li>
-</ul></li>
-</ul>
-</section>
-<section id="the-foci-of-the-course" class="slide level2">
-<h2>The Foci of the Course</h2>
-<ol type="1">
-<li><p>More realistic/complex <strong>Generative Models</strong></p></li>
-<li><p>Thinking with Care about <strong>Error Structures</strong></p></li>
-<li><p>Bayesian Inference and the Freedom it Brings for Process-Based Models</p></li>
-<li><p>Causal Inference</p></li>
-</ol>
-</section>
-<section id="new-process-based-models-zero-inflated-models" class="slide level2">
-<h2>New Process-Based Models: Zero Inflated Models</h2>
-<p><img src="01_intro_files/figure-revealjs/z-1.jpeg" width="768" /></p>
-</section>
-<section id="mixed-models" class="slide level2">
-<h2>Mixed Models</h2>
-<p><img data-src="./images/01/repeated_measures.png" /></p>
-</section>
-<section id="mixed-models-1" class="slide level2">
-<h2>Mixed Models</h2>
-<p><img data-src="./images/01/mixed_models_walken.jpg" /></p>
-</section>
-<section id="heterogeneous-error-structure" class="slide level2">
-<h2>Heterogeneous Error Structure</h2>
-<p><img data-src="./images/01/Fig-1-Linear-models-fi-tted-using-the-generalized-least-squares-GLS-method-corrected.png" /></p>
-</section>
-<section id="spatial-autocorrelation" class="slide level2">
-<h2>Spatial Autocorrelation</h2>
-<p><img data-src="./images/01/spatial_auto.png" style="width:70.0%" /></p>
-</section>
-<section id="temporal-autocorrelation" class="slide level2">
-<h2>Temporal Autocorrelation</h2>
-<p><img data-src="./images/01/dfs_autocorrelation_sm.gif" /></p>
-</section>
-<section id="deep-dives-into-bayes" class="slide level2">
-<h2>Deep Dives into Bayes</h2>
-<p><img data-src="./images/01/052816_bayesian-opener_free.jpg" /></p>
-</section>
-<section id="causal-modeling-with-graph-theory" class="slide level2">
-<h2>Causal Modeling with Graph Theory</h2>
-<p><img data-src="./images/01/process.jpg" style="width:80.0%" /></p>
+<section id="my-true-goal-in-this-class" class="slide level2">
+<h2>My True Goal in this Class</h2>
+<blockquote class="tiktok-embed" cite="https://www.tiktok.com/@juliaprogramming/video/7075431028772343086" data-video-id="7075431028772343086" data-embed-from="oembed" style="max-width: 605px;min-width: 325px;" > <section> <a target="_blank" title="@juliaprogramming" href="https://www.tiktok.com/@juliaprogramming?refer=embed">@juliaprogramming</a> <p>Which one are you? <a title="statistics" target="_blank" href="https://www.tiktok.com/tag/statistics?refer=embed">#statistics</a> <a title="mathtok" target="_blank" href="https://www.tiktok.com/tag/mathtok?refer=embed">#mathtok</a> <a title="mathematics" target="_blank" href="https://www.tiktok.com/tag/mathematics?refer=embed">#mathematics</a> <a title="math" target="_blank" href="https://www.tiktok.com/tag/math?refer=embed">#math</a> <a title="cs" target="_blank" href="https://www.tiktok.com/tag/cs?refer=embed">#cs</a> <a title="computerscience" target="_blank" href="https://www.tiktok.com/tag/computerscience?refer=embed">#computerscience</a> <a title="bayesian" target="_blank" href="https://www.tiktok.com/tag/bayesian?refer=embed">#bayesian</a> <a title="stem" target="_blank" href="https://www.tiktok.com/tag/stem?refer=embed">#stem</a> <a title="stemtok" target="_blank" href="https://www.tiktok.com/tag/stemtok?refer=embed">#stemtok</a> <a title="probability" target="_blank" href="https://www.tiktok.com/tag/probability?refer=embed">#probability</a> <a title="maths" target="_blank" href="https://www.tiktok.com/tag/maths?refer=embed">#maths</a></p> <a target="_blank" title="♬ problems by mother mother - ₍ᵔ·͈༝·͈ᵔ₎" href="https://www.tiktok.com/music/problems-by-mother-mother-6888708386326596357?refer=embed">♬ problems by mother mother - ₍ᵔ·͈༝·͈ᵔ₎</a> </section> </blockquote> 
+<!--SHINY.SINGLETON[e123f97525dee37cc53ba5b9f17fd3caf1b72842]-->
+<script async data-external="1" src="https://www.tiktok.com/embed.js"></script>
+<style>blockquote.tiktok-embed {border:unset;padding:unset;}</style>
+<!--/SHINY.SINGLETON[e123f97525dee37cc53ba5b9f17fd3caf1b72842]-->
 </section>
 <section id="outline-for-today-3" class="slide level2">
+<h2>Outline for Today</h2>
+<ol type="1">
+<li><p>Who are you?</p></li>
+<li><p>How will this course work?</p></li>
+<li><p><strong>What are we doing here?</strong></p></li>
+<li><p>Rethinking everything</p></li>
+</ol>
+</section>
+<section id="outline-for-today-4" class="slide level2">
 <h2>Outline for Today</h2>
 <ol type="1">
 <li><p>Who are you?</p></li>
@@ -769,25 +709,38 @@ Tuesdays 12-1 in M-2-628
 </section>
 <section id="how-do-you-view-data-analysis" class="slide level2">
 <h2>How do You View Data Analysis?</h2>
-<img data-src="./images/11/many_paths.jpg" />
+<center>
+<h3>
+You tell me!<br> <a
+href="https://etherpad.wikimedia.org/p/609-intro-2024"
+class="uri">https://etherpad.wikimedia.org/p/609-intro-2024</a>
+</h3>
+</center>
+</section>
+<section id="a-common-way-to-think-about-data-analysis"
+class="slide level2">
+<h2>A Common Way to Think about Data Analysis</h2>
+<img data-src="images/11/many_paths.jpg" />
 <div class="fragment">
 NO!
 </div>
 </section>
 <section id="one-hypothesis-one-statistical-model" class="slide level2">
 <h2>One Hypothesis ≠ One Statistical Model</h2>
-<p><img data-src="./images/01/multiple_models.jpg" /></p>
+<p><img data-src="images/01/multiple_models.jpg" /></p>
 <div class="fragment">
 Apply this to your research!
 </div>
 </section>
 <section id="back-to-bayes-ics" class="slide level2">
 <h2>Back to Bayes-ics</h2>
-<p><img data-src="./images/01/bayes-and-hus-theory.png" alt="image" /></p>
+<p><img data-src="images/01/bayes-and-hus-theory.png"
+alt="image" /></p>
 </section>
 <section id="bayesian-inference" class="slide level2">
 <h2>Bayesian Inference</h2>
-<p><img data-src="./images/01/bayes_in_the_head.jpg" alt="image" style="width:40.0%" /><br />
+<p><img data-src="images/01/bayes_in_the_head.jpg" style="width:40.0%"
+alt="image" /><br />
 </p>
 <p><font size="6"></p>
 <ul>
@@ -806,42 +759,48 @@ Apply this to your research!
 <br />
 <br />
 </li>
-<li class="fragment">Likelhoodist: p( D | H)<br />
+<li class="fragment">Likelihood-ist: p( D | H)<br />
 <br />
 <br />
 </li>
 <li class="fragment">Bayesian: p(H | D)</li>
 </ul>
 </h1>
-</section>
-<section id="why-is-this-approach-inherently-bayesian" class="slide level2">
-<h2>Why is this approach inherently Bayesian?</h2>
-<p><img data-src="./images/01/multiple_models.jpg" /></p>
+<div class="fragment">
+What is the difference between these?
+</div>
 </section>
 <section id="lets-see-how-bayes-works" class="slide level2">
 <h2>Let’s see how Bayes works</h2>
 <p><br />
 I have a bag with 6 stones. Some are black. Some are white.<br />
 <br />
-I’m going to draw stones, one at a time, with replacement, and let’s see the number of ways that the draw could have been produced.<br />
+I’m going to draw stones, one at a time, with replacement, and let’s see
+the number of ways that the draw could have been produced.<br />
 <br />
-After 4 draws, let’s calculate the probability of W white stones and B black stones. Let’s formalize how we made this calculation. This leads to conditional versus marginal probabilities.<br />
+After 4 draws, let’s calculate the probability of W white stones and B
+black stones. Let’s formalize how we made this calculation. This leads
+to conditional versus marginal probabilities.<br />
 <br />
 </p>
 </section>
 <section id="lets-see-how-bayes-works-1" class="slide level2">
 <h2>Let’s see how Bayes works…</h2>
-<p>Now, I will look at the stones, and introduce a prior or some sort for W.<br />
+<p>Now, I will look at the stones, and introduce a prior or some sort
+for W.<br />
 <br />
-Let’s do a new set of draws, but this time, on the board, update our posterior.<br />
+Let’s do a new set of draws, but this time, on the board, update our
+posterior.<br />
 <br />
-And finally, relate this to the definition of Bayes theorem in 2.3.4 pg 36.</p>
+And finally, relate this to the definition of Bayes theorem in 2.3.4 pg
+36.</p>
 </section>
 <section id="lets-do-this-in-r-with-grid-sampling" class="slide level2">
 <h2>Let’s do this in R with Grid Sampling!</h2>
 <p>Use <code>dplyr</code> and mutate for the following.</p>
 <ol start="0" type="1">
-<li>Chose what fraction of stones is white in a bag of infinite size.<br />
+<li>Chose what fraction of stones is white in a bag of infinite
+size.<br />
 <br />
 </li>
 <li>Creat a column of possible values from 0 to 1.<br />
@@ -850,7 +809,8 @@ And finally, relate this to the definition of Bayes theorem in 2.3.4 pg 36.</p>
 <li>Define a prior as the second column.<br />
 <br />
 </li>
-<li>Calculate your posterior after 1 random draw, then repeat for draws 2-4 plotting your posteriors
+<li>Calculate your posterior after 1 random draw, then repeat for draws
+2-4 plotting your posteriors
 <ul>
 <li>posterior = likelihood*prior/sum(all posterior values)<br />
 <br />
@@ -864,31 +824,31 @@ And finally, relate this to the definition of Bayes theorem in 2.3.4 pg 36.</p>
 <p>This is from the Rcode on page 42, box 2.6. Assume 100 draws.<br />
 <br />
 </p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(rethinking)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="co">#alist is a list for used to define a model</span></a>
-<a class="sourceLine" id="cb1-4" data-line-number="4">draws_mod &lt;-<span class="st"> </span><span class="kw">alist</span>(</a>
-<a class="sourceLine" id="cb1-5" data-line-number="5">  </a>
-<a class="sourceLine" id="cb1-6" data-line-number="6">  <span class="co">#our likelihood</span></a>
-<a class="sourceLine" id="cb1-7" data-line-number="7">  w <span class="op">~</span><span class="st"> </span><span class="kw">dbinom</span>(<span class="dv">100</span>, p)</a>
-<a class="sourceLine" id="cb1-8" data-line-number="8">  </a>
-<a class="sourceLine" id="cb1-9" data-line-number="9">  <span class="co">#our prior - can be something else if you want!</span></a>
-<a class="sourceLine" id="cb1-10" data-line-number="10">  p <span class="op">~</span><span class="st"> </span><span class="kw">dunif</span>(<span class="dv">0</span>,<span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb1-11" data-line-number="11">)</a>
-<a class="sourceLine" id="cb1-12" data-line-number="12"></a>
-<a class="sourceLine" id="cb1-13" data-line-number="13"><span class="co">#define the data - you fill in the probability</span></a>
-<a class="sourceLine" id="cb1-14" data-line-number="14">draws_data &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">w =</span> XXX)</a>
-<a class="sourceLine" id="cb1-15" data-line-number="15"></a>
-<a class="sourceLine" id="cb1-16" data-line-number="16"><span class="co">#We will use map - maximum a posteriori sampling</span></a>
-<a class="sourceLine" id="cb1-17" data-line-number="17"><span class="co">#Note, I use rethinking:: in case you&#39;ve loaded purrr</span></a>
-<a class="sourceLine" id="cb1-18" data-line-number="18">draws_fit &lt;-<span class="st"> </span>rethinking<span class="op">::</span><span class="kw">map</span>(draws_mod,</a>
-<a class="sourceLine" id="cb1-19" data-line-number="19">                             <span class="dt">data =</span> draws_data)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rethinking)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">#alist is a list for used to define a model</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>draws_mod <span class="ot">&lt;-</span> <span class="fu">alist</span>(</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">#our likelihood</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  w <span class="sc">~</span> <span class="fu">dbinom</span>(<span class="dv">100</span>, p)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">#our prior - can be something else if you want!</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  p <span class="sc">~</span> <span class="fu">dunif</span>(<span class="dv">0</span>,<span class="dv">1</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co">#define the data - you fill in the probability</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>draws_data <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">w =</span> XXX)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">#We will use map - maximum a posteriori sampling</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co">#Note, I use rethinking:: in case you&#39;ve loaded purrr</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>draws_fit <span class="ot">&lt;-</span> rethinking<span class="sc">::</span><span class="fu">map</span>(draws_mod,</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>                             <span class="at">data =</span> draws_data)</span></code></pre></div>
 </section>
 <section id="now-lets-explore-our-output" class="slide level2">
 <h2>Now let’s explore our output</h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">draws_fit</a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="kw">summary</span>(draws_fit)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>draws_fit</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(draws_fit)</span></code></pre></div>
 </section>
     </div>
   </div>
@@ -901,18 +861,43 @@ And finally, relate this to the definition of Bayes theorem in 2.3.4 pg 36.</p>
       // Full list of configuration options available at:
       // https://github.com/hakimel/reveal.js#configuration
       Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+        // Display a presentation progress bar
+        progress: true,
         // Display the page number of the current slide
         slideNumber: true,
         // Push each slide change to the browser history
         history: true,
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+        // Enable the slide overview mode
+        overview: true,
         // Vertical centering of slides
         center: false,
+        // Enables touch navigation on devices with touch input
+        touch: true,
+        // Turns fragments on and off globally
+        fragments: true,
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
         // Opens links in an iframe preview overlay
         previewLinks: true,
         // Transition style
         transition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Transition speed
+        transitionSpeed: 'default', // default/fast/slow
         // Transition style for full page slide backgrounds
         backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
 
 
 
