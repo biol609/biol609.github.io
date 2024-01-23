@@ -1,4 +1,4 @@
-base
 Rcpp
 rstanarm
 ggplot2
+palmerpenguins

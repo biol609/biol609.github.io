@@ -1,34 +1,48 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
 
 <title>Resources, Blogs, and More</title>
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 
-<style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -41,32 +55,8 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
+
+
 
 
 
@@ -77,13 +67,8 @@ h6 {
   margin-left: auto;
   margin-right: auto;
 }
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
-}
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -97,40 +82,16 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 54px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 59px;
-  margin-top: -59px;
-}
-.section h2 {
-  padding-top: 59px;
-  margin-top: -59px;
-}
-.section h3 {
-  padding-top: 59px;
-  margin-top: -59px;
-}
-.section h4 {
-  padding-top: 59px;
-  margin-top: -59px;
-}
-.section h5 {
-  padding-top: 59px;
-  margin-top: -59px;
-}
-.section h6 {
-  padding-top: 59px;
-  margin-top: -59px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -158,7 +119,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -170,7 +131,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -180,11 +141,28 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.parent().addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -196,13 +174,12 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -210,16 +187,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -232,6 +202,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -243,18 +214,6 @@ $(document).ready(function () {
   display: none;
 }
 </style>
-
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
 
 <!-- code folding -->
 
@@ -274,7 +233,7 @@ $(document).ready(function () {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -290,7 +249,7 @@ $(document).ready(function () {
   <a href="overview.html">Overview</a>
 </li>
 <li>
-  <a href="schedule_new.html">Schedule</a>
+  <a href="schedule.html">Schedule</a>
 </li>
 <li>
   <a href="final.html">Final</a>
@@ -318,7 +277,7 @@ $(document).ready(function () {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
@@ -327,95 +286,159 @@ $(document).ready(function () {
 </div>
 
 
-<p>For more basic resources, see <a href="https://biol607.github.io/resources.html">this list from Biol 607</a><br />
+<p>For more basic resources, see <a
+href="https://biol607.github.io/resources.html">this list from Biol
+607</a><br />
 <br />
 </p>
 <div id="bayes" class="section level3">
 <h3>Bayes</h3>
-<p><a href="https://m-clark.github.io/bayesian-basics/">Bayesian Basics</a> by Michael Clarke<br />
-<a href="https://bookdown.org/connect/#/apps/1850/access">Statistical Rethinking Recoded</a><br />
-<a href="https://bookdown.org/ajkurz/recoding_Hayes_2018/">recoding Introduction to Mediation, Moderation, and Conditional Process Analysis</a> from A. Solomon Kurz<br />
+<p><a href="https://m-clark.github.io/bayesian-basics/">Bayesian
+Basics</a> by Michael Clarke<br />
+<a href="https://bookdown.org/connect/#/apps/1850/access">Statistical
+Rethinking Recoded</a><br />
+<a href="https://bookdown.org/ajkurz/recoding_Hayes_2018/">recoding
+Introduction to Mediation, Moderation, and Conditional Process
+Analysis</a> from A. Solomon Kurz<br />
 <a href="http://mjskay.github.io/tidybayes/">tidybayes</a><br />
-<a href="https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations">Prior Choice Recommendation Wiki</a><br />
-<a href="https://www.amazon.com/Bayesian-Analysis-Chapman-Statistical-Science/dp/1439840954">Bayesian Data Analysis</a> by Gelman et al.<br />
+<a
+href="https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations">Prior
+Choice Recommendation Wiki</a><br />
+<a
+href="https://www.amazon.com/Bayesian-Analysis-Chapman-Statistical-Science/dp/1439840954">Bayesian
+Data Analysis</a> by Gelman et al.<br />
 </p>
 </div>
 <div id="mixed-models" class="section level3">
 <h3>Mixed Models</h3>
-<p><a href="https://www.amazon.com/Analysis-Regression-Multilevel-Hierarchical-Models/dp/052168689X/">Data Analysis Using Regression and Multilevel/Hierarchical Models</a> by Gelman and Hill. My bible.<br />
+<p><a
+href="https://www.amazon.com/Analysis-Regression-Multilevel-Hierarchical-Models/dp/052168689X/">Data
+Analysis Using Regression and Multilevel/Hierarchical Models</a> by
+Gelman and Hill. My bible.<br />
 <br />
 </p>
 </div>
 <div id="timeseries" class="section level3">
 <h3>Timeseries</h3>
-<p><a href="http://otexts.org/fpp2/">Forecasting: Principles and Practice</a>. 2018. Rob Hyndman and George Athanasaopoules. A great intro to timeseries and forecasting in R.<br />
-<a href="http://tts.smac-group.com/">A Tour of Time Series Analysis with R</a><br />
+<p><a href="http://otexts.org/fpp2/">Forecasting: Principles and
+Practice</a>. 2018. Rob Hyndman and George Athanasaopoules. A great
+intro to timeseries and forecasting in R.<br />
+<a href="http://tts.smac-group.com/">A Tour of Time Series Analysis with
+R</a><br />
 <br />
 </p>
 </div>
 <div id="spatial-analysis-gis-and-modeling" class="section level3">
 <h3>Spatial Analysis (GIS and Modeling)</h3>
-<p><a href="https://geocompr.robinlovelace.net/">Geocomputation with R</a><br />
-<a href="https://www.r-spatial.org/">R-spatial.org</a> with forthcoming <a href="https://keen-swartz-3146c4.netlify.com/">book</a>!<br />
-<a href="https://datacarpentry.org/geospatial-workshop/">Data Carpentry Geospatial Workshop</a><br />
-<a href="https://spatial.uchicago.edu/content/giscience-education">GIS Resources from University of Chicago</a><br />
-<a href="http://www.econ.uiuc.edu/~lab/workshop/Spatial_in_R.html">Intro to Spatial Econometrics in R</a><br />
-<a href="https://asdar-book.org/">Applied Spatial Data Analysis with R</a><br />
-<a href="https://www.amazon.com/Introduction-Spatial-Analysis-Mapping/dp/1446272958/">Introduction to R for Spatial Analysis and Mapping</a> - uses <code>sp</code> instead of <code>sf</code> but very useful<br />
-<a href="https://spatialanalysis.github.io/workshop-notes/">R Spatial Workshop Notes</a><br />
-<a href="https://spatialanalysis.github.io/lab_tutorials/1_R_Spatial_Data_Handling.html">Spatial Data Handling</a><br />
+<p><a href="https://geocompr.robinlovelace.net/">Geocomputation with
+R</a><br />
+<a href="https://www.r-spatial.org/">R-spatial.org</a> with forthcoming
+<a href="https://keen-swartz-3146c4.netlify.com/">book</a>!<br />
+<a href="https://datacarpentry.org/geospatial-workshop/">Data Carpentry
+Geospatial Workshop</a><br />
+<a href="https://spatial.uchicago.edu/content/giscience-education">GIS
+Resources from University of Chicago</a><br />
+<a href="http://www.econ.uiuc.edu/~lab/workshop/Spatial_in_R.html">Intro
+to Spatial Econometrics in R</a><br />
+<a href="https://asdar-book.org/">Applied Spatial Data Analysis with
+R</a><br />
+<a
+href="https://www.amazon.com/Introduction-Spatial-Analysis-Mapping/dp/1446272958/">Introduction
+to R for Spatial Analysis and Mapping</a> - uses <code>sp</code> instead
+of <code>sf</code> but very useful<br />
+<a href="https://spatialanalysis.github.io/workshop-notes/">R Spatial
+Workshop Notes</a><br />
+<a
+href="https://spatialanalysis.github.io/lab_tutorials/1_R_Spatial_Data_Handling.html">Spatial
+Data Handling</a><br />
 <br />
 </p>
 </div>
 <div id="sem-causality-and-all-that" class="section level3">
 <h3>SEM, Causality, and All That</h3>
-<p><a href="https://jebyrnes.github.io/semclass/">Structural Equation Modeling for Ecology and Evolutionary Biology</a> My week long workshop in SEM with slides, code, and readings<br />
-<a href="https://jslefche.github.io/sem_book/">Jon Lefcheck’s Notes in SEM in EEB</a><br />
-<a href="https://www.usgs.gov/centers/wetland-and-aquatic-research-center/science/quantitative-analysis-using-structural-equation?qt-science_center_objects=0#qt-science_center_objects">Jim Grace’s SEM tutorials</a><br />
-<a href="https://www.amazon.com/Book-Why-Science-Cause-Effect/dp/046509760X">The Book of Why</a> Judea Pearl’s intro to causal thinking from an approachable general audience perspective<br />
+<p><a href="https://jebyrnes.github.io/semclass/">Structural Equation
+Modeling for Ecology and Evolutionary Biology</a> My week long workshop
+in SEM with slides, code, and readings<br />
+<a href="https://jslefche.github.io/sem_book/">Jon Lefcheck’s Notes in
+SEM in EEB</a><br />
+<a
+href="https://www.usgs.gov/centers/wetland-and-aquatic-research-center/science/quantitative-analysis-using-structural-equation?qt-science_center_objects=0#qt-science_center_objects">Jim
+Grace’s SEM tutorials</a><br />
+<a
+href="https://www.amazon.com/Book-Why-Science-Cause-Effect/dp/046509760X">The
+Book of Why</a> Judea Pearl’s intro to causal thinking from an
+approachable general audience perspective<br />
 </p>
 </div>
 <div id="econometrics" class="section level3">
 <h3>Econometrics</h3>
-<p><a href="https://bookdown.org/ccolonescu/RPoE4/">Principles of Econometrics with R</a> 2016. Constantin Colonescu. Yes, it’s econometrics, but there’s a lot here that’s very generalizable to biological data analysis in R as well.<br />
-<a href="https://bookdown.org/machar1991/ITER/">Introduction to Econometrics with R</a><br />
+<p><a href="https://bookdown.org/ccolonescu/RPoE4/">Principles of
+Econometrics with R</a> 2016. Constantin Colonescu. Yes, it’s
+econometrics, but there’s a lot here that’s very generalizable to
+biological data analysis in R as well.<br />
+<a href="https://bookdown.org/machar1991/ITER/">Introduction to
+Econometrics with R</a><br />
 <br />
 </p>
 </div>
 <div id="r" class="section level3">
 <h3>R</h3>
-<p><a href="http://adv-r.had.co.nz/">Advanced R</a>. 2014. Great walkthrough of the details and guts of R. From novices to R wizards, you will learn things you never thought possible (or the actual reasoning behind that hacky stuff you’ve been doing for years).<br />
-<a href="https://tidyeval.tidyverse.org/">Tidy evaluation: The Bookdown</a><br />
+<p><a href="http://adv-r.had.co.nz/">Advanced R</a>. 2014. Great
+walkthrough of the details and guts of R. From novices to R wizards, you
+will learn things you never thought possible (or the actual reasoning
+behind that hacky stuff you’ve been doing for years).<br />
+<a href="https://tidyeval.tidyverse.org/">Tidy evaluation: The
+Bookdown</a><br />
 <br />
 </p>
 </div>
 <div id="github" class="section level3">
 <h3>Github</h3>
-<p><a href="http://www.molecularecologist.com/2013/11/using-github-with-r-and-rstudio/">Using Git and Github with Rstudio</a><br />
-<a href="http://www.datasurg.net/2015/07/13/rstudio-and-github/">Git and Github in Rstudio</a><br />
-<a href="http://happygitwithr.com/index.html">Happy with Git</a>. 2006. Jenny Bryan. Introduction to Git and Github for her class. Very detailed and walks you through each step.</p>
+<p><a
+href="http://www.molecularecologist.com/2013/11/using-github-with-r-and-rstudio/">Using
+Git and Github with Rstudio</a><br />
+<a href="http://www.datasurg.net/2015/07/13/rstudio-and-github/">Git and
+Github in Rstudio</a><br />
+<a href="http://happygitwithr.com/index.html">Happy with Git</a>. 2006.
+Jenny Bryan. Introduction to Git and Github for her class. Very detailed
+and walks you through each step.</p>
 </div>
 <div id="blogs" class="section level3">
 <h3>Blogs</h3>
 <p><a href="https://rweekly.org/">R Weekly</a> A weekly newsletter<br />
-<a href="http://www.r-bloggers.com/">R bloggers</a> R Blogger aggregator<br />
+<a href="http://www.r-bloggers.com/">R bloggers</a> R Blogger
+aggregator<br />
 <a href="https://blog.rstudio.org/">RStudio Blog</a><br />
 <a href="http://simplystatistics.org/">Simply Statistics</a><br />
-<a href="http://www.stat.columbia.edu/~gelman/blog/">Statistical modeling, causal inference, and social science</a>: Andrew Gelman’s research group<br />
+<a href="http://www.stat.columbia.edu/~gelman/blog/">Statistical
+modeling, causal inference, and social science</a>: Andrew Gelman’s
+research group<br />
 <a href="http://www.r-statistics.com/">R-statistics blog</a><br />
-<a href="http://errorstatistics.com/">Error Statistics Philosophy</a> Great source of information on philosophy of statistics and data analysis<br />
-<a href="http://www.quantumforest.com/">Quantum Forest</a> A shoebox for scribbles on data analysis by Luis Apiolaza<br />
-<a href="http://inundata.org/">Inundata</a> from Karthik Ram of ROpenSci<br />
+<a href="http://errorstatistics.com/">Error Statistics
+Philosophy</a> Great source of information on philosophy of statistics
+and data analysis<br />
+<a href="http://www.quantumforest.com/">Quantum Forest</a> A shoebox for
+scribbles on data analysis by Luis Apiolaza<br />
+<a href="http://inundata.org/">Inundata</a> from Karthik Ram of
+ROpenSci<br />
 <a href="https://ropensci.org/blog/">ROpenSci</a><br />
 <a href="http://xianblog.wordpress.com/">Xi’an’s Og</a><br />
-<a href="http://civilstat.com/">Civil Statistician</a> Former census statistician<br />
-<a href="http://citizen-statistician.org/">Citizen Statistician</a> Various stats faculty</p>
+<a href="http://civilstat.com/">Civil Statistician</a> Former census
+statistician<br />
+<a href="http://citizen-statistician.org/">Citizen Statistician</a>
+Various stats faculty</p>
 </div>
 <div id="podcasts" class="section level3">
 <h3>Podcasts</h3>
-<p><a href="https://soundcloud.com/nssd-podcast">Not So Standard Deviations</a> Listen to this! #Rcatladies<br />
-<a href="http://fivethirtyeight.com/tag/fivethirtyeight-podcasts/">FiveThirtyEight Elections Podcast</a>: How we use data analysis to forecast elections.<br />
-<a href="http://fivethirtyeight.com/tag/fivethirtyeight-podcasts/">What’s the Point</a>: Data in society. From FiveThirtyEight.</p>
+<p><a href="https://soundcloud.com/nssd-podcast">Not So Standard
+Deviations</a> Listen to this! #Rcatladies<br />
+<a
+href="http://fivethirtyeight.com/tag/fivethirtyeight-podcasts/">FiveThirtyEight
+Elections Podcast</a>: How we use data analysis to forecast
+elections.<br />
+<a
+href="http://fivethirtyeight.com/tag/fivethirtyeight-podcasts/">What’s
+the Point</a>: Data in society. From FiveThirtyEight.</p>
 </div>
 <div id="twitter-feeds" class="section level3">
 <h3>Twitter Feeds</h3>
@@ -434,10 +457,21 @@ $(document).ready(function () {
 </div>
 <div id="philosophy" class="section level3">
 <h3>Philosophy</h3>
-<p><a href="https://www.amazon.com/Logic-Scientific-Discovery-Routledge-Classics/dp/0415278449/ref=sr_1_2?ie=UTF8&amp;qid=1474044878&amp;sr=8-2&amp;keywords=karl+popper">The Logic of Scientific Discovery</a>. 1934. Karl Popper.<br />
-<a href="https://www.amazon.com/Methodology-Scientific-Research-Programmes-Philosophical/dp/0521280311/ref=sr_1_5?ie=UTF8&amp;qid=1474044943&amp;sr=8-5&amp;keywords=lakatos">The Methodology of Scientific Research Programs</a> Collected works of Irme Lakatos<br />
-<a href="https://www.amazon.com/Against-Method-Paul-Feyerabend/dp/1844674428/ref=sr_1_1?ie=UTF8&amp;qid=1474045065&amp;sr=8-1&amp;keywords=Against+Method">Against Method</a> Paul Feyerabend’s provocative take on sciene in context.<br />
-<a href="https://www.amazon.com/Against-Method-Scientific-Lakatos-Feyerabend-Correspondence/dp/0226467759/ref=sr_1_2?ie=UTF8&amp;qid=1474044943&amp;sr=8-2&amp;keywords=lakatos">For and Against Method</a> Collected correspondence/dialogue of Imre Lakatos and Paul Feyerabend </p>
+<p><a
+href="https://www.amazon.com/Logic-Scientific-Discovery-Routledge-Classics/dp/0415278449/ref=sr_1_2?ie=UTF8&amp;qid=1474044878&amp;sr=8-2&amp;keywords=karl+popper">The
+Logic of Scientific Discovery</a>. 1934. Karl Popper.<br />
+<a
+href="https://www.amazon.com/Methodology-Scientific-Research-Programmes-Philosophical/dp/0521280311/ref=sr_1_5?ie=UTF8&amp;qid=1474044943&amp;sr=8-5&amp;keywords=lakatos">The
+Methodology of Scientific Research Programs</a> Collected works of Irme
+Lakatos<br />
+<a
+href="https://www.amazon.com/Against-Method-Paul-Feyerabend/dp/1844674428/ref=sr_1_1?ie=UTF8&amp;qid=1474045065&amp;sr=8-1&amp;keywords=Against+Method">Against
+Method</a> Paul Feyerabend’s provocative take on sciene in
+context.<br />
+<a
+href="https://www.amazon.com/Against-Method-Scientific-Lakatos-Feyerabend-Correspondence/dp/0226467759/ref=sr_1_2?ie=UTF8&amp;qid=1474044943&amp;sr=8-2&amp;keywords=lakatos">For
+and Against Method</a> Collected correspondence/dialogue of Imre Lakatos
+and Paul Feyerabend </p>
 </div>
 
 
@@ -449,7 +483,7 @@ $(document).ready(function () {
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
@@ -457,6 +491,23 @@ $(document).ready(function () {
 
 
 </script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
