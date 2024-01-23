@@ -1,34 +1,48 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
 
 <title>Course Schedule and Readings</title>
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 
-<style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -41,32 +55,8 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
+
+
 
 
 
@@ -77,13 +67,8 @@ h6 {
   margin-left: auto;
   margin-right: auto;
 }
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
-}
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -97,40 +82,16 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 54px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 59px;
-  margin-top: -59px;
-}
-.section h2 {
-  padding-top: 59px;
-  margin-top: -59px;
-}
-.section h3 {
-  padding-top: 59px;
-  margin-top: -59px;
-}
-.section h4 {
-  padding-top: 59px;
-  margin-top: -59px;
-}
-.section h5 {
-  padding-top: 59px;
-  margin-top: -59px;
-}
-.section h6 {
-  padding-top: 59px;
-  margin-top: -59px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -158,7 +119,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -170,7 +131,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -180,11 +141,28 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.parent().addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -196,13 +174,12 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -210,16 +187,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -232,6 +202,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -243,18 +214,6 @@ $(document).ready(function () {
   display: none;
 }
 </style>
-
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
 
 <!-- code folding -->
 
@@ -274,7 +233,7 @@ $(document).ready(function () {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -290,7 +249,7 @@ $(document).ready(function () {
   <a href="overview.html">Overview</a>
 </li>
 <li>
-  <a href="schedule_new.html">Schedule</a>
+  <a href="schedule.html">Schedule</a>
 </li>
 <li>
   <a href="final.html">Final</a>
@@ -318,7 +277,7 @@ $(document).ready(function () {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
@@ -327,110 +286,368 @@ $(document).ready(function () {
 </div>
 
 
-<p>While the topics covered are broad, each week will feature different examples from genetics, ecology, molecular, and evolutionary biology highlighting uses of each individual set of techniques. Each topic will have accompanying readings highlighting a general introduction to a technique (required), and one or more general references or examples. For access to blocked readings, biol609.<br />
+<p>While the topics covered are broad, each week will feature different
+examples from genetics, ecology, molecular, and evolutionary biology
+highlighting uses of each individual set of techniques. Each topic will
+have accompanying readings highlighting a general introduction to a
+technique (required), and one or more general references or examples.
+For access to blocked readings, biol609.<br />
 <br />
-To see the code of a lecture, load the slides, then change the file extension in your browser bar to .Rmd to get the code. Or go to <a href="https://github.com/biol609/biol609.github.io/tree/master/lectures">this link</a> for all of the code.</p>
+To see the code of a lecture, load the slides, then change the file
+extension in your browser bar to .Rmd to get the code. Or go to <a
+href="https://github.com/biol609/biol609.github.io/tree/master/lectures">this
+link</a> for all of the code.</p>
 <div id="week-1." class="section level3">
 <h3>Week 1.</h3>
-<p><strong>Lecture:</strong> <a href="lectures/01_intro.html">Why Advanced Data Analysis?</a>, <a href="lectures/02_generalized_linear_models.html">GLM Review</a><br />
-<strong>Etherpad:</strong> <a href="https://etherpad.wikimedia.org/p/609-intro" class="uri">https://etherpad.wikimedia.org/p/609-intro</a><br />
-<strong>Reading:</strong> <a href="http://byrneslab.net/classes/biol609/O&#39;Hara_2009_glmm.pdf">O’Hara 2009</a> through section on GLMs, <a href="http://byrneslab.net/classes/biol609/o&#39;hara_and_kotze_do_not_log_transform.pdf">O’Hara and Kotze 2010</a>, <a href="http://byrneslab.net/classes/biol609/Wharton_Hui_2011_Ecology.pdf">Wharton and Hui 2011</a>, <a href="http://byrneslab.net/classes/biol609/Ver_Hoef_and_Boveng_qp_neg%20binomial.pdf">ver Hoef and Boveng 2007 on overdispersion</a>, <a href="https://cran.r-project.org/web/packages/DHARMa/vignettes/DHARMa.html">Hartig DHARMa vignette</a><br />
-<strong>Files:</strong> <a href="lectures/02_data.zip">Data for GLM Lecture</a></p>
+<p>1/23/2022<br />
+<strong>Lecture</strong>: <a href="lectures/01_intro.html">Why Advanced
+Data Analysis?</a>, <a
+href="lectures/02_Bayesian_Intro.html">Re-Introduction to
+Bayes</a><br />
+<strong>Reading:</strong> McElreath Ch. 1-2<br />
+<strong>Deeper Reading:</strong> <a
+href="https://www.bayesrulesbook.com/chapter-2">Bayes’ Rules</a><br />
+<strong>Etherpad:</strong> <a
+href="https://etherpad.wikimedia.org/p/609-bayes-2024"
+class="uri">https://etherpad.wikimedia.org/p/609-bayes-2024</a></p>
 </div>
 <div id="week-2." class="section level3">
 <h3>Week 2.</h3>
-<p><strong>Lecture:</strong> <a href="./lectures/03_rma_quantile.html">Model II and Quantile Regression</a>, <a href="./lectures/04_gls.html">Generalised Least Squares</a><br />
-<strong>Etherpad:</strong> <a href="https://etherpad.wikimedia.org/p/609-alt_regression" class="uri">https://etherpad.wikimedia.org/p/609-alt_regression</a><br />
-<strong>Reading:</strong> <a href="http://byrneslab.net/classes/biol609/Warton_et_al_2012_MEE.pdf">Warton et al. SMATR</a>, <a href="http://byrneslab.net/classes/biol609/Warton_et_al-2006-Biological_Reviews.pdf">Warton et al. 2006 Model II Review</a>, <a href="http://byrneslab.net/classes/biol609/Cade_and_Noon_2003_Quantile.pdf">Cade and Noon 2003 on Quantile Regression</a>, <a href="http://byrneslab.net/classes/biol609/Brennen_et_al_2015_quantile.pdf">Brennen et al. 2015 quantile regression example</a>, <a href="https://bookdown.org/ccolonescu/RPoE4/heteroskedasticity.html">Colonescu Ch. 8 on Heteroskedasticity</a><br />
-<strong>Files:</strong> <a href="./lectures/data/03/ekk_from_dryad.csv">Elk data</a>, <a href="./lectures/data/04/Clams.txt">Clam data</a> <strong>R Packages:</strong> Quantreg,</p>
-</div>
-<div id="week-3." class="section level3">
-<h3>Week 3.</h3>
-<p><strong>Lecture:</strong> <a href="lectures/05_timeseries.html">Temporal Autocorrelation</a>, <a href="lectures/06_spatial.html">Spatial Autocorrelation</a><br />
-<strong>Etherpad:</strong> <a href="https://etherpad.wikimedia.org/p/609-autocorrelation" class="uri">https://etherpad.wikimedia.org/p/609-autocorrelation</a><br />
-<strong>Reading:</strong> <a href="http://byrneslab.net/classes/biol609/Zuur_ch_6_temporal.pdf">Zuur et al. on temporal autocorrelation</a>, <a href="https://dynamicecology.wordpress.com/2012/09/24/why-ols-estimator-is-an-unbiased-estimator-for-gls/">Why OLS is an Unbiased Estimator for GLS</a>, <a href="http://byrneslab.net/classes/biol609/Zuur_ch_7_space.pdf">Zuur et al. on spatial autocorrelation</a>, <a href="http://byrneslab.net/classes/biol609/hawkins_2011_spatial.pdf">Hawkings on the 8 1/2 deadly sins of spatial data analysis</a><br />
-<strong>Files:</strong> <a href="./lectures/data/05/allbirds.csv">Birds</a>, <a href="./lectures/data/05/planktonMeans.csv">Plankton</a>, <a href="./lectures/data/06/Boreality.txt">Boreal Forests</a>, <a href="./lectures/data/06/SDI2003.txt">Irish EPA Data</a><br />
-<strong>R Packages:</strong> nlme</p>
+<p>1/30/2022<br />
+<strong>Lecture:</strong> <a
+href="./lectures/03_posterior_sampling.html">Sampling from your
+Posterior</a><br />
+<strong>Reading:</strong> McElreath Chapter 3.<br />
+<strong>Deeper Reading:</strong> <a
+href="https://www.bayesrulesbook.com/chapter-6">Approximating the
+Posterior</a>, <a
+href="https://m-clark.github.io/bayesian-basics/">Bayesian Basics</a>,
+<a href="https://www.bayesrulesbook.com/chapter-8">Posterior Inference
+and Prediction</a><br />
+<strong>Etherpad:</strong> <a
+href="https://etherpad.wikimedia.org/p/609-posteriors-2024"
+class="uri">https://etherpad.wikimedia.org/p/609-posteriors-2024</a></p>
 </div>
 <div id="week-4." class="section level3">
 <h3>Week 4.</h3>
-<p><strong>Lecture:</strong> <a href="./lectures/07_random_effects.html">Random Effects</a>, <a href="./lectures/08_mixed_effects.html">Mixed Models</a><br />
-<strong>Etherpad:</strong> <a href="https://etherpad.wikimedia.org/p/609-ranef" class="uri">https://etherpad.wikimedia.org/p/609-ranef</a><br />
-<strong>Reading:</strong> <a href="http://byrneslab.net/classes/biol609/gelman_hill_ch_12.pdf">Gelman and Hill Ch. 12</a> and/or <a href="http://byrneslab.net/classes/biol609/Zuur_ch_5.pdf">Zuur on Random Effects</a><br />
-<strong>Writings on visualization:</strong> <a href="http://strengejacke.wordpress.com/2014/10/26/visualizing-generalized-linear-mixed-effects-models-with-ggplot-rstats-lme4/">Visualizing Mixed Models part 1</a>, <a href="http://strengejacke.wordpress.com/2014/11/18/visualizing-generalized-linear-mixed-effects-models-part-2-rstats-lme4/">Visualizing Mixed Models part 2</a>, <a href="http://cran.r-project.org/web/packages/sjPlot/index.html">sjPlot</a>, <a href="http://anythingbutrbitrary.blogspot.com/2012/06/random-regression-coefficients-using.html">Random regression coefficients using lme4</a>, <a href="http://stackoverflow.com/questions/13847936/in-r-plotting-random-effects-from-lmer-lme4-package-using-qqmath-or-dotplot">Making mixed model plots look fancy</a><br />
-<strong>A Little More Reading:</strong> <a href="http://jonlefcheck.net/2013/03/13/r2-for-linear-mixed-effects-models/">R<sup>2</sup> for mixed models (from Jon Lefcheck)</a><br />
-<strong>Your One Stop FAQ:</strong> <a href="https://rawgit.com/bbolker/mixedmodels-misc/master/glmmFAQ.html">Ben Bolker’s Mixed Model’s FAQ</a><br />
-<strong>Files:</strong> <a href="./lectures/data/07/mussels.csv">Mussels</a>, <a href="./lectures/data/07/mussels_ragged.csv">Uneven Mussels</a>, <a href="./lectures/data/08/rikz.csv">RIKZ Beach data</a>, <a href="./lectures/data/07nestedGrowth.csv">growth data</a><br />
-<strong>R Packages:</strong> lme4, lmerTest, <a href="https://github.com/jknowles/merTools">merTools</a>, sjplot, RLRsim, cAIC4</p>
+<p>2/6/2022<br />
+<strong>Lecture:</strong> <a
+href="./lectures/04_linear_models.html">Linear Bayesian
+Models</a>,<br />
+<strong>Reading:</strong> McElreath Chapter 4<br />
+<strong>Deeper Reading:</strong> <a
+href="https://www.bayesrulesbook.com/chapter-9">Simple Normal
+Regression</a>, <a
+href="https://www.bayesrulesbook.com/chapter-8">Posterior Inference and
+Prediction</a><br />
+<strong>Etherpad:</strong> <a
+href="https://etherpad.wikimedia.org/p/609-linreg-2024"
+class="uri">https://etherpad.wikimedia.org/p/609-linreg-2024</a></p>
 </div>
 <div id="week-5." class="section level3">
 <h3>Week 5.</h3>
-<p><strong>Lecture:</strong> <a href="https://1drv.ms/p/s!AvOIsObbweOroNIqHiVxra6SIrp4gw">Intro to Structural Equation Models</a>, <a href="https://1drv.ms/f/s!AvOIsObbweOroNIitg7KpsLhgffJrw">Implementing Piecewise SEM</a><br />
-<strong>Etherpad:</strong> <a href="https://etherpad.wikimedia.org/p/609-sem" class="uri">https://etherpad.wikimedia.org/p/609-sem</a><br />
-<strong>Reading:</strong> <a href="http://byrneslab.net/classes/biol609/Grace_et_al-2012-Ecosphere.pdf">Grace et al 2012 Ecosphere</a><br />
-<strong>R packages:</strong> piecewiseSEM</p>
+<p>2/13/2022<br />
+<strong>Lecture:</strong> <a
+href="./lectures/14_multiple_predictors.html">Multiple Predictor
+Variables</a>,<br />
+<strong>Reading:</strong> McElreath Chapter 5 - 6<br />
+<strong>Deeper Reading:</strong> <a
+href="https://www.bayesrulesbook.com/chapter-11">Extending the Normal
+Regression Model</a>.<br />
+<strong>Etherpad:</strong> <a
+href="https://etherpad.wikimedia.org/p/609-multiple_predictors-2024"
+class="uri">https://etherpad.wikimedia.org/p/609-multiple_predictors-2024</a></p>
 </div>
 <div id="week-6." class="section level3">
 <h3>Week 6.</h3>
-<p><strong>Lecture</strong>: <a href="./lectures/11_bayes_reintro.html">Re-Introduction to Bayesian Logic</a> and <a href="./lectures/12_posterior_sampling.html">Sampling</a><br />
-<strong>Reading:</strong> McElreath Ch. 1-3<br />
-<strong>Etherpad:</strong> <a href="https://etherpad.wikimedia.org/p/609-bayes" class="uri">https://etherpad.wikimedia.org/p/609-bayes</a></p>
+<p>2/20/2022<br />
+<strong>Lecture:</strong> <a href="./lectures/15_mmi.html">Bayesian
+Multimodel Inference</a><br />
+<strong>Reading:</strong> McElreath Chapter 7<br />
+<strong>Deeper Reading:</strong> <a
+href="http://izt.ciens.ucv.ve/ecologia/Archivos/ECO_POB%202014/ECOPO2_2014/Aho%20et%20al%202014.pdf">Aho
+et al 2013 Ecology</a>, <a
+href="http://link.springer.com/article/10.1007/s11222-013-9416-2">Gelman
+et al. 2013 on WAIC and LOO</a><br />
+<strong>Etherpad:</strong> <a
+href="https://etherpad.wikimedia.org/p/609-mmi-2024"
+class="uri">https://etherpad.wikimedia.org/p/609-mmi-2024</a></p>
 </div>
 <div id="week-7." class="section level3">
 <h3>Week 7.</h3>
-<p><strong>Lecture:</strong> <a href="./lectures/13_linear_models.html">Linear Bayesian Models</a>, <a href="./lectures/14_multiple_predictors.html">Multiple Predictor Variables (including Categoricals)</a><br />
-<strong>Reading:</strong> McElreath Chapter 4-5<br />
-<strong>Etherpad:</strong> <a href="https://etherpad.wikimedia.org/p/609-linreg" class="uri">https://etherpad.wikimedia.org/p/609-linreg</a></p>
+<p>2/27/2022<br />
+<strong>Lecture:</strong> <a
+href="./lectures/16_interactions.html">Interaction Effects</a>, <a
+href="./lectures/17_mcmc.html">Markov Chain Monte-Carlo
+Approaches</a><br />
+<strong>Reading:</strong> McElreath Chapter 8-9<br />
+<strong>Deeper Reading:</strong> <a
+href="https://www.bayesrulesbook.com/chapter-7">MCMC Under the Hood</a>.
+<strong>Etherpad:</strong> <a
+href="https://etherpad.wikimedia.org/p/609-interactions-2024"
+class="uri">https://etherpad.wikimedia.org/p/609-interactions-2024</a></p>
 </div>
 <div id="week-8." class="section level3">
 <h3>Week 8.</h3>
-<p><strong>Lecture:</strong> <a href="./lectures/15_mmi.html">Bayesian Multimodel Inference</a>, <a href="./lectures/16_interactions.html">Interaction Effects</a><br />
-<strong>Reading:</strong> McElreath Chapter 6-7<br />
-<strong>Additional Reading:</strong> <a href="http://izt.ciens.ucv.ve/ecologia/Archivos/ECO_POB%202014/ECOPO2_2014/Aho%20et%20al%202014.pdf">Aho et al 2013 Ecology</a>, <a href="http://link.springer.com/article/10.1007/s11222-013-9416-2">Gelman et al. 2013 on WAIC and LOO</a><br />
-<strong>Etherpad:</strong> <a href="https://etherpad.wikimedia.org/p/609-mmi" class="uri">https://etherpad.wikimedia.org/p/609-mmi</a></p>
+<p>3/6/2022<br />
+<strong>Lecture</strong>: <a
+href="lectures/09_generalized_linear_models.html">MaxEnt and GLMs - a
+review</a>, <a href="./lectures/10_bayesian_glm.html">Bayesian GLMs</a>,
+<a href="lectures/11_bayesian_glm_lab.html">GLM lab</a><br />
+<strong>Reading:</strong> McElreath Chapter 10-11. <strong>Deeper
+Reading:</strong> <a
+href="https://www.bayesrulesbook.com/chapter-12">Poisson and Negative
+Binomial Regression</a>, <a
+href="https://www.bayesrulesbook.com/chapter-13">Logistic
+Regression</a><br />
+<strong>Files:</strong>
+<code>usethis::use_course("https://biol609.github.io/lectures/glm_data.zip")</code><br />
+<strong>Etherpad:</strong> <a
+href="https://etherpad.wikimedia.org/p/609-glm-2024"
+class="uri">https://etherpad.wikimedia.org/p/609-glm-2024</a></p>
 </div>
 <div id="week-9." class="section level3">
 <h3>Week 9.</h3>
-<p><strong>Lecture:</strong> <a href="./lectures/17_mcmc.html">Markov Chain Monte-Carlo Approaches</a><br />
-<strong>Reading:</strong> McElreath Chapter 8,9<br />
-<strong>Etherpad:</strong> <a href="https://etherpad.wikimedia.org/p/609-mcmc_entropy" class="uri">https://etherpad.wikimedia.org/p/609-mcmc_entropy</a></p>
+<p>3/20/2022<br />
+<strong>Lecture:</strong> <a
+href="./lectures/12_overdisp.html">Overdispersed Models</a>, <a
+href="./lectures/13_zinfl.html">Zero Inflated Models</a><br />
+<strong>Reading:</strong> McElreath Chapter 11, <a
+href="https://www.biorxiv.org/content/10.1101/132753v1.abstract">Introduction
+to glmmTMB</a>, <a
+href="http://byrneslab.net/classes/biol609/Ver_Hoef_and_Boveng_qp_neg%20binomial.pdf">ver
+Hoef and Boveng 2007 on overdispersion</a>, <a
+href="http://byrneslab.net/classes/biol609/Rose_et_al_2006_zero_inflation.pdf">Roset
+et al 2006 on Overdispersion</a><br />
+<strong>Further Reading:</strong> <a
+href="http://byrneslab.net/classes/biol609/zuur_zero_inflation.pdf">Zuur
+chapter on zero inflation</a>, <a
+href="https://cran.r-project.org/web/packages/glmmTMB/vignettes/glmmTMB.pdf">Getting
+started with glmmTMB</a>, [Troubleshooting with glmmTMB]<br />
+<strong>Files:</strong> <a
+href="./lectures/data/20/fishing_duration.csv">Fishing Duration
+CSV</a><br />
+<strong>Etherpad:</strong> <a
+href="https://etherpad.wikimedia.org/p/609-zig_zag-2024"
+class="uri">https://etherpad.wikimedia.org/p/609-zig_zag-2024</a></p>
 </div>
 <div id="week-10." class="section level3">
 <h3>Week 10.</h3>
-<p><strong>Lecture</strong>: <a href="./lectures/18_maxent_glm.html">MaxEnt and GLMs</a>, Generalized Linear Models in a Bayesian Framework<br />
-<strong>Reading:</strong> McElreath Chapter 9-10</p>
+<p>3/27/2022<br />
+<strong>Lecture:</strong> <a
+href="./lectures/07_random_effects.html">Random Effects</a>, <a
+href="./lectures/08_mixed_effects.html">Mixed Models</a><br />
+<strong>Etherpad:</strong> <a
+href="https://etherpad.wikimedia.org/p/609-ranef-2024"
+class="uri">https://etherpad.wikimedia.org/p/609-ranef-2024</a><br />
+<strong>Reading:</strong> <a
+href="http://byrneslab.net/classes/biol609/gelman_hill_ch_12.pdf">Gelman
+and Hill Ch. 12</a> and/or <a
+href="http://byrneslab.net/classes/biol609/Zuur_ch_5.pdf">Zuur on Random
+Effects</a>, <a
+href="https://www.cell.com/trends/ecology-evolution/fulltext/S0169-5347(09)00019-6">A
+Practical Guide to Generalized Linear Mixed Models</a><br />
+<strong>Writings on visualization:</strong>
+<a href="http://anythingbutrbitrary.blogspot.com/2012/06/random-regression-coefficients-using.html">Random
+regression coefficients using lme4</a>,
+<a href="http://stackoverflow.com/questions/13847936/in-r-plotting-random-effects-from-lmer-lme4-package-using-qqmath-or-dotplot">Making
+mixed model plots look fancy</a><br />
+<strong>A Little More Reading:</strong>
+<a href="http://jonlefcheck.net/2013/03/13/r2-for-linear-mixed-effects-models/">R<sup>2</sup>
+for mixed models (from Jon Lefcheck)</a>, <a
+href="https://rstudio-pubs-static.s3.amazonaws.com/33653_57fc7b8e5d484c909b615d8633c01d51.html">lme4
+converge warnings and solutions</a><br />
+<strong>Your One Stop FAQ:</strong> <a
+href="https://bbolker.github.io/mixedmodels-misc/">Ben Bolker’s Mixed
+Model’s FAQ</a><br />
+<strong>Files:</strong> <a
+href="./lectures/data/07/mussels.csv">Mussels</a>, <a
+href="./lectures/data/07/mussels_ragged.csv">Uneven Mussels</a>, <a
+href="./lectures/data/08/rikz.csv">RIKZ Beach data</a>, <a
+href="./lectures/data/08/nestedGrowth.csv">growth data</a><br />
+<strong>R Packages:</strong> lme4, lmerTest, <a
+href="https://github.com/jknowles/merTools">merTools</a>, RLRsim,
+cAIC4</p>
+</div>
+<div id="week-8.-1" class="section level3">
+<h3>Week 8.</h3>
+<p>4/3/2022<br />
+<strong>Lecture:</strong> <a
+href="./lectures/22_varying_intercept.html">Varying Intercept Mixed
+Models</a> in a Bayesian Context, <a
+href="./lectures/23a_varslope.html">Varying Slope Models</a><br />
+<strong>Etherpad:</strong> <a
+href="https://etherpad.wikimedia.org/p/609-mixed_bayesian-2024"
+class="uri">https://etherpad.wikimedia.org/p/609-mixed_bayesian-2024</a><br />
+<strong>Reading:</strong> McElreath Chapter 12, 13<br />
+<strong>Further Reading:</strong> <a
+href="http://byrneslab.net/classes/biol609/gelman_hill_ch_12.pdf">Gelman
+and Hill Ch. 12</a> (see the bit on one model written 5 ways), <a
+href="http://byrneslab.net/classes/biol609/gelman_hill_ch_13.pdf">Gelman
+and Hill Ch. 13</a>, <a
+href="http://byrneslab.net/classes/biol609/Gelman_multcomp.pdf">Gelman
+on multiple comparisons in mixed models</a></p>
+</div>
+<div id="week-9.-1" class="section level3">
+<h3>Week 9.</h3>
+<p>4/10/2022<br />
+<strong>Lecture:</strong> <a
+href="./lectures/23c_brms_prediction.html">brms and Prediction with
+Mixed Models</a>, Group-Mean Centering and Other Model Structures<br />
+<strong>Etherpad:</strong> <a
+href="https://etherpad.wikimedia.org/p/609-mixed_bayesian-2024"
+class="uri">https://etherpad.wikimedia.org/p/609-mixed_bayesian-2024</a><br />
+<strong>Reading:</strong> <a
+href="./Readings/McNeish_Kelley_PsychMethods_2024.pdf">McNeish and Kelly
+2018</a>, <a href="http://rpubs.com/jebyrnes/causal_mods">Causal Model
+Structures and Random Effects</a>, <a
+href="./Readings/2018-11-02_wim_poe_clustered_slides.pdf">Poe Lecture
+Slides</a>, <a
+href="./Readings/Bell2018_Article_UnderstandingAndMisunderstandi.pdf">Bell
+et al. 2018a</a>, <a href="./Bell_2018_Qual_Quant.pdf">Bell et al
+2018b</a></p>
+</div>
+<div id="week-10.-1" class="section level3">
+<h3>Week 10.</h3>
+<p>4/17/2022<br />
+<strong>Lecture:</strong> <a href="lectures/05_timeseries.html">Temporal
+Autocorrelation</a>, <a href="lectures/20_spatial.html">Spatial
+Autocorrelation</a><br />
+<strong>Etherpad:</strong> <a
+href="https://etherpad.wikimedia.org/p/609-autocorrelation-2024"
+class="uri">https://etherpad.wikimedia.org/p/609-autocorrelation-2024</a><br />
+<strong>Reading:</strong> <a
+href="http://byrneslab.net/classes/biol609/Zuur_ch_6_temporal.pdf">Zuur
+et al. on temporal autocorrelation</a>, <a
+href="https://dynamicecology.wordpress.com/2012/09/24/why-ols-estimator-is-an-unbiased-estimator-for-gls/">Why
+OLS is an Unbiased Estimator for GLS</a>, <a
+href="http://byrneslab.net/classes/biol609/Zuur_ch_7_space.pdf">Zuur et
+al. on spatial autocorrelation</a>, <a
+href="http://byrneslab.net/classes/biol609/hawkins_2011_spatial.pdf">Hawkings
+on the 8 1/2 deadly sins of spatial data analysis</a><br />
+<strong>Further Reading:</strong> <a
+href="https://ourcodingclub.github.io/2018/12/04/inla.html">Intro to
+INLA for spatial and spatiotemporal modeling</a>, <a
+href="https://www.jstatsoft.org/article/view/v063i20/v63i20.pdf">Spatial
+Data Analysis with R-INLA</a>, <a
+href="https://besjournals.onlinelibrary.wiley.com/doi/abs/10.1111/2041-210X.13168">inlabru:
+a package for Baysianspatial modelling from ecological survey data</a>,
+<a
+href="http://www.r-inla.org/events/bayes2013anintroductiontoinlawithacomparisontojagshandson">Introduction
+to INLA</a>, <a href="http://www.r-inla.org/examples/volume-1">more
+R-INLA examples</a>, <a
+href="https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/j.2041-210X.2012.00211.x">Hierarchical
+analysis of spatially autocorrelated ecological data using integrated
+nested Laplace approximation</a> with <a
+href="https://besjournals.onlinelibrary.wiley.com/action/downloadSupplement?doi=10.1111%2Fj.2041-210X.2012.00211.x&amp;file=MEE3_211_sm_Appendices-data-S1-S2.zip">code
+appendix</a><br />
+<strong>Files:</strong> <a
+href="./lectures/data/05/allbirds.csv">Birds</a>, <a
+href="./lectures/data/05/planktonMeans.csv">Plankton</a>, <a
+href="./lectures/data/06/Boreality.txt">Boreal Forests</a>, <a
+href="./lectures/data/06/SDI2003.txt">Irish EPA Data</a>  <strong>R
+Packages:</strong> nlme</p>
 </div>
 <div id="week-11." class="section level3">
 <h3>Week 11.</h3>
-<p><strong>Lecture:</strong> <a href="./lectures/20_zinfl.html">Gamma and Zero Inflated Models</a>, <a href="./lectures/21_overdisp.html">Overdispersed Models</a><br />
-<strong>Reading:</strong> McElreath Chapter 11, <a href="http://seananderson.ca/2014/04/08/gamma-glms.html">fitting Gamma models multiple ways</a>, <a href="http://seananderson.ca/2014/05/18/gamma-hurdle.html">Gamma hurdle model</a><br />
-<strong>Files:</strong> <a href="./lectures/data/20/fishing_duration.csv">Fishing Duration CSV</a><br />
-<strong>Etherpad:</strong> <a href="https://etherpad.wikimedia.org/p/609-zig_zag" class="uri">https://etherpad.wikimedia.org/p/609-zig_zag</a></p>
+<p>4/24/2022<br />
+<strong>Lecture:</strong> <a
+href="./lectures/24_gaussian_process.html">Gaussian Proces Models</a>,
+<a href="./lectures/22_gams.html">Generalized Additive Models
+(GAMs)</a><br />
+<strong>Etherpad:</strong> <a
+href="https://etherpad.wikimedia.org/p/609-beyond-2024"
+class="uri">https://etherpad.wikimedia.org/p/609-beyond-2024</a><br />
+<strong>Files:</strong> <a
+href="./lectures/data/gp/predict_gpl2.R">predicted GP script</a><br />
+<strong>Reading:</strong> <a
+href="./Readings/verHoef_spatial_autocorrelation.pdf">Spatial
+autoregressive models for statistical inference from ecological
+data</a>, McElreath Chapter 14, <a
+href="http://byrneslab.net/classes/biol609/Roberts_et_al_2012_gaussian_process.pdf">Roberts
+et al. 2012</a>, <a
+href="http://environmentalcomputing.net/intro-to-gams/">GAMs: an
+Introduction</a>, <a
+href="https://m-clark.github.io/generalized-additive-models/">Michael
+Clark’s GAM Introduction</a>, <a
+href="./Readings/Pedersen-2024-Hierarchical%20Generalized%20Additive%20Models%20in%20ecology.pdf">Hierarchical
+Generalized Additive Models in ecology: an introduction with
+mgcv</a><br />
+<strong>Further Readings:</strong> <a
+href="./Readings/DormannEcography30_57164.pdf">Methods to account for
+spatial autocorrelation in the analysis of species distributional data:
+a review</a></p>
 </div>
 <div id="week-12." class="section level3">
 <h3>Week 12.</h3>
-<p><strong>Lecture:</strong> <a href="./lectures/22_varying_intercept.html">Varying Intercept Mixed Models</a> in a Bayesian Context, <a href="./lectures/23a_varslope.html">Varying Slope Models</a>, <a href="./lectures/23b_prediction.html">Prediction with Mixed Models</a><br />
-<strong>Etherpad:</strong> <a href="https://etherpad.wikimedia.org/p/609-mixed_bayesian" class="uri">https://etherpad.wikimedia.org/p/609-mixed_bayesian</a><br />
-<strong>Reading:</strong> McElreath Chapter 12, 13<br />
-<strong>Additional Reading:</strong> <a href="http://byrneslab.net/classes/biol609/gelman_hill_ch_12.pdf">Gelman and Hill Ch. 12</a> (see the bit on one model written 5 ways), <a href="http://byrneslab.net/classes/biol609/gelman_hill_ch_13.pdf">Gelman and Hill Ch. 13</a>, <a href="http://byrneslab.net/classes/biol609/Gelman_multcomp.pdf">Gelman on multiple comparisons in mixed models</a></p>
+<p>5/1/2022<br />
+<strong>Lecture:</strong> Measurement Error and Missing Data, <a
+href="./lectures/03_rma_quantile.html">Model II and Quantile
+Regression</a><br />
+<strong>Etherpad:</strong> <a
+href="https://etherpad.wikimedia.org/p/609-alt_regression-2024"
+class="uri">https://etherpad.wikimedia.org/p/609-alt_regression-2024</a><br />
+<strong>Reading:</strong> <a
+href="http://byrneslab.net/classes/biol609/Warton_et_al_2012_MEE.pdf">Warton
+et al. SMATR</a>, <a
+href="http://byrneslab.net/classes/biol609/Warton_et_al-2006-Biological_Reviews.pdf">Warton
+et al. 2006 Model II Review</a>, <a
+href="http://byrneslab.net/classes/biol609/Cade_and_Noon_2003_Quantile.pdf">Cade
+and Noon 2003 on Quantile Regression</a>, <a
+href="http://byrneslab.net/classes/biol609/Brennen_et_al_2015_quantile.pdf">Brennen
+et al. 2015 quantile regression example</a>, <a
+href="https://bookdown.org/ccolonescu/RPoE4/heteroskedasticity.html">Colonescu
+Ch. 8 on Heteroskedasticity</a><br />
+<strong>Files:</strong> <a
+href="./lectures/data/03/ekk_from_dryad.csv">Elk data</a>, <a
+href="./lectures/data/04/Clams.txt">Clam data</a><br />
+<strong>R Packages:</strong> Quantreg</p>
 </div>
 <div id="week-13." class="section level3">
 <h3>Week 13.</h3>
-<p><strong>Lecture:</strong> <a href="./lectures/24_gaussian_process.html">Gaussian Proces Models</a> and <a href="./lectures/25_beyond_rethinking.html">Rethinking Alternatives</a><br />
-<strong>Etherpad:</strong> <a href="https://etherpad.wikimedia.org/p/609-beyond" class="uri">https://etherpad.wikimedia.org/p/609-beyond</a><br />
-<strong>Files:</strong> <a href="./lectures/data/gp/predict_gpl2.R">predicted GP script</a><br />
-<strong>Reading:</strong> McElreath Chapter 14, <a href="http://byrneslab.net/classes/biol609/Roberts_et_al_2012_gaussian_process.pdf">Roberts et al. 2012</a><br />
-<strong>Further reading:</strong> <a href="https://thinkinator.com/2016/01/12/r-users-will-now-inevitably-become-bayesians/">R users will now inevitably become Bayesians</a>, <a href="https://cran.r-project.org/web/packages/rstanarm/vignettes/rstanarm.html">rstanarm intro</a>, <a href="https://cran.r-project.org/web/packages/brms/vignettes/brms_overview.pdf">brms overview</a>, <a href="http://mc-stan.org">stan</a>, <a href="http://www.r-inla.org/events/bayes2013anintroductiontoinlawithacomparisontojagshandson">Introduction to INLA</a>, <a href="http://www.r-inla.org/examples/volume-1">more R-INLA examples</a>,</p>
+<p>5/8/2022<br />
+<strong>Lecture:</strong> Causal Modeling<br />
+<strong>Readings:</strong> <a
+href="./Readings/Hernán_and_Healey_2024.pdf">A Second Change to Get
+Causal Inference Right</a>, <a
+href="./Readings/Larsen_et_al_2024.pdf">Causal analysis in control
+impact studies</a>, <a href="Pearl_2010_causal_inference.pdf">Pearl
+2010</a><br />
+<strong>Further Reading:</strong> <a
+href="https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/">Causal
+Inference</a></p>
 </div>
 <div id="week-14." class="section level3">
 <h3>Week 14.</h3>
-<p><strong>Lecture:</strong> Open Lab<br />
-<strong>Reading:</strong> <a href="https://github.com/stan-dev/stan/wiki/Prior-Choice-Recommendations">Prior Choice Wiki</a></p>
+<p>5/15/2022<br />
+<!-- __Lecture:__ [Intro to Structural Equation Models](https://1drv.ms/p/s!AvOIsObbweOroNIqHiVxra6SIrp4gw), [Implementing Piecewise SEM](https://1drv.ms/f/s!AvOIsObbweOroNIitg7KpsLhgffJrw)  -->
+<strong>Lecture:</strong> <a
+href="https://www.dropbox.com/s/l7z6sbs16jk2y0s/23_SEM_Intro.pptx?dl=0">Intro
+to Structural Equation Models</a>, <a
+href="https://www.dropbox.com/s/j59oodlmcx53tiw/24_Estimation_in_SEM.pptx?dl=0">SEM
+Implementation</a><br />
+<strong>Etherpad:</strong> <a
+href="https://etherpad.wikimedia.org/p/609-sem-2024"
+class="uri">https://etherpad.wikimedia.org/p/609-sem-2024</a><br />
+<strong>Reading:</strong> <a
+href="http://byrneslab.net/classes/biol609/Grace_et_al-2012-Ecosphere.pdf">Grace
+et al 2012 Ecosphere</a>, <a
+href="./Readings/Lefcheck_2016_SEM.pdf">Lefcheck 2016</a><br />
+_<strong>Further Reading:</strong> <a
+href="https://jslefche.github.io/sem_book/">Notes from Jon
+Lefcheck</a><br />
+<strong>Helpful Websites:</strong> <a
+href="http://jslefche.github.io/piecewiseSEM/">piecewiseSEM</a>, <a
+href="http://lavaan.ugent.be/">lavaan</a>, <a
+href="https://www.usgs.gov/centers/wetland-and-aquatic-research-center/science/quantitative-analysis-using-structural-equation">Jim
+Grace’s Tutorials</a></p>
 </div>
 <div id="week-15." class="section level3">
 <h3>Week 15.</h3>
-<p><strong>Lecture:</strong> Final Presentations, May 11<br />
-<strong>Assignments:</strong> Final Paper due, May 18</p>
+<p>5/22/2022<br />
+<strong><strong>Final Work Party Week!</strong></strong><br />
+<strong>Final Presentations:</strong> Friday May 17th<br />
+<strong>Final Papers Due:</strong> May 21st</p>
 </div>
 
 
@@ -442,7 +659,7 @@ To see the code of a lecture, load the slides, then change the file extension in
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
@@ -450,6 +667,23 @@ $(document).ready(function () {
 
 
 </script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
