@@ -5,10 +5,13 @@ title: "Biol 609: Advanced Data Analysis for Biology"
 ```{r demoplot, fig.align='center', echo=FALSE, fig.height=4, fig.width=6, cache=TRUE, warning=FALSE, message=FALSE, comment=NA, results="hide"}
 library(rstanarm)
 library(ggplot2)
+library(palmerpenguins)
 
-chains <- stan_glm(Petal.Width ~ Petal.Length *Species, data=iris, 
+chains <- stan_glm(bill_depth_mm ~ body_mass_g *species, data=penguins, 
                    family="gaussian", verbose=FALSE, show_messages=FALSE)
-plot(chains, plotfun="stan_trace")
+
+bayesplot::color_scheme_set("brewer-Set3")
+plot(chains, plot = "mcmc_trace")
 ```
 
 **Instructor:** Jarrett Byrnes, PhD.
@@ -17,7 +20,7 @@ plot(chains, plotfun="stan_trace")
 
 **Weekly Schedule:** Tuesday & Thursday 2-3:30
 
-**Office Hours:** Prof. Byrnes will hold office hours Wednesday from 1:30-3.
+**Office Hours:** Prof. Byrnes will hold office hours Thursday from 10-12.
 
 **Source for this Website:** https://github.com/biol609/biol609.github.io/
 &nbsp;  
@@ -25,5 +28,5 @@ plot(chains, plotfun="stan_trace")
 &nbsp;  
 
 ## Course News: 
-*1/25/19* Welcome to the class! Please browse around the site or download the [syllabus](./syllabus/adv_data_analysis_syllabus_2016a.doc)!
+*1/25/24* Welcome to the class! Please browse around the site or download the olde [syllabus](./syllabus/adv_data_analysis_syllabus_2016a.doc)!
 
