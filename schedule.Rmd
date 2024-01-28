@@ -15,7 +15,8 @@ datestring <- paste(month(current_date), day(current_date), year(current_date), 
 `r datestring`   
 __Lecture__: [Why Advanced Data Analysis?](lectures/01_intro.html),  [Introduction to Bayes](lectures/02_Bayesian_Intro.html)   
 __Reading:__ McElreath Ch. 1-2  
-__Deeper Reading:__ [Bayes' Rules](https://www.bayesrulesbook.com/chapter-2)  
+__Deeper Reading:__ [Bayes' Rules](https://www.bayesrulesbook.com/chapter-2)   
+__Even Deeper Reading:__ [Bayesian Basics](https://m-clark.github.io/bayesian-basics/)  
 __Tidying Rethinking:__ [Small Worlds and Large Worlds](https://bookdown.org/content/4857/small-worlds-and-large-worlds.html)  
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-bayes-2024  
 
@@ -28,7 +29,7 @@ datestring <- paste(month(current_date), day(current_date), year(current_date), 
 `r datestring`  
 __Lecture:__ [Sampling from your Posterior](./lectures/03_posterior_sampling.html)     
 __Reading:__ McElreath Chapter 3, Sampling the Imaginary   
-__Deeper Reading:__ [Approximating the Posterior](https://www.bayesrulesbook.com/chapter-6), <!-- [Bayesian Basics](https://m-clark.github.io/bayesian-basics/), -->[Posterior Inference and Prediction](https://www.bayesrulesbook.com/chapter-8)    
+__Deeper Reading:__ [Approximating the Posterior](https://www.bayesrulesbook.com/chapter-6), [Posterior Inference and Prediction](https://www.bayesrulesbook.com/chapter-8)    
 __Even Deeper Reading:__ [Are confidence intervals better termed ”uncertainty intervals”?
 ](http://www.stat.columbia.edu/~gelman/research/published/uncertainty_intervals.pdf), [Assessing uncertainty in physcial constants](https://www.cmu.edu/epp/people/faculty/research/Fischoff-Henrion-Assessing%20uncertainty%20in%20physical%20constants.pdf)  
 __Tidying Rethinking:__ [Sampling from your Posterior](https://bookdown.org/content/4857/sampling-the-imaginary.html)   
