@@ -12,7 +12,7 @@ output:
     self_contained: false
     lib_dir: libs
 ---
-##
+#
 <h2>Sampling Your Posterior</h2>
 
 ![](./images/12/coolest_bayesian.jpg){width="60%"}
@@ -29,7 +29,7 @@ library(tidyverse)
 library(ggplot2)
 theme_set(theme_bw(base_size = 14))
 ```
-## The data
+# The data
 So, we've flipped the globe 6 times, and drawn W,L,W,W,W,L,W,L,W\
 ```{r define_w, echo=TRUE}
 water <- 6
@@ -37,7 +37,7 @@ water <- 6
 
 ![](./images/12/rcLnp89bi.jpg){width="50%"}
 
-## Grid Sampling
+# Grid Sampling
 <div style="text-align:left">
 In a data frame:  
 1. Use `seq` to come up with a set of possible probability values\
@@ -51,99 +51,177 @@ In a data frame:
 5. Calculate your posterior, as the previous value divided by the sum of all prior*likelihoods
 </div>
 
-## And we've made a grid sample
+# And we've made a grid sample
 ```{r make_grid, echo=TRUE}
 library(dplyr)
 
-grid <- data.frame(prob = seq(0,1,.01), prior=1) %>%
+# our hypotheses and prior = 1/nrow
+grid <- data.frame(prob = seq(0,1,.01), 
+                   prior=1/101) |>
   
+  #calculate likelihood
   mutate(likelihood = 
-           dbinom(water, size = 9, prob = prob)) %>%
+           dbinom(water, size = 9, prob = prob)) |>
   
-  mutate(posterior = likelihood*prior) %>%
+  # multiply by prior
+  mutate(posterior = likelihood*prior) |>
   
+  # divide by marginal (normalize)
   mutate(posterior = posterior/sum(posterior))
 ```
 
-## 
+
+# Note - if rounding error is a problem
+```{r make_log_grid, echo=TRUE}
+
+# our hypotheses
+log_grid <- data.frame(prob = seq(0,1,.01), 
+                   prior=1/101) |>
+  
+  #calculate log likelihood
+  mutate(likelihood = 
+           dbinom(water, size = 9, prob = prob, log = TRUE)) |>
+  
+  # multiply by prior
+  mutate(posterior = likelihood + prior) |>
+  
+  # exponentiate and divide by marginal (normalize)
+  mutate(posterior = exp(posterior),
+         posterior = posterior/sum(posterior))
+```
+
+
+# 
 <br><br><br>
 <center><h3>How do we query our posterior?</h3></centeR>
 
-## Our posterior
+
+# Our posterior
 ```{r}
 head(grid)
 ```
 
-## Our posterior at it's peak
+# Our posterior at it's peak
 ```{r}
-grid %>% arrange(desc(posterior)) %>% head
+grid |> 
+  arrange(desc(posterior)) |> 
+  head()
 ```
-## How do we query our posterior?
+
+# What does it look like?
+
+```{r view_posterior, echo = FALSE}
+library(ggplot2)
+theme_set(theme_classic(base_size = 14))
+ggplot(grid, aes(x = prob, y = posterior)) + geom_line()
+```
+
+## Code
+
+```{r view_posterior_show, echo = TRUE, eval = FALSE}
+library(ggplot2)
+theme_set(theme_classic(base_size = 14))
+
+ggplot(grid, aes(x = prob, y = posterior)) + geom_line()
+```
+
+# How do we query our posterior?
 > 1. We could look at all values of the posterior and calcuate the density  
 \
 > 2. We could look at the highest posterior or weighted average  
 \
-> 3. We could integrate over a selected range and...
+> 3. We could **integrate** over a selected range and...
 
-## AH! Intergrals? No! Samples? Yes!
+# AH! Intergrals? No! Samples? Yes!
 > - Posteriors summarize the frequency of certain values  
 \
 > - We can leverage that and use our grid sample to generate an **empirical distribution**  
 \
 > - This lets us develop an intuitive notion of the posterior, and manipulate it easily
 
-## Sampling from your Posterior
+# Sampling from your Posterior
+
 ```{r samp}
-samp <- sample(grid$prob, 
+samp <- tibble(
+  draw = 1:1e4,
+  
+  samp = sample(grid$prob, # parameters
                
-               size = 1e4,
+               size = 1e4,  #how many draws
                
-               replace=TRUE,
+               replace=TRUE, # sample with replacement
                
-               prob = grid$posterior)
+               prob = grid$posterior) # probability of each parameter
+)
 ```
 
-## Sampling from your Posterior
-```{r plot_samp, echo = TRUE}
-plot(samp)
+# Sampling from your Posterior
+
+```{r plot_samp, echo = FALSE, eval = TRUE}
+ggplot(samp, aes(x = draw, y = samp)) +
+  geom_point(alpha = .4)
 ```
 
-## Sampling from your Posterior: MCMC style
-```{r ggplot_samp}
-samp_df <- tibble(samp = samp, draw = 1:length(samp))
-qplot(y = samp, x = draw, data = samp_df, geom="line")
+## Code
+```{r plot_samp_show, echo = TRUE, eval = FALSE}
+ggplot(samp, aes(x = draw, y = samp)) +
+  geom_point(alpha = .4)
+```
+
+# Sampling from your Posterior: MCMC style
+```{r ggplot_samp, echo = FALSE}
+ggplot(samp, aes(x = draw, y = samp)) +
+  geom_line(alpha = 1)
+```
+
+## Code
+```{r ggplot_samp_show, eval = FALSE}
+ggplot(samp, aes(x = draw, y = samp)) +
+  geom_line(alpha = 1)
+```
+
+# What can we do with this: histogram
+```{r hist_samp, echo = FALSE}
+ggplot(samp, aes(x = samp)) +
+  geom_histogram(bins = 40)+ 
+  labs(subtitle = "40 bins")
+```
+
+## Code
+```{r hist_samp, eval = FALSE}
+```
+
+# Histograms can show weakness of grid
+```{r hist_samp_50, echo = FALSE}
+ggplot(samp, aes(x = samp)) +
+  geom_histogram(bins = 50) + 
+  labs(subtitle = "50 bins")
+```
+
+## Code
+```{r hist_samp_50, eval = FALSE}
 ```
 
 
-## What can we do with this: histogram
-```{r hist_samp, echo = TRUE}
-qplot(x = samp, data = samp_df, geom="histogram", bins = 40)+
-  ggtitle("bins = 40")
-```
+# What can we do with this: density
 
-## Histograms can show weakness of grid
-```{r hist_samp_50}
-qplot(x = samp, data = samp_df, geom="histogram", bins = 50) +
-  ggtitle("bins = 50")
-```
-
-
-## What can we do with this: density
-```{r density_samp, echo = TRUE}
-qplot(x = samp, data = samp_df, geom="density", fill=I("grey"))
-```
-
-## What do you learn from this?
 ```{r density_samp, echo = FALSE}
+ggplot(samp, aes(x = samp)) +
+  geom_density(fill = "grey")
 ```
 
-##
+## Code
+```{r density_samp, eval = FALSE}
+```
+
+#
 \
 \
 \
 <h3>Summarizing a Parameter with a Sample</h3>
 
-## Summarizing a sample of a posterior: Questions we can ask
+# Summarizing a sample of a posterior: Questions we can ask
+
 > How much of the posterior is *less* than a certain value?  
 \
 > How much of the posterior is *greater* than a certain value?  
@@ -152,18 +230,17 @@ qplot(x = samp, data = samp_df, geom="density", fill=I("grey"))
 \
 > What is the range of the values of some percent of the posterior? e.g., 90%  
 
-## Looking at mass < a key value
+# Looking at mass < a key value
 - Let's say we wanted the % of the posterior < 0.4  
 \
 ```{r echo = TRUE}
-sum(samp < 0.4) / length(samp)
+sum(samp$samp < 0.4) / nrow(samp)
 ```
 
-So, `r sum(samp < 0.4) / length(samp)*100`% of the posterior
+So, `r sum(samp$samp < 0.4) / nrow(samp)*100`% of the posterior
 
-## Plotting
-It's a filter thang!
-```{r plot_crit_val, eval=FALSE}
+# Plotting an Interval
+```{r plot_crit_val, echo=FALSE}
 ggplot() +
   
   #grid posterior
@@ -171,16 +248,17 @@ ggplot() +
                aes(x = prob, y = posterior)) +
   
   #the interval
-  geom_ribbon(data = grid %>% filter(prob < 0.4),
-              ymin = 0, aes(x = prob, ymax = posterior),
+  geom_ribbon(data = grid |> filter(prob < 0.4), #interval
+              ymin = 0, aes(x = prob, ymax = posterior), #top and bottom
               fill = "black")
 ```
 
-## Plotting
-```{r plot_crit_val, echo=FALSE}
+## Code: 
+It's a filter thang!
+```{r plot_crit_val, eval=FALSE}
 ```
 
-## Try a few
+# Try a few
 - What % is < 0.6  \
   
 - What % is > 0.6  \
@@ -188,43 +266,55 @@ ggplot() +
 - What % is between 0.2 and 0.6  \
 
 
-## How do we describe a parameter
-- Typically we want to know a parameter estimate and incormation about uncertainty  
+# How do we describe a parameter
+- Typically we want to know a parameter estimate and information about uncertainty  
 \
 - Uncertainty can be summarized via the distribution of a large sample  
-    - We can look at credible intervals based on mass of sample  
+    - We can look at credible (compatability) intervals based on mass of sample  
 \
 - We have a few point estimates we can also draw from a sample  
     - Mean, median, mode
 
-## Summarizing Uncertainty: 50th Percentile Interval
+# Summarizing Uncertainty: 50th Percentile Interval
 <div style="text-align:left">
-We often look at the 95% interval
+We often look at the 95% credible interval
 ```{r quant_95}
-quantile(samp, c(0.025, 0.975))
+quantile(samp$samp, c(0.025, 0.975))
 ```
 <div class = "fragment">
-But this is arbitrary (thanks, Fisher), and unstable. Lower intervals are more stable
-</div>
-<div class = "fragment">
+But this is arbitrary (thanks, Fisher), and unstable. <br>
+Lower intervals are more stable - e.g., the 50% credible Interval
 ```{r quant_50}
-quantile(samp, c(0.25, 0.75))
+quantile(samp$samp, c(0.25, 0.75))
 ```
 </div>
 </div>
 
 
-## Summarizing Uncertainty: 50th Percentile Interval
+# Summarizing Uncertainty: Percentiles
 We can calculate quantiles using the cummulative density of the posterior
 
 ```{r quant2}
-grid <- grid %>%
+grid <- grid |>
   mutate(quantile = cumsum(posterior)/sum(posterior))
 ```
 
-## Summarizing Uncertainty: 50th Percentile Interval
+# Summarizing Uncertainty: 50th Percentile Interval
+
+```{r quant3, echo = FALSE}
+ggplot(grid, aes(x = prob, y = quantile)) +
+  geom_line() +
+  geom_hline(yintercept = 0.25, color = "red", lty = 2) +
+  geom_hline(yintercept = 0.75, color = "red", lty = 2)
+```
+
+## Code
+```{r quant3, eval = FALSE}
+```
+
+# Summarizing Uncertainty: 50th Percentile Interval
 Visualize as before
-```{r quant_plot, eval=FALSE}
+```{r quant_plot, echo=FALSE}
 ggplot() +
   
   #grid posterior
@@ -232,58 +322,89 @@ ggplot() +
                aes(x = prob, y = posterior)) +
   
   #the interval
-  geom_ribbon(data = grid %>% filter(quantile > 0.25 & quantile < 0.75),
+  geom_ribbon(data = grid |> filter(quantile > 0.25 & quantile < 0.75),
               ymin = 0, aes(x = prob, ymax = posterior),
               fill = "black")
 ```
 
-## Summarizing Uncertainty: 50th Percentile Interval
+## Summarizing Uncertainty: 50th Percentile Interval Code
 Visualize as before
-```{r quant_plot, echo = FALSE}
+```{r quant_plot, eval = FALSE}
 ```
 
 Note that this is not the **Highest** Posterior Density Interval
 
-## PI v. HPDI
+# PI v. HPDI
 - Percentile Intervals get interval around median that covers X% of the distribution\
 \
 - Highest Posteriod Density Interval gets interval with highest density containing 50% of mass of distribution
-```{r HPDI_PI}
+
+```{r HPDI_PI, message = FALSE, warning = FALSE}
 library(rethinking)
-PI(samp, 0.5)
-HPDI(samp, 0.5)
+PI(samp$samp, 0.5)
+HPDI(samp$samp, 0.5)
 ```
 
-## PI v. HPDI for a Skewed Distribution
+# PI v. HPDI for a Skewed Distribution
+
+```{r show_bad_dist, echo = FALSE}
+ggplot(data = tibble(x = rbeta(1e4, 1,3)), aes(x=x)) +
+  geom_density()
+```
+
+## Code
+
+```{r show_bad_dist, eval = FALSE}
+```
+
+# PI v. HPDI for a Skewed Distribution
 ```{r bad_dist}
-samp_bad <- rbeta(1e4, 2,3)
+samp_bad <- rbeta(1e4, 1,3)
 
 PI(samp_bad, 0.5)
 
 HPDI(samp_bad, 0.5)
 ```
 
-## PI v. HPDI
+# PI v. HPDI
 ```{r hpdi_pi_plot, echo=FALSE}
-par(mfrow=c(1,2))
-dens <- density(samp_bad)
-q25 <- quantile(samp_bad, 0.25)
-q75 <- quantile(samp_bad, .75)
-x1 <- min(which(dens$x >= q25))  
-x2 <- max(which(dens$x <  q75))
-plot(dens, main="Percentile Interval")
-with(dens, polygon(x=c(x[c(x1,x1:x2,x2)]), y= c(0, y[x1:x2], 0), col="gray"))
 
-q25h <-HPDI(samp_bad, 0.5)[1]
-q75h <- HPDI(samp_bad, 0.5)[2]
-x1h <- min(which(dens$x >= q25h))  
-x2h <- max(which(dens$x <  q75h))
-plot(dens, main="Highest Posterior Density Interval")
-with(dens, polygon(x=c(x[c(x1h,x1h:x2h,x2h)]), y= c(0, y[x1h:x2h], 0), col="gray"))
-par(mfrow=c(1,1))
+# to get distributional properties
+dens <- density(samp_bad)
+hpdi_50 <- HPDI(samp_bad, 0.5)
+
+#properties
+interval_dat <- tibble(
+  prob = dens$x, # parameters
+  dens = dens$y/sum(dens$y), #standardized density
+  quant = cumsum(dens), #quantiles based on std dens
+  
+  # use the quantiles for the PI
+  pi_50 = ifelse(quant >= 0.25 & quant <= 0.75,
+                 dens,
+                 NA),
+  
+  # use the values from the HPDI for filtering
+  hpdi_50 = ifelse(prob >= hpdi_50[1] & prob <= hpdi_50[2],
+                 dens,
+                 NA)
+) |>
+  tidyr::pivot_longer(cols = c(pi_50, hpdi_50))
+
+## Plot!
+ggplot(interval_dat, 
+       aes(x = prob, y = dens)) +
+  geom_line() +
+  geom_ribbon(ymin = 0, aes(ymax = value), 
+              fill = "darkgrey") +
+  facet_wrap(vars(name))
 ```
 
-## So which interval to use?
+## Code for HPDI and PI
+```{r hpdi_pi_plot, eval=FALSE}
+```
+
+# So which interval to use?
 - Usually, they are quite similar\
 \
 - PI communicates distirbution shape for parameter\
@@ -293,19 +414,19 @@ par(mfrow=c(1,1))
 - BUT - computationally intensive and sensitive to # of posterior draws\
 \
 - If the two are *very* different, the problem is *not* which interval type to use\
-    - It's in your model/data! Buyer beware!
+    - It's in your model/data! Buyer beware! **SHOW YOUR POSTERIOR!**
 
-## Which Point Estimate: Mean, Median, Mode?
+# Which Point Estimate: Mean, Median, Mode?
 ```{r mmm}
-mean(samp)
+mean(samp$samp)
 
-median(samp)
+median(samp$samp)
 
-#mode
-samp[which.max(grid$posterior)]
+#mode using max value from posterior
+samp$samp[which.max(grid$posterior)]
 ```
 
-## Applying a Loss Function!
+# Applying a Loss Function!
 - Well, let's think about the cost of getting it wrong!  
 \
 - Assume a point estimate of d\
@@ -317,44 +438,52 @@ samp[which.max(grid$posterior)]
 \
 - Can apply this to chosing $\alpha$ and $\beta$ in frequentist stats!
 
-## Linear Loss Function Says Median (it's close)!
-```{r linear_loss}
-loss_fun <- function(d) sum(grid$posterior * abs(d - grid$prob))
+# Linear Loss Function Says Median (it's close)!
+```{r linear_loss, eval = TRUE}
+# what is the cost of a given value being wrong
+# for any parameter - linear addition
+loss_fun <- function(d) {
+  
+  dist_from_each_hypothesis <- abs(d - grid$prob)
 
+  scaled_distance_by_posterior_prob <- 
+    grid$posterior * dist_from_each_hypothesis
+  
+  cost_if_parameter_is_wrong <- sum(scaled_distance_by_posterior_prob)
+  
+}
+```
+
+# Linear Loss Function Says Median (it's close)!
+
+```{r}
+# iterate over all parameters
 loss <- sapply(grid$prob, loss_fun)
 
+# and the point estimate with the lowest cost is...
 grid$prob[which.min(loss)]
+
+median(samp$samp)
 ```
 
-## Linear Loss Function Says Median (it's close)!
-```{r}
-grid$loss <- loss
-ggplot(grid) +
-  geom_line(aes(x = prob, y = loss)) +
-  geom_point(x = grid$prob[which.min(loss)], y = min(loss),
-             size = 2) +
-  geom_vline(data = data.frame(value = c(mean(samp),
-                                           median(samp),
-                                           samp[which.max(grid$posterior)]),
-                               measure = c("mean", "median", "mode")),
-             aes(xintercept = value, color = measure)) +
-  scale_color_manual(values = c("red", "blue", "black"))
-```
+<div class = "fragment">If we had summed the squares, it would be mean! Or you 
+can apply other functions depending on severity of cost</div>
 
-## Choosing a loss function
+# Choosing a loss function
 - Usually the mean and median will agree\
 \
 - If the cost of being wrong is higher, go with the mean\
 \
 - If this is a big problem, or big discrepancy, problem might be deeper
+     - **Examine your posterior! All of it!**
 
-##
+#
 \
 \
 \
 <h3>Using your samples for model checking</h3>
 
-## Model Checking - Why?
+# Model Checking - Why?
 - We're in Simulation land\
 \
 - A lot can go wrong do to small errors in our model\
@@ -365,61 +494,83 @@ ggplot(grid) +
 \
 - Maybe our sampling design cannot produce valid estimates
 
-## How do you check models?
+# How do you check models?
 - Did you reproduce your observed summarized data?\
 \
 - Did you reproduce patterns in your raw data?
 
-## Simulating from your Posterior Sample
+# Simulating from your Posterior
 - Make random draws using your sampled parameters
 
 ```{r make_sim}
-w <- rbinom(1e4, size=9, prob = samp)
+# Random numbers are the core of simulation!
+w <- rbinom(1e4, size=9, prob = samp$samp)
 ```
 
 ```{r sim_summary}
-table(w)
+janitor::tabyl(w)
 ```
 
-## Simulating from your Posterior Sample
+# Simulating from your Posterior Sample
 ```{r sim_hist}
 simplehist(w)
 ```
 
 Note that 6 is the peak, and our draw was w=6!
 
-## Getting Fancier with Checking
+# Getting Fancier with Checking
 - We drew  W,L,W,W,W,L,W,L,W\
 \
-- Can we reproduce 3 Ws as the most common run?\
+- Can we reproduce 3 Ws as the longest run?\
 \
 - This will require fancier use of the posterior to simulate order of observations\
 \
-- See slide code - but, this empahsized the subjective nature of model checking!
+- See slide code - but, this empahsizes the subjective nature of model checking!
 
-## So, reproducing runs of W
+# So, reproducing longest runs of W
 ```{r runs, echo=FALSE}
-
 getRuns <- function(prob, draws=9){
+  
+  # toss that coin with a probability!
   toss <- rbinom(draws, size=1, prob)
-  runs <- which(toss==0)
-  if(length(runs)==0) return(9)
-  #toss
-  max(runs - c(1, runs[-length(runs)]+1))
+  
+  runs <- rle(toss) # gets run lengths of all values
+  runs <- runs$length[runs$values == 1] # filter to 1
+  
+  # return 0 if all L, otherwise
+  # return the longest
+  if(length(runs) == 0){return(0)}
+  max(runs)
 }
 
-s <- sapply(samp, getRuns)
-simplehist(s)
+# iterate over all samples
+samp <- samp |>
+  group_by(samp) |>
+  mutate(longest_run = getRuns(samp)) |>
+  ungroup()
+
+simplehist(samp$longest_run)
 ```
 
-We had a run of 3 - not bad, not spot on - is this a good model or check?
+We had many 3s - not bad, not spot on - is this a good model or check?
 
-## Exercise
-- Choose a # of observations and # of tosses that land on W  
+
+## Code
+```{r runs, eval=FALSE}
+```
+
+# Your Model is a Query Engine! 
+
+> - We can do a LOT with a simulated posterior  
 \
-- Use grid sampling to get a posterior with your choice of prior  
+> - We can explore intervals and shape to create inferences   
 \
-- Derive point estimates and uncertainty  
+> - We can explore intervals and shape to validate our model  
 \
-- Did your model checks show you were all good?
+> - Using posteriors to generate random numbers means we can explore  
+>       - If our model TRULY matches our data   
+>       - Large-world relevance (**external validity**)  
+>       - Future implications of our model  
+\
+> - None of this is arbitrary statistical tests 
 
