@@ -33,6 +33,7 @@ __Deeper Reading:__ [Approximating the Posterior](https://www.bayesrulesbook.com
 __Even Deeper Reading:__ [Are confidence intervals better termed ”uncertainty intervals”?
 ](http://www.stat.columbia.edu/~gelman/research/published/uncertainty_intervals.pdf), [Assessing uncertainty in physcial constants](https://www.cmu.edu/epp/people/faculty/research/Fischoff-Henrion-Assessing%20uncertainty%20in%20physical%20constants.pdf)  
 __Tidying Rethinking:__ [Sampling from your Posterior](https://bookdown.org/content/4857/sampling-the-imaginary.html)   
+__Thursday Problems:__ [sampling](lab/sampling.html)  
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-posteriors-2024    
 
 
