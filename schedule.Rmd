@@ -36,16 +36,18 @@ __Tidying Rethinking:__ [Sampling from your Posterior](https://bookdown.org/cont
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-posteriors-2024    
 
 
-### Week 4.
+### Week 3.
 ```{r next_date, echo=FALSE }
 ```
 `r datestring`  
 __Lecture:__  [Linear Bayesian Models](./lectures/04_linear_models.html),   
 __Reading:__ McElreath Chapter 4  
 __Deeper Reading:__ [Simple Normal Regression](https://www.bayesrulesbook.com/chapter-9), [Posterior Inference and Prediction](https://www.bayesrulesbook.com/chapter-8)   
+__Even Deeper Reading:__ [Gavin Simpson on B-Splines](https://fromthebottomoftheheap.net/2020/06/03/extrapolating-with-gams/), [Michael Clark's GAM Introduction](https://m-clark.github.io/generalized-additive-models/), [Resources for Learning about GAMs in R](https://github.com/noamross/gam-resources)     
+__Tidying Rethinking:__ [Geocentric Models](https://bookdown.org/content/4857/geocentric-models.html). 
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-linreg-2024    
 
-### Week 5.
+### Week 4.
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
@@ -55,7 +57,7 @@ __Deeper Reading:__ [Extending the Normal Regression Model](https://www.bayesrul
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-multiple_predictors-2024    
 
 
-### Week 6.
+### Week 5.
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
@@ -65,7 +67,7 @@ __Deeper Reading:__ [Aho et al 2013 Ecology](http://izt.ciens.ucv.ve/ecologia/Ar
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-mmi-2024    
 
 
-### Week 7.
+### Week 6.
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
@@ -74,7 +76,7 @@ __Reading:__ McElreath Chapter 8-9
 __Deeper Reading:__ [MCMC Under the Hood](https://www.bayesrulesbook.com/chapter-7). 
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-interactions-2024    
 
-### Week 8.
+### Week 7.
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
@@ -85,7 +87,7 @@ __Files:__  `usethis::use_course("https://biol609.github.io/lectures/glm_data.zi
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-glm-2024    
 
 
-### Week 9.
+### Week 8.
 ```{r next_date, echo=FALSE}
 ```
 ```{r next_date, echo=FALSE}
@@ -98,9 +100,7 @@ __Files:__ [Fishing Duration CSV](./lectures/data/20/fishing_duration.csv)
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-zig_zag-2024    
 
 
-### Week 10.
-
-
+### Week 9.
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
@@ -113,7 +113,7 @@ __A Little More Reading:__ <a href="http://jonlefcheck.net/2013/03/13/r2-for-lin
 __Files:__ [Mussels](./lectures/data/07/mussels.csv), [Uneven  Mussels](./lectures/data/07/mussels_ragged.csv), [RIKZ Beach data](./lectures/data/08/rikz.csv), [growth data](./lectures/data/08/nestedGrowth.csv)    
 __R Packages:__ lme4, lmerTest, [merTools](https://github.com/jknowles/merTools), RLRsim, cAIC4  
   
-### Week 8.
+### Week 10.
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
@@ -122,7 +122,7 @@ __Etherpad:__ https://etherpad.wikimedia.org/p/609-mixed_bayesian-2024
 __Reading:__ McElreath Chapter 12, 13   
 __Further Reading:__ [Gelman and Hill Ch. 12](http://byrneslab.net/classes/biol609/gelman_hill_ch_12.pdf) (see the bit on one model written 5 ways), [Gelman and Hill Ch. 13](http://byrneslab.net/classes/biol609/gelman_hill_ch_13.pdf), [Gelman on multiple comparisons in mixed models](http://byrneslab.net/classes/biol609/Gelman_multcomp.pdf)  
 
-### Week 9.
+### Week 11.
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
@@ -131,7 +131,7 @@ __Etherpad:__ https://etherpad.wikimedia.org/p/609-mixed_bayesian-2024
 __Reading:__ [McNeish and Kelly 2018](./Readings/McNeish_Kelley_PsychMethods_2024.pdf), [Causal Model Structures and Random Effects](http://rpubs.com/jebyrnes/causal_mods), [Poe Lecture Slides](./Readings/2018-11-02_wim_poe_clustered_slides.pdf), [Bell et al. 2018a](./Readings/Bell2018_Article_UnderstandingAndMisunderstandi.pdf), [Bell et al 2018b](./Bell_2018_Qual_Quant.pdf)  
 
 
-### Week 10.
+### Week 12.
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
@@ -143,7 +143,7 @@ __Files:__ [Birds](./lectures/data/05/allbirds.csv), [Plankton](./lectures/data/
 __R Packages:__ nlme   
 
   
-### Week 11. 
+### Week 13. 
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
@@ -154,7 +154,7 @@ __Reading:__ [Spatial autoregressive models for statistical inference from ecolo
 __Further Readings:__ [Methods to account for spatial autocorrelation in the analysis of species distributional data: a review](./Readings/DormannEcography30_57164.pdf)
 
   
-### Week 12.  
+### Week 14.  
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
@@ -164,7 +164,7 @@ __Reading:__ [Warton et al. SMATR](http://byrneslab.net/classes/biol609/Warton_e
 __Files:__ [Elk data](./lectures/data/03/ekk_from_dryad.csv), [Clam data](./lectures/data/04/Clams.txt)  
 __R Packages:__ Quantreg  
   
-### Week 13.
+### Week 15.
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
@@ -172,7 +172,7 @@ __Lecture:__ Causal Modeling
 __Readings:__ [A Second Change to Get Causal Inference Right](./Readings/Hernán_and_Healey_2024.pdf), [Causal analysis in control impact studies](./Readings/Larsen_et_al_2024.pdf), [Pearl 2010](Pearl_2010_causal_inference.pdf)    
 __Further Reading:__ [Causal Inference](https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/)
   
-### Week 14.
+### Week 16.
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
@@ -183,7 +183,7 @@ __Reading:__ [Grace et al 2012 Ecosphere](http://byrneslab.net/classes/biol609/G
 ___Further Reading:__ [Notes from Jon Lefcheck](https://jslefche.github.io/sem_book/)  
 __Helpful Websites:__ [piecewiseSEM](http://jslefche.github.io/piecewiseSEM/), [lavaan](http://lavaan.ugent.be/), [Jim Grace's Tutorials](https://www.usgs.gov/centers/wetland-and-aquatic-research-center/science/quantitative-analysis-using-structural-equation)    
 
-### Week 15.
+### Week 17.
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   

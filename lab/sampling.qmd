@@ -1,0 +1,26 @@
+---
+title: "Sampling Your Posterior"
+format: html
+---
+
+## 1. Baes Theorem
+
+![](images/sampling/frequentists_vs_bayesians.png)
+
+Don't you love [XKCD](https://xkcd.com/)?
+
+Using Bayes theorem
+
+$$p(H|D) = \frac{p(D|H)p{H}}{p(D)}$$
+
+whow what is the probability of the sun exploding is given that the device said yes - p(explodes|yes).
+
+Assume that your prior probability that the sun explodes is **p(Sun Explodes) = 0.0001** (I’ll leave it to you to get p(Sun Doesn’t Explode) given that they have to sum to 1). The rest of the information you need - and some you don’t - is in the cartoon - p(Yes | Explodes) and p(No | Doesn't explode) - i.e., the probability of the machine not lying, p(Yes | Doesn’t Explode) and p(No | Explodes) - i.e., the probability of lying.
+
+Do this on the whiteboard together. The answer is ~ 0.003 for the prior I have given you.
+
+
+## 2. Grid Sampling and Properties of Your Posterior
+Use tidyverse tools for the below
+
+![](images/sampling/mcelreath_ch3.png)
