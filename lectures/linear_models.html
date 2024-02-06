@@ -740,7 +740,7 @@ male     0.46875  0.4997328   0.0000   1.00000      ▇▁▁▁▁▁▁▁▁�
 <p>Data Generating Process<br>
 <span class="math inline">\(\mu_i = \alpha + \beta (x_i - \bar{x_i})\)</span></p>
 <p>Prior:<br>
-<span class="math inline">\(\alpha \sim \mathcal{N}(150, 100)\)</span> &nbsp; <span class="fragment" style="color:red">Previous Mean</span><br>
+<span class="math inline">\(\alpha \sim \mathcal{N}(150, 20)\)</span> &nbsp; <span class="fragment" style="color:red">Previous Mean</span><br>
 <span class="math inline">\(\beta \sim \mathcal{N}(0, 10)\)</span> &nbsp; <span class="fragment" style="color:red">Weakly Informative</span><br>
 <span class="math inline">\(\sigma \sim \mathcal{U}(0,50)\)</span> &nbsp;<span class="fragment" style="color:red">Wide range of possibilities</span></p>
 </section>
@@ -764,7 +764,7 @@ male     0.46875  0.4997328   0.0000   1.00000      ▇▁▁▁▁▁▁▁▁�
 <section id="when-in-doubt-simulate-it-out" class="title-slide slide level1 center">
 <h1>When in doubt, simulate it out!</h1>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb17" data-code-line-numbers="|1-5|8-10|11-15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="fu">set.seed</span>(<span class="dv">2019</span>)</span>
+<div class="sourceCode cell-code" id="cb17" data-code-line-numbers="|3-6|8-11|12-15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="fu">set.seed</span>(<span class="dv">2019</span>)</span>
 <span id="cb17-2"><a href="#cb17-2"></a>n <span class="ot">&lt;-</span> <span class="dv">100</span></span>
 <span id="cb17-3"><a href="#cb17-3"></a></span>
 <span id="cb17-4"><a href="#cb17-4"></a><span class="co"># a data frame of priors</span></span>
@@ -833,8 +833,8 @@ male     0.46875  0.4997328   0.0000   1.00000      ▇▁▁▁▁▁▁▁▁�
 </div>
 </section>
 
-<section id="the-coefficies" class="title-slide slide level1 center">
-<h1>The Coefficies</h1>
+<section id="the-coefficients" class="title-slide slide level1 center">
+<h1>The Coefficients</h1>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="fu">precis</span>(weight_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -907,19 +907,17 @@ sigma   5.0718827 0.19115492   4.76638   5.3773852</code></pre>
 3   152.   47.8    63     1     1     3   157.
 4   152.   47.8    63     1     1     4   157.
 5   152.   47.8    63     1     1     5   157.
-6   152.   47.8    63     1     1     6   157.</code></pre>
+6   152.   47.8    63     1     1     6   158.</code></pre>
 </div>
 </div>
 </section>
 
-<section>
 <section id="get-residuals-and-a-summarized-frame" class="title-slide slide level1 center">
 <h1>Get Residuals and a Summarized Frame</h1>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1"></a>weight_samps <span class="ot">&lt;-</span> weight_samps <span class="sc">|&gt;</span></span>
 <span id="cb29-2"><a href="#cb29-2"></a>  <span class="fu">mutate</span>(<span class="at">.residuals =</span> height <span class="sc">-</span> .value)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>–</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1"></a>weight_samps_summarized <span class="ot">&lt;-</span> weight_samps <span class="sc">|&gt;</span></span>
 <span id="cb30-2"><a href="#cb30-2"></a>  <span class="fu">group_by</span>(height, weight, .row) <span class="sc">|&gt;</span></span>
@@ -931,9 +929,14 @@ sigma   5.0718827 0.19115492   4.76638   5.3773852</code></pre>
 <span id="cb30-8"><a href="#cb30-8"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
 <span id="cb30-9"><a href="#cb30-9"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<div class="cell fragment" data-layout-align="center">
+
+</div>
 </section>
-<section id="check-posterior-against-data" class="slide level2">
-<h2>Check Posterior Against Data</h2>
+
+<section>
+<section id="check-posterior-against-data" class="title-slide slide level1 center">
+<h1>Check Posterior Against Data</h1>
 
 <img data-src="linear_models_files/figure-revealjs/pp_check-1.jpeg" width="672" class="r-stretch quarto-figure-center"></section>
 <section id="code-for-pp-check" class="slide level2">
@@ -1004,12 +1007,12 @@ sigma   5.0718827 0.19115492   4.76638   5.3773852</code></pre>
 <pre><code># A tibble: 6 × 6
   .chain .iteration .draw alpha  beta sigma
    &lt;int&gt;      &lt;int&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-1     NA         NA     1  154. 0.959  5.34
-2     NA         NA     2  155. 0.955  5.21
-3     NA         NA     3  154. 0.909  5.31
-4     NA         NA     4  155. 0.788  5.48
-5     NA         NA     5  155. 0.928  4.96
-6     NA         NA     6  155. 0.927  4.98</code></pre>
+1     NA         NA     1  154. 0.855  5.19
+2     NA         NA     2  154. 0.965  4.84
+3     NA         NA     3  155. 0.914  4.68
+4     NA         NA     4  155. 0.961  5.08
+5     NA         NA     5  155. 0.896  5.36
+6     NA         NA     6  154. 0.868  5.21</code></pre>
 </div>
 </div>
 </section>
@@ -1040,7 +1043,7 @@ sigma   5.0718827 0.19115492   4.76638   5.3773852</code></pre>
 <section id="how-well-have-we-fit-the-data-use-samples-of-data" class="title-slide slide level1 center">
 <h1>How Well Have we Fit the Data? Use Samples of Data</h1>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<div class="sourceCode cell-code" id="cb40" data-code-line-numbers="4-8|"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
 <span id="cb40-2"><a href="#cb40-2"></a>  </span>
 <span id="cb40-3"><a href="#cb40-3"></a>  <span class="co">#simulated fits from the posterior</span></span>
 <span id="cb40-4"><a href="#cb40-4"></a>  <span class="fu">geom_line</span>(<span class="at">data=</span>weight_samps <span class="sc">|&gt;</span> <span class="fu">filter</span>(.draw <span class="sc">&lt;</span> <span class="dv">500</span>), </span>
@@ -1062,7 +1065,7 @@ sigma   5.0718827 0.19115492   4.76638   5.3773852</code></pre>
 <section id="or-use-ggdist" class="title-slide slide level1 center">
 <h1>Or, Use <code>ggdist</code></h1>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1"></a><span class="fu">library</span>(ggdist)</span>
+<div class="sourceCode cell-code" id="cb41" data-code-line-numbers="4-7|"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1"></a><span class="fu">library</span>(ggdist)</span>
 <span id="cb41-2"><a href="#cb41-2"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
 <span id="cb41-3"><a href="#cb41-3"></a>  </span>
 <span id="cb41-4"><a href="#cb41-4"></a>  <span class="co">#simulated fits from the posterior</span></span>
@@ -1084,7 +1087,7 @@ sigma   5.0718827 0.19115492   4.76638   5.3773852</code></pre>
 <section id="what-about-prediction-intervals" class="title-slide slide level1 center">
 <h1>What about prediction intervals?</h1>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1"></a><span class="co">#1) Get the posterior prediction interval</span></span>
+<div class="sourceCode cell-code" id="cb42" data-code-line-numbers="1-2|"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1"></a><span class="co">#1) Get the posterior prediction interval</span></span>
 <span id="cb42-2"><a href="#cb42-2"></a>pred_samps <span class="ot">&lt;-</span> <span class="fu">predicted_draws</span>(weight_fit, <span class="at">newdata =</span> Howell1_Adult)</span>
 <span id="cb42-3"><a href="#cb42-3"></a></span>
 <span id="cb42-4"><a href="#cb42-4"></a></span>
@@ -1207,12 +1210,12 @@ sigma   5.0718827 0.19115492   4.76638   5.3773852</code></pre>
 <pre><code># A tibble: 6 × 6
       alpha     beta1     beta2     beta3     sigma  draw
   &lt;dbl[1d]&gt; &lt;dbl[1d]&gt; &lt;dbl[1d]&gt; &lt;dbl[1d]&gt; &lt;dbl[1d]&gt; &lt;int&gt;
-1      92.6      3.02    -2.80     -0.501      18.4     1
-2     133.      -2.07   -14.4       5.23       43.2     2
-3     135.       2.46     0.859     2.91       37.2     3
-4      70.2     14.6    -22.4      11.6        14.2     4
-5     226.      -2.44    -4.50     20.3        42.3     5
-6     437.      -8.61   -14.1      11.7        17.8     6</code></pre>
+1     178.      7.22       6.60     -1.00     34.5      1
+2     177.    -11.7       -1.38     18.1      23.9      2
+3     148.     23.9       -6.03      7.11     48.6      3
+4      39.8     7.46      -4.70     -2.27     47.0      4
+5     350.      0.175    -18.0      14.9       4.82     5
+6     156.    -13.1       10.6      -9.73     48.5      6</code></pre>
 </div>
 </div>
 </section>
@@ -1220,7 +1223,7 @@ sigma   5.0718827 0.19115492   4.76638   5.3773852</code></pre>
 <section id="we-can-just-calculate-curves" class="title-slide slide level1 center">
 <h1>We Can Just Calculate Curves</h1>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1"></a>prior_pred <span class="ot">&lt;-</span> tidyr<span class="sc">::</span><span class="fu">crossing</span>(</span>
+<div class="sourceCode cell-code" id="cb48" data-code-line-numbers="|4-6|"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1"></a>prior_pred <span class="ot">&lt;-</span> tidyr<span class="sc">::</span><span class="fu">crossing</span>(</span>
 <span id="cb48-2"><a href="#cb48-2"></a>  nonlinear_priors[<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>,],</span>
 <span id="cb48-3"><a href="#cb48-3"></a>  Howell1 ) <span class="sc">|&gt;</span></span>
 <span id="cb48-4"><a href="#cb48-4"></a>  <span class="fu">mutate</span>(<span class="at">height =</span> alpha <span class="sc">+</span> beta1<span class="sc">*</span>weight.s <span class="sc">+</span> </span>
@@ -1235,7 +1238,7 @@ sigma   5.0718827 0.19115492   4.76638   5.3773852</code></pre>
 <section id="were-these-good-priors" class="title-slide slide level1 center">
 <h1>Were These Good Priors?</h1>
 
-</section>
+<img data-src="linear_models_files/figure-revealjs/prior_curves_poly-1.jpeg" width="672" class="r-stretch quarto-figure-center"></section>
 
 <section>
 <section id="but-did-our-model-fit" class="title-slide slide level1 center">

@@ -208,12 +208,15 @@ $\mu   \sim \mathcal{N}(187, 20)$  My Height
 $\sigma   \sim \mathcal{U}(0,50)$ Wide range of possibilities
 
 ```{r}
+dpy <- density(prior_h)$y/sum(density(prior_h)$y)
 plot(density(prior_h)$x, 
-     density(prior_h)$y/sum(density(prior_h)$y), xlab = "Height (cm)",
-     type = "l", ylab = "density")
+     dpy/max(dpy), xlab = "Height (cm)",
+     type = "l", ylab = "density", lwd = 1.5)
+
+dph <-  density(Howell1_Adult$height)$y/sum(density(Howell1_Adult$height)$y)
 matplot(density(Howell1_Adult$height)$x,
-      density(Howell1_Adult$height)$y/sum(density(Howell1_Adult$height)$y), 
-     col = "red", add = TRUE, type = "l")
+     dph/max(dph), 
+     col = "red", add = TRUE, type = "l", lwd = 1.5)
 ```
 
 
@@ -226,12 +229,15 @@ $\sigma   \sim \mathcal{U}(0,50)$ Wide range of possibilities
 prior_m <- rnorm(n, 150, 20)
 prior_h <- rnorm(n, prior_m, prior_s)
 
+dpy <- density(prior_h)$y/sum(density(prior_h)$y)
 plot(density(prior_h)$x, 
-     density(prior_h)$y/sum(density(prior_h)$y), xlab = "Height (cm)",
-     type = "l", ylab = "density")
+     dpy/max(dpy), xlab = "Height (cm)",
+     type = "l", ylab = "density", lwd = 1.5)
+
+dph <-  density(Howell1_Adult$height)$y/sum(density(Howell1_Adult$height)$y)
 matplot(density(Howell1_Adult$height)$x,
-      density(Howell1_Adult$height)$y/sum(density(Howell1_Adult$height)$y), 
-     col = "red", add = TRUE, type = "l")
+     dph/max(dph), 
+     col = "red", add = TRUE, type = "l", lwd = 1.5)
 ```
 
 # Grid Sampling
@@ -363,7 +369,7 @@ Data Generating Process
 $\mu_i =   \alpha +   \beta (x_i - \bar{x_i})$  
   
 Prior:  
-$\alpha   \sim \mathcal{N}(150, 100)$  &nbsp; <span class="fragment" style = "color:red">Previous Mean</span>  
+$\alpha   \sim \mathcal{N}(150, 20)$  &nbsp; <span class="fragment" style = "color:red">Previous Mean</span>  
 $\beta  \sim \mathcal{N}(0, 10)$ &nbsp; <span class="fragment"style = "color:red">Weakly Informative</span>  
 $\sigma   \sim \mathcal{U}(0,50)$ &nbsp;<span class="fragment"style = "color:red">Wide range of possibilities</span>
 
@@ -379,7 +385,7 @@ So, ± 15
 
 # When in doubt, simulate it out!
 ```{r sim_prior0}
-#| code-line-numbers: "|1-5|8-10|11-15"
+#| code-line-numbers: "|3-6|8-11|12-15"
 #| eval: true
 #| echo: true
 
@@ -465,7 +471,7 @@ weight_fit <- quap(weight_mod,
                 data = Howell1_Adult)
 ```
 
-# The Coefficies
+# The Coefficients
 
 ```{r}
 #| echo: true
@@ -534,10 +540,11 @@ weight_samps <- weight_samps |>
   mutate(.residuals = height - .value)
 ```
 
---
+
 
 ```{r}
 #| echo: true
+#| output-location: fragment
 weight_samps_summarized <- weight_samps |>
   group_by(height, weight, .row) |>
   summarize(
@@ -550,7 +557,7 @@ weight_samps_summarized <- weight_samps |>
 
 ```
 
-## Check Posterior Against Data
+# Check Posterior Against Data
 
 ```{r pp_check}
 ggplot() +
@@ -634,7 +641,11 @@ ggplot(data = post, aes(x = alpha, y = beta)) +
 
 
 # How Well Have we Fit the Data? Use Samples of Data
-```{r plot_pred, echo=TRUE, eval=FALSE}
+```{r plot_pred}
+#| echo: true
+#| eval: false
+#| code-line-numbers: "4-8|"
+
 ggplot() +
   
   #simulated fits from the posterior
@@ -656,7 +667,10 @@ ggplot() +
 ```
 
 # Or, Use `ggdist`
-```{r fit_interval_data, echo=TRUE, eval=FALSE}
+```{r fit_interval_data}
+#| echo: true
+#| eval: false
+#| code-line-numbers: "4-7|"
 library(ggdist)
 ggplot() +
   
@@ -677,7 +691,10 @@ ggplot() +
 
 # What about prediction intervals?
 
-```{r pred_interval_data, echo=TRUE, eval=FALSE}
+```{r pred_interval_data}
+#| echo: true
+#| eval: false
+#| code-line-numbers: "1-2|"
 #1) Get the posterior prediction interval
 pred_samps <- predicted_draws(weight_fit, newdata = Howell1_Adult)
 
@@ -809,7 +826,10 @@ head(nonlinear_priors)
 
 # We Can Just Calculate Curves
 
-```{r echo = TRUE, eval = FALSE}
+```{r prior_curves_poly}
+#| echo: true
+#| eval: false
+#| code-line-numbers: "|4-6|"
 prior_pred <- tidyr::crossing(
   nonlinear_priors[1:100,],
   Howell1 ) |>
@@ -823,7 +843,7 @@ ggplot(data = Howell1, aes(x = weight.s, y = height)) +
 
 # Were These Good Priors?
 
-```{r echo = FALSE, eval = TRUE}
+```{r prior_curves_poly, echo = FALSE, eval = TRUE}
 ```
 
 # But Did Our Model Fit?
