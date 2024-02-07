@@ -781,7 +781,7 @@ Data Generating Process
 $\mu_i =  \alpha +   \beta_1 x_i +   \beta_2 x_i^2 +   \beta_3 x_i^3$  
   
 Prior:  
-$\alpha   \sim \mathcal{N}(150, 100)$  
+$\alpha   \sim \mathcal{N}(150, 20)$  
 $\beta_j   \sim \mathcal{N}(0, 10)$    
 $\sigma   \sim \mathcal{U}(0,50)$  
 
