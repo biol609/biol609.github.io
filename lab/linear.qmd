@@ -1,0 +1,28 @@
+---
+title: "Linear Models and Rethinking"
+format: html
+---
+
+## Priors and Simulation from McElreath
+
+4M1. For the model definition below, simulate observed y values from the prior (not the posterior). 
+yi ∼ Normal(μ, σ)
+μ ∼ Normal(0, 10) 
+σ ∼ Exponential(1)
+
+4M2. Translate the model just above into a quap formula. Try simulating from the prior with `extract.prior()` and make sure it matches with your previous answer.
+
+## Make a Model from McElreath
+A sample of students is measured for height each year for 3 years.After the third year, you want to fit a linear regression predicting height using year as a predictor. Write down the mathematical model definition for this regression, using any variable names and priors you choose. Be prepared to defend your choice of priors.
+
+## Linear Regression from McElreath
+
+4H2. Select out all the rows in the Howell1 data with ages below 18 years of age. If you do it right, you should end up with a new data frame with 192 rows in it.
+
+(a) Fit a linear regression to these data, using quap. Check your priors with `extract.prior()`. Present and interpret the estimates from your posterior. For every 10 units of increase in weight, how much taller does the model predict a child gets?
+
+(b) Plot the raw data, with height on the vertical axis and weight on the horizontal axis. Superimpose the MAP regression line and 89% interval for the mean. Also superimpose the 89% interval for predicted heights. You can do this with either `rethinking` or use `tidybayes` and `ggdist::stat_ribbon()` or get fancy with `ggdist::stat_gradientinterval()` (I'm not actually sure this will work, but, try it!).
+
+(c) What aspects of the model fit concern you? Describe the kinds of assumptions you would change, if any, to improve the model. You don’t have to write any new code. Just explain what the model appears to be doing a bad job of, and what you hypothesize would be a better model.
+
+(d) OK, fix the model and show that it works!

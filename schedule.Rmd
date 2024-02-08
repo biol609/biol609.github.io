@@ -45,16 +45,18 @@ __Lecture:__  [Linear Bayesian Models](./lectures/linear_models.html),
 __Reading:__ McElreath Chapter 4  
 __Deeper Reading:__ [Simple Normal Regression](https://www.bayesrulesbook.com/chapter-9), [Posterior Inference and Prediction](https://www.bayesrulesbook.com/chapter-8)   
 __Even Deeper Reading:__ [Gavin Simpson on B-Splines](https://fromthebottomoftheheap.net/2020/06/03/extrapolating-with-gams/), [Michael Clark's GAM Introduction](https://m-clark.github.io/generalized-additive-models/), [Resources for Learning about GAMs in R](https://github.com/noamross/gam-resources)     
-__Tidying Rethinking:__ [Geocentric Models](https://bookdown.org/content/4857/geocentric-models.html). 
+__Tidying Rethinking:__ [Geocentric Models](https://bookdown.org/content/4857/geocentric-models.html)  
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-linreg-2024    
+__Lab:__ [Linear Bayesian Models](lab/linear.html)  
 
 ### Week 4.
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
 __Lecture:__ [Multiple Predictor Variables](./lectures/14_multiple_predictors.html),   
-__Reading:__ McElreath Chapter 5 - 6  
-__Deeper Reading:__ [Extending the Normal Regression Model](https://www.bayesrulesbook.com/chapter-11).   
+__Reading:__ McElreath Chapter 5, Skim Ch. 6 (we did this in 607)  
+__Deeper Reading:__ [Extending the Normal Regression Model](https://www.bayesrulesbook.com/chapter-11)   
+__Tidying Rethinking:__ [The Many Variables and Spurious Waffles](https://bookdown.org/content/4857/the-many-variables-the-spurious-waffles.html)   
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-multiple_predictors-2024    
 
 
@@ -65,6 +67,7 @@ __Etherpad:__ https://etherpad.wikimedia.org/p/609-multiple_predictors-2024
 __Lecture:__ [Bayesian Multimodel Inference](./lectures/15_mmi.html)   
 __Reading:__ McElreath Chapter 7  
 __Deeper Reading:__ [Aho et al 2013 Ecology](http://izt.ciens.ucv.ve/ecologia/Archivos/ECO_POB%202014/ECOPO2_2014/Aho%20et%20al%202014.pdf), [Gelman et al. 2013 on WAIC and LOO](http://link.springer.com/article/10.1007/s11222-013-9416-2)  
+__Tidying Rethinking:__ [Ulysses Compass](https://bookdown.org/content/4857/ulysses-compass.html)
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-mmi-2024    
 
 
