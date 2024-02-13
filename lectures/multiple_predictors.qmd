@@ -1,0 +1,935 @@
+---
+title: ""
+format: 
+  revealjs:
+    navigation-mode: vertical
+    controls-layout: bottom-right
+    controls-tutorial: true
+    theme: simple
+    incremental: false
+    css: style.css
+    
+---
+
+##
+<center>
+<h2>Bayesian Models with Multiple Predictors</h2>
+</center>
+  
+![](./images/14/mult_reg_dog.jpg){width="50%"}
+
+
+```{r prep, echo=FALSE, cache=FALSE, message=FALSE, warning=FALSE}
+library(knitr)
+
+opts_chunk$set(fig.height=5, fig.width=7, comment=NA, 
+               warning=FALSE, message=FALSE, 
+               dev="jpeg", echo=FALSE)
+
+library(rethinking)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(patchwork)
+theme_set(theme_bw(base_size=17))
+data(Howell1)
+Howell1_Adult <- Howell1 %>% filter(age >= 18)
+```
+
+
+# {data-background="images/14/wafflehouse.jpg"}
+
+# {data-background="images/14/2014-05-15-map1Nik.jpg"}
+<!-- from http://www.huffingtonpost.com/nik-freeman/waffle-house-locations_b_5332044.html -->
+
+# Waffle House: Does it Lead to Perdition?
+```{r waffle_data}
+data(WaffleDivorce)
+ggplot(WaffleDivorce,
+       aes(x = WaffleHouses, y = Divorce)) + 
+  geom_point() +
+  stat_smooth(method="lm") +
+  theme_bw(base_size=17) +
+  ylab("Divorce Rate") + xlab("Waffle Houses per Million People")
+```
+
+# So many possibilities
+```{r waffle_pairs}
+with(WaffleDivorce,
+     pairs(cbind(Divorce, MedianAgeMarriage, Marriage, WaffleHouses, Slaves1860)))
+```
+
+
+# Today's Outline
+1. Multiple Predictors in a Bayesian Framework  
+    - How multiple predictors tease apart spurious and masked relationships  
+  
+2. Evaluating a Model with Multiple Predictors  
+  
+3. Testing Mediation  
+  
+4. Categorical Variables
+
+# Why use multiple predictors
+<div id="right">
+1. Controlling for confounds  
+    - Disentangle spurious relationships
+    - Reveal masked relationships  
+  
+2. Dealing with multiple causation  
+  
+3. Interactions (soon)
+
+</div>
+
+<div id="left">
+
+```{r waffle_pairs2}
+with(WaffleDivorce,
+     pairs(cbind(Divorce, MedianAgeMarriage, Marriage), col = "blue"))
+```
+
+</div>
+
+# Why *NOT* use multiple predictors
+::: {.columns}
+
+::: {.column width="40%"}
+
+::: {.incremental}
+1. Multicollinearity  
+     - But can aggregate variables
+  
+2. Overfitting  
+     - But see model selection
+  
+3. Loss of precision in estimates  
+  
+4. Interpretability
+:::
+
+:::
+
+::: {.column width="60%"}
+
+```{r waffle_pairs2}
+```
+
+:::
+:::
+
+# DAG Before You Model
+[Which of these is your model?]{.center}
+
+::: {.columns}
+
+::: {.column width="50%"}
+
+```{dot}
+digraph {
+
+layout = neato
+
+m [
+    shape = none
+    pos = "-1,1!"
+]
+
+d [
+    shape = none
+    pos = "0,0!"
+]
+
+
+a [
+    shape = none
+    pos = "1,1!"
+]
+
+
+m -> d
+a -> d
+}
+```
+
+:::
+
+::: {.column width="50%"}
+```{dot}
+digraph {
+
+layout = neato
+
+m [
+    shape = none
+    pos = "-1,1!"
+]
+
+d [
+    shape = none
+    pos = "0,0!"
+]
+
+
+a [
+    shape = none
+    pos = "1,1!"
+]
+
+
+m -> d
+a -> d
+a -> m
+}
+```
+:::
+:::
+
+::: {.columns}
+
+::: {.column width="50%"}
+
+```{dot}
+digraph {
+
+layout = neato
+
+m [
+    shape = none
+    pos = "-1,1!"
+]
+
+d [
+    shape = none
+    pos = "0,0!"
+]
+
+
+a [
+    shape = none
+    pos = "1,1!"
+]
+
+
+m -> d
+a -> d
+a -> m
+}
+```
+
+:::
+
+::: {.column width="50%"}
+```{dot}
+digraph {
+
+layout = neato
+
+m [
+    shape = none
+    pos = "-1,1!"
+]
+
+d [
+    shape = none
+    pos = "0,0!"
+]
+
+
+a [
+    shape = none
+    pos = "1,1!"
+]
+
+u [
+    shape = circle
+    pos = "0,2!"
+]
+
+m -> d
+a -> d
+u -> a
+u -> m
+}
+```
+
+:::
+:::
+
+# What Are We Fitting?
+
+```{dot}
+digraph {
+
+layout = neato
+
+m [
+    shape = none
+    pos = "-1,1!"
+]
+
+d [
+    shape = none
+    pos = "0,0!"
+]
+
+
+a [
+    shape = none
+    pos = "1,1!"
+]
+
+
+
+m -> d
+a -> d
+
+m -> a [dir=both]
+}
+```
+
+:::{.incremental}
+- We are uninterested in *exogenous variable covariance*, but we control for it. 
+- This does not preclude later assessing other relationships between *m* and *a*.
+:::
+
+# Should we Standardize?
+
+:::{.incremental}
+- Standardization can aid in fitting. 
+     - No scaling issues  
+     - Faster convergence
+     - Reduces collinearity of derived predictors (nonlinear terms)
+  
+- Standardization X and/or Y can aid in choosing priors.  
+     -Centering moves intercept to 0 on X and/or Y axis  
+     - Dividing by SD means we can think in terms of standard normal for slopes and intercepts
+  
+- Interpretation
+     - For linear models, coefficients are standardized correlation coefficients  
+     - Can back-transform Y by multiplying by sd and adding mean
+:::
+
+# Let's Standardize Divorce
+
+```{r std, echo = TRUE}
+WaffleDivorce <- WaffleDivorce |>
+  mutate(D = (Divorce - mean(Divorce))/sd(Divorce),
+         A = (MedianAgeMarriage - mean(MedianAgeMarriage))/sd(MedianAgeMarriage),
+         M = (Marriage - mean(Marriage))/sd(Marriage))
+```
+
+:::{.fragment}
+Or use `standardize()` or write a function
+:::
+
+
+# How to Build a Model with Multiple Predictors
+Likelihood:  
+$y_i \sim Normal(\mu_i, \sigma)$  
+  
+Data Generating Process  
+$\mu_i = \alpha + \beta_1 x1_i + \beta_2 x2_i + ...$  
+  
+Prior:  
+$\alpha \sim Normal(0, 100)$  
+$\beta_j \sim Normal(0, 100)$ [prior for each]{.fragment style="color:red"}   
+$\sigma \sim Exp(1)$  
+
+
+
+# Our Model
+Likelihood:  
+$D_i \sim Normal(\mu_i, \sigma)$  
+  
+Data Generating Process  
+$\mu_i = \alpha + \beta_m M_i + \beta_a A_i$  
+  
+Prior:  
+$\alpha \sim Normal(0, 0.5)$  [because standardized]{.fragment style="color:red"}  
+$\beta_m \sim Normal(0, 0.5)$   [because standardized]{.fragment style="color:red"}  
+$\beta_a \sim Normal(0, 0.5)$   [because standardized]{.fragment style="color:red"}  
+$\sigma \sim Exp(1)$  [because standardized]{.fragment style="color:red"}  
+
+# Our Model
+```{r wafffleDivorce_model, echo=TRUE}
+mod <- alist(
+  #likelihood
+  D ~ dnorm(mu, sigma),
+  
+  #data generating process
+  mu <- a + bM*M + bA * A,
+  
+  # Priors
+  a ~ dnorm(0, 0.5),
+  bM ~ dnorm(0, 0.5),
+  bA ~ dnorm(0, 0.5),
+  sigma ~ dunif(0,10)
+)
+
+fit <- quap(mod, data=WaffleDivorce)
+```
+
+# Were Our Priors Reasonable?
+**Prior for Marriage Age* N(0,0.5)*
+
+```{r age_prior}
+prior_divorce <- extract.prior(fit, n = 200) |> 
+  as_tibble()
+
+p1 <- ggplot(data = prior_divorce) +
+  geom_abline(aes(slope = bA, intercept = a), alpha = 0.2) +
+  xlim(c(-3,3)) + ylim(c(-3,3))  +
+  geom_hline(yintercept = c(-2,2), color = "red")
+
+
+d1 <- ggplot(data = WaffleDivorce) +
+  geom_point(aes(x = A, y = D)) +
+    xlim(c(-3,3)) + ylim(c(-3,3)) 
+
+
+p1 + d1
+```
+
+## Prior and Plot
+```{r age_prior}
+#| echo: true
+#| eval: false
+#| code-line-numbers: "|1-2|3-8|"
+```
+
+# Were Our Priors Reasonable? 
+**Prior for Marriage Rate N(0, 0.5**
+
+```{r divorce_prior}
+prior_divorce <- extract.prior(fit, n = 200) |> 
+  as_tibble()
+
+p1 <- ggplot(data = prior_divorce) +
+  geom_abline(aes(slope = bM, intercept = a), alpha = 0.2) +
+  xlim(c(-3,3)) + ylim(c(-3,3))  +
+  geom_hline(yintercept = c(-2,2), color = "red")
+
+
+d1 <- ggplot(data = WaffleDivorce) +
+  geom_point(aes(x = M, y = D)) +
+    xlim(c(-3,3)) + ylim(c(-3,3)) 
+
+
+p1 + d1
+```
+
+# Results: We Only Need Median Age
+```{r waffleRes}
+#precis(fit)
+
+plot(precis(fit))
+```
+
+
+# What does a Multiple Regression Coefficient Mean?
+- What is the predictive value of one variable once all others have been accounted for?  
+  
+- We want a coefficient that explains the unique contribution of a predictor  
+  
+- What is the effect of x1 on y after we take out the effect of x2 on x1?  
+
+# Today's Outline
+1. Multiple Predictors in a Bayesian Framework  
+    - How multiple predictors tease apart spurious and masked relationships  
+  
+2. **Evaluating a Model with Multiple Predictors**  
+  
+3. Testing Mediation  
+  
+4. Categorical Variables
+
+
+# How to Understand Posteriors
+```{r wafflesPostPair, echo=TRUE}
+pairs(fit)
+```
+
+:::{.fragment}
+Note correlation between bM and bA - when one is high the other is as well, but see scale
+:::
+
+# How to Understand Posteriors
+1. Predictor-residual plots  
+    - What if you remove the effect of other predictors?  
+  
+2. Counterfactual plots
+    - What if something else had happened?  
+  
+3. Posterior Predictions  
+    - How close are model predictions to the data
+
+# Predictor-Residual Plots
+- The `cr.plots` from the `car` package  
+    - Component-residual  
+  
+- Take the residual of a predictor, assess it's predictive power  
+  
+
+# Steps to Make Predictor-Residual Plots
+1. Compute predictor 1 ~ all other predictors  
+  
+2. Take residual of predictor 1  
+  
+3. Regress predictor 1 on response
+
+# PR Model Part 1
+```{r marraiges_resid, echo=TRUE}
+m_mod <- alist(
+  #model
+  M ~ dnorm(mu, sigma),
+  mu <- a + b*A,
+  
+  #priors
+  a ~ dnorm(0,10),
+  b ~ dnorm(0,10),
+  sigma ~ dunif(0,10)
+  )
+
+m_fit <- quap(m_mod, data=WaffleDivorce)
+```
+
+# PR Model Part 2
+```{r get_resid, echo=TRUE}
+WaffleDivorce <- WaffleDivorce %>%
+  mutate(Marriage_resid = M - 
+           (coef(m_fit)[1] + coef(m_fit)[2]*A)
+)
+```
+
+# The Predictor-Residual Plot
+```{r waf_cr}
+ggplot(WaffleDivorce,
+       aes(x = Marriage_resid, y = Divorce)) +
+  geom_point() +
+  stat_smooth(method="lm") +
+  theme_bw(base_size=17) +
+  xlab("Marraige Rate after accounting for Median Age") +
+  geom_vline(xintercept=0, lty=2)
+
+```
+
+<div class="fragment">What have we learned after accounting for median age?</div>
+
+# Counterfactual Plots
+- Counterfactual: A conditional statement of "if this, then ..."  
+  
+- Powerful way of assessing models - "If we had seen Marriage Rate as x, then the effect of Median age on divorce rate would be..."  
+  
+- Shows model implied predictions, often at levels nor observed
+
+# But - WHICH if?
+
+::: {.column width="50%"}
+
+::: {.columns}
+
+**Estimate effect of Age and Rate controlling for one another**
+
+```{dot}
+digraph {
+
+layout = neato
+
+m [
+    shape = none
+    pos = "-1,1!"
+]
+
+d [
+    shape = none
+    pos = "0,0!"
+]
+
+
+a [
+    shape = none
+    pos = "1,1!"
+]
+
+
+m -> d
+a -> d
+}
+```
+
+:::
+
+::: {.column width="50%"}
+
+**Estimate total, direct, and indirect effect of Marriage Age on Divorce**
+(This is Structural Equation Modeling)
+```{dot}
+digraph {
+
+layout = neato
+
+m [
+    shape = none
+    pos = "-1,1!"
+]
+
+d [
+    shape = none
+    pos = "0,0!"
+]
+
+
+a [
+    shape = none
+    pos = "1,1!"
+]
+
+
+
+m -> d
+a -> d
+m -> a
+}
+```
+
+:::
+:::
+
+
+# Counterfactual Plots: Code
+Effect of Age on Divorce holding Rate at it's Mean
+
+```{r get_conterfact}
+#| echo: true
+#| code-line-numbers: "|4-6|8-10|"
+library(tidybayes)
+library(tidybayes.rethinking)
+
+# fit interval
+cf_fit <- tidyr::crossing(A = seq(-2,3, .01),
+                          M = 0) |>
+  linpred_draws(m_fit, newdata = _)
+
+# prediction interval
+cf_pred <- tidyr::crossing(A = seq(-2,3, .01),
+                          M = 0) |>
+  predicted_draws(m_fit, newdata = _)
+```
+
+# What do we learn about the effects of Median Marriage Age Alone?
+```{r cf_plot}
+ggplot(data = cf_pred,
+       aes(x = A)) +
+  stat_lineribbon(aes(y = .prediction), .width = 0.8, 
+                  show.legend = FALSE,
+                  fill = "grey", alpha = 0.5) +
+  stat_lineribbon(data = cf_fit, aes(y = .value)) +
+  scale_fill_brewer(type = "qual") +
+  labs(title = "Effect of Median Age of Marriage\nat Mean Marriage Rate",
+       fill = "Fit Interval",
+       x = "Standardized Marriage Age",
+       y = "Standardized Divorce Rate") +
+  geom_point(data = WaffleDivorce, aes(y = D))
+```
+
+
+
+# Today's Outline
+1. Multiple Predictors in a Bayesian Framework  
+    - How multiple predictors tease apart spurious and masked relationships  
+  
+2. Evaluating a Model with Multiple Predictors  
+  
+3. **Testing Mediation**  
+  
+4. Categorical Variables
+
+
+# What if this was right?
+```{dot}
+digraph {
+
+layout = neato
+
+m [
+    shape = none
+    pos = "-1,1!"
+]
+
+d [
+    shape = none
+    pos = "0,0!"
+]
+
+
+a [
+    shape = none
+    pos = "1,1!"
+]
+
+m -> d
+a -> d
+m -> a
+}
+```
+
+# Mediation
+:::{.incremental}
+- The effect of one variable has a direct *and* indirect effect  
+  
+- The indirect effect is **mediated** through another variable. 
+  
+- Multiple types of mediation
+     - Full mediation (i.e., no direct effect)   
+     - Partial mediation (i.e., a direct and indirect effect)  
+     - Unmediated relationship (direct effect only)  
+  
+- We can look at strength of indirect and direct effects to differentiate  
+     - Or we can use model selection  
+     - Adding indirect effects also allows tests of causal independence
+:::
+
+
+# Our New Model
+:::{.fragment}
+Likelihoods:  
+$D_i \sim Normal(\mu_{di}, \sigma_d)$  
+$M_i \sim Normal(\mu_{mi}, \sigma_m)$
+:::
+
+:::{.fragment}
+Data Generating Processes  
+$\mu_{di} = \alpha_d + \beta_m M_i + \beta_a A_i$  
+$\mu_{mi} = \alpha_m + \beta_{ma} A_i$  
+:::
+
+:::{.fragment}
+Prior:  
+$\alpha_d \sim Normal(0, 0.5)$  
+$\alpha_m \sim Normal(0, 0.5)$  
+$\beta_m \sim Normal(0, 0.5)$   
+$\beta_a \sim Normal(0, 0.5)$   
+$\beta_{ma} \sim Normal(0, 0.5)$   
+$\sigma_d \sim Exp(1)$  
+$\sigma_m \sim Exp(1)$  
+:::
+
+# Our Model
+```{r wafffleDivorce_med_model, echo=TRUE}
+mod_med <- alist(
+  ## A -> D <- M
+  #likelihood 
+  D ~ dnorm(mu, sigma),
+  
+  #data generating processes
+  mu <- a + bM*M + bA * A,
+  
+  # Priors
+  a ~ dnorm(0, 0.5),
+  bM ~ dnorm(0, 0.5),
+  bA ~ dnorm(0, 0.5),
+  sigma ~ dunif(0,10),
+  
+  ## A -> M
+  #likelihood 
+  M ~ dnorm(mu_m, sigma_m),
+  
+  #data generating processes
+  mu_m <- a_m + bMA*A,
+  
+  # Priors
+  a_m ~ dnorm(0, 0.5),
+  bMA ~ dnorm(0, 0.5),
+  sigma_m ~ dunif(0,10)
+
+)
+
+fit_med <- quap(mod_med, data=WaffleDivorce)
+```
+
+# Calculating Direct and Indirect Effects
+```{dot}
+digraph {
+
+layout = neato
+
+m [
+    shape = none
+    pos = "-1,1!"
+]
+
+d [
+    shape = none
+    pos = "0,0!"
+]
+
+
+a [
+    shape = none
+    pos = "1,1!"
+]
+
+
+
+m -> d [label="bM"]
+a -> d [label="bA"]
+m -> a [label="bMA"]
+}
+```
+
+:::{.incremental}
+- Direct: *bA*   
+- Indirect: *bMA x bM*  
+- Total = *bA + bMA x bM*
+:::
+
+# Calculate and Visualize
+
+ We can draw coefficients and calculate using our DAG  
+
+```{r med_post}
+#| echo: true
+coef_med <- tidy_draws(fit_med) |>
+  mutate(direct = bA,
+         indirect = bMA * bM,
+         total = direct + indirect) |>
+  select(.draw, total, direct, indirect)
+```
+
+# Is there Mediation here?
+
+```{r vis_med}
+ggplot(coef_med |> pivot_longer(-.draw),
+       aes(x = value, y = name)) +
+  stat_halfeye() +
+  geom_vline(xintercept = 0, lty = 2) +
+  labs(y="")
+```
+
+## Code
+```{r vis_med, echo = TRUE, eval = FALSE}
+```
+
+# Today's Outline
+
+1. Multiple Predictors in a Bayesian Framework  
+
+2. Evaluating a Model with Multiple Predictors  
+  
+3. Testing Mediation  
+  
+4. **Categorical Variables**
+
+
+# Categorical Variables
+- Lots of ways to write models with categorical variables  
+  
+- We all hate R's treatment contrasts  
+  
+- Two main ways to write a model
+
+# Categorical Model Construction
+1. Code each level as 1 or 0 if present/absent  
+    - Need to have one baseline level  
+    - Treatment contrasts!  
+    - `Y <- a + b * x_is_level`  
+
+  
+2. Index your categories  
+    - Need to convert factors to levels with `as.numeric()`  
+    - `y <- a[level]`  
+
+# Monkies and Milk
+![](./images/14/monkies_milk.jpg)
+
+# Monkies and Milk Production
+```{r milk, echo=TRUE}
+data(milk)
+head(milk)
+```
+
+# To easily make Variables
+```{r make_monkey_clade, echo=TRUE}
+mmat <- model.matrix.default(mass ~ clade, data=milk)
+colnames(mmat) <- c("Ape", "New_World_Monkey", "Old_World_Monkey", "Strepsirrhine")
+milk <- cbind(milk, mmat)
+
+head(mmat)
+```
+
+# Original Milk Model
+```{r ape_mod1, echo=TRUE}
+milk_mod_1 <- alist(
+  kcal.per.g ~ dnorm(mu, sigma),
+  
+  mu <- a*Ape + b1*New_World_Monkey +
+    b2*Old_World_Monkey + b3*Strepsirrhine,
+  
+  a ~ dnorm(0.6, 10),
+  b1 ~ dnorm(0,1),
+  b2 ~ dnorm(0,1),
+  b3 ~ dnorm(0,1),
+  sigma ~ dexp(1)
+)
+
+milk_fit_1 <- quap(milk_mod_1, data=milk)
+```
+
+# Milk Coefs: What does a and b mean?
+```{r plot_ape_1}
+plot(precis(milk_fit_1))
+```
+
+# To get the New World mean...
+```{r combine, echo=TRUE}
+samp_milk <- extract.samples(milk_fit_1)
+
+new_world <- samp_milk$a + samp_milk$b1
+
+#Deviation from Ape
+HPDI(samp_milk$b1)
+
+#New World Monkies
+HPDI(new_world)
+```
+
+# A Better Way
+```{r ape_2, echo=TRUE}
+milk$clade_idx <- as.numeric(milk$clade)
+
+#A new model
+milk_mod_2 <- alist(
+  kcal.per.g ~ dnorm(mu, sigma),
+  
+  #note the indexing!
+  mu <- a[clade_idx],
+  
+  #four priors with one line!
+  a[clade_idx] ~ dnorm(0.6, 10),
+  sigma ~ dexp(1)
+  
+)
+
+milk_fit_2 <- quap(milk_mod_2, data=milk)
+```
+
+# Compare Results
+```{r samp_compare, echo=TRUE}
+#New World Monkies
+#From Mod1
+HPDI(new_world)
+
+#From Mod2 - note indexing
+samp_fit2 <- extract.samples(milk_fit_2)
+HPDI(samp_fit2$a[,2])
+```
+
+#  Exercise
+1. Build a model explaing the `kcal.per.g` of milk  
+  
+2. First try 2 continuous predictors  
+  
+3. Add clade  
+  
+4. Bonus: Can you make an interaction (try this *last*)

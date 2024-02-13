@@ -41,7 +41,7 @@ __Etherpad:__ https://etherpad.wikimedia.org/p/609-posteriors-2024
 ```{r next_date, echo=FALSE }
 ```
 `r datestring`  
-__Lecture:__  [Linear Bayesian Models](./lectures/linear_models.html),   
+__Lecture:__  [Linear Bayesian Models](./lectures/linear_models.html)   
 __Reading:__ McElreath Chapter 4  
 __Deeper Reading:__ [Simple Normal Regression](https://www.bayesrulesbook.com/chapter-9), [Posterior Inference and Prediction](https://www.bayesrulesbook.com/chapter-8)   
 __Even Deeper Reading:__ [Gavin Simpson on B-Splines](https://fromthebottomoftheheap.net/2020/06/03/extrapolating-with-gams/), [Michael Clark's GAM Introduction](https://m-clark.github.io/generalized-additive-models/), [Resources for Learning about GAMs in R](https://github.com/noamross/gam-resources)     
@@ -53,7 +53,7 @@ __Lab:__ [Linear Bayesian Models](lab/linear.html)
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
-__Lecture:__ [Multiple Predictor Variables](./lectures/14_multiple_predictors.html),   
+__Lecture:__ [Multiple Predictor Variables](./lectures/multiple_predictors.html)   
 __Reading:__ McElreath Chapter 5, Skim Ch. 6 (we did this in 607)  
 __Deeper Reading:__ [Extending the Normal Regression Model](https://www.bayesrulesbook.com/chapter-11)   
 __Tidying Rethinking:__ [The Many Variables and Spurious Waffles](https://bookdown.org/content/4857/the-many-variables-the-spurious-waffles.html)   
@@ -98,9 +98,8 @@ __Etherpad:__ https://etherpad.wikimedia.org/p/609-glm-2024
 ```
 `r datestring`   
 __Lecture:__ [Overdispersed Models](./lectures/12_overdisp.html), [Zero Inflated Models](./lectures/13_zinfl.html)   
-__Reading:__ McElreath Chapter 11, [Introduction to glmmTMB](https://www.biorxiv.org/content/10.1101/132753v1.abstract), [ver Hoef and Boveng 2007 on overdispersion](http://byrneslab.net/classes/biol609/Ver_Hoef_and_Boveng_qp_neg binomial.pdf), [Roset et al 2006 on Overdispersion](http://byrneslab.net/classes/biol609/Rose_et_al_2006_zero_inflation.pdf)  
-__Further Reading:__ [Zuur chapter on zero inflation](http://byrneslab.net/classes/biol609/zuur_zero_inflation.pdf), [Getting started with glmmTMB](https://cran.r-project.org/web/packages/glmmTMB/vignettes/glmmTMB.pdf), [Troubleshooting with glmmTMB]   
-__Files:__ [Fishing Duration CSV](./lectures/data/20/fishing_duration.csv)  
+__Reading:__ McElreath Chapter 12     
+__Further Reading:__ [ver Hoef and Boveng 2007 on overdispersion](http://byrneslab.net/classes/biol609/Ver_Hoef_and_Boveng_qp_neg binomial.pdf), [Roset et al 2006 on Overdispersion](http://byrneslab.net/classes/biol609/Rose_et_al_2006_zero_inflation.pdf), [Zuur chapter on zero inflation](http://byrneslab.net/classes/biol609/zuur_zero_inflation.pdf)
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-zig_zag-2024    
 
 
@@ -108,43 +107,32 @@ __Etherpad:__ https://etherpad.wikimedia.org/p/609-zig_zag-2024
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
-__Lecture:__ [Random Effects](./lectures/07_random_effects.html), [Mixed Models](./lectures/08_mixed_effects.html)  
+__Lecture:__ [Random Effects](./lectures/07_random_effects.html), [Varying Intercept Mixed Models](./lectures/22_varying_intercept.html)
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-ranef-2024  
-__Reading:__ [Gelman and Hill Ch. 12](http://byrneslab.net/classes/biol609/gelman_hill_ch_12.pdf) and/or [Zuur on Random Effects](http://byrneslab.net/classes/biol609/Zuur_ch_5.pdf), [A Practical Guide to Generalized Linear Mixed Models](https://www.cell.com/trends/ecology-evolution/fulltext/S0169-5347(09)00019-6)    
+__Reading:__ McElreath Ch. 13  
+__Further Reading:__ [Gelman and Hill Ch. 12](http://byrneslab.net/classes/biol609/gelman_hill_ch_12.pdf) and/or [Zuur on Random Effects](http://byrneslab.net/classes/biol609/Zuur_ch_5.pdf), [A Practical Guide to Generalized Linear Mixed Models](https://www.cell.com/trends/ecology-evolution/fulltext/S0169-5347(09)00019-6)    
 __Writings on visualization:__ <a href="http://anythingbutrbitrary.blogspot.com/2012/06/random-regression-coefficients-using.html">Random regression coefficients using lme4</a>, <a href="http://stackoverflow.com/questions/13847936/in-r-plotting-random-effects-from-lmer-lme4-package-using-qqmath-or-dotplot">Making mixed model plots look fancy</a>  
 __A Little More Reading:__ <a href="http://jonlefcheck.net/2013/03/13/r2-for-linear-mixed-effects-models/">R<sup>2</sup> for mixed models (from Jon Lefcheck)</a>, [lme4 converge warnings and solutions](https://rstudio-pubs-static.s3.amazonaws.com/33653_57fc7b8e5d484c909b615d8633c01d51.html)  
-  __Your One Stop FAQ:__ [Ben Bolker's Mixed Model's FAQ](https://bbolker.github.io/mixedmodels-misc/)  
-__Files:__ [Mussels](./lectures/data/07/mussels.csv), [Uneven  Mussels](./lectures/data/07/mussels_ragged.csv), [RIKZ Beach data](./lectures/data/08/rikz.csv), [growth data](./lectures/data/08/nestedGrowth.csv)    
-__R Packages:__ lme4, lmerTest, [merTools](https://github.com/jknowles/merTools), RLRsim, cAIC4  
+
   
 ### Week 10.
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
-__Lecture:__ [Varying Intercept Mixed Models](./lectures/22_varying_intercept.html) in a Bayesian Context, [Varying Slope Models](./lectures/23a_varslope.html)  
+__Lecture:__  [Varying Slope Models](./lectures/23a_varslope.html)  
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-mixed_bayesian-2024   
-__Reading:__ McElreath Chapter 12, 13   
+__Reading:__ McElreath Chapter 13   
 __Further Reading:__ [Gelman and Hill Ch. 12](http://byrneslab.net/classes/biol609/gelman_hill_ch_12.pdf) (see the bit on one model written 5 ways), [Gelman and Hill Ch. 13](http://byrneslab.net/classes/biol609/gelman_hill_ch_13.pdf), [Gelman on multiple comparisons in mixed models](http://byrneslab.net/classes/biol609/Gelman_multcomp.pdf)  
 
 ### Week 11.
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
-__Lecture:__  [brms and Prediction with Mixed Models](./lectures/23c_brms_prediction.html), Group-Mean Centering and Other Model Structures    
+__Lecture:__  Instrumental Variables, Group-Mean Centering, and Other Model Structures    
+__Reading:__ McElreath Chapter 14 Part 2   
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-mixed_bayesian-2024   
 __Reading:__ [McNeish and Kelly 2018](./Readings/McNeish_Kelley_PsychMethods_2024.pdf), [Causal Model Structures and Random Effects](http://rpubs.com/jebyrnes/causal_mods), [Poe Lecture Slides](./Readings/2018-11-02_wim_poe_clustered_slides.pdf), [Bell et al. 2018a](./Readings/Bell2018_Article_UnderstandingAndMisunderstandi.pdf), [Bell et al 2018b](./Bell_2018_Qual_Quant.pdf)  
 
-
-### Week 12.
-```{r next_date, echo=FALSE}
-```
-`r datestring`   
-__Lecture:__ [Temporal Autocorrelation](lectures/05_timeseries.html), [Spatial Autocorrelation](lectures/20_spatial.html)\
-__Etherpad:__ https://etherpad.wikimedia.org/p/609-autocorrelation-2024  
-__Reading:__ [Zuur et al. on temporal autocorrelation](http://byrneslab.net/classes/biol609/Zuur_ch_6_temporal.pdf), [Why OLS is an Unbiased Estimator for GLS](https://dynamicecology.wordpress.com/2012/09/24/why-ols-estimator-is-an-unbiased-estimator-for-gls/), [Zuur et al. on spatial autocorrelation](http://byrneslab.net/classes/biol609/Zuur_ch_7_space.pdf), [Hawkings on the 8 1/2 deadly sins of spatial data analysis](http://byrneslab.net/classes/biol609/hawkins_2011_spatial.pdf)\
-__Further Reading:__ [Intro to INLA for spatial and spatiotemporal modeling](https://ourcodingclub.github.io/2018/12/04/inla.html), [Spatial Data Analysis with R-INLA](https://www.jstatsoft.org/article/view/v063i20/v63i20.pdf), [inlabru: a package for Baysianspatial modelling from ecological survey data](https://besjournals.onlinelibrary.wiley.com/doi/abs/10.1111/2041-210X.13168), [Introduction to INLA](http://www.r-inla.org/events/bayes2013anintroductiontoinlawithacomparisontojagshandson), [more R-INLA examples](http://www.r-inla.org/examples/volume-1), [Hierarchical analysis of spatially autocorrelated ecological data using integrated nested Laplace approximation](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/j.2041-210X.2012.00211.x) with [code appendix](https://besjournals.onlinelibrary.wiley.com/action/downloadSupplement?doi=10.1111%2Fj.2041-210X.2012.00211.x&file=MEE3_211_sm_Appendices-data-S1-S2.zip) \
-__Files:__ [Birds](./lectures/data/05/allbirds.csv), [Plankton](./lectures/data/05/planktonMeans.csv), [Boreal Forests](./lectures/data/06/Boreality.txt), [Irish EPA Data](./lectures/data/06/SDI2003.txt)\ 
-__R Packages:__ nlme   
 
   
 ### Week 13. 
@@ -152,6 +140,7 @@ __R Packages:__ nlme
 ```
 `r datestring`   
 __Lecture:__ [Gaussian Proces Models](./lectures/24_gaussian_process.html), [Generalized Additive Models (GAMs)](./lectures/22_gams.html)   
+__Reading:__ McElreath Chapter 14 On GP and Ch4 on BSplines   
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-beyond-2024   
 __Files:__ [predicted GP script](./lectures/data/gp/predict_gpl2.R)  
 __Reading:__ [Spatial autoregressive models for statistical inference from ecological data](./Readings/verHoef_spatial_autocorrelation.pdf), McElreath Chapter 14, [Roberts et al. 2012](http://byrneslab.net/classes/biol609/Roberts_et_al_2012_gaussian_process.pdf), [GAMs: an Introduction](http://environmentalcomputing.net/intro-to-gams/), [Michael Clark's GAM Introduction](https://m-clark.github.io/generalized-additive-models/), [Hierarchical Generalized Additive Models in ecology: an introduction with mgcv](./Readings/Pedersen-2024-Hierarchical Generalized Additive Models in ecology.pdf)  
@@ -162,32 +151,14 @@ __Further Readings:__ [Methods to account for spatial autocorrelation in the ana
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
-__Lecture:__ Measurement Error and Missing Data, [Model II and Quantile Regression](./lectures/03_rma_quantile.html)  
+__Lecture:__ Measurement Error, Missing Data, and Meta-Analysis
+__Reading:__ McElreath Chapter 15.  
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-alt_regression-2024  
 __Reading:__ [Warton et al. SMATR](http://byrneslab.net/classes/biol609/Warton_et_al_2012_MEE.pdf), [Warton et al. 2006 Model II Review](http://byrneslab.net/classes/biol609/Warton_et_al-2006-Biological_Reviews.pdf), [Cade and Noon 2003 on Quantile Regression](http://byrneslab.net/classes/biol609/Cade_and_Noon_2003_Quantile.pdf), [Brennen et al. 2015 quantile regression example](http://byrneslab.net/classes/biol609/Brennen_et_al_2015_quantile.pdf), [Colonescu Ch. 8 on Heteroskedasticity](https://bookdown.org/ccolonescu/RPoE4/heteroskedasticity.html)\
 __Files:__ [Elk data](./lectures/data/03/ekk_from_dryad.csv), [Clam data](./lectures/data/04/Clams.txt)  
 __R Packages:__ Quantreg  
-  
-### Week 15.
-```{r next_date, echo=FALSE}
-```
-`r datestring`   
-__Lecture:__ Causal Modeling  
-__Readings:__ [A Second Change to Get Causal Inference Right](./Readings/Hernán_and_Healey_2024.pdf), [Causal analysis in control impact studies](./Readings/Larsen_et_al_2024.pdf), [Pearl 2010](Pearl_2010_causal_inference.pdf)    
-__Further Reading:__ [Causal Inference](https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/)
-  
-### Week 16.
-```{r next_date, echo=FALSE}
-```
-`r datestring`   
-<!-- __Lecture:__ [Intro to Structural Equation Models](https://1drv.ms/p/s!AvOIsObbweOroNIqHiVxra6SIrp4gw), [Implementing Piecewise SEM](https://1drv.ms/f/s!AvOIsObbweOroNIitg7KpsLhgffJrw)  -->
-__Lecture:__ [Intro to Structural Equation Models](https://www.dropbox.com/s/l7z6sbs16jk2y0s/23_SEM_Intro.pptx?dl=0), [SEM Implementation](https://www.dropbox.com/s/j59oodlmcx53tiw/24_Estimation_in_SEM.pptx?dl=0)  
-__Etherpad:__ https://etherpad.wikimedia.org/p/609-sem-2024  
-__Reading:__ [Grace et al 2012 Ecosphere](http://byrneslab.net/classes/biol609/Grace_et_al-2012-Ecosphere.pdf), [Lefcheck 2016](./Readings/Lefcheck_2016_SEM.pdf)   
-___Further Reading:__ [Notes from Jon Lefcheck](https://jslefche.github.io/sem_book/)  
-__Helpful Websites:__ [piecewiseSEM](http://jslefche.github.io/piecewiseSEM/), [lavaan](http://lavaan.ugent.be/), [Jim Grace's Tutorials](https://www.usgs.gov/centers/wetland-and-aquatic-research-center/science/quantitative-analysis-using-structural-equation)    
 
-### Week 17.
+### Week 15.
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
