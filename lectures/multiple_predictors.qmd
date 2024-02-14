@@ -18,6 +18,13 @@ format:
   
 ![](./images/14/mult_reg_dog.jpg){width="50%"}
 
+<!-- next year
+
+Break down DAGS more into sequence and explain back-door - they don't remember
+Show calculation of counterfactual with SEM
+Show how you'd use groups model - get group names back, plot, emmeans with groups
+
+-->
 
 ```{r prep, echo=FALSE, cache=FALSE, message=FALSE, warning=FALSE}
 library(knitr)
@@ -27,6 +34,8 @@ opts_chunk$set(fig.height=5, fig.width=7, comment=NA,
                dev="jpeg", echo=FALSE)
 
 library(rethinking)
+library(dagitty)
+
 library(dplyr)
 library(tidyr)
 library(ggplot2)
@@ -118,6 +127,7 @@ with(WaffleDivorce,
 :::
 :::
 
+
 # DAG Before You Model
 [Which of these is your model?]{.center}
 
@@ -125,62 +135,38 @@ with(WaffleDivorce,
 
 ::: {.column width="50%"}
 
-```{dot}
-digraph {
+```{r m1, fig.height=2}
+library(dagitty)
 
-layout = neato
-
-m [
-    shape = none
-    pos = "-1,1!"
-]
-
-d [
-    shape = none
-    pos = "0,0!"
-]
-
-
-a [
-    shape = none
-    pos = "1,1!"
-]
-
-
+m1 <- dagitty("dag{
 m -> d
 a -> d
-}
+}")
+
+coordinates(m1) <- list(x = c(m = -1, d = 0, a = 1),
+                       y = c(m = -1, d = 0, a = -1)
+                       )
+
+rethinking::drawdag(m1, cex = 3)
+
 ```
 
 :::
 
 ::: {.column width="50%"}
-```{dot}
-digraph {
+```{r m2, fig.height=2}
 
-layout = neato
-
-m [
-    shape = none
-    pos = "-1,1!"
-]
-
-d [
-    shape = none
-    pos = "0,0!"
-]
-
-
-a [
-    shape = none
-    pos = "1,1!"
-]
-
-
+m2 <- dagitty("dag{
 m -> d
 a -> d
-a -> m
-}
+m -> a
+}")
+
+coordinates(m2) <- list(x = c(m = -1, d = 0, a = 1),
+                       y = c(m = -1, d = 0, a = -1)
+                       )
+
+rethinking::drawdag(m2, cex = 3)
 ```
 :::
 :::
@@ -189,108 +175,41 @@ a -> m
 
 ::: {.column width="50%"}
 
-```{dot}
-digraph {
+```{r m3, fig.height=3}
 
-layout = neato
-
-m [
-    shape = none
-    pos = "-1,1!"
-]
-
-d [
-    shape = none
-    pos = "0,0!"
-]
-
-
-a [
-    shape = none
-    pos = "1,1!"
-]
-
-
+m3 <- dagitty("dag{
 m -> d
 a -> d
 a -> m
-}
+}")
+
+coordinates(m3) <- list(x = c(m = -1, d = 0, a = 1),
+                       y = c(m = -1, d = 0, a = -1)
+                       )
+
+rethinking::drawdag(m3, cex = 3)
 ```
 
 :::
 
 ::: {.column width="50%"}
-```{dot}
-digraph {
+```{r m4, fig.height=3}
 
-layout = neato
-
-m [
-    shape = none
-    pos = "-1,1!"
-]
-
-d [
-    shape = none
-    pos = "0,0!"
-]
-
-
-a [
-    shape = none
-    pos = "1,1!"
-]
-
-u [
-    shape = circle
-    pos = "0,2!"
-]
-
+m4 <- dagitty("dag{
 m -> d
 a -> d
-u -> a
-u -> m
-}
+m <- u -> a
+}")
+
+coordinates(m4) <- list(x = c(m = -1, d = 0, a = 1, u = 0),
+                       y = c(m = -1, d = 0, a = -1, u = -1)
+                       )
+latents(m4) <- "u"
+
+rethinking::drawdag(m4, cex = 3, shapes = list(u = "c"), radius = 9)
 ```
 
 :::
-:::
-
-# What Are We Fitting?
-
-```{dot}
-digraph {
-
-layout = neato
-
-m [
-    shape = none
-    pos = "-1,1!"
-]
-
-d [
-    shape = none
-    pos = "0,0!"
-]
-
-
-a [
-    shape = none
-    pos = "1,1!"
-]
-
-
-
-m -> d
-a -> d
-
-m -> a [dir=both]
-}
-```
-
-:::{.incremental}
-- We are uninterested in *exogenous variable covariance*, but we control for it. 
-- This does not preclude later assessing other relationships between *m* and *a*.
 :::
 
 # Should we Standardize?
@@ -301,13 +220,13 @@ m -> a [dir=both]
      - Faster convergence
      - Reduces collinearity of derived predictors (nonlinear terms)
   
-- Standardization X and/or Y can aid in choosing priors.  
-     -Centering moves intercept to 0 on X and/or Y axis  
+- Standardization X and/or Y can aid in choosing priors     
+     - Centering moves intercept to 0 on X and/or Y axis  
      - Dividing by SD means we can think in terms of standard normal for slopes and intercepts
   
-- Interpretation
-     - For linear models, coefficients are standardized correlation coefficients  
-     - Can back-transform Y by multiplying by sd and adding mean
+- Interpretation  
+     - For linear models, coefficients are standardized correlation coefficients   
+     - Can back-transform Y by multiplying by sd and adding mean  
 :::
 
 # Let's Standardize Divorce
@@ -332,8 +251,8 @@ Data Generating Process
 $\mu_i = \alpha + \beta_1 x1_i + \beta_2 x2_i + ...$  
   
 Prior:  
-$\alpha \sim Normal(0, 100)$  
-$\beta_j \sim Normal(0, 100)$ [prior for each]{.fragment style="color:red"}   
+$\alpha \sim Normal(0, 0.5)$  
+$\beta_j \sim Normal(0, 0.5)$ [prior for each]{.fragment style="color:red"}   
 $\sigma \sim Exp(1)$  
 
 
@@ -371,7 +290,7 @@ fit <- quap(mod, data=WaffleDivorce)
 ```
 
 # Were Our Priors Reasonable?
-**Prior for Marriage Age* N(0,0.5)*
+**Prior for Marriage Age N(0,0.5)**
 
 ```{r age_prior}
 prior_divorce <- extract.prior(fit, n = 200) |> 
@@ -380,12 +299,14 @@ prior_divorce <- extract.prior(fit, n = 200) |>
 p1 <- ggplot(data = prior_divorce) +
   geom_abline(aes(slope = bA, intercept = a), alpha = 0.2) +
   xlim(c(-3,3)) + ylim(c(-3,3))  +
-  geom_hline(yintercept = c(-2,2), color = "red")
+  geom_hline(yintercept = c(-2,2), color = "red") +
+  labs(y = "D", x = "A", subtitle = "From Prior")
 
 
 d1 <- ggplot(data = WaffleDivorce) +
   geom_point(aes(x = A, y = D)) +
-    xlim(c(-3,3)) + ylim(c(-3,3)) 
+    xlim(c(-3,3)) + ylim(c(-3,3))  +
+  labs(subtitle = "Z-Transformed Data")
 
 
 p1 + d1
@@ -399,7 +320,7 @@ p1 + d1
 ```
 
 # Were Our Priors Reasonable? 
-**Prior for Marriage Rate N(0, 0.5**
+**Prior for Marriage Rate N(0, 0.5)**
 
 ```{r divorce_prior}
 prior_divorce <- extract.prior(fit, n = 200) |> 
@@ -408,12 +329,15 @@ prior_divorce <- extract.prior(fit, n = 200) |>
 p1 <- ggplot(data = prior_divorce) +
   geom_abline(aes(slope = bM, intercept = a), alpha = 0.2) +
   xlim(c(-3,3)) + ylim(c(-3,3))  +
-  geom_hline(yintercept = c(-2,2), color = "red")
+  geom_hline(yintercept = c(-2,2), color = "red") +
+  labs(y = "D", x = "M", subtitle = "From Prior")
 
 
 d1 <- ggplot(data = WaffleDivorce) +
   geom_point(aes(x = M, y = D)) +
-    xlim(c(-3,3)) + ylim(c(-3,3)) 
+    xlim(c(-3,3)) + ylim(c(-3,3)) +
+    labs(subtitle = "Z-Transformed Data")
+
 
 
 p1 + d1
@@ -525,73 +449,27 @@ ggplot(WaffleDivorce,
 
 # But - WHICH if?
 
+::: {.columns}
+
 ::: {.column width="50%"}
 
-::: {.columns}
 
 **Estimate effect of Age and Rate controlling for one another**
 
-```{dot}
-digraph {
-
-layout = neato
-
-m [
-    shape = none
-    pos = "-1,1!"
-]
-
-d [
-    shape = none
-    pos = "0,0!"
-]
-
-
-a [
-    shape = none
-    pos = "1,1!"
-]
-
-
-m -> d
-a -> d
-}
+```{r m1}
 ```
 
 :::
 
 ::: {.column width="50%"}
 
-**Estimate total, direct, and indirect effect of Marriage Age on Divorce**
-(This is Structural Equation Modeling)
-```{dot}
-digraph {
-
-layout = neato
-
-m [
-    shape = none
-    pos = "-1,1!"
-]
-
-d [
-    shape = none
-    pos = "0,0!"
-]
+**Estimate total, direct, & indirect effect of Age on Divorce**
 
 
-a [
-    shape = none
-    pos = "1,1!"
-]
-
-
-
-m -> d
-a -> d
-m -> a
-}
+```{r m3}
 ```
+
+(This is Structural Equation Modeling)
 
 :::
 :::
@@ -670,7 +548,7 @@ a [
 
 m -> d
 a -> d
-m -> a
+a -> m
 }
 ```
 
@@ -774,7 +652,7 @@ a [
 
 m -> d [label="bM"]
 a -> d [label="bA"]
-m -> a [label="bMA"]
+a -> m [label="bMA"]
 }
 ```
 
