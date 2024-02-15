@@ -1,0 +1,32 @@
+---
+title: "Multiple Predictor Models with Rethinking"
+format: html
+---
+
+# Models from McElreath
+5E2. Write down a multiple regression to evaluate the claim: Animal diversity is linearly related to latitude, but only after controlling for plant diversity. You just need to write down the model definition. Stretch your wings by doing this in markdown with LaTeX. See [here](https://biostats-r.github.io/biostats/quarto/04-figures-tables.html#equations), [here](https://qmd4sci.njtierney.com/math), and [this little cheat](https://editor.codecogs.com/?lang=en-us).
+
+# Some Conceptual Thoughts from McElreath
+
+5M1. Invent your own example of a spurious correlation. An outcome variable should be correlated with both predictor variables. But when both predictors are entered in the same model, the correlation between the outcome and one of the predictors should mostly vanish (or at least be greatly reduced). Draw the DAG with [dagitty](https://biol607.github.io/lab/dagitty.html) and the `rethinking::drawdag()` function.  
+
+5M2. Invent your own example of a masked relationship. An outcome variable should be correlated with both predictor variables, but in opposite directions. And the two predictor variables should be correlated with one another. Draw the DAG with [dagitty](https://biol607.github.io/lab/dagitty.html) and the `rethinking::drawdag()` function.  
+
+## McElreath gets Foxy!
+
+For the following, we will use the `data(foxes)` (part of rethinking). The urban fox (*Vulpes vulpes*) is a successful exploiter of human habitat. Since urban foxes move in packs and defend territories, data on habitat quality and population density is also included. The data frame has five columns:
+
+(1) group: Number of the social group the individual fox belongs to 
+(2) avgfood: The average amount of food available in the territory 
+(3) groupsize: The number of foxes in the social group
+(4) area: Size of the territory
+(5) weight: Body weight of the individual fox
+
+5H2.  Fit a multiple linear regression with weight as the outcome and both area and grou psize as predictor variables. Plot the predictions of the model for each predictor, holding the other predictor constant at its mean. What does this model say about the importance of each variable? Why do you get different results than you got in the exercise just above?
+
+## Categoricals
+With `data(milk)`, build a model explaing the kcal.per.g of milk with 2 continuous predictors of your choice and clade. Plot the effect of clade controlling for continuous predictors. If you want to go wild, try and make some of the SLOPES clade specific. Hey, you've got an interaction. Can you plot clade-specific effects? (Note, you do not need to do this part - just leaving it there as a challenge and an opportunity.)
+
+## Go Causal from McElreath
+
+6H1. Use the Waffle House data, data(WaffleDivorce), to find the total causal influence of number of Waffle Houses on divorce rate. Justify your model or models with a causal graph. You can fit an SEM here and calculate direct and indirect effects. If you want to show the causal graph in R, use [dagitty](https://biol607.github.io/lab/dagitty.html) and be sure to check out the `drawdag()` function in rethinking

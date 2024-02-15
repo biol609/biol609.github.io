@@ -56,7 +56,8 @@ __Lab:__ [Linear Bayesian Models](lab/linear.html)
 __Lecture:__ [Multiple Predictor Variables](./lectures/multiple_predictors.html)   
 __Reading:__ McElreath Chapter 5, Skim Ch. 6 (we did this in 607)  
 __Deeper Reading:__ [Extending the Normal Regression Model](https://www.bayesrulesbook.com/chapter-11)   
-__Tidying Rethinking:__ [The Many Variables and Spurious Waffles](https://bookdown.org/content/4857/the-many-variables-the-spurious-waffles.html)   
+__Tidying Rethinking:__ [The Many Variables and Spurious Waffles](https://bookdown.org/content/4857/the-many-variables-the-spurious-waffles.html) 
+__Lab:__ [Multiple Predictors with Rethinking](lab/multiple_predictors.html)  
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-multiple_predictors-2024    
 
 
