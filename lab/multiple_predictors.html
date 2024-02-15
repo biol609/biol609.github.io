@@ -64,7 +64,7 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="models-from-mcelreath" class="level1">
 <h1>Models from McElreath</h1>
-<p>5E2. Write down a multiple regression to evaluate the claim: Animal diversity is linearly related to latitude, but only after controlling for plant diversity. You just need to write down the model definition. Stretch your wings by doing this in markdown with LaTeX. See <a href="https://biostats-r.github.io/biostats/quarto/04-figures-tables.html#equations">here</a>, <a href="https://qmd4sci.njtierney.com/math">here</a>, and <a href="https://editor.codecogs.com/?lang=en-us">this little cheat</a>.</p>
+<p>5E2. Write down a multiple regression to evaluate the claim: Animal diversity is linearly related to plant productivity (more food, more animal species), but only after controlling for latitude. Assume these are z-standardized variables. You just need to write down the model definition. Stretch your wings by doing this in markdown with LaTeX. See <a href="https://biostats-r.github.io/biostats/quarto/04-figures-tables.html#equations">here</a>, <a href="https://qmd4sci.njtierney.com/math">here</a>, and <a href="https://editor.codecogs.com/?lang=en-us">this little cheat</a>.</p>
 </section>
 <section id="some-conceptual-thoughts-from-mcelreath" class="level1">
 <h1>Some Conceptual Thoughts from McElreath</h1>
@@ -80,7 +80,7 @@ ul.task-list li input[type="checkbox"] {
 <li>area: Size of the territory</li>
 <li>weight: Body weight of the individual fox</li>
 </ol>
-<p>5H2. Fit a multiple linear regression with weight as the outcome and both area and grou psize as predictor variables. Plot the predictions of the model for each predictor, holding the other predictor constant at its mean. What does this model say about the importance of each variable? Why do you get different results than you got in the exercise just above?</p>
+<p>5H2. Fit a multiple linear regression with weight as the outcome and both area and group size as predictor variables. You can standardize the variables if you wish. Plot the predictions of the model for each predictor, holding the other predictor constant at its mean. Use <code>tidybayes</code> and <code>tidybayes.rethinking</code> for this with either the <code>tidy_draws()</code> function or <code>linpred_draws()</code>. What does this model say about the importance of each variable?</p>
 </section>
 <section id="categoricals" class="level2">
 <h2 class="anchored" data-anchor-id="categoricals">Categoricals</h2>

@@ -4,7 +4,7 @@ format: html
 ---
 
 # Models from McElreath
-5E2. Write down a multiple regression to evaluate the claim: Animal diversity is linearly related to latitude, but only after controlling for plant diversity. You just need to write down the model definition. Stretch your wings by doing this in markdown with LaTeX. See [here](https://biostats-r.github.io/biostats/quarto/04-figures-tables.html#equations), [here](https://qmd4sci.njtierney.com/math), and [this little cheat](https://editor.codecogs.com/?lang=en-us).
+5E2. Write down a multiple regression to evaluate the claim: Animal diversity is linearly related to plant productivity (more food, more animal species), but only after controlling for latitude. Assume these are z-standardized variables. You just need to write down the model definition. Stretch your wings by doing this in markdown with LaTeX. See [here](https://biostats-r.github.io/biostats/quarto/04-figures-tables.html#equations), [here](https://qmd4sci.njtierney.com/math), and [this little cheat](https://editor.codecogs.com/?lang=en-us).
 
 # Some Conceptual Thoughts from McElreath
 
@@ -22,7 +22,7 @@ For the following, we will use the `data(foxes)` (part of rethinking). The urban
 (4) area: Size of the territory
 (5) weight: Body weight of the individual fox
 
-5H2.  Fit a multiple linear regression with weight as the outcome and both area and grou psize as predictor variables. Plot the predictions of the model for each predictor, holding the other predictor constant at its mean. What does this model say about the importance of each variable? Why do you get different results than you got in the exercise just above?
+5H2.  Fit a multiple linear regression with weight as the outcome and both area and group size as predictor variables. You can standardize the variables if you wish. Plot the predictions of the model for each predictor, holding the other predictor constant at its mean. Use `tidybayes` and `tidybayes.rethinking` for this with either the `tidy_draws()` function or `linpred_draws()`. What does this model say about the importance of each variable? 
 
 ## Categoricals
 With `data(milk)`, build a model explaing the kcal.per.g of milk with 2 continuous predictors of your choice and clade. Plot the effect of clade controlling for continuous predictors. If you want to go wild, try and make some of the SLOPES clade specific. Hey, you've got an interaction. Can you plot clade-specific effects? (Note, you do not need to do this part - just leaving it there as a challenge and an opportunity.)
