@@ -6,6 +6,8 @@ format: html
 # Models from McElreath
 5E2. Write down a multiple regression to evaluate the claim: Animal diversity is linearly related to plant productivity (more food, more animal species), but only after controlling for latitude. Assume these are z-standardized variables. You just need to write down the model definition. Stretch your wings by doing this in markdown with LaTeX. See [here](https://biostats-r.github.io/biostats/quarto/04-figures-tables.html#equations), [here](https://qmd4sci.njtierney.com/math), and [this little cheat](https://editor.codecogs.com/?lang=en-us).
 
+Draw the DAG with [dagitty](https://biol607.github.io/lab/dagitty.html) and the `rethinking::drawdag()` function.  
+
 # Some Conceptual Thoughts from McElreath
 
 5M2. Invent your own example of a masked relationship. An outcome variable should be correlated with both predictor variables, but in opposite directions. And the two predictor variables should be correlated with one another. Draw the DAG with [dagitty](https://biol607.github.io/lab/dagitty.html) and the `rethinking::drawdag()` function.  
