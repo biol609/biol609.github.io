@@ -8,8 +8,6 @@ format: html
 
 # Some Conceptual Thoughts from McElreath
 
-5M1. Invent your own example of a spurious correlation. An outcome variable should be correlated with both predictor variables. But when both predictors are entered in the same model, the correlation between the outcome and one of the predictors should mostly vanish (or at least be greatly reduced). Draw the DAG with [dagitty](https://biol607.github.io/lab/dagitty.html) and the `rethinking::drawdag()` function.  
-
 5M2. Invent your own example of a masked relationship. An outcome variable should be correlated with both predictor variables, but in opposite directions. And the two predictor variables should be correlated with one another. Draw the DAG with [dagitty](https://biol607.github.io/lab/dagitty.html) and the `rethinking::drawdag()` function.  
 
 ## McElreath gets Foxy!
@@ -25,7 +23,7 @@ For the following, we will use the `data(foxes)` (part of rethinking). The urban
 5H2.  Fit a multiple linear regression with weight as the outcome and both area and group size as predictor variables. You can standardize the variables if you wish. Plot the predictions of the model for each predictor, holding the other predictor constant at its mean. Use `tidybayes` and `tidybayes.rethinking` for this with either the `tidy_draws()` function or `linpred_draws()`. What does this model say about the importance of each variable? 
 
 ## Categoricals
-With `data(milk)`, build a model explaing the kcal.per.g of milk with 2 continuous predictors of your choice and clade. Plot the effect of clade controlling for continuous predictors. If you want to go wild, try and make some of the SLOPES clade specific. Hey, you've got an interaction. Can you plot clade-specific effects? (Note, you do not need to do this part - just leaving it there as a challenge and an opportunity.)
+With `data(milk)`, build a model explaing the kcal.per.g of milk with 2 continuous predictors of your choice and clade. Plot the effect of clade controlling for continuous predictors (which you can standardize). If you want to go wild, try and make some of the SLOPES clade specific. Hey, you've got an interaction. Use `tidybayes` and `tidybayes.rethinking` with `linpred_draws()` for this. Can you plot clade-specific effects? (Note, you do not need to do this part - just leaving it there as a challenge and an opportunity.)
 
 ## Go Causal from McElreath
 

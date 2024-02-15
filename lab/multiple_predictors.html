@@ -68,7 +68,6 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="some-conceptual-thoughts-from-mcelreath" class="level1">
 <h1>Some Conceptual Thoughts from McElreath</h1>
-<p>5M1. Invent your own example of a spurious correlation. An outcome variable should be correlated with both predictor variables. But when both predictors are entered in the same model, the correlation between the outcome and one of the predictors should mostly vanish (or at least be greatly reduced). Draw the DAG with <a href="https://biol607.github.io/lab/dagitty.html">dagitty</a> and the <code>rethinking::drawdag()</code> function.</p>
 <p>5M2. Invent your own example of a masked relationship. An outcome variable should be correlated with both predictor variables, but in opposite directions. And the two predictor variables should be correlated with one another. Draw the DAG with <a href="https://biol607.github.io/lab/dagitty.html">dagitty</a> and the <code>rethinking::drawdag()</code> function.</p>
 <section id="mcelreath-gets-foxy" class="level2">
 <h2 class="anchored" data-anchor-id="mcelreath-gets-foxy">McElreath gets Foxy!</h2>
@@ -84,7 +83,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="categoricals" class="level2">
 <h2 class="anchored" data-anchor-id="categoricals">Categoricals</h2>
-<p>With <code>data(milk)</code>, build a model explaing the kcal.per.g of milk with 2 continuous predictors of your choice and clade. Plot the effect of clade controlling for continuous predictors. If you want to go wild, try and make some of the SLOPES clade specific. Hey, you’ve got an interaction. Can you plot clade-specific effects? (Note, you do not need to do this part - just leaving it there as a challenge and an opportunity.)</p>
+<p>With <code>data(milk)</code>, build a model explaing the kcal.per.g of milk with 2 continuous predictors of your choice and clade. Plot the effect of clade controlling for continuous predictors (which you can standardize). If you want to go wild, try and make some of the SLOPES clade specific. Hey, you’ve got an interaction. Use <code>tidybayes</code> and <code>tidybayes.rethinking</code> with <code>linpred_draws()</code> for this. Can you plot clade-specific effects? (Note, you do not need to do this part - just leaving it there as a challenge and an opportunity.)</p>
 </section>
 <section id="go-causal-from-mcelreath" class="level2">
 <h2 class="anchored" data-anchor-id="go-causal-from-mcelreath">Go Causal from McElreath</h2>
