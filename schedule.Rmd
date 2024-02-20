@@ -65,7 +65,7 @@ __Etherpad:__ https://etherpad.wikimedia.org/p/609-multiple_predictors-2024
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
-__Lecture:__ [Bayesian Multimodel Inference](./lectures/15_mmi.html)   
+__Lecture:__ [Bayesian Multimodel Inference](./lectures/mmi.html)   
 __Reading:__ McElreath Chapter 7  
 __Deeper Reading:__ [Aho et al 2013 Ecology](http://izt.ciens.ucv.ve/ecologia/Archivos/ECO_POB%202014/ECOPO2_2014/Aho%20et%20al%202014.pdf), [Gelman et al. 2013 on WAIC and LOO](http://link.springer.com/article/10.1007/s11222-013-9416-2)  
 __Tidying Rethinking:__ [Ulysses Compass](https://bookdown.org/content/4857/ulysses-compass.html)

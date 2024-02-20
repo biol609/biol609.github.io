@@ -1,0 +1,1936 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="mmi_files/libs/clipboard/clipboard.min.js"></script>
+<script src="mmi_files/libs/quarto-html/tabby.min.js"></script>
+<script src="mmi_files/libs/quarto-html/popper.min.js"></script>
+<script src="mmi_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="mmi_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="mmi_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="mmi_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
+<link href="mmi_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.4.549">
+
+  <title>mmi</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="mmi_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="mmi_files/libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="mmi_files/libs/revealjs/dist/theme/quarto.css">
+  <link rel="stylesheet" href="style.css">
+  <link href="mmi_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="mmi_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="mmi_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="mmi_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+
+  .callout {
+    margin-top: 1em;
+    margin-bottom: 1em;  
+    border-radius: .25rem;
+  }
+
+  .callout.callout-style-simple { 
+    padding: 0em 0.5em;
+    border-left: solid #acacac .3rem;
+    border-right: solid 1px silver;
+    border-top: solid 1px silver;
+    border-bottom: solid 1px silver;
+    display: flex;
+  }
+
+  .callout.callout-style-default {
+    border-left: solid #acacac .3rem;
+    border-right: solid 1px silver;
+    border-top: solid 1px silver;
+    border-bottom: solid 1px silver;
+  }
+
+  .callout .callout-body-container {
+    flex-grow: 1;
+  }
+
+  .callout.callout-style-simple .callout-body {
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  .callout.callout-style-default .callout-body {
+    font-size: 0.9rem;
+    font-weight: 400;
+  }
+
+  .callout.callout-titled.callout-style-simple .callout-body {
+    margin-top: 0.2em;
+  }
+
+  .callout:not(.callout-titled) .callout-body {
+      display: flex;
+  }
+
+  .callout:not(.no-icon).callout-titled.callout-style-simple .callout-content {
+    padding-left: 1.6em;
+  }
+
+  .callout.callout-titled .callout-header {
+    padding-top: 0.2em;
+    margin-bottom: -0.2em;
+  }
+
+  .callout.callout-titled .callout-title  p {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+  }
+    
+  .callout.callout-titled.callout-style-simple .callout-content  p {
+    margin-top: 0;
+  }
+
+  .callout.callout-titled.callout-style-default .callout-content  p {
+    margin-top: 0.7em;
+  }
+
+  .callout.callout-style-simple div.callout-title {
+    border-bottom: none;
+    font-size: .9rem;
+    font-weight: 600;
+    opacity: 75%;
+  }
+
+  .callout.callout-style-default  div.callout-title {
+    border-bottom: none;
+    font-weight: 600;
+    opacity: 85%;
+    font-size: 0.9rem;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+  }
+
+  .callout.callout-style-default div.callout-content {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+  }
+
+  .callout.callout-style-simple .callout-icon::before {
+    height: 1rem;
+    width: 1rem;
+    display: inline-block;
+    content: "";
+    background-repeat: no-repeat;
+    background-size: 1rem 1rem;
+  }
+
+  .callout.callout-style-default .callout-icon::before {
+    height: 0.9rem;
+    width: 0.9rem;
+    display: inline-block;
+    content: "";
+    background-repeat: no-repeat;
+    background-size: 0.9rem 0.9rem;
+  }
+
+  .callout-title {
+    display: flex
+  }
+    
+  .callout-icon::before {
+    margin-top: 1rem;
+    padding-right: .5rem;
+  }
+
+  .callout.no-icon::before {
+    display: none !important;
+  }
+
+  .callout.callout-titled .callout-body > .callout-content > :last-child {
+    padding-bottom: 0.5rem;
+    margin-bottom: 0;
+  }
+
+  .callout.callout-titled .callout-icon::before {
+    margin-top: .5rem;
+    padding-right: .5rem;
+  }
+
+  .callout:not(.callout-titled) .callout-icon::before {
+    margin-top: 1rem;
+    padding-right: .5rem;
+  }
+
+  /* Callout Types */
+
+  div.callout-note {
+    border-left-color: #4582ec !important;
+  }
+
+  div.callout-note .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAEU0lEQVRYCcVXTWhcVRQ+586kSUMMxkyaElstCto2SIhitS5Ek8xUKV2poatCcVHtUlFQk8mbaaziwpWgglJwVaquitBOfhQXFlqlzSJpFSpIYyXNjBNiTCck7x2/8/LeNDOZxDuEkgOXe++553zfefee+/OYLOXFk3+1LLrRdiO81yNqZ6K9cG0P3MeFaMIQjXssE8Z1JzLO9ls20MBZX7oG8w9GxB0goaPrW5aNMp1yOZIa7Wv6o2ykpLtmAPs/vrG14Z+6d4jpbSKuhdcSyq9wGMPXjonwmESXrriLzFGOdDBLB8Y6MNYBu0dRokSygMA/mrun8MGFN3behm6VVAwg4WR3i6FvYK1T7MHo9BK7ydH+1uurECoouk5MPRyVSBrBHMYwVobG2aOXM07sWrn5qgB60rc6mcwIDJtQrnrEr44kmy+UO9r0u9O5/YbkS9juQckLed3DyW2XV/qWBBB3ptvI8EUY3I9p/67OW+g967TNr3Sotn3IuVlfMLVnsBwH4fsnebJvyGm5GeIUA3jljERmrv49SizPYuq+z7c2H/jlGC+Ghhupn/hcapqmcudB9jwJ/3jvnvu6vu5lVzF1fXyZuZZ7U8nRmVzytvT+H3kilYvH09mLWrQdwFSsFEsxFVs5fK7A0g8gMZjbif4ACpKbjv7gNGaD8bUrlk8x+KRflttr22JEMRUbTUwwDQScyzPgedQHZT0xnx7ujw2jfVfExwYHwOsDTjLdJ2ebmeQIlJ7neo41s/DrsL3kl+W2lWvAga0tR3zueGr6GL78M3ifH0rGXrBC2aAR8uYcIA5gwV8zIE8onoh8u0Fca/ciF7j1uOzEnqcIm59sEXoGc0+z6+H45V1CvAvHcD7THztu669cnp+L0okAeIc6zjbM/24LgGM1gZk7jnRu1aQWoU9sfUOuhrmtaPIO3YY1KLLWZaEO5TKUbMY5zx8W9UJ6elpLwKXbsaZ4EFl7B4bMtDv0iRipKoDQT2sNQI9b1utXFdYisi+wzZ/ri/1m7QfDgEuvgUUEIJPq3DhX/5DWNqIXDOweC2wvIR90Oq3lDpdMIgD2r0dXvGdsEW5H6x6HLRJYU7C69VefO1x8Gde1ZFSJLfWS1jbCnhtOPxmpfv2LXOA2Xk2tvnwKKPFuZ/oRmwBwqRQDcKNeVQkYcOjtWVBuM/JuYw5b6isojIkYxyYAFn5K7ZBF10fea52y8QltAg6jnMqNHFBmGkQ1j+U43HMi2xMar1Nv0zGsf1s8nUsmUtPOOrbFIR8bHFDMB5zL13Gmr/kGlCkUzedTzzmzsaJXhYawnA3UmARpiYj5ooJZiUoxFRtK3X6pgNPv+IZVPcnwbOl6f+aBaO1CNvPW9n9LmCp01nuSaTRF2YxHqZ8DYQT6WsXT+RD6eUztwYLZ8rM+rcPxamv1VQzFUkzFXvkiVrySGQgJNvXHJAxiU3/NwiC03rSf05VBaPtu/Z7/B8Yn/w7eguloAAAAAElFTkSuQmCC');
+  }
+
+  div.callout-note.callout-style-default .callout-title {
+    background-color: #dae6fb
+  }
+
+  div.callout-important {
+    border-left-color: #d9534f !important;
+  }
+
+  div.callout-important .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAEKklEQVRYCcVXTWhcVRS+575MJym48A+hSRFr00ySRQhURRfd2HYjk2SSTokuBCkU2o0LoSKKraKIBTcuFCoidGFD08nkBzdREbpQ1EDNIv8qSGMFUboImMSZd4/f9zJv8ibJMC8xJQfO3HPPPef7zrvvvnvviIkpC9nsw0UttFunbUhpFzFtarSd6WJkStVMw5xyVqYTvkwfzuf/5FgtkVoB0729j1rjXwThS7Vio+Mo6DNnvLfahoZ+i/o32lULuJ3NNiz7q6+pyAUkJaFF6JwaM2lUJlV0MlnQn5aTRbEu0SEqHUa0A4AdiGuB1kFXRfVyg5d87+Dg4DL6m2TLAub60ilj7A1Ec4odSAc8X95sHh7+ZRPCFo6Fnp7HfU/fBng/hi10CjCnWnJjsxvDNxWw0NfV6Rv5GgP3I3jGWXumdTD/3cbEOP2ZbOZp69yniG3FQ9z1jD7bnBu9Fc2tKGC2q+uAJOQHBDRiZX1x36o7fWBs7J9ownbtO+n0/qWkvW7UPIfc37WgT6ZGR++EOJyeQDSb9UB+DZ1G6DdLDzyS+b/kBCYGsYgJbSQHuThGKRcw5xdeQf8YdNHsc6ePXrlSYMBuSIAFTGAtQo+VuALo4BX83N190NWZWbynBjhOHsmNfFWLeL6v+ynsA58zDvvAC8j5PkbOcXCMg2PZFk3q8MjI7WAG/Dp9AwP7jdGBOOQkAvlFUB+irtm16I1Zw9YBcpGTGXYmk3kQIC/Cds55l+iMI3jqhjAuaoe+am2Jw5GT3Nbz3CkE12NavmzN5+erJW7046n/CH1RO/RVa8lBLozXk9uqykkGAyRXLWlLv5jyp4RFsG5vGVzpDLnIjTWgnRy2Rr+tDKvRc7Y8AyZq10jj8DqXdnIRNtFZb+t/ZRtXcDiVnzpqx8mPcDWxgARUqx0W1QB9MeUZiNrV4qP+Ehc+BpNgATsTX8ozYKL2NtFYAHc84fG7ndxUPr+AR/iQSns7uSUufAymwDOb2+NjK27lEFocm/EE2WpyIy/Hi66MWuMKJn8RvxIcj87IM5Vh9663ziW36kR0HNenXuxmfaD8JC7tfKbrhFr7LiZCrMjrzTeGx+PmkosrkNzW94ObzwocJ7A1HokLolY+AvkTiD/q1H0cN48c5EL8Crkttsa/AXQVDmutfyku0E7jShx49XqV3MFK8IryDhYVbj7Sj2P2eBxwcXoe8T8idsKKPRcnZw1b+slFTubwUwhktrfnAt7J++jwQtLZcm3sr9LQrjRzz6cfMv9aLvgmnAGvpoaGLxM4mAEaLV7iAzQ3oU0IvD5x9ix3yF2RAAuYAOO2f7PEFWCXZ4C9Pb2UsgDeVnFSpbFK7/IWu7TPTvBqzbGdCHOJQSxiEjt6IyZmxQyEJHv6xyQsYk//moVFsN2zP6fRImjfq7/n/wFDguUQFNEwugAAAABJRU5ErkJggg==');
+  }
+
+  div.callout-important.callout-style-default .callout-title {
+    background-color: #f7dddc
+  }
+
+  div.callout-warning {
+    border-left-color: #f0ad4e !important;
+  }
+
+  div.callout-warning .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAETklEQVRYCeVWW2gcVRg+58yaTUnizqbipZeX4uWhBEniBaoUX1Ioze52t7sRq6APio9V9MEaoWlVsFasRq0gltaAPuxms8lu0gcviE/FFOstVbSIxgcv6SU7EZqmdc7v9+9mJtNks51NTUH84ed889/PP+cmxP+d5FIbMJmNbpREu4WUkiTtCicKny0l1pIKmBzovF2S+hIJHX8iEu3hZJ5lNZGqyRrGSIQpq15AzF28jgpeY6yk6GVdrfFqdrD6Iw+QlB8g0YS2g7dyQmXM/IDhBhT0UCiRf59lfqmmDvzRt6kByV/m4JjtzuaujMUM2c5Z2d6JdKrRb3K2q6mA+oYVz8JnDdKPmmNthzkAk/lN63sYPgevrguc72aZX/L9C6x09GYyxBgCX4NlvyGUHOKELlm5rXeR1kchuChJt4SSwyddZRXgvwMGvYo4QSlk3/zkHD8UHxwVJA6zjZZqP8v8kK8OWLnIZtLyCAJagYC4rTGW/9Pqj92N/c+LUaAj27movwbi19tk/whRCIE7Q9vyI6yvRpftAKVTdUjOW40X3h5OXsKCdmFcx0xlLJoSuQngnrJe7Kcjm4OMq9FlC7CMmScQANuNvjfP3PjGXDBaUQmbp296S5L4DrpbrHN1T87ZVEZVCzg1FF0Ft+dKrlLukI+/c9ENo+TvlTDbYFvuKPtQ9+l052rXrgKoWkDAFnvh0wTOmYn8R5f4k/jN/fZiCM1tQx9jQQ4ANhqG4hiL0qIFTGViG9DKB7GYzgubnpofgYRwO+DFjh0Zin2m4b/97EDkXkc+f6xYAPX0KK2I/7fUQuwzuwo/L3AkcjugPNixC8cHf0FyPjWlItmLxWw4Ou9YsQCr5fijMGoD/zpdRy95HRysyXA74MWOnscpO4j2y3HAVisw85hX5+AFBRSHt4ShfLFkIMXTqyKFc46xdzQM6XbAi702a7sy04J0+feReMFKp5q9esYLCqAZYw/k14E/xcLLsFElaornTuJB0svMuJINy8xkIYuL+xPAlWRceH6+HX7THJ0djLUom46zREu7tTkxwmf/FdOZ/sh6Q8qvEAiHpm4PJ4a/doJe0gH1t+aHRgCzOvBvJedEK5OFE5jpm4AGP2a8Dxe3gGJ/pAutug9Gp6he92CsSsWBaEcxGx0FHytmIpuqGkOpldqNYQK8cSoXvd+xLxXADw0kf6UkJNFtdo5MOgaLjiQOQHcn+A6h5NuL2s0qsC2LOM75PcF3yr5STuBSAcGG+meA14K/CI21HcS4LBT6tv0QAh8Dr5l93AhZzG5ZJ4VxAqdZUEl9z7WJ4aN+svMvwHHL21UKTd1mqvChH7/Za5xzXBBKrUcB0TQ+Ulgkfbi/H/YT5EptrGzsEK7tR1B7ln9BBwckYfMiuSqklSznIuoIIOM42MQO+QnduCoFCI0bpkzjCjddHPN/F+2Yu+sd9bKNpVwHhbS3LluK/0zgfwD0xYI5dXuzlQAAAABJRU5ErkJggg==');
+  }
+
+  div.callout-warning.callout-style-default .callout-title {
+    background-color: #fcefdc
+  }
+
+  div.callout-tip {
+    border-left-color: #02b875 !important;
+  }
+
+  div.callout-tip .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAADr0lEQVRYCe1XTWgTQRj9ZjZV8a9SPIkKgj8I1bMHsUWrqYLVg4Ue6v9BwZOxSYsIerFao7UiUryIqJcqgtpimhbBXoSCVxUFe9CTiogUrUp2Pt+3aUI2u5vdNh4dmMzOzHvvezuz8xNFM0mjnbXaNu1MvFWRXkXEyE6aYOYJpdW4IXuA4r0fo8qqSMDBU0v1HJUgVieAXxzCsdE/YJTdFcVIZQNMyhruOMJKXYFoLfIfIvVIMWdsrd+Rpd86ZmyzzjJmLStqRn0v8lzkb4rVIXvnpScOJuAn2ACC65FkPzEdEy4TPWRLJ2h7z4cArXzzaOdKlbOvKKX25Wl00jSnrwVxAg3o4dRxhO13RBSdNvH0xSARv3adTXbBdTf64IWO2vH0LT+cv4GR1DJt+DUItaQogeBX/chhbTBxEiZ6gftlDNXTrvT7co4ub5A6gp9HIcHvzTa46OS5fBeP87Qm0fQkr4FsYgVQ7Qg+ZayaDg9jhg1GkWj8RG6lkeSacrrHgDaxdoBiZPg+NXV/KifMuB6//JmYH4CntVEHy/keA6x4h4CU5oFy8GzrBS18cLJMXcljAKB6INjWsRcuZBWVaS3GDrqB7rdapVIeA+isQ57Eev9eCqzqOa81CY05VLd6SamW2wA2H3SiTbnbSxmzfp7WtKZkqy4mdyAlGx7ennghYf8voqp9cLSgKdqNfa6RdRsAAkPwRuJZNbpByn+RrJi1RXTwdi8RQF6ymDwGMAtZ6TVE+4uoKh+MYkcLsT0Hk8eAienbiGdjJHZTpmNjlbFJNKDVAp2fJlYju6IreQxQ08UJDNYdoLSl6AadO+fFuCQqVMB1NJwPm69T04Wv5WhfcWyfXQB+wXRs1pt+nCknRa0LVzSA/2B+a9+zQJadb7IyyV24YAxKp2Jqs3emZTuNnKxsah+uabKbMk7CbTgJx/zIgQYErIeTKRQ9yD9wxVof5YolPHqaWo7TD6tJlh7jQnK5z2n3+fGdggIOx2kaa2YI9QWarc5Ce1ipNWMKeSG4DysFF52KBmTNMmn5HqCFkwy34rDg05gDwgH3bBi+sgFhN/e8QvRn8kbamCOhgrZ9GJhFDgfcMHzFb6BAtjKpFhzTjwv1KCVuxHvCbsSiEz4CANnj84cwHdFXAbAOJ4LTSAawGWFn5tDhLMYz6nWeU2wJfIhmIJBefcd/A5FWQWGgrWzyORZ3Q6HuV+Jf0Bj+BTX69fm1zWgK7By1YTXchFDORywnfQ7GpzOo6S+qECrsx2ifVQAAAABJRU5ErkJggg==');
+  }
+
+  div.callout-tip.callout-style-default .callout-title {
+    background-color: #ccf1e3
+  }
+
+  div.callout-caution {
+    border-left-color: #fd7e14 !important;
+  }
+
+  div.callout-caution .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAACV0lEQVRYCdVWzWoUQRCuqp2ICBLJXgITZL1EfQDBW/bkzUMUD7klD+ATSHBEfAIfQO+iXsWDxJsHL96EHAwhgzlkg8nBg25XWb0zIb0zs9muYYWkoKeru+vn664fBqElyZNuyh167NXJ8Ut8McjbmEraKHkd7uAnAFku+VWdb3reSmRV8PKSLfZ0Gjn3a6Xlcq9YGb6tADjn+lUfTXtVmaZ1KwBIvFI11rRXlWlatwIAAv2asaa9mlB9wwygiDX26qaw1yYPzFXg2N1GgG0FMF8Oj+VIx7E/03lHx8UhvYyNZLN7BwSPgekXXLribw7w5/c8EF+DBK5idvDVYtEEwMeYefjjLAdEyQ3M9nfOkgnPTEkYU+sxMq0BxNR6jExrAI31H1rzvLEfRIdgcv1XEdj6QTQAS2wtstEALLG1yEZ3QhH6oDX7ExBSFEkFINXH98NTrme5IOaaA7kIfiu2L8A3qhH9zRbukdCqdsA98TdElyeMe5BI8Rs2xHRIsoTSSVFfCFCWGPn9XHb4cdobRIWABNf0add9jakDjQJpJ1bTXOJXnnRXHRf+dNL1ZV1MBRCXhMbaHqGI1JkKIL7+i8uffuP6wVQAzO7+qVEbF6NbS0LJureYcWXUUhH66nLR5rYmva+2tjRFtojkM2aD76HEGAD3tPtKM309FJg5j/K682ywcWJ3PASCcycH/22u+Bh7Aa0ehM2Fu4z0SAE81HF9RkB21c5bEn4Dzw+/qNOyXr3DCTQDMBOdhi4nAgiFDGCinIa2owCEChUwD8qzd03PG+qdW/4fDzjUMcE1ZpIAAAAASUVORK5CYII=');
+  }
+
+  div.callout-caution.callout-style-default .callout-title {
+    background-color: #ffe5d0
+  }
+
+  </style>
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+
+<section id="section" class="title-slide slide level1 center">
+<h1></h1>
+<center>
+<h2>
+Information Theory and a Multimodel World
+</h2>
+</center>
+
+<img data-src="./images/15/angry-bjork-and-if-you-overfit-once-more-youll-me-an-army-of-aic.jpg" style="width:60.0%" class="r-stretch"></section>
+
+<section id="how-complex-a-model-do-you-need-to-be-useful" class="title-slide slide level1 center">
+<h1>How complex a model do you need to be useful?</h1>
+
+<img data-src="./images/15/matter-model.jpg" class="r-stretch"></section>
+
+<section id="some-models-are-simple-but-good-enough" class="title-slide slide level1 center">
+<h1>Some models are simple but good enough</h1>
+
+<img data-src="./images/15/turtles.jpg" class="r-stretch"></section>
+
+<section id="more-complex-models-are-not-always-better-or-right" class="title-slide slide level1 center">
+<h1>More Complex Models are Not Always Better or Right</h1>
+
+<img data-src="./images/15/helio_geo.jpg" class="r-stretch"></section>
+
+<section>
+<section id="our-old-friend-r2-but-bayesian" class="title-slide slide level1 center">
+<h1>Our Old Friend <span class="math inline">\(R^2\)</span>, but Bayesian</h1>
+<p><span class="math display">\[R^2 = \frac{Var_{model}}{Var_{data}}\]</span></p>
+<p><span class="fragment">But, with some priors, this can be negative</span></p>
+<p><span class="fragment"><span class="math display">\[R^2_{bayes} = \frac{Var_{model}}{Var_{model} + Var_{residual}}\]</span></span></p>
+<p><span class="fragment center red">Is this useful?</span></p>
+</section>
+<section id="a-bayesian-r2-function" class="slide level2">
+<h2>A Bayesian R2 Function</h2>
+</section></section>
+<section id="consider-this-data" class="title-slide slide level1 center">
+<h1>Consider this data…</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a>sppnames <span class="ot">&lt;-</span> <span class="fu">c</span>( <span class="st">"afarensis"</span>,<span class="st">"africanus"</span>,</span>
+<span id="cb1-2"><a href=""></a>               <span class="st">"habilis"</span>,<span class="st">"boisei"</span>,</span>
+<span id="cb1-3"><a href=""></a>               <span class="st">"rudolfensis"</span>,<span class="st">"ergaster"</span>,<span class="st">"sapiens"</span>)</span>
+<span id="cb1-4"><a href=""></a></span>
+<span id="cb1-5"><a href=""></a>brainvolcc <span class="ot">&lt;-</span> <span class="fu">c</span>( <span class="dv">438</span> , <span class="dv">452</span> , <span class="dv">612</span>, <span class="dv">521</span>, <span class="dv">752</span>, <span class="dv">871</span>, <span class="dv">1350</span> )</span>
+<span id="cb1-6"><a href=""></a>masskg <span class="ot">&lt;-</span> <span class="fu">c</span>( <span class="fl">37.0</span> , <span class="fl">35.5</span> , <span class="fl">34.5</span> , <span class="fl">41.5</span> , <span class="fl">55.5</span> , <span class="fl">61.0</span> , <span class="fl">53.5</span> )</span>
+<span id="cb1-7"><a href=""></a></span>
+<span id="cb1-8"><a href=""></a>d <span class="ot">&lt;-</span> <span class="fu">data.frame</span>( <span class="at">species=</span>sppnames, </span>
+<span id="cb1-9"><a href=""></a>                 <span class="at">brain=</span>brainvolcc, </span>
+<span id="cb1-10"><a href=""></a>                 <span class="at">mass=</span>masskg )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+
+<section id="underfitting" class="title-slide slide level1 center">
+<h1>Underfitting</h1>
+
+<img data-src="mmi_files/figure-revealjs/underfit-1.jpeg" width="672" class="r-stretch"><p>We have explained nothing!</p>
+</section>
+
+<section id="overfitting" class="title-slide slide level1 center">
+<h1>Overfitting</h1>
+
+<img data-src="mmi_files/figure-revealjs/overfit-1.jpeg" width="672" class="r-stretch"><p>We have perfectly explained this sample</p>
+</section>
+
+<section id="what-is-the-right-fit-how-do-weget-there" class="title-slide slide level1 center">
+<h1>What is the right fit? How do weGet there?</h1>
+
+<img data-src="mmi_files/figure-revealjs/medfit-1.jpeg" width="672" class="r-stretch"></section>
+
+<section id="section-1" class="title-slide slide level1 center" data-background="images/15/scylla_charybdis.jpeg" data-background-size="contain" data-background-color="black">
+<h1></h1>
+
+</section>
+
+<section id="how-do-we-navigate-scylla-and-charybdis" class="title-slide slide level1 center">
+<h1>How do we navigate Scylla and Charybdis?</h1>
+<ol type="1">
+<li><p>Information theory</p></li>
+<li><p>Regularization</p>
+<ul>
+<li>Force parameters to demonstrate they have strong support</li>
+<li>Penalize parameters with weak support</li>
+</ul></li>
+<li><p>Optimization for Prediction</p>
+<ul>
+<li>Cross-Validation<br>
+</li>
+<li>Information Theory</li>
+<li>Drawing from comparison of information loss</li>
+</ul></li>
+</ol>
+</section>
+
+<section id="information-theory-and-entropy" class="title-slide slide level1 center">
+<h1>Information Theory and Entropy</h1>
+
+<img data-src="mmi_files/figure-revealjs/unnamed-chunk-2-1.jpeg" width="672" class="r-stretch"></section>
+
+<section id="entropy-over-the-distribution-of-brainvolcc-what-is-the-average-log-probability-of-observing-values" class="title-slide slide level1 center">
+<h1>Entropy: Over the distribution of brainvolcc, what is the average log probability of observing values</h1>
+<p><span class="math display">\[H = - E[log(p_i)] = -\sum p_i log(p_i)\]</span></p>
+<div>
+<ul>
+<li class="fragment"><p>sum over the curve</p></li>
+<li class="fragment"><p>notice higher entropy the more a wiggly curve as it repeats the same values</p></li>
+<li class="fragment"><p>a straight line will have lower entropy from a uniform distribution<br>
+</p></li>
+</ul>
+</div>
+</section>
+
+<section id="difference-between-the-truth-and-a-model" class="title-slide slide level1 center">
+<h1>Difference between the truth and a model</h1>
+
+<img data-src="mmi_files/figure-revealjs/unnamed-chunk-3-1.jpeg" width="672" class="r-stretch"></section>
+
+<section id="kullback-leibler-divergence" class="title-slide slide level1 center">
+<h1>Kullback-Leibler Divergence</h1>
+<p><strong>Divergence:</strong> The additional uncertainty induced by using probabilities from one distribution to describe another distribution.</p>
+<p><span class="math display">\[D_{KL} =  \sum p_i (log(p_i) − log(q_i)) \\
+= \sum p_i log\frac{p_i}{q_i}\]</span> where <span class="math inline">\(q_i\)</span> is the probability of a value from the model and <span class="math inline">\(p_i\)</span> from the truth. This is the difference in information caused by using the model to approximate the truth.</p>
+</section>
+
+<section id="but---we-want-to-compare-models" class="title-slide slide level1 center">
+<h1>But - we want to <strong>compare models</strong></h1>
+<p>Difference in information loss between Model 1 (q) and Model 2 (r)</p>
+<p><span class="fragment"><span class="math display">\[ =  \sum p_i (log(p_i) − log(q_i) - \sum p_i (log(p_i) − log(r_i) \\\]</span></span> <span class="fragment"><span class="math display">\[= \sum p_i log(p_i) − p_i log(p_i) - p_i log(q_i) + p_i log(r_i)\]</span></span> <span class="fragment"><span class="math display">\[= \sum p_i log(r_i) - p_i log(q_i)\]</span></span> <span class="fragment"><span class="math display">\[=\sum p_i(log(r_i) - log(q_i))\]</span></span> <span class="fragment"><span class="math display">\[= E[log (r_i)] - E[log(q_i)]\]</span></span></p>
+</section>
+
+<section id="so-what-is-our-score-of-interest-then" class="title-slide slide level1 center">
+<h1>So, What is Our Score of Interest Then?</h1>
+<p>It’s all about <span class="math inline">\(E[log(q_i)]\)</span>!</p>
+<p><span class="math display">\[S(q) = \sum log(q_i)\]</span></p>
+<div>
+<ul>
+<li class="fragment"><p>This is the unscaled average of our model score.</p></li>
+<li class="fragment"><p>It is also the <em>log pointwise predictive density</em>.</p></li>
+<li class="fragment"><p>Provides an estimate of how well our model’s predictive accuracy.</p></li>
+<li class="fragment"><p>Pointwise, and uses entire posterior for each observation.</p></li>
+</ul>
+</div>
+</section>
+
+<section id="lppd-for-one-point-visually" class="title-slide slide level1 center">
+<h1>lppd for one point, visually</h1>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="mmi_files/figure-revealjs/unnamed-chunk-4-1.jpeg" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="mmi_files/figure-revealjs/unnamed-chunk-5-1.jpeg" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section id="lppd-and-deviance" class="title-slide slide level1 center">
+<h1>lppd and Deviance</h1>
+<p><span class="math display">\[ Deviance \approx -2 *llpd\]</span></p>
+<ul>
+<li><p>Hello, old friend.</p></li>
+<li><p>Increasing model complexity will <strong>always</strong> improve lppd.</p></li>
+<li><p>Out of sample llpd will get worse with model complexity.</p></li>
+</ul>
+</section>
+
+<section id="in-and-out-of-sample-deviance" class="title-slide slide level1 center">
+<h1>In and Out of Sample Deviance</h1>
+
+<img data-src="mmi_files/figure-revealjs/dev_plot1-1.jpeg" width="672" class="r-stretch"><div class="fragment">
+Deviance = -2 * log(dnorm(<span class="math inline">\(y_i | \mu_i\)</span>))
+</div>
+<div class="fragment">
+The deviance of this linear regression is 3.1766285^{5}
+</div>
+</section>
+
+<section id="in-and-out-of-sample-deviance-1" class="title-slide slide level1 center">
+<h1>In and Out of Sample Deviance</h1>
+
+<img data-src="mmi_files/figure-revealjs/dev_plot2-1.jpeg" width="672" class="r-stretch"><p>Prediction: 806.8141456, Observe: 515<br>
+Deviance: 8.5265838^{4}</p>
+</section>
+
+<section id="in-and-out-of-sample-deviance-2" class="title-slide slide level1 center">
+<h1>In and Out of Sample Deviance</h1>
+
+<img data-src="mmi_files/figure-revealjs/simtrainplot-1.jpeg" width="672" class="r-stretch"></section>
+
+<section id="our-goal-for-judging-models" class="title-slide slide level1 center">
+<h1>Our Goal for Judging Models</h1>
+<ul>
+<li><p>Can we minimize the out of sample deviance</p></li>
+<li><p>So, fit a model, and evaluate how different the deviance is for a training versus test data set is</p></li>
+<li><p>What can we use to minimize the difference?</p></li>
+</ul>
+</section>
+
+<section id="how-do-we-navigate-scylla-and-charybdis-1" class="title-slide slide level1 center">
+<h1>How do we navigate Scylla and Charybdis?</h1>
+<ol type="1">
+<li><p>Information theory</p></li>
+<li><p><span class="red">Regularization</span></p>
+<ul>
+<li>Force parameters to demonstrate they have strong support</li>
+<li>Penalize parameters with weak support</li>
+</ul></li>
+<li><p>Optimization for Prediction</p>
+<ul>
+<li>Cross-Validation<br>
+</li>
+<li>Information Theory</li>
+<li>Drawing from comparison of information loss</li>
+</ul></li>
+</ol>
+</section>
+
+<section id="regularlization" class="title-slide slide level1 center">
+<h1>Regularlization</h1>
+<div id="left">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="mmi_files/figure-revealjs/priors-1.jpeg" width="576"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>List of 97
+ $ line                      :List of 6
+  ..$ colour       : chr "black"
+  ..$ linewidth    : num 0.773
+  ..$ linetype     : num 1
+  ..$ lineend      : chr "butt"
+  ..$ arrow        : logi FALSE
+  ..$ inherit.blank: logi TRUE
+  ..- attr(*, "class")= chr [1:2] "element_line" "element"
+ $ rect                      :List of 5
+  ..$ fill         : chr "white"
+  ..$ colour       : chr "black"
+  ..$ linewidth    : num 0.773
+  ..$ linetype     : num 1
+  ..$ inherit.blank: logi TRUE
+  ..- attr(*, "class")= chr [1:2] "element_rect" "element"
+ $ text                      :List of 11
+  ..$ family       : chr ""
+  ..$ face         : chr "plain"
+  ..$ colour       : chr "black"
+  ..$ size         : num 17
+  ..$ hjust        : num 0.5
+  ..$ vjust        : num 0.5
+  ..$ angle        : num 0
+  ..$ lineheight   : num 0.9
+  ..$ margin       : 'margin' num [1:4] 0points 0points 0points 0points
+  .. ..- attr(*, "unit")= int 8
+  ..$ debug        : logi FALSE
+  ..$ inherit.blank: logi TRUE
+  ..- attr(*, "class")= chr [1:2] "element_text" "element"
+ $ title                     : NULL
+ $ aspect.ratio              : NULL
+ $ axis.title                : NULL
+ $ axis.title.x              :List of 11
+  ..$ family       : NULL
+  ..$ face         : NULL
+  ..$ colour       : NULL
+  ..$ size         : NULL
+  ..$ hjust        : NULL
+  ..$ vjust        : num 1
+  ..$ angle        : NULL
+  ..$ lineheight   : NULL
+  ..$ margin       : 'margin' num [1:4] 4.25points 0points 0points 0points
+  .. ..- attr(*, "unit")= int 8
+  ..$ debug        : NULL
+  ..$ inherit.blank: logi TRUE
+  ..- attr(*, "class")= chr [1:2] "element_text" "element"
+ $ axis.title.x.top          :List of 11
+  ..$ family       : NULL
+  ..$ face         : NULL
+  ..$ colour       : NULL
+  ..$ size         : NULL
+  ..$ hjust        : NULL
+  ..$ vjust        : num 0
+  ..$ angle        : NULL
+  ..$ lineheight   : NULL
+  ..$ margin       : 'margin' num [1:4] 0points 0points 4.25points 0points
+  .. ..- attr(*, "unit")= int 8
+  ..$ debug        : NULL
+  ..$ inherit.blank: logi TRUE
+  ..- attr(*, "class")= chr [1:2] "element_text" "element"
+ $ axis.title.x.bottom       : NULL
+ $ axis.title.y              :List of 11
+  ..$ family       : NULL
+  ..$ face         : NULL
+  ..$ colour       : NULL
+  ..$ size         : NULL
+  ..$ hjust        : NULL
+  ..$ vjust        : num 1
+  ..$ angle        : num 90
+  ..$ lineheight   : NULL
+  ..$ margin       : 'margin' num [1:4] 0points 4.25points 0points 0points
+  .. ..- attr(*, "unit")= int 8
+  ..$ debug        : NULL
+  ..$ inherit.blank: logi TRUE
+  ..- attr(*, "class")= chr [1:2] "element_text" "element"
+ $ axis.title.y.left         : NULL
+ $ axis.title.y.right        :List of 11
+  ..$ family       : NULL
+  ..$ face         : NULL
+  ..$ colour       : NULL
+  ..$ size         : NULL
+  ..$ hjust        : NULL
+  ..$ vjust        : num 0
+  ..$ angle        : num -90
+  ..$ lineheight   : NULL
+  ..$ margin       : 'margin' num [1:4] 0points 0points 0points 4.25points
+  .. ..- attr(*, "unit")= int 8
+  ..$ debug        : NULL
+  ..$ inherit.blank: logi TRUE
+  ..- attr(*, "class")= chr [1:2] "element_text" "element"
+ $ axis.text                 :List of 11
+  ..$ family       : NULL
+  ..$ face         : NULL
+  ..$ colour       : chr "grey30"
+  ..$ size         : 'rel' num 0.8
+  ..$ hjust        : NULL
+  ..$ vjust        : NULL
+  ..$ angle        : NULL
+  ..$ lineheight   : NULL
+  ..$ margin       : NULL
+  ..$ debug        : NULL
+  ..$ inherit.blank: logi TRUE
+  ..- attr(*, "class")= chr [1:2] "element_text" "element"
+ $ axis.text.x               :List of 11
+  ..$ family       : NULL
+  ..$ face         : NULL
+  ..$ colour       : NULL
+  ..$ size         : NULL
+  ..$ hjust        : NULL
+  ..$ vjust        : num 1
+  ..$ angle        : NULL
+  ..$ lineheight   : NULL
+  ..$ margin       : 'margin' num [1:4] 3.4points 0points 0points 0points
+  .. ..- attr(*, "unit")= int 8
+  ..$ debug        : NULL
+  ..$ inherit.blank: logi TRUE
+  ..- attr(*, "class")= chr [1:2] "element_text" "element"
+ $ axis.text.x.top           :List of 11
+  ..$ family       : NULL
+  ..$ face         : NULL
+  ..$ colour       : NULL
+  ..$ size         : NULL
+  ..$ hjust        : NULL
+  ..$ vjust        : num 0
+  ..$ angle        : NULL
+  ..$ lineheight   : NULL
+  ..$ margin       : 'margin' num [1:4] 0points 0points 3.4points 0points
+  .. ..- attr(*, "unit")= int 8
+  ..$ debug        : NULL
+  ..$ inherit.blank: logi TRUE
+  ..- attr(*, "class")= chr [1:2] "element_text" "element"
+ $ axis.text.x.bottom        : NULL
+ $ axis.text.y               :List of 11
+  ..$ family       : NULL
+  ..$ face         : NULL
+  ..$ colour       : NULL
+  ..$ size         : NULL
+  ..$ hjust        : num 1
+  ..$ vjust        : NULL
+  ..$ angle        : NULL
+  ..$ lineheight   : NULL
+  ..$ margin       : 'margin' num [1:4] 0points 3.4points 0points 0points
+  .. ..- attr(*, "unit")= int 8
+  ..$ debug        : NULL
+  ..$ inherit.blank: logi TRUE
+  ..- attr(*, "class")= chr [1:2] "element_text" "element"
+ $ axis.text.y.left          : NULL
+ $ axis.text.y.right         :List of 11
+  ..$ family       : NULL
+  ..$ face         : NULL
+  ..$ colour       : NULL
+  ..$ size         : NULL
+  ..$ hjust        : num 0
+  ..$ vjust        : NULL
+  ..$ angle        : NULL
+  ..$ lineheight   : NULL
+  ..$ margin       : 'margin' num [1:4] 0points 0points 0points 3.4points
+  .. ..- attr(*, "unit")= int 8
+  ..$ debug        : NULL
+  ..$ inherit.blank: logi TRUE
+  ..- attr(*, "class")= chr [1:2] "element_text" "element"
+ $ axis.ticks                :List of 6
+  ..$ colour       : chr "grey20"
+  ..$ linewidth    : NULL
+  ..$ linetype     : NULL
+  ..$ lineend      : NULL
+  ..$ arrow        : logi FALSE
+  ..$ inherit.blank: logi TRUE
+  ..- attr(*, "class")= chr [1:2] "element_line" "element"
+ $ axis.ticks.x              : NULL
+ $ axis.ticks.x.top          : NULL
+ $ axis.ticks.x.bottom       : NULL
+ $ axis.ticks.y              : NULL
+ $ axis.ticks.y.left         : NULL
+ $ axis.ticks.y.right        : NULL
+ $ axis.ticks.length         : 'simpleUnit' num 4.25points
+  ..- attr(*, "unit")= int 8
+ $ axis.ticks.length.x       : NULL
+ $ axis.ticks.length.x.top   : NULL
+ $ axis.ticks.length.x.bottom: NULL
+ $ axis.ticks.length.y       : NULL
+ $ axis.ticks.length.y.left  : NULL
+ $ axis.ticks.length.y.right : NULL
+ $ axis.line                 : list()
+  ..- attr(*, "class")= chr [1:2] "element_blank" "element"
+ $ axis.line.x               : NULL
+ $ axis.line.x.top           : NULL
+ $ axis.line.x.bottom        : NULL
+ $ axis.line.y               : NULL
+ $ axis.line.y.left          : NULL
+ $ axis.line.y.right         : NULL
+ $ legend.background         :List of 5
+  ..$ fill         : NULL
+  ..$ colour       : logi NA
+  ..$ linewidth    : NULL
+  ..$ linetype     : NULL
+  ..$ inherit.blank: logi TRUE
+  ..- attr(*, "class")= chr [1:2] "element_rect" "element"
+ $ legend.margin             : 'margin' num [1:4] 8.5points 8.5points 8.5points 8.5points
+  ..- attr(*, "unit")= int 8
+ $ legend.spacing            : 'simpleUnit' num 17points
+  ..- attr(*, "unit")= int 8
+ $ legend.spacing.x          : NULL
+ $ legend.spacing.y          : NULL
+ $ legend.key                :List of 5
+  ..$ fill         : chr "white"
+  ..$ colour       : logi NA
+  ..$ linewidth    : NULL
+  ..$ linetype     : NULL
+  ..$ inherit.blank: logi TRUE
+  ..- attr(*, "class")= chr [1:2] "element_rect" "element"
+ $ legend.key.size           : 'simpleUnit' num 1.2lines
+  ..- attr(*, "unit")= int 3
+ $ legend.key.height         : NULL
+ $ legend.key.width          : NULL
+ $ legend.text               :List of 11
+  ..$ family       : NULL
+  ..$ face         : NULL
+  ..$ colour       : NULL
+  ..$ size         : 'rel' num 0.8
+  ..$ hjust        : NULL
+  ..$ vjust        : NULL
+  ..$ angle        : NULL
+  ..$ lineheight   : NULL
+  ..$ margin       : NULL
+  ..$ debug        : NULL
+  ..$ inherit.blank: logi TRUE
+  ..- attr(*, "class")= chr [1:2] "element_text" "element"
+ $ legend.text.align         : NULL
+ $ legend.title              :List of 11
+  ..$ family       : NULL
+  ..$ face         : NULL
+  ..$ colour       : NULL
+  ..$ size         : NULL
+  ..$ hjust        : num 0
+  ..$ vjust        : NULL
+  ..$ angle        : NULL
+  ..$ lineheight   : NULL
+  ..$ margin       : NULL
+  ..$ debug        : NULL
+  ..$ inherit.blank: logi TRUE
+  ..- attr(*, "class")= chr [1:2] "element_text" "element"
+ $ legend.title.align        : NULL
+ $ legend.position           : chr "right"
+ $ legend.direction          : NULL
+ $ legend.justification      : chr "center"
+ $ legend.box                : NULL
+ $ legend.box.just           : NULL
+ $ legend.box.margin         : 'margin' num [1:4] 0cm 0cm 0cm 0cm
+  ..- attr(*, "unit")= int 1
+ $ legend.box.background     : list()
+  ..- attr(*, "class")= chr [1:2] "element_blank" "element"
+ $ legend.box.spacing        : 'simpleUnit' num 17points
+  ..- attr(*, "unit")= int 8
+ $ panel.background          :List of 5
+  ..$ fill         : chr "white"
+  ..$ colour       : logi NA
+  ..$ linewidth    : NULL
+  ..$ linetype     : NULL
+  ..$ inherit.blank: logi TRUE
+  ..- attr(*, "class")= chr [1:2] "element_rect" "element"
+ $ panel.border              :List of 5
+  ..$ fill         : logi NA
+  ..$ colour       : chr "grey20"
+  ..$ linewidth    : NULL
+  ..$ linetype     : NULL
+  ..$ inherit.blank: logi TRUE
+  ..- attr(*, "class")= chr [1:2] "element_rect" "element"
+ $ panel.spacing             : 'simpleUnit' num 8.5points
+  ..- attr(*, "unit")= int 8
+ $ panel.spacing.x           : NULL
+ $ panel.spacing.y           : NULL
+ $ panel.grid                :List of 6
+  ..$ colour       : chr "grey92"
+  ..$ linewidth    : NULL
+  ..$ linetype     : NULL
+  ..$ lineend      : NULL
+  ..$ arrow        : logi FALSE
+  ..$ inherit.blank: logi TRUE
+  ..- attr(*, "class")= chr [1:2] "element_line" "element"
+ $ panel.grid.major          : NULL
+ $ panel.grid.minor          :List of 6
+  ..$ colour       : NULL
+  ..$ linewidth    : 'rel' num 0.5
+  ..$ linetype     : NULL
+  ..$ lineend      : NULL
+  ..$ arrow        : logi FALSE
+  ..$ inherit.blank: logi TRUE
+  ..- attr(*, "class")= chr [1:2] "element_line" "element"
+ $ panel.grid.major.x        : NULL
+ $ panel.grid.major.y        : NULL
+ $ panel.grid.minor.x        : NULL
+ $ panel.grid.minor.y        : NULL
+ $ panel.ontop               : logi FALSE
+ $ plot.background           :List of 5
+  ..$ fill         : NULL
+  ..$ colour       : chr "white"
+  ..$ linewidth    : NULL
+  ..$ linetype     : NULL
+  ..$ inherit.blank: logi TRUE
+  ..- attr(*, "class")= chr [1:2] "element_rect" "element"
+ $ plot.title                :List of 11
+  ..$ family       : NULL
+  ..$ face         : NULL
+  ..$ colour       : NULL
+  ..$ size         : 'rel' num 1.2
+  ..$ hjust        : num 0
+  ..$ vjust        : num 1
+  ..$ angle        : NULL
+  ..$ lineheight   : NULL
+  ..$ margin       : 'margin' num [1:4] 0points 0points 8.5points 0points
+  .. ..- attr(*, "unit")= int 8
+  ..$ debug        : NULL
+  ..$ inherit.blank: logi TRUE
+  ..- attr(*, "class")= chr [1:2] "element_text" "element"
+ $ plot.title.position       : chr "panel"
+ $ plot.subtitle             :List of 11
+  ..$ family       : NULL
+  ..$ face         : NULL
+  ..$ colour       : NULL
+  ..$ size         : NULL
+  ..$ hjust        : num 0
+  ..$ vjust        : num 1
+  ..$ angle        : NULL
+  ..$ lineheight   : NULL
+  ..$ margin       : 'margin' num [1:4] 0points 0points 8.5points 0points
+  .. ..- attr(*, "unit")= int 8
+  ..$ debug        : NULL
+  ..$ inherit.blank: logi TRUE
+  ..- attr(*, "class")= chr [1:2] "element_text" "element"
+ $ plot.caption              :List of 11
+  ..$ family       : NULL
+  ..$ face         : NULL
+  ..$ colour       : NULL
+  ..$ size         : 'rel' num 0.8
+  ..$ hjust        : num 1
+  ..$ vjust        : num 1
+  ..$ angle        : NULL
+  ..$ lineheight   : NULL
+  ..$ margin       : 'margin' num [1:4] 8.5points 0points 0points 0points
+  .. ..- attr(*, "unit")= int 8
+  ..$ debug        : NULL
+  ..$ inherit.blank: logi TRUE
+  ..- attr(*, "class")= chr [1:2] "element_text" "element"
+ $ plot.caption.position     : chr "panel"
+ $ plot.tag                  :List of 11
+  ..$ family       : NULL
+  ..$ face         : NULL
+  ..$ colour       : NULL
+  ..$ size         : 'rel' num 1.2
+  ..$ hjust        : num 0.5
+  ..$ vjust        : num 0.5
+  ..$ angle        : NULL
+  ..$ lineheight   : NULL
+  ..$ margin       : NULL
+  ..$ debug        : NULL
+  ..$ inherit.blank: logi TRUE
+  ..- attr(*, "class")= chr [1:2] "element_text" "element"
+ $ plot.tag.position         : chr "topleft"
+ $ plot.margin               : 'margin' num [1:4] 8.5points 8.5points 8.5points 8.5points
+  ..- attr(*, "unit")= int 8
+ $ strip.background          :List of 5
+  ..$ fill         : chr "grey85"
+  ..$ colour       : chr "grey20"
+  ..$ linewidth    : NULL
+  ..$ linetype     : NULL
+  ..$ inherit.blank: logi TRUE
+  ..- attr(*, "class")= chr [1:2] "element_rect" "element"
+ $ strip.background.x        : NULL
+ $ strip.background.y        : NULL
+ $ strip.clip                : chr "inherit"
+ $ strip.placement           : chr "inside"
+ $ strip.text                :List of 11
+  ..$ family       : NULL
+  ..$ face         : NULL
+  ..$ colour       : chr "grey10"
+  ..$ size         : 'rel' num 0.8
+  ..$ hjust        : NULL
+  ..$ vjust        : NULL
+  ..$ angle        : NULL
+  ..$ lineheight   : NULL
+  ..$ margin       : 'margin' num [1:4] 6.8points 6.8points 6.8points 6.8points
+  .. ..- attr(*, "unit")= int 8
+  ..$ debug        : NULL
+  ..$ inherit.blank: logi TRUE
+  ..- attr(*, "class")= chr [1:2] "element_text" "element"
+ $ strip.text.x              : NULL
+ $ strip.text.x.bottom       : NULL
+ $ strip.text.x.top          : NULL
+ $ strip.text.y              :List of 11
+  ..$ family       : NULL
+  ..$ face         : NULL
+  ..$ colour       : NULL
+  ..$ size         : NULL
+  ..$ hjust        : NULL
+  ..$ vjust        : NULL
+  ..$ angle        : num -90
+  ..$ lineheight   : NULL
+  ..$ margin       : NULL
+  ..$ debug        : NULL
+  ..$ inherit.blank: logi TRUE
+  ..- attr(*, "class")= chr [1:2] "element_text" "element"
+ $ strip.text.y.left         :List of 11
+  ..$ family       : NULL
+  ..$ face         : NULL
+  ..$ colour       : NULL
+  ..$ size         : NULL
+  ..$ hjust        : NULL
+  ..$ vjust        : NULL
+  ..$ angle        : num 90
+  ..$ lineheight   : NULL
+  ..$ margin       : NULL
+  ..$ debug        : NULL
+  ..$ inherit.blank: logi TRUE
+  ..- attr(*, "class")= chr [1:2] "element_text" "element"
+ $ strip.text.y.right        : NULL
+ $ strip.switch.pad.grid     : 'simpleUnit' num 4.25points
+  ..- attr(*, "unit")= int 8
+ $ strip.switch.pad.wrap     : 'simpleUnit' num 4.25points
+  ..- attr(*, "unit")= int 8
+ - attr(*, "class")= chr [1:2] "theme" "gg"
+ - attr(*, "complete")= logi TRUE
+ - attr(*, "validate")= logi TRUE</code></pre>
+</div>
+</div>
+</div>
+<div id="right">
+
+<ul>
+<li><p>Regularization means shrinking the prior towards 0</p></li>
+<li><p>Means data has to work harder to overcome prior</p></li>
+<li><p>Good way to shrink weak effects with little data, which are often spurious</p>
+</li></ul></div>
+
+</section>
+
+<section id="regularization-and-train-test-deviance" class="title-slide slide level1 center">
+<h1>Regularization and Train-Test Deviance</h1>
+
+<img data-src="mmi_files/figure-revealjs/regularplot-1.jpeg" width="672" class="r-stretch"></section>
+
+<section id="how-do-we-navigate-scylla-and-charybdis-2" class="title-slide slide level1 center">
+<h1>How do we navigate Scylla and Charybdis?</h1>
+<ol type="1">
+<li><p>Information theory</p></li>
+<li><p>Regularization</p>
+<ul>
+<li>Force parameters to demonstrate they have strong support</li>
+<li>Penalize parameters with weak support</li>
+</ul></li>
+<li><p><span class="red">Optimization for Prediction</span></p>
+<ul>
+<li>Cross-Validation<br>
+</li>
+<li>Information Theory</li>
+<li>Drawing from comparison of information loss</li>
+</ul></li>
+</ol>
+</section>
+
+<section id="a-criteria-estimating-test-sample-deviance" class="title-slide slide level1 center">
+<h1>A Criteria Estimating Test Sample Deviance</h1>
+<ul>
+<li><p>What if we could estimate out of sample deviance?</p></li>
+<li><p>The difference between training and testing deviance shows overfitting</p></li>
+</ul>
+</section>
+
+<section id="a-criteria-estimating-test-sample-deviance-1" class="title-slide slide level1 center">
+<h1>A Criteria Estimating Test Sample Deviance</h1>
+
+<img data-src="mmi_files/figure-revealjs/diff-1.jpeg" width="672" class="r-stretch"><p>Slope here of 0.98</p>
+</section>
+
+<section id="aic" class="title-slide slide level1 center">
+<h1>AIC</h1>
+<div id="right">
+<p><img data-src="./images/15/hirotugu_akaike.jpg"></p>
+</div>
+<div id="left">
+<ul>
+<li><p>So, <span class="math inline">\(E[D_{test}] = D_{train} + 2K\)</span></p></li>
+<li><p>This is Akaike’s Information Criteria (AIC)</p></li>
+</ul>
+</div>
+<p><span class="math display">\[AIC = Deviance + 2K\]</span></p>
+</section>
+
+<section id="aic-1" class="title-slide slide level1 center">
+<h1>AIC</h1>
+<ul>
+<li><p>Estimate of Leave One Out Cross-Validation</p></li>
+<li><p>AIC optimized for forecasting (out of sample deviance)</p></li>
+<li><p>Requires flat priors</p></li>
+<li><p>Assumes large N relative to K</p>
+<ul>
+<li>AICc for a correction</li>
+</ul></li>
+<li><p>Difficult to define in a mixed model context</p></li>
+</ul>
+</section>
+
+<section id="what-about-ic-in-bayes" class="title-slide slide level1 center">
+<h1>What about IC in Bayes?</h1>
+<ul>
+<li><p>We <em>do</em> estimate the posterior distribution of the deviance</p></li>
+<li><p>Average of the posterior, <span class="math inline">\(\bar{D}\)</span> is our <span class="math inline">\(D_{train}\)</span></p></li>
+<li><p>But what about # of parameters?</p>
+<ul>
+<li>For a non-mixed model, this is not a concern - just the AIC<br>
+</li>
+<li>For a mixed model…trickier</li>
+</ul></li>
+</ul>
+</section>
+
+<section id="effective-number-of-parameters" class="title-slide slide level1 center">
+<h1>Effective number of Parameters</h1>
+<ul>
+<li>In addition to <span class="math inline">\(\bar{D}\)</span>, there is also <span class="math inline">\(\hat{D}\)</span>
+<ul>
+<li>The value of the posterior at the posterior mean</li>
+</ul></li>
+<li>Given Bayesian logic:
+<ul>
+<li><span class="math inline">\(\bar{D}\)</span> is our estimate of the out of sample deviance</li>
+<li><span class="math inline">\(\hat{D}\)</span> is our <span class="math inline">\(D_{train}\)</span></li>
+<li>So, <span class="math inline">\(\bar{D} - \hat{D}\)</span> = number of parameters</li>
+</ul></li>
+<li>We term this <span class="math inline">\(p_D\)</span> for effective number of parameters</li>
+</ul>
+</section>
+
+<section id="dic" class="title-slide slide level1 center">
+<h1>DIC</h1>
+
+<img data-src="./images/15/Sir-David-Spiegelhalter_I0A0548.jpg" class="r-stretch"><p><span class="math display">\[DIC = 2 \bar{D} - 2 p_D\]</span></p>
+</section>
+
+<section id="dic-1" class="title-slide slide level1 center">
+<h1>DIC</h1>
+<p><span class="math display">\[DIC = 2 \bar{D} - 2 p_D\]</span></p>
+<ul>
+<li>Works well for multivariate normal posteriors<br>
+</li>
+<li>Handles mixed models<br>
+</li>
+<li>Reduces to AIC with flat priors<br>
+</li>
+<li>But does not require flat priors - which does interesting things to <span class="math inline">\(p_D\)</span>!</li>
+<li>But… fails with anything non-normal, and hot debate on even mixed effects</li>
+</ul>
+</section>
+
+<section id="and-so-we-pause" class="title-slide slide level1 center">
+<h1>And so we pause…</h1>
+<ul>
+<li><p>Our goal is to maximize prediction</p></li>
+<li><p>Why not look at the pieces that make up the deviance</p>
+<ul>
+<li>The pointwise predictive power of the posterior</li>
+</ul></li>
+<li><p>We can define the Pr(y<sub>i</sub> | posterior simulations)</p>
+<ul>
+<li>This tells us the distribution of the predictive power of our posterior for each point<br>
+</li>
+<li><span class="math inline">\(llpd = \sum log Pr(y_i | \theta)\)</span></li>
+</ul></li>
+</ul>
+</section>
+
+<section id="but-what-about-parameters" class="title-slide slide level1 center">
+<h1>But what about Parameters?</h1>
+<ul>
+<li><p>We know that as k increases, our uncertainty in coefficients increases</p></li>
+<li><p>As uncertainty increases, Pr(y<sub>i</sub> | simulations) widens</p></li>
+<li><p>Thus, this variance gives us an effective penalty term</p></li>
+<li><p><span class="math inline">\(p_{waic} = \sum Var(log Pr(y_i | \theta))\)</span></p></li>
+</ul>
+</section>
+
+<section id="widely-applicable-ic" class="title-slide slide level1 center">
+<h1>Widely Applicable IC</h1>
+<p><span class="math display">\[WAIC = -2 \sum log Pr(y_i | \theta) + 2 \sum Var(log Pr(y_i | \theta))\]</span></p>
+<p><span class="math display">\[= -2 llpd + 2 p_{waic}\]</span></p>
+<ul>
+<li><p>Widely Applicable/Wantanabe-Akaike Information Criteria</p></li>
+<li><p>Advantage in being pointwise is that we also get an estimate of uncertainty</p></li>
+<li><p>Disadvantage that inappropriate to use with lagged (spatial or temporal) predictors</p></li>
+</ul>
+</section>
+
+<section id="but-what-about-leave-one-out" class="title-slide slide level1 center">
+<h1>But What about Leave One Out?</h1>
+<p>The problem</p>
+<p><span class="math display">\[LOOCV_{Bayes} = \\lppd_{cv} = \\ \sum_{i=1}^N \frac{1}{S} \sum_{s=1}^S log(y_i | \theta_{s, -i})\]</span> Here, i is observation, 1….N and s is draw from our posterior 1….S.</p>
+<p>In essence, for each data point:</p>
+<div>
+<ul>
+<li class="fragment">Remove it &amp; refit the model.<br>
+</li>
+<li class="fragment">Calculate the lppd for that refit.<br>
+</li>
+<li class="fragment">Sum it over each refit.<br>
+</li>
+<li class="fragment">Let your computer warm your house.<br>
+</li>
+</ul>
+</div>
+</section>
+
+<section id="dont-wait-to-weight" class="title-slide slide level1 center">
+<h1>Don’t wait to weight!</h1>
+<div>
+<ul>
+<li class="fragment"><p>We can do the same if we weighted the lppd of each point by it’s importance.</p></li>
+<li class="fragment"><p>Importance can be defined as <span class="math inline">\(\frac{p(y_i | \theta_{s, -i})}{p(y_i | \theta_{s})}\)</span></p></li>
+<li class="fragment"><p>Proportional to just <span class="math inline">\(\frac{1}{p(y_i | \theta_{s})} = r_s\)</span></p></li>
+<li class="fragment"><p>Can weight each element of lppd and then standardize by sum of weights.</p></li>
+<li class="fragment"><p>BUT - if we get weird weights, this can cause huge problems</p></li>
+</ul>
+</div>
+</section>
+
+<section id="introducing-the-pareto-distribution" class="title-slide slide level1 center">
+<h1>Introducing, the Pareto Distribution</h1>
+
+<img data-src="mmi_files/figure-revealjs/pareto-1.jpeg" width="672" class="r-stretch"><ul>
+<li><p>Distribution of importances - 80:20 rule</p></li>
+<li><p>For each observation, we can use the largest importance value, and calculate a smoothed Pareto curve of weights</p></li>
+<li><p>PSIS: Pareto Smoothed Importance Sampling</p></li>
+</ul>
+</section>
+
+<section id="which-should-i-use" class="title-slide slide level1 center">
+<h1>Which should I use?</h1>
+<ul>
+<li><p>They are all pretty darned similar!</p></li>
+<li><p>WAIC performs better at lower sample sizes.</p></li>
+<li><p>WAIC also can perform better in some nonlinear cases.</p></li>
+<li><p>But, PSIS will also give you information about points driving performance and problems.</p></li>
+</ul>
+</section>
+
+<section id="how-do-i-use-my-ic" class="title-slide slide level1 center">
+<h1>How do I use my IC?</h1>
+<p>We can use difference between fits or calculate:</p>
+<p><span class="math display">\[w_{i} = \frac{e^{\Delta_{i}/2 }}{\displaystyle \sum^R_{r=1} e^{\Delta_{i}/2 }}\]</span><br>
+Where <span class="math inline">\(w_{i}\)</span> is the <em>relative support</em> for model i making the best prediction compared to other models in the set being considered.</p>
+<p>Model weights summed together = 1</p>
+</section>
+
+<section id="monkies-and-milk" class="title-slide slide level1 center">
+<h1>Monkies and Milk</h1>
+
+<img data-src="./images/14/monkies_milk.jpg" class="r-stretch"><div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a><span class="fu">data</span>(milk)</span>
+<span id="cb3-2"><a href=""></a>d <span class="ot">&lt;-</span> milk[ <span class="fu">complete.cases</span>(milk) , ]</span>
+<span id="cb3-3"><a href=""></a>d<span class="sc">$</span>neocortex <span class="ot">&lt;-</span> d<span class="sc">$</span>neocortex.perc <span class="sc">/</span> <span class="dv">100</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+
+<section id="a-lotta-models" class="title-slide slide level1 center">
+<h1>A lotta Models</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href=""></a>a.start <span class="ot">&lt;-</span> <span class="fu">mean</span>(d<span class="sc">$</span>kcal.per.g)</span>
+<span id="cb4-2"><a href=""></a>sigma.start <span class="ot">&lt;-</span> <span class="fu">log</span>(<span class="fu">sd</span>(d<span class="sc">$</span>kcal.per.g))</span>
+<span id="cb4-3"><a href=""></a></span>
+<span id="cb4-4"><a href=""></a><span class="co">#null</span></span>
+<span id="cb4-5"><a href=""></a>m6<span class="fl">.11</span> <span class="ot">&lt;-</span> <span class="fu">map</span>(</span>
+<span id="cb4-6"><a href=""></a>    <span class="fu">alist</span>(</span>
+<span id="cb4-7"><a href=""></a>        kcal.per.g <span class="sc">~</span> <span class="fu">dnorm</span>( a , <span class="fu">exp</span>(log.sigma) )</span>
+<span id="cb4-8"><a href=""></a>    ) ,</span>
+<span id="cb4-9"><a href=""></a>    <span class="at">data=</span>d , <span class="at">start=</span><span class="fu">list</span>(<span class="at">a=</span>a.start,<span class="at">log.sigma=</span>sigma.start) )</span>
+<span id="cb4-10"><a href=""></a></span>
+<span id="cb4-11"><a href=""></a><span class="co">#neocortex only</span></span>
+<span id="cb4-12"><a href=""></a>m6<span class="fl">.12</span> <span class="ot">&lt;-</span> <span class="fu">map</span>(</span>
+<span id="cb4-13"><a href=""></a>    <span class="fu">alist</span>(</span>
+<span id="cb4-14"><a href=""></a>        kcal.per.g <span class="sc">~</span> <span class="fu">dnorm</span>( mu , <span class="fu">exp</span>(log.sigma) ) ,</span>
+<span id="cb4-15"><a href=""></a>        mu <span class="ot">&lt;-</span> a <span class="sc">+</span> bn<span class="sc">*</span>neocortex</span>
+<span id="cb4-16"><a href=""></a>    ) ,</span>
+<span id="cb4-17"><a href=""></a>    <span class="at">data=</span>d , <span class="at">start=</span><span class="fu">list</span>(<span class="at">a=</span>a.start,<span class="at">bn=</span><span class="dv">0</span>,<span class="at">log.sigma=</span>sigma.start) )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+
+<section id="a-lotta-models-1" class="title-slide slide level1 center">
+<h1>A lotta Models</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a><span class="co"># log(mass) only</span></span>
+<span id="cb5-2"><a href=""></a>m6<span class="fl">.13</span> <span class="ot">&lt;-</span> <span class="fu">map</span>(</span>
+<span id="cb5-3"><a href=""></a>    <span class="fu">alist</span>(</span>
+<span id="cb5-4"><a href=""></a>        kcal.per.g <span class="sc">~</span> <span class="fu">dnorm</span>( mu , <span class="fu">exp</span>(log.sigma) ) ,</span>
+<span id="cb5-5"><a href=""></a>        mu <span class="ot">&lt;-</span> a <span class="sc">+</span> bm<span class="sc">*</span><span class="fu">log</span>(mass)</span>
+<span id="cb5-6"><a href=""></a>    ) ,</span>
+<span id="cb5-7"><a href=""></a>    <span class="at">data=</span>d , <span class="at">start=</span><span class="fu">list</span>(<span class="at">a=</span>a.start,<span class="at">bm=</span><span class="dv">0</span>,<span class="at">log.sigma=</span>sigma.start) )</span>
+<span id="cb5-8"><a href=""></a></span>
+<span id="cb5-9"><a href=""></a><span class="co"># neocortex + log(mass)</span></span>
+<span id="cb5-10"><a href=""></a>m6<span class="fl">.14</span> <span class="ot">&lt;-</span> <span class="fu">map</span>(</span>
+<span id="cb5-11"><a href=""></a>    <span class="fu">alist</span>(</span>
+<span id="cb5-12"><a href=""></a>        kcal.per.g <span class="sc">~</span> <span class="fu">dnorm</span>( mu , <span class="fu">exp</span>(log.sigma) ) ,</span>
+<span id="cb5-13"><a href=""></a>        mu <span class="ot">&lt;-</span> a <span class="sc">+</span> bn<span class="sc">*</span>neocortex <span class="sc">+</span> bm<span class="sc">*</span><span class="fu">log</span>(mass)</span>
+<span id="cb5-14"><a href=""></a>    ) ,</span>
+<span id="cb5-15"><a href=""></a>    <span class="at">data=</span>d , <span class="at">start=</span><span class="fu">list</span>(<span class="at">a=</span>a.start,<span class="at">bn=</span><span class="dv">0</span>,<span class="at">bm=</span><span class="dv">0</span>,<span class="at">log.sigma=</span>sigma.start) )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+
+<section id="a-waic" class="title-slide slide level1 center">
+<h1>A WAIC</h1>
+<div class="cell" data-refresh="0">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href=""></a><span class="fu">WAIC</span>( m6<span class="fl">.14</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       WAIC     lppd  penalty  std_err
+1 -15.07116 12.33633 4.800753 7.684498</code></pre>
+</div>
+</div>
+</section>
+
+<section id="comparing-models" class="title-slide slide level1 center">
+<h1>Comparing Models</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href=""></a>milk.models <span class="ot">&lt;-</span> <span class="fu">compare</span>( m6<span class="fl">.11</span> , m6<span class="fl">.12</span> , m6<span class="fl">.13</span> , m6<span class="fl">.14</span>)</span>
+<span id="cb8-2"><a href=""></a>milk.models</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            WAIC       SE    dWAIC      dSE    pWAIC     weight
+m6.14 -14.531291 7.616650 0.000000       NA 5.083474 0.91135329
+m6.13  -8.303929 5.532010 6.227362 5.342747 2.824969 0.04049788
+m6.11  -8.027938 4.684037 6.503353 7.242885 1.943980 0.03527780
+m6.12  -6.011389 4.285965 8.519902 7.511702 3.000938 0.01287103</code></pre>
+</div>
+</div>
+</section>
+
+<section id="comparing-models-1" class="title-slide slide level1 center">
+<h1>Comparing Models</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href=""></a><span class="fu">plot</span>(milk.models, <span class="at">cex=</span><span class="fl">1.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="mmi_files/figure-revealjs/waic_compare_fig-1.jpeg" width="672" class="r-stretch"><center>
+solid = deviance, circle=WAIC, triangle = <span class="math inline">\(\Delta\)</span>WAIC
+</center>
+</section>
+
+<section id="comparing-models-with-psis" class="title-slide slide level1 center">
+<h1>Comparing Models with PSIS</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a>milk.models.psis <span class="ot">&lt;-</span> <span class="fu">compare</span>( m6<span class="fl">.11</span> , m6<span class="fl">.12</span> , m6<span class="fl">.13</span> , m6<span class="fl">.14</span>, <span class="at">func =</span> PSIS)</span>
+<span id="cb11-2"><a href=""></a><span class="fu">plot</span>(milk.models.psis)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="mmi_files/figure-revealjs/psis_compare-1.jpeg" width="672" class="r-stretch"></section>
+
+<section id="psis-and-warnings-of-big-weights" class="title-slide slide level1 center">
+<h1>PSIS and Warnings of Big Weights</h1>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>       PSIS     lppd  penalty  std_err
+1 -8.269555 4.134778 1.804511 4.573406</code></pre>
+</div>
+</div>
+</section>
+
+<section id="psis-and-warnings-of-big-weights-1" class="title-slide slide level1 center">
+<h1>PSIS and Warnings of Big Weights</h1>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>          PSIS        lppd    penalty  std_err           k
+1  -0.54379033  0.27189516 0.07536975 4.918592 0.110928428
+2  -0.25100413  0.12550207 0.09667641 4.918592 0.141064066
+3  -1.28505873  0.64252937 0.03767753 4.918592 0.137201566
+4   0.64800200 -0.32400100 0.21765862 4.918592 0.379834740
+5   1.36161094 -0.68080547 0.32809924 4.918592 0.517833782
+6  -0.83764796  0.41882398 0.05905439 4.918592 0.293044647
+7  -0.08966115  0.04483057 0.11008533 4.918592 0.132774264
+8  -1.54312140  0.77156070 0.02701942 4.918592 0.057620921
+9  -1.63104150  0.81552075 0.02591626 4.918592 0.113083685
+10  2.88287292 -1.44143646 0.62759197 4.918592 0.863425023
+11 -0.28576746  0.14288373 0.10560214 4.918592 0.196157674
+12 -1.59790928  0.79895464 0.02837054 4.918592 0.009027069
+13 -1.11645979  0.55822989 0.04407620 4.918592 0.193489797
+14 -0.54379033  0.27189516 0.07536975 4.918592 0.110928428
+15 -0.40187958  0.20093979 0.08537474 4.918592 0.095956746
+16 -1.20492392  0.60246196 0.04056094 4.918592 0.195238557
+17 -1.54312140  0.77156070 0.02701942 4.918592 0.057620921</code></pre>
+</div>
+</div>
+</section>
+
+<section id="using-waic-and-psis-to-determine-problem-points" class="title-slide slide level1 center">
+<h1>Using WAIC and PSIS to Determine Problem Points</h1>
+<div class="cell">
+
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "M mulatta"</code></pre>
+</div>
+</div>
+<img data-src="mmi_files/figure-revealjs/psis_waic_importance-1.jpeg" width="672" class="r-stretch"></section>
+
+<section id="section-2" class="title-slide slide level1 center" data-background-color="black">
+<h1></h1>
+
+<img data-src="./images/15/chorus_line_model_selection.jpg" class="r-stretch"></section>
+
+<section id="death-to-model-selection" class="title-slide slide level1 center">
+<h1>Death to model selection</h1>
+<ul>
+<li><p>While sometimes the model you should use is clear, more often it is <em>not</em></p></li>
+<li><p>Further, you made those models for a reason: you suspect those terms are important</p></li>
+<li><p>Better to look at coefficients across models</p></li>
+<li><p>For actual predictions, ensemble predictions provide real uncertainty</p></li>
+</ul>
+</section>
+
+<section id="section-3" class="title-slide slide level1 center" data-background-color="black">
+<h1></h1>
+
+<img data-src="./images/15/bjork-on-phone-yes-i-am-all-about-the-deviance-let-us-make-it-shrink-our-parameters.jpg" class="r-stretch"></section>
+
+<section id="coefficients" class="title-slide slide level1 center">
+<h1>Coefficients</h1>
+<p>Remember, <code>m6.14</code> has a 97% WAIC model weight</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href=""></a>ctab <span class="ot">&lt;-</span> <span class="fu">coeftab</span>( m6<span class="fl">.11</span> , m6<span class="fl">.12</span> , m6<span class="fl">.13</span> , m6<span class="fl">.14</span>)</span>
+<span id="cb15-2"><a href=""></a>ctab</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          m6.11   m6.12   m6.13   m6.14  
+a            0.66    0.35    0.71   -1.09
+log.sigma   -1.79   -1.80   -1.85   -2.16
+bn             NA    0.45      NA    2.79
+bm             NA      NA   -0.03   -0.10
+nobs           17      17      17      17</code></pre>
+</div>
+</div>
+</section>
+
+<section id="coefficients-1" class="title-slide slide level1 center">
+<h1>Coefficients</h1>
+<p>Remember, <code>m6.14</code> has a 97% WAIC model weight</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href=""></a><span class="fu">plot</span>(ctab)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="mmi_files/figure-revealjs/coeftab_plot-1.jpeg" width="672" class="r-stretch"></section>
+
+<section id="ensemble-prediction" class="title-slide slide level1 center">
+<h1>Ensemble Prediction</h1>
+<ul>
+<li><p>Ensemble prediction gives us better uncertainty estimates</p></li>
+<li><p>Takes relative weights of predictions into account</p></li>
+<li><p>Takes weights of coefficients into account</p></li>
+<li><p>Basicaly, get simulated predicted values, multiply them by model weight</p></li>
+</ul>
+</section>
+
+<section id="making-an-ensemble" class="title-slide slide level1 center">
+<h1>Making an Ensemble</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href=""></a><span class="co"># data for prediction</span></span>
+<span id="cb18-2"><a href=""></a>nc.seq <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="at">from=</span><span class="fl">0.5</span>,<span class="at">to=</span><span class="fl">0.8</span>,<span class="at">length.out=</span><span class="dv">30</span>)</span>
+<span id="cb18-3"><a href=""></a></span>
+<span id="cb18-4"><a href=""></a>d.predict <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb18-5"><a href=""></a>    <span class="at">kcal.per.g =</span> <span class="fu">rep</span>(<span class="dv">0</span>,<span class="dv">30</span>), <span class="co"># empty outcome</span></span>
+<span id="cb18-6"><a href=""></a>    <span class="at">neocortex =</span> nc.seq,     <span class="co"># sequence of neocortex</span></span>
+<span id="cb18-7"><a href=""></a>    <span class="at">mass =</span> <span class="fu">rep</span>(<span class="fl">4.5</span>,<span class="dv">30</span>)      <span class="co"># average mass</span></span>
+<span id="cb18-8"><a href=""></a>)</span>
+<span id="cb18-9"><a href=""></a></span>
+<span id="cb18-10"><a href=""></a><span class="co"># make the ensemble</span></span>
+<span id="cb18-11"><a href=""></a>milk.ensemble <span class="ot">&lt;-</span> <span class="fu">ensemble</span>( m6<span class="fl">.11</span>, m6<span class="fl">.12</span>, </span>
+<span id="cb18-12"><a href=""></a>                           m6<span class="fl">.13</span> ,m6<span class="fl">.14</span> , <span class="at">data=</span>d.predict )</span>
+<span id="cb18-13"><a href=""></a></span>
+<span id="cb18-14"><a href=""></a><span class="co"># get </span></span>
+<span id="cb18-15"><a href=""></a>mu_ensemble <span class="ot">&lt;-</span> <span class="fu">apply</span>( milk.ensemble<span class="sc">$</span>link , <span class="dv">2</span> , mean )</span>
+<span id="cb18-16"><a href=""></a>mu.PI_fit <span class="ot">&lt;-</span> <span class="fu">apply</span>( milk.ensemble<span class="sc">$</span>link , <span class="dv">2</span> , PI )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+
+<section id="making-an-ensemble-1" class="title-slide slide level1 center">
+<h1>Making an Ensemble</h1>
+
+<img data-src="mmi_files/figure-revealjs/plot_ensemble-1.jpeg" width="672" class="r-stretch"></section>
+
+<section id="exercise" class="title-slide slide level1 center">
+<h1>Exercise</h1>
+<ul>
+<li><p>Take your milk multiple predictor models with clade, milk components, both, and neither</p></li>
+<li><p>Compare via WAIC</p></li>
+<li><p>Get ensemble predictions for each clade</p></li>
+</ul>
+<div class="quarto-auto-generated-content">
+<div class="footer footer-default">
+
+</div>
+</div>
+</section>
+    </div>
+  </div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="mmi_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="mmi_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="mmi_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="mmi_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="mmi_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="mmi_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="mmi_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="mmi_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="mmi_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="mmi_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: false,
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'default',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
+    <script id="quarto-html-after-body" type="application/javascript">
+    window.document.addEventListener("DOMContentLoaded", function (event) {
+      const toggleBodyColorMode = (bsSheetEl) => {
+        const mode = bsSheetEl.getAttribute("data-mode");
+        const bodyEl = window.document.querySelector("body");
+        if (mode === "dark") {
+          bodyEl.classList.add("quarto-dark");
+          bodyEl.classList.remove("quarto-light");
+        } else {
+          bodyEl.classList.add("quarto-light");
+          bodyEl.classList.remove("quarto-dark");
+        }
+      }
+      const toggleBodyColorPrimary = () => {
+        const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+        if (bsSheetEl) {
+          toggleBodyColorMode(bsSheetEl);
+        }
+      }
+      toggleBodyColorPrimary();  
+      const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+      tabsets.forEach(function(tabset) {
+        const tabby = new Tabby('#' + tabset.id);
+      });
+      const isCodeAnnotation = (el) => {
+        for (const clz of el.classList) {
+          if (clz.startsWith('code-annotation-')) {                     
+            return true;
+          }
+        }
+        return false;
+      }
+      const clipboard = new window.ClipboardJS('.code-copy-button', {
+        text: function(trigger) {
+          const codeEl = trigger.previousElementSibling.cloneNode(true);
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+      });
+      clipboard.on('success', function(e) {
+        // button target
+        const button = e.trigger;
+        // don't keep focus
+        button.blur();
+        // flash "checked"
+        button.classList.add('code-copy-button-checked');
+        var currentTitle = button.getAttribute("title");
+        button.setAttribute("title", "Copied!");
+        let tooltip;
+        if (window.bootstrap) {
+          button.setAttribute("data-bs-toggle", "tooltip");
+          button.setAttribute("data-bs-placement", "left");
+          button.setAttribute("data-bs-title", "Copied!");
+          tooltip = new bootstrap.Tooltip(button, 
+            { trigger: "manual", 
+              customClass: "code-copy-button-tooltip",
+              offset: [0, -8]});
+          tooltip.show();    
+        }
+        setTimeout(function() {
+          if (tooltip) {
+            tooltip.hide();
+            button.removeAttribute("data-bs-title");
+            button.removeAttribute("data-bs-toggle");
+            button.removeAttribute("data-bs-placement");
+          }
+          button.setAttribute("title", currentTitle);
+          button.classList.remove('code-copy-button-checked');
+        }, 1000);
+        // clear code selection
+        e.clearSelection();
+      });
+      function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+        const config = {
+          allowHTML: true,
+          maxWidth: 500,
+          delay: 100,
+          arrow: false,
+          appendTo: function(el) {
+              return el.closest('section.slide') || el.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'light-border',
+          placement: 'bottom-start',
+        };
+        if (contentFn) {
+          config.content = contentFn;
+        }
+        if (onTriggerFn) {
+          config.onTrigger = onTriggerFn;
+        }
+        if (onUntriggerFn) {
+          config.onUntrigger = onUntriggerFn;
+        }
+          config['offset'] = [0,0];
+          config['maxWidth'] = 700;
+        window.tippy(el, config); 
+      }
+      const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+      for (var i=0; i<noterefs.length; i++) {
+        const ref = noterefs[i];
+        tippyHover(ref, function() {
+          // use id or data attribute instead here
+          let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+          try { href = new URL(href).hash; } catch {}
+          const id = href.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          return note.innerHTML;
+        });
+      }
+      const findCites = (el) => {
+        const parentEl = el.parentElement;
+        if (parentEl) {
+          const cites = parentEl.dataset.cites;
+          if (cites) {
+            return {
+              el,
+              cites: cites.split(' ')
+            };
+          } else {
+            return findCites(el.parentElement)
+          }
+        } else {
+          return undefined;
+        }
+      };
+      var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+      for (var i=0; i<bibliorefs.length; i++) {
+        const ref = bibliorefs[i];
+        const citeInfo = findCites(ref);
+        if (citeInfo) {
+          tippyHover(citeInfo.el, function() {
+            var popup = window.document.createElement('div');
+            citeInfo.cites.forEach(function(cite) {
+              var citeDiv = window.document.createElement('div');
+              citeDiv.classList.add('hanging-indent');
+              citeDiv.classList.add('csl-entry');
+              var biblioDiv = window.document.getElementById('ref-' + cite);
+              if (biblioDiv) {
+                citeDiv.innerHTML = biblioDiv.innerHTML;
+              }
+              popup.appendChild(citeDiv);
+            });
+            return popup.innerHTML;
+          });
+        }
+      }
+    });
+    </script>
+    
+
+</body></html>
