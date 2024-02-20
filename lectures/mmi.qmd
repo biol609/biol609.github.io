@@ -16,7 +16,7 @@ format:
 <h2>Information Theory and a Multimodel World</h2>
 </center>
   
-![](./images/15/angry-bjork-and-if-you-overfit-once-more-youll-me-an-army-of-aic.jpg){width="60%"}
+![](./images/15/army_of_aic.jpg){width="60%"}
 
 
 ```{r prep, echo=FALSE, cache=FALSE, message=FALSE, warning=FALSE}
