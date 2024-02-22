@@ -563,11 +563,11 @@ Information Theory and a Multimodel World
 
 <section id="lppd-and-deviance" class="title-slide slide level1 center">
 <h1>lppd and Deviance</h1>
-<p><span class="math display">\[ Deviance \approx -2 *llpd\]</span></p>
+<p><span class="math display">\[ Deviance \approx -2 *lppd\]</span></p>
 <ul>
 <li><p>Hello, old friend.</p></li>
 <li><p>Increasing model complexity will <strong>always</strong> improve lppd.</p></li>
-<li><p>Out of sample llpd will get worse with model complexity.</p></li>
+<li><p>Out of sample lppd will get worse with model complexity.</p></li>
 </ul>
 </section>
 
@@ -1201,7 +1201,7 @@ Deviance: 8.5265838^{4}</p>
 <ul>
 <li>This tells us the distribution of the predictive power of our posterior for each point<br>
 </li>
-<li><span class="math inline">\(llpd = \sum log Pr(y_i | \theta)\)</span></li>
+<li><span class="math inline">\(lppd = \sum log Pr(y_i | \theta)\)</span></li>
 </ul></li>
 </ul>
 </section>
@@ -1219,7 +1219,7 @@ Deviance: 8.5265838^{4}</p>
 <section id="widely-applicable-ic" class="title-slide slide level1 center">
 <h1>Widely Applicable IC</h1>
 <p><span class="math display">\[WAIC = -2 \sum log Pr(y_i | \theta) + 2 \sum Var(log Pr(y_i | \theta))\]</span></p>
-<p><span class="math display">\[= -2 llpd + 2 p_{waic}\]</span></p>
+<p><span class="math display">\[= -2 lppd + 2 p_{waic}\]</span></p>
 <ul>
 <li><p>Widely Applicable/Wantanabe-Akaike Information Criteria</p></li>
 <li><p>Advantage in being pointwise is that we also get an estimate of uncertainty</p></li>

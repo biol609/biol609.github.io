@@ -275,13 +275,13 @@ ggplot(point_5, aes(x = .value)) +
 
 # lppd and Deviance
 
-$$ Deviance \approx -2 *llpd$$
+$$ Deviance \approx -2 *lppd$$
 
 - Hello, old friend.  
   
 - Increasing model complexity will **always** improve lppd.  
   
-- Out of sample llpd will get worse with model complexity. 
+- Out of sample lppd will get worse with model complexity. 
 
 
 # In and Out of Sample Deviance
@@ -526,7 +526,7 @@ $$DIC = 2 \bar{D} - 2 p_D$$
   
 - We can define the Pr(y<sub>i</sub> | posterior simulations)  
   - This tells us the distribution of the predictive power of our posterior for each point  
-  - $llpd = \sum log Pr(y_i | \theta)$
+  - $lppd = \sum log Pr(y_i | \theta)$
   
 # But what about Parameters?
 - We know that as k increases, our uncertainty in coefficients increases  
@@ -540,7 +540,7 @@ $$DIC = 2 \bar{D} - 2 p_D$$
 # Widely Applicable IC
 $$WAIC = -2 \sum log Pr(y_i | \theta) + 2 \sum Var(log Pr(y_i | \theta))$$  
   
-$$= -2 llpd + 2 p_{waic}$$
+$$= -2 lppd + 2 p_{waic}$$
   
 
 - Widely Applicable/Wantanabe-Akaike Information Criteria  
