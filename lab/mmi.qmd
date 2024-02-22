@@ -1,0 +1,54 @@
+---
+title: "MultiModel Inference with Rethinking"
+format: html
+---
+
+## Priors and Information Criteria from McElreath
+
+7M4. What happens to the effective number of parameters, as measured by PSIS or WAIC, as a prior becomes more concentrated? Why? Perform some experiments, if you are not sure. Start with this model.
+
+```{r}
+#| warning: false
+
+library(rethinking)
+library(dplyr)
+
+data(WaffleDivorce)
+
+WaffleDivorce <- WaffleDivorce |>
+  mutate(D = (Divorce - mean(Divorce))/sd(Divorce),
+         A = (MedianAgeMarriage - mean(MedianAgeMarriage))/sd(MedianAgeMarriage),
+         M = (Marriage - mean(Marriage))/sd(Marriage))
+
+
+mod <- alist(
+  #likelihood
+  D ~ dnorm(mu, sigma),
+  
+  #data generating process
+  mu <- a + bM*M + bA * A,
+  
+  # Priors
+  a ~ dnorm(0, 0.5),
+  bM ~ dnorm(0, 0.5),
+  bA ~ dnorm(0, 0.5),
+  sigma ~ dunif(0,10)
+)
+
+fit <- quap(mod, data=WaffleDivorce)
+```
+
+## IC Practice from McElreath
+
+7H1. In 2007, The Wall Street Journal published an editorial (“We’re Num- ber One, Alas”) with a graph of corporate tax rates in 29 countries plotted against tax revenue. A badly fit curve was drawn in seemingly by hand, to make the argument that the relationship between tax rate and tax revenue increases and then declines (is squared), such that higher tax rates can actually produce less tax revenue. I want you to actually fit a curve to these data, found in `data(Laffer)`. Consider models that use tax rate to predict tax revenue. Compare, using WAIC or PSIS, a straight-line model to any curved models you like. What do you conclude about the relationship between tax rate and tax revenue? And are there any points driving the relationship?
+
+
+7H5. Revisit the urban fox data, `data(foxes)`, from the previous chapter’s practice problems. Use WAIC or PSIS based model comparison on five different models, each using weight as the outcome, and containing these sets of predictor variables:
+
+(1) avgfood + groupsize + area 
+(2) avgfood + groupsize
+(3) groupsize + area
+(4) avgfood
+(5) area
+
+What are the WAIC scores and differences? How different are the coefficients between models? If you were to predict weight by `groupsize` using these models with an `ensemble()` approach, holding all other predictors at their median, what would that curve look like as compared to the curve from Model 3?
