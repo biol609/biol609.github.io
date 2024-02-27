@@ -77,10 +77,10 @@ __Etherpad:__ https://etherpad.wikimedia.org/p/609-mmi-2024
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
-__Lecture:__ [Interaction Effects](./lectures/16_interactions.html), [Markov Chain Monte-Carlo Approaches](./lectures/17_mcmc.html)   
+__Lecture:__ [Hamiltonian and Markov Chain Monte-Carlo Approaches](./lectures/mcmc_and_hmc.html)   
 __Reading:__ McElreath Chapter 8-9  
-__Deeper Reading:__ [MCMC Under the Hood](https://www.bayesrulesbook.com/chapter-7). 
-__Etherpad:__ https://etherpad.wikimedia.org/p/609-interactions-2024    
+__Deeper Reading:__ [MCMC Under the Hood](https://www.bayesrulesbook.com/chapter-7)   
+__Etherpad:__ https://etherpad.wikimedia.org/p/609-hmc-2024    
 
 ### Week 7.
 ```{r next_date, echo=FALSE}
