@@ -80,12 +80,14 @@ __Etherpad:__ https://etherpad.wikimedia.org/p/609-mmi-2024
 __Lecture:__ [Hamiltonian and Markov Chain Monte-Carlo Approaches](./lectures/mcmc_and_hmc.html)   
 __Reading:__ McElreath Chapter 8-9  
 __Deeper Reading:__ [MCMC Under the Hood](https://www.bayesrulesbook.com/chapter-7)   
+__Lab:__ [HMC and Interaction Effects](lab/mcmc_interaction.html)  
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-hmc-2024    
 
 ### Week 7.
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
+__Lab:__ Split into 3 groups. One group presents logistic regression, one poisson regression, and one censored regression.  
 __Lecture__: [MaxEnt and GLMs - a review](lectures/09_generalized_linear_models.html), [Bayesian GLMs](./lectures/10_bayesian_glm.html), [GLM lab](lectures/11_bayesian_glm_lab.html)   
 __Reading:__ McElreath Chapter 10-11. 
 __Deeper Reading:__ [Poisson and Negative Binomial Regression](https://www.bayesrulesbook.com/chapter-12), [Logistic Regression](https://www.bayesrulesbook.com/chapter-13)  

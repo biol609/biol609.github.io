@@ -1,0 +1,37 @@
+---
+title: "Interactions and HMC"
+format: html
+---
+
+For each of the following questions, fit models using `ulam()` and evaluate whether your model is sampling the posterior well.
+
+## Tulips from McElreath
+
+A. Return to the `data(tulips)` example in the chapter. After standardizing variables, the model looked like this:
+
+```{r, eval = FALSE}
+alist(
+        blooms_std ~ dnorm( mu , sigma ) ,
+        mu <- a + bw*water_s + bs*shade_s + bws*water_cent*shade_s ,
+        a ~ dnorm( 0.5 , 0.25 ) ,
+        bw ~ dnorm( 0 , 0.25 ) ,
+        bs ~ dnorm( 0 , 0.25 ) ,
+        bws ~ dnorm( 0 , 0.25 ) ,
+        sigma ~ dexp( 1 )
+) , data=d )
+
+```
+
+Add an additive effect of bed and re-fit the model using HMC. You'll have to use an index here. Evaluate if your posterior is sampling well.
+
+## Warming up
+
+Re-estimate one of the tulip models above, but at different numbers of warmup iterations. Be sure to use the same number of sampling iterations in each case. Compare the n_eff values. How much warmup is enough?
+
+## Looking at Priors
+
+What happens if you make utterly wild choices of priors to your chains?
+
+## Plot!
+
+With the model above, plot the predicted number of blooms at each site and at different levels of shade and water.
