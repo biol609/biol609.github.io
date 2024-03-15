@@ -84,10 +84,14 @@ __Lab:__ [HMC and Interaction Effects](lab/mcmc_interaction.html)
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-hmc-2024    
 
 ### Week 7.
+Catch Up Labs!
+  
+### Week 8.
+```{r next_date, echo=FALSE}
+```
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
-__Lab:__ Split into 3 groups. One group presents logistic regression, one poisson regression, and one censored regression.  
 __Lecture__: [MaxEnt and GLMs - a review](lectures/09_generalized_linear_models.html), [Bayesian GLMs](./lectures/10_bayesian_glm.html), [GLM lab](lectures/11_bayesian_glm_lab.html)   
 __Reading:__ McElreath Chapter 10-11. 
 __Deeper Reading:__ [Poisson and Negative Binomial Regression](https://www.bayesrulesbook.com/chapter-12), [Logistic Regression](https://www.bayesrulesbook.com/chapter-13)  
@@ -95,9 +99,7 @@ __Files:__  `usethis::use_course("https://biol609.github.io/lectures/glm_data.zi
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-glm-2024    
 
 
-### Week 8.
-```{r next_date, echo=FALSE}
-```
+### Week 9.
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
@@ -107,65 +109,57 @@ __Further Reading:__ [ver Hoef and Boveng 2007 on overdispersion](http://byrnesl
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-zig_zag-2024    
 
 
-### Week 9.
-```{r next_date, echo=FALSE}
-```
-`r datestring`   
-__Lecture:__ [Random Effects](./lectures/07_random_effects.html), [Varying Intercept Mixed Models](./lectures/22_varying_intercept.html)
-__Etherpad:__ https://etherpad.wikimedia.org/p/609-ranef-2024  
-__Reading:__ McElreath Ch. 13  
-__Further Reading:__ [Gelman and Hill Ch. 12](http://byrneslab.net/classes/biol609/gelman_hill_ch_12.pdf) and/or [Zuur on Random Effects](http://byrneslab.net/classes/biol609/Zuur_ch_5.pdf), [A Practical Guide to Generalized Linear Mixed Models](https://www.cell.com/trends/ecology-evolution/fulltext/S0169-5347(09)00019-6)    
-__Writings on visualization:__ <a href="http://anythingbutrbitrary.blogspot.com/2012/06/random-regression-coefficients-using.html">Random regression coefficients using lme4</a>, <a href="http://stackoverflow.com/questions/13847936/in-r-plotting-random-effects-from-lmer-lme4-package-using-qqmath-or-dotplot">Making mixed model plots look fancy</a>  
-__A Little More Reading:__ <a href="http://jonlefcheck.net/2013/03/13/r2-for-linear-mixed-effects-models/">R<sup>2</sup> for mixed models (from Jon Lefcheck)</a>, [lme4 converge warnings and solutions](https://rstudio-pubs-static.s3.amazonaws.com/33653_57fc7b8e5d484c909b615d8633c01d51.html)  
-
-  
 ### Week 10.
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
-__Lecture:__  [Varying Slope Models](./lectures/23a_varslope.html)  
-__Etherpad:__ https://etherpad.wikimedia.org/p/609-mixed_bayesian-2024   
-__Reading:__ McElreath Chapter 13   
-__Further Reading:__ [Gelman and Hill Ch. 12](http://byrneslab.net/classes/biol609/gelman_hill_ch_12.pdf) (see the bit on one model written 5 ways), [Gelman and Hill Ch. 13](http://byrneslab.net/classes/biol609/gelman_hill_ch_13.pdf), [Gelman on multiple comparisons in mixed models](http://byrneslab.net/classes/biol609/Gelman_multcomp.pdf)  
+__Lecture:__ [Random Effects](./lectures/07_random_effects.html), [Varying Intercept Mixed Models](./lectures/22_varying_intercept.html),  [Varying Slope Models](./lectures/23a_varslope.html)  
+__Etherpad:__ https://etherpad.wikimedia.org/p/609-ranef-2024  
+__Reading:__ McElreath Ch. 13, 14 to 14.3  
+__Further Reading:__ [Gelman and Hill Ch. 12](http://byrneslab.net/classes/biol609/gelman_hill_ch_12.pdf) and/or [Zuur on Random Effects](http://byrneslab.net/classes/biol609/Zuur_ch_5.pdf), [A Practical Guide to Generalized Linear Mixed Models](https://www.cell.com/trends/ecology-evolution/fulltext/S0169-5347(09)00019-6), [Gelman and Hill Ch. 12](http://byrneslab.net/classes/biol609/gelman_hill_ch_12.pdf) (see the bit on one model written 5 ways), [Gelman and Hill Ch. 13](http://byrneslab.net/classes/biol609/gelman_hill_ch_13.pdf)      
+__Writings on visualization:__ <a href="http://anythingbutrbitrary.blogspot.com/2012/06/random-regression-coefficients-using.html">Random regression coefficients using lme4</a>, <a href="http://stackoverflow.com/questions/13847936/in-r-plotting-random-effects-from-lmer-lme4-package-using-qqmath-or-dotplot">Making mixed model plots look fancy</a>  
+__A Little More Reading:__ <a href="http://jonlefcheck.net/2013/03/13/r2-for-linear-mixed-effects-models/">R<sup>2</sup> for mixed models (from Jon Lefcheck)</a>, [lme4 converge warnings and solutions](https://rstudio-pubs-static.s3.amazonaws.com/33653_57fc7b8e5d484c909b615d8633c01d51.html)  
 
+  
 ### Week 11.
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
-__Lecture:__  Instrumental Variables, Group-Mean Centering, and Other Model Structures    
-__Reading:__ McElreath Chapter 14 Part 2   
-__Etherpad:__ https://etherpad.wikimedia.org/p/609-mixed_bayesian-2024   
-__Reading:__ [McNeish and Kelly 2018](./Readings/McNeish_Kelley_PsychMethods_2024.pdf), [Causal Model Structures and Random Effects](http://rpubs.com/jebyrnes/causal_mods), [Poe Lecture Slides](./Readings/2018-11-02_wim_poe_clustered_slides.pdf), [Bell et al. 2018a](./Readings/Bell2018_Article_UnderstandingAndMisunderstandi.pdf), [Bell et al 2018b](./Bell_2018_Qual_Quant.pdf)  
-
+__Lecture:__  Visualizing Complex Bayesian Models    
+__Reading:__ TBD
 
   
-### Week 13. 
+### Week 12. 
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
-__Lecture:__ [Gaussian Proces Models](./lectures/24_gaussian_process.html), [Generalized Additive Models (GAMs)](./lectures/22_gams.html)   
-__Reading:__ McElreath Chapter 14 On GP and Ch4 on BSplines   
+__Lecture:__ [Gaussian Proces Models](./lectures/24_gaussian_process.html), [Generalized Additive Models (GAMs) and Autocorrelation](./lectures/22_gams.html)   
+__Reading:__ McElreath Chapter 14.5 On GP and Ch4 on BSplines   
 __Etherpad:__ https://etherpad.wikimedia.org/p/609-beyond-2024   
 __Files:__ [predicted GP script](./lectures/data/gp/predict_gpl2.R)  
 __Reading:__ [Spatial autoregressive models for statistical inference from ecological data](./Readings/verHoef_spatial_autocorrelation.pdf), McElreath Chapter 14, [Roberts et al. 2012](http://byrneslab.net/classes/biol609/Roberts_et_al_2012_gaussian_process.pdf), [GAMs: an Introduction](http://environmentalcomputing.net/intro-to-gams/), [Michael Clark's GAM Introduction](https://m-clark.github.io/generalized-additive-models/), [Hierarchical Generalized Additive Models in ecology: an introduction with mgcv](./Readings/Pedersen-2024-Hierarchical Generalized Additive Models in ecology.pdf)  
 __Further Readings:__ [Methods to account for spatial autocorrelation in the analysis of species distributional data: a review](./Readings/DormannEcography30_57164.pdf)
 
   
+### Week 13.  
+```{r next_date, echo=FALSE}
+```
+`r datestring`   
+__Lecture:__ Measurement Error, Missing Data, and Bayesian Meta-Analysis  
+__Reading:__ McElreath Chapter 15.  
+__Homework:__ Project Proposals Due  
+
 ### Week 14.  
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
-__Lecture:__ Measurement Error, Missing Data, and Meta-Analysis
-__Reading:__ McElreath Chapter 15.  
-__Etherpad:__ https://etherpad.wikimedia.org/p/609-alt_regression-2024  
-__Reading:__ [Warton et al. SMATR](http://byrneslab.net/classes/biol609/Warton_et_al_2012_MEE.pdf), [Warton et al. 2006 Model II Review](http://byrneslab.net/classes/biol609/Warton_et_al-2006-Biological_Reviews.pdf), [Cade and Noon 2003 on Quantile Regression](http://byrneslab.net/classes/biol609/Cade_and_Noon_2003_Quantile.pdf), [Brennen et al. 2015 quantile regression example](http://byrneslab.net/classes/biol609/Brennen_et_al_2015_quantile.pdf), [Colonescu Ch. 8 on Heteroskedasticity](https://bookdown.org/ccolonescu/RPoE4/heteroskedasticity.html)\
-__Files:__ [Elk data](./lectures/data/03/ekk_from_dryad.csv), [Clam data](./lectures/data/04/Clams.txt)  
-__R Packages:__ Quantreg  
+__Lecture:__ Bayes Outside of Rethinking  
+__Reading:__ brms, INLA, stan?
 
 ### Week 15.
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
 __**Final Work Party Week!**__  
-__Final Presentations:__  Friday May 17th  
+__Final Presentations:__  Friday May 10th  
 __Final Papers Due:__ May 21st  
