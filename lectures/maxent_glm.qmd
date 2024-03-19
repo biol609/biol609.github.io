@@ -1,0 +1,968 @@
+---
+title: ""
+format: 
+  revealjs:
+    navigation-mode: vertical
+    controls-layout: bottom-right
+    controls-tutorial: true
+    theme: simple
+    incremental: false
+    css: style.css
+---
+
+##
+<center>
+<h2>Bayesian Generalized Linear Models</h2>
+</center>
+  
+<!-- add some fitted and predictions intervals next time -->
+
+![](./images/bayesian_glm/star_wars_glm.jpg){width="65%"}
+
+
+```{r prep, echo=FALSE, cache=FALSE, message=FALSE, warning=FALSE}
+library(knitr)
+
+opts_chunk$set(fig.height=5, fig.width=7, comment=NA, 
+               warning=FALSE, message=FALSE, 
+               dev="jpeg", echo=FALSE)
+
+library(rethinking)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(tidybayes)
+library(tidybayes.rethinking)
+#center plot titles
+theme_set(theme_bw())
+theme_update(plot.title = element_text(hjust = 0.5))
+
+```
+
+
+
+# Our Models Until Now
+Likelihood:  
+$y_i \sim Normal(\mu_i, \sigma)$  
+   
+Data Generating Process  
+$\mu_i = \alpha + \beta_1 x1_i + \beta_2 x2_i + ...$  
+     
+Priors:  
+$\alpha \sim Normal(0, 1)$  
+$\beta_j \sim Normal(0, 1)$    
+$\sigma \sim cauchy(0,2)$  
+
+# Making the Normal General
+Likelihood:  
+$y_i \sim Normal(\mu_i, \sigma)$     
+     
+Data Generating Process with identity link  
+f($\mu_i) = \alpha + \beta_1 x1_i + \beta_2 x2_i + ...$     
+     
+Priors:  
+...  
+
+# A Generalized Linear Model
+Likelihood:  
+$y_i \sim D(\theta_i, ...)$     
+     
+Data Generating Process with identity link  
+f($\theta_i) = \alpha + \beta_1 x1_i + \beta_2 x2_i + ...$     
+     
+Priors:  
+...  
+
+# A Generalized Outline
+1. Why use GLMs? An Intro to Entropy  
+  
+2. Logistic Regression  
+
+3. Poisson Regression  
+
+4. Poisson -> Multinomial  
+
+# What is Maximum Entropy?
+![](./images/18/tangled-ball-mess-of-computer-cords-dxpt68.jpg)
+
+# Maximum Entropy Principle
+  
+  
+<center><b>The distribution that can happen the most ways is also the distribution with the biggest information entropy. The distribution with the biggest entropy is the most conservative distribution that obeys its constraints.</b></center>  
+  
+-McElreath 2017
+
+# Why are we thinking about MaxEnt?
+- MaxEnt distributions have the widest spread - conservative  
+  
+- Nature tends to favor maximum entropy distributions  
+     - It's just natural probability  
+  
+- The foundation of Generalized Linear Model Distributions  
+  
+- Leads to useful distributions once we impose *constraints*
+
+##
+![](./images/18/maxent_1.jpg)
+<div style="font-size:11pt">McElreath 2016</div>
+
+##
+![](./images/18/maxent_2.jpg)
+<div style="font-size:11pt">McElreath 2016</div>
+
+##
+![](./images/18/maxent_3.jpg)
+<div style="font-size:11pt">McElreath 2016</div>
+
+##
+![](./images/18/maxent_4.jpg)
+<div style="font-size:11pt">McElreath 2016</div>
+
+##
+![](./images/18/maxent_5.jpg)
+<div style="font-size:11pt">McElreath 2016</div>
+
+##
+![](./images/18/maxent_6.jpg)
+<div style="font-size:11pt">McElreath 2016</div>
+
+##
+![](./images/18/maxent_7.jpg)
+<div style="font-size:11pt">McElreath 2016</div>
+
+##
+![](./images/18/maxent_8.jpg)
+<div style="font-size:11pt">McElreath 2016</div>
+
+##
+```{r entropy_show}
+#from pg 303 of 2nd edition of Statistical Rethinking
+p <- list()
+p$A <- c(0,0,10,0,0)
+p$B <- c(0,1,8,1,0)
+p$C <- c(0,2,6,2,0)
+p$D <- c(1,2,4,2,1)
+p$E <- c(2,2,2,2,2)
+
+p_norm <- lapply( p , function(q) q/sum(q))
+H <- sapply( p_norm , function(q) -sum(ifelse(q==0,0,q*log(q))) ) 
+ways <- c(1,90,1260,37800,113400)
+logwayspp <- log(ways)/10
+
+set.seed(2019)
+qplot(logwayspp, H, label = LETTERS[1:5], geom = "point") +
+  geom_text(position = position_jitter(height = 0.1, width = 0.07)) +
+  stat_smooth(method = "lm", fill = NA, lty = 2) +
+  xlab("log # Ways") + ylab('-sum(p log p) = Entropy')
+```
+
+
+# Information Entropy
+$$H(p) = - \sum p_i log \, p_i$$
+
+- Measure of uncertainty  
+  
+- If more events possible, it increases  
+  
+- Nature finds the distribution with the largest entropy, given constraints of distribution
+
+# Maximum Entropy and Coin Flips
+* Let's say you are flipping a fair (p=0.5) coin twice    
+  
+* What is the maximum entropy distribution of # Heads?  
+  
+* Possible Outcomes: TT, HT, TH, HH  
+     - which leads to 0, 1, 2 heads  
+  
+* Constraint is, with p=0.5, the average outcome is 1 heads
+     
+# The Binomial Possibilities
+```{r entropy}
+entropy <- function(z) {
+  ret <- -1*sum(sapply(z, function(x) x*log(x)))
+  if(!is.finite(ret)) ret <- 0
+  ret
+}
+expandBin <- function(p, trials){
+  ways <- sapply(0:trials, function(x) choose(trials,x))
+  out <- sapply(1:length(p), function(i) rep(p[i]/ways[i], times=ways[i]))
+  do.call(c, out)
+}
+
+binEnt <- function(trials = 2, prob=0.5){
+  p <- dbinom(0:trials, trials, prob)
+  entropy(expandBin(p, trials))
+}
+
+```
+TT = p<sup>2</sup>  
+HT = p(1-p)  
+TH = (1-p)p  
+HH = p<sup>2</sup>  
+  
+<center>But other distributions are possible</center>
+
+# Let's compare other distributions meeting constraint using Entropy
+
+Remember, we must average 1 Heads, so,  
+sum(distribution * 0,1,1,2) = 1
+
+$$H = - \sum{p_i log p_i}$$  
+
+
+
+| Distribution | TT, HT, TH, HH | Entropy |
+|--------------|----------------|---------|
+|Binomial | 1/4, 1/4, 1/4, 1/4  | `r round(entropy(rep(0.25,4)),3)` |
+|Candiate 1 | 2/6, 1/6, 1/6, 2/6 |  `r round(entropy(c(2/6, 1/6, 1/6, 2/6)),3)` |
+|Candiate 2 | 1/6, 2/6, 2/6, 1/6 |  `r round(entropy(c(1/6, 2/6, 2/6, 1/6)),3)` |
+|Candiate 3 | 1/8, 1/2, 1/8, 2/8 |  `r round(entropy(c(1/8, 1/2, 1/8, 2/8)),3)` |
+
+  
+<center>Binomial wins!</center>
+
+# What about other p's and draws?
+Assume 2 draws, p=0.7, make 1000 simulated distributions
+```{r bin_try}
+
+get_rand_coin_dist <- function(trials=2, prob=0.5, expand=TRUE){
+  exp_heads <- sum(dbinom(0:trials, trials, prob)*0:trials)
+  x <- runif(trials) #gets 0, 1, ... trials -1
+  r <- sum(sapply(1:trials, function(j) x[j]*(j-1))) #intermediate thing
+  x_i <- (sum(x)*exp_heads - r)/(trials - exp_heads) #the constraint
+  p <- c(x,x_i)/sum(c(x,x_i)) #normalize to probabilities
+  
+  #test
+  #exp_heads
+  #sum(p*0:trials)
+
+  #return
+  if(expand) return(expandBin(p,trials))
+  p
+}
+
+H_2_0.7 <- replicate(1e3, entropy(get_rand_coin_dist(trials = 2, prob=0.7)))
+plot(density(H_2_0.7, bw=0.001), main=paste("Trials=100, prob=0.6\nBinomial Max Ent = ", binEnt(2, 0.7)), xlab="Entropy")
+```
+
+<!--
+# What about other p's and draws?
+Assume 10 draws, p=0.6, make 1000 simulated distributions
+```{r maxent2, cache=TRUE}
+H_10_0.6 <- replicate(1e3, entropy(get_rand_coin_dist(10, 0.6)))
+plot(density(H_10_0.6, bw=0.01), main=paste("Trials=10, prob=0.6\nBinomial Max Ent = ", binEnt(10, 0.6)), xlab="Entropy")
+```
+-->
+
+# OK, what about the Gaussian?
+<div id="left">
+```{r norm, fig.height=6,fig.width=5}
+library(pgnorm)
+norm_dists <- crossing(x=seq(-4,4, length.out=300), shape=1:4) %>%
+  rowwise() %>%
+  mutate(y=dpgnorm(x, shape, 0,1)) %>%
+  ungroup()
+
+qplot(x, y, data=norm_dists, color=factor(shape), geom="line") +
+  ggtitle("Generalized Normal Distribution\nStandard Normal Shape=2")
+```
+</div>
+
+<div id="right">
+- Constraints: mean, finite variance, unbounded  
+  
+- Lots of possible distributions for normal processes  
+  
+- Flattest distribution given constraints: MaxEnt
+</div>
+
+# Maximum Entropy Distributions
+Constraints | Maxent distribution |
+------------|---------------------|
+Real value in interval | Uniform |
+Real value,  finite variance | Gaussian |
+Binary events,  fixed probability | Binomial |
+Sum of binomials as n -> inf | Binomial |
+Non-negative real, has mean | Exponential |
+
+
+# How to determine which non-normal distribution is right for you
+* Use previous table to determine  
+  
+* Bounded values: binomial, beta, Dirchlet  
+  
+* Counts: Poisson, multinomial, geometric  
+  
+* Distances and durations: Exponential, Gamma (survival or event history)  
+  
+* Monsters: Ranks and ordered categories  
+  
+* Mixtures: Beta-binomial, gamma-Poisson, Zero-inflated processes
+
+
+# How Distributions are Coupled
+![](./images/18/all_dists.jpg){width="85%"}
+
+
+# A Generalized Outline
+1. Why use GLMs? An Intro to Entropy  
+  
+2. [Logistic Regression]{style="color:red"}  
+
+3. Poisson Regression  
+
+4. Poisson -> Multinomial
+
+
+
+# Our Models Until Now
+Likelihood:  
+$y_i \sim Normal(\mu_i, \sigma)$  
+  
+Data Generating Process  
+$\mu_i = \alpha + \beta_1 x1_i + \beta_2 x2_i + ...$  
+  
+Priors:  
+$\alpha \sim Normal(0, 1)$  
+$\beta_j \sim Normal(0, 1)$    
+$\sigma \sim cauchy(0,2)$  
+
+
+# Binomial Logistic Regression
+Likelihood:  
+$y_i \sim B(size, p_i)$  
+  
+Data Generating Process with identity link  
+logit($p_i) = \alpha + \beta_1 x1_i + \beta_2 x2_i + ...$  
+  
+Priors:  
+...  
+
+# Why Binomial Logistic Regression
+- Allows us to predict **absolute** probability of something occuring  
+  
+- Allows us to determing **relative** change in risk due to predictors
+
+# Why a Logit Link?
+![](./images/bayesian_glm/logit_conversion.jpg)
+<div style="font-size:11pt">McElreath 2016</div>
+
+# Meaning of Logit Coefficients
+$$logit(p_i) = log \frac{p_i}{1-p_i} = \alpha + \beta x_i$$  
+
+::: {.incremental}
+
+- $\frac{p_i}{1-p_i}$ is *odds* of something happening  
+  
+- $\beta$ is change in *log odds* per one unit change in $x_i$  
+     - exp($\beta$) is change in odds  
+     - Change in **relative risk**  
+  
+- $p_i$ is *absolute probability* of something happening
+     - logistic($\alpha + \beta x_i$) = probability
+     - To evaluate change in probability, choose two different $x_i$ values
+:::
+
+# Binomial GLM in Action: Gender Discrimination in Graduate Admissions
+![](./images/bayesian_glm/FINAL_gender_news_dani-01.jpg)
+
+# Our data: Berkeley in 1973
+```{r ucb, echo=TRUE}
+data(UCBadmit)
+head(UCBadmit)
+```
+
+
+
+# The Gender Gap
+```{r}
+apply(UCBAdmissions, c(1, 2), sum)
+mosaicplot(apply(UCBAdmissions, c(1, 2), sum),
+           main = "Student admissions at UC Berkeley")
+```
+
+# Doesn't Look like a Gender Gap if we Factor In Department...
+```{r}
+ggplot(UCBadmit,
+       aes(x = applicant.gender, y = admit/applications,
+           color = dept)) +
+  geom_point() +
+  stat_summary(color = "red")
+```
+
+# But Gender -> Department Applied To
+```{r}
+ggplot(UCBadmit,
+       aes(x = applicant.gender, y = applications,
+           color = dept, group = dept)) +
+  geom_point(size = 3)  +
+  geom_line()
+```
+
+# Porportion Admitted by Department...
+```{r}
+ggplot(UCBadmit,
+       aes(x = applicant.gender, y = admit/applications,
+           color = dept, group = dept, shape = applicant.gender)) +
+  geom_point(size = 3) + 
+  geom_line()
+```
+
+
+# What model would you build?
+```{r ucb, echo=FALSE}
+```
+
+
+# Mediation Model
+```{dot}
+digraph G{
+layout = neato
+
+  percent_admit [
+    shape = none
+    pos = "1,1!"
+  ]
+  
+    dept [
+    shape = none
+    pos = "-1,1!"
+  ]
+  
+    applicant_gender [
+    shape = none
+    pos = "0,2!"
+  ]
+  
+applicant_gender -> dept
+dept -> percent_admit
+applicant_gender -> percent_admit
+}
+```
+
+Gender influences where you apply to. Department mediates gender to admission relationship.
+
+# One Model
+```{r ecb_mod1, echo=TRUE}
+#| code-line-numbers: "|7-8|10-11|13-15|"
+
+#female = 1, male = 2
+UCBadmit <-  UCBadmit |>
+  mutate(gender = as.numeric(applicant.gender),
+         dept_id = as.numeric(dept))
+
+mod_gender <- alist(
+  #likelihood
+  admit ~ dbinom(applications, p),
+  
+  #Data generating process
+  logit(p) <- a[gender] + delta[dept_id],
+  
+  #priors
+  a[gender] ~ dnorm(0,1),
+  delta[dept_id] ~ dnorm(0,1)
+)
+
+fit_gender <- quap(mod_gender, UCBadmit)
+```
+
+# What do Priors Imply in a GLMS?
+
+```{r prior_sim, echo = TRUE, eval = FALSE}
+#| code-line-numbers: "|1-2|4-5|"
+#Let's simulate some priors!
+prior_sims <- extract.prior(fit_gender)
+
+# prior sims of gender assuming average no effect of dept - 50:50
+prior_sims_gender <- inv_logit(prior_sims$a) 
+
+hist(prior_sims_gender[,1], main = "Prior Probability of Admission if Female")
+```
+
+# A Flat Prior in Logit Space Might Not Be Flat!
+```{r prior_sim, echo = FALSE}
+```
+
+# Let's try a few SDs to see what works!
+```{r echo = TRUE}
+prior_frame <- tibble(sd = seq(0.5, 5, 0.5)) %>%
+  rowwise() %>%
+  mutate(prior_sims = list(rnorm(1e4,0,sd))) %>%
+  unnest(prior_sims) %>%
+  mutate(prior_sims = inv_logit(prior_sims))
+```
+
+# What is our flat prior?
+```{r}
+ggplot(prior_frame, 
+       aes(x = prior_sims, 
+           group = factor(sd),
+           color = factor(sd), 
+           fill = factor(sd))) +
+  geom_density(alpha = 0.5) +
+  facet_wrap(~sd)
+```
+
+# A New Model
+```{r ecb_mod2, echo=TRUE}
+mod_gender <- alist(
+  #likelihood
+  admit ~ dbinom(applications, p),
+  
+  #Data generating process
+  logit(p) <- a[gender] + delta[dept_id],
+  
+  #priors
+  a[gender] ~ dnorm(0,1.5),
+  delta[dept_id] ~ dnorm(0,1.5)
+)
+```
+
+# Fit the Model!
+```{r fit_ech, echo = TRUE, cache = TRUE, message=FALSE}
+fit_gender <- quap(mod_gender, UCBadmit)
+```
+
+
+# Results... men do slightly worse?
+```{r admit_precis, echo=TRUE}
+#female = 1, male = 2
+precis(fit_gender, depth=2)
+```
+
+# Results... men do slightly worse?
+What it means
+```{r p, echo=TRUE}
+#Women
+logistic(-0.43)
+
+#Men
+logistic(-0.52)
+```
+
+# Relative comparison: Slight Female Advantage? Eh.
+```{r male_adf, echo=TRUE, eval = FALSE}
+samp <- extract.samples(fit_gender)
+
+precis(samp$a[,2] - samp$a[,1], prob=0.8)
+```
+
+```{r male_adf2, echo=FALSE}
+samp <- extract.samples(fit_gender)
+
+a <- precis(samp$a[,2] - samp$a[,1], prob=0.8)
+rownames(a) <- ""
+a
+```
+
+```{r plot_diff}
+plot(density(samp$a[,2] - samp$a[,1]), main="Male Advantage Distribution",
+     xlab="Male - Female Coefficient")
+matplot(c(0,0), c(0,5), add = TRUE, type = "l", col = "red", lty = 2)
+text(-0.3, 3, "Female Advantage")
+text(0.15, 3, "Male Advantage")
+```
+
+# Does our Data Fall in Observations?
+
+```{r}
+postcheck(fit_gender)
+```
+
+# Quantile Residuals
+```{r}
+#| echo: true
+qpreds <- add_linpred_draws(UCBadmit, fit_gender) |>
+  mutate(.obs = admit/applications) |>
+  group_by(dept, applicant.gender) |>
+  
+  # make an empirical dist of each linpred
+  # then get quantile of result
+  summarize(dist = list(ecdf(.linpred)),
+            .obs = .obs[1],
+            q = purrr::map_dbl(.obs[1], dist))
+```
+
+# Quantile Residuals and Fits
+```{r res, echo = TRUE, results = "hide"}
+ggplot(qpreds,
+       aes(.obs, q)) +
+  geom_point(size = 3)
+```
+
+# QQ Unif Check
+```{r res_qq, echo = TRUE}
+gap::qqunif(qpreds$q, logscale=FALSE)
+```
+
+# Model Vis with Tidybayes
+```{r, echo = TRUE, eval = FALSE}
+#| code-line-numbers: "|1|6|"
+preds <- add_linpred_draws(UCBadmit, fit_gender)
+
+ggplot(preds, aes(x = dept, y = .linpred,
+                  group = applicant.gender, 
+                  color = applicant.gender)) +
+  stat_gradientinterval(position = "dodge")
+```
+
+# Model Vis with Tidybayes
+```{r, echo = FALSE, eval = TRUE}
+```
+
+# Prediction Intervals and Binomial GLMs
+- Of course, predictions are 1 or 0 for a straight binomial GLM.   
+  
+- But, more than just coefficient variability is at play  
+
+- So, we simulate # of successes out of some # of attempts. 
+
+- Can use this to generate prediction intervals
+
+# Prediction Model Vis with Tidybayes
+```{r abspred_binom, echo = TRUE, eval = FALSE}
+#| code-line-numbers: "|1|7|"
+preds_all <- add_predicted_draws(UCBadmit, fit_gender) |>
+  mutate(abs_pred = .prediction/applications)
+
+ggplot(preds_all, aes(x = dept, y = abs_pred,
+                  group = applicant.gender, 
+                  color = applicant.gender)) +
+  stat_gradientinterval(position = "dodge")
+```
+
+# Prediction Model Vis with Tidybayes
+```{r abspred_binom, echo = FALSE, eval = TRUE}
+```
+
+# But what about this?
+```{dot}
+digraph G{
+layout = neato
+
+  percent_admit [
+    shape = none
+    pos = "1,1!",
+  ]
+  
+    dept [
+    shape = none
+    pos = "-1,1!"
+  ]
+  
+    applicant_gender [
+    shape = none
+    pos = "0,2!"
+  ]
+  
+applicant_gender -> dept [color="red"]
+dept -> percent_admit
+applicant_gender -> percent_admit
+}
+```
+
+# A Generalized Outline
+1. Why use GLMs? An Intro to Entropy  
+  
+2. Logistic Regression  
+
+3. [Poisson Regression]{style="color:red"}    
+
+4. Poisson -> Multinomial
+
+# Disparities in Who Applied Where?
+
+```{r}
+ggplot(UCBadmit,
+       aes(x = dept, y = applications,
+           color = applicant.gender)
+) +
+  geom_point(size = 3)
+```
+
+# Modeling How Gender Influences Application
+
+- It could be just different departments get different #s. 
+
+- It could be gender + department. 
+
+- It could be differential application by department.
+
+# How to determine which non-normal distribution is right for you
+* Use previous table to determine  
+  
+* Bounded values: binomial, beta, Dirchlet  
+  
+* Counts: Poisson, multinomial, geometric  
+  
+* Distances and durations: Exponential, Gamma (survival or event history)  
+  
+* Monsters: Ranks and ordered categories  
+  
+* Mixtures: Beta-binomial, gamma-Poisson, Zero-inflated processes
+
+
+
+# Poisson Regression
+Likelihood:  
+$y_i \sim \mathcal{P}(\lambda)$  
+  
+Data Generating Process with identity link  
+log($\lambda_i) = \alpha + \beta_1 x1_i + \beta_2 x2_i + ...$  
+  
+Priors:  
+...  
+
+# Consider the Gender + Department Model
+Likelihood:  
+$y_i \sim \mathcal{P}(\lambda)$  
+  
+Data Generating Process with identity link  
+$log(\lambda_i) = \alpha_{gender} + \beta_{dept}$
+  
+Priors:  
+$\alpha_{gender} \sim \mathcal{N}(0,1)$ 
+$\beta_{dept} \sim \mathcal{N}(0,1)$ 
+
+
+# Coded
+```{r gender_dept_code}
+mod_apply_add <- alist(
+  applications ~ dpois(lambda),
+  
+  log(lambda) <- a[gender] + b[dept_id],
+  
+  a[gender] ~ dnorm(0,1),
+  b[dept_id] ~ dnorm(0,1)
+)
+
+fit_apply_add <- quap(mod_apply_add, data = UCBadmit)
+```
+
+# Were those reasonable priors?
+```{r prior_sim_pois, echo = TRUE}
+#Let's simulate some priors!
+prior_sims_apply <- extract.prior(fit_apply_add)
+
+# What would 1 dept look like for one gender?
+ps <- exp(prior_sims_apply$a[,1] + prior_sims_apply$b[,1]) 
+ 
+hist(ps, main = "Distribiution of Applications")
+```
+
+# And for real
+```{r}
+hist(UCBadmit$applications)
+```
+
+- Up the SD!
+
+# Priors at Different SDs
+
+```{r}
+tibble(sd_prior = seq(0.5, 2, length.out = 4) |> round(2)) |>
+  group_by(sd_prior) |>
+  reframe(x = rnorm(1e3, 0, sd_prior) |> exp()) |>
+  ggplot(aes(x = x)) +
+  geom_density() +
+  facet_wrap(vars(sd_prior), scale = "free")
+```
+
+
+# Better Regularizing Priors
+```{r gender_dept_reg}
+mod_apply_add <- alist(
+  applications ~ dpois(lambda),
+  
+  log(lambda) <- a[gender] + b[dept_id],
+  
+  a[gender] ~ dnorm(0,2),
+  b[dept_id] ~ dnorm(0,2)
+)
+
+fit_apply_add <- quap(mod_apply_add, data = UCBadmit)
+```
+
+# Was this Any Good?
+```{r}
+postcheck(fit_apply_add)
+```
+
+# What About Gender * Department
+```{r}
+UCBadmit <- UCBadmit |>
+  mutate(gen_dept = as.numeric(as.factor(paste(gender, dept_id))))
+
+mod_apply <- alist(
+  applications ~ dpois(lambda),
+  
+  log(lambda) <- a[gen_dept],
+  
+  a[gen_dept] ~ dnorm(0,2)
+)
+
+fit_apply <- quap(mod_apply, UCBadmit)
+```
+
+# Postcheck
+```{r}
+postcheck(fit_apply)
+```
+
+# But, More Parameters, so Compare
+```{r}
+compare(fit_apply, fit_apply_add)
+```
+
+# What does it Mean?
+```{r, echo = FALSE}
+linpred_draws(fit_apply, UCBadmit) |>
+  ggplot(
+       aes(x = dept, y = .value,
+           group = applicant.gender, 
+           color = applicant.gender)) +
+  stat_gradientinterval(position = "dodge")
+```
+
+## Code
+```{r, eval = FALSE, echo = TRUE}
+linpred_draws(fit_apply, UCBadmit) |>
+  ggplot(
+       aes(x = dept, y = .value,
+           group = applicant.gender, 
+           color = applicant.gender)) +
+  stat_gradientinterval(position = "dodge")
+```
+
+# It's an Indirect Effect of Gender
+```{r}
+library(patchwork)
+
+a <- ggplot(preds_all, aes(x = dept, y = abs_pred,
+                  group = applicant.gender, 
+                  color = applicant.gender)) +
+  stat_gradientinterval(position = "dodge") +
+  labs(title = "Probability of Admission\nto Departments")
+
+b <- linpred_draws(fit_apply, UCBadmit) |>
+  ggplot(
+       aes(x = dept, y = .value,
+           group = applicant.gender, 
+           color = applicant.gender)) +
+  stat_gradientinterval(position = "dodge")+
+  labs(title = "# of Applicants\nto Departments")
+
+a + b
+```
+
+# A Generalized Outline
+1. Why use GLMs? An Intro to Entropy  
+  
+2. Logistic Regression  
+
+3. Poisson Regression  
+
+4. [Poisson = Multinomial]]{style="color:red"}  
+
+# Lingering Questions
+
+1. Well, maybe admission bias differs by departments?
+
+2. Can we turn our application results into probabilities to calculate direct, indirect, and total effects?
+
+# Does Bias Differ by Department?
+```{r}
+mod_gender_int <- alist(
+  #likelihood
+  admit ~ dbinom(applications, p),
+  
+  #Data generating process
+  logit(p) <- a[gen_dept],
+  
+  #priors
+  a[gen_dept] ~ dnorm(0,1.5)
+  )
+
+fit_gen_int <- quap(mod_gender_int, UCBadmit)
+
+#WAIC
+compare(fit_gender, fit_gen_int) 
+```
+
+# Department A is Biased Towards Women - Although Fewer Apply
+
+```{r}
+linpred_draws(fit_gen_int, UCBadmit) |>
+  ggplot(
+       aes(x = dept, y = .value,
+           group = applicant.gender, 
+           color = applicant.gender)) +
+  stat_gradientinterval(position = "dodge")
+```
+
+# Q2: How to Turn Poisson Model into Probabilities
+
+- Normally we'd use a multinomial to get probabilities of multiple classes. 
+$$X \sim Mult(n, \pi)$$
+
+- BUT - a poisson with categories can turn into a multinomial!
+
+# Poisson to Multinomial
+$$X \sim Mult(n, \pi)$$
+
+:::{.fragment}
+If
+$$X_1 \sim P(\lambda_1)$$
+$$X_2 \sim P(\lambda_2)$$
+...
+$$X_k \sim P(\lambda_k)$$
+:::
+
+::: {.fragment}
+then n = $X_1 + X_2 +....X_k$ where $\pi=(\pi_1,\ldots,\pi_k)$
+:::
+
+::: {.fragment}
+So:
+$$\pi_j=\dfrac{\lambda_j}{\lambda_1+\cdots+\lambda_k}$$
+:::
+
+# Using our Model for Estimating Pi
+
+- We Can Use our Predictions as Lambda
+
+```{r, echo = TRUE}
+#| code-line-numbers: "|2-3|"
+probs <- linpred_draws(fit_apply, UCBadmit) |>
+  group_by(.draw, applicant.gender) |>
+  mutate(prob = .value / sum(.value)) |>
+  ungroup()
+```
+
+# Big Disparities in Where Different Genders Apply
+```{r}
+
+ggplot(probs,
+       aes(x = dept, y = prob,
+           group = applicant.gender, 
+           color = applicant.gender)) +
+  stat_gradientinterval(position = "dodge") +
+  labs(title = "Probability of Applying to a Department")
+```
+
+# Calculating the Probabilities of Getting Into Dept A as a Woman
+
+Direct Probability of Admission if a Woman:
+```{r}
+linpred_draws(fit_gen_int, UCBadmit[2,]) |>
+  pull(.value) |> mean()
+```
+
+Probability of Applying to A if a Woman:
+```{r}
+probs |> 
+  filter(dept == "A", applicant.gender == "female") |>
+  pull(prob) |> mean()
+```
+
+0.06 * 0.81  = 0.0486
