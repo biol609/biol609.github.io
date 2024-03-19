@@ -92,7 +92,7 @@ Catch Up Labs!
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
-__Lecture__: [MaxEnt and Bayesian GLMs](lectures/maxent_glm.html), [Bayesian GLMs](./lectures/10_bayesian_glm.html)  
+__Lecture__: [MaxEnt and Bayesian GLMs](lectures/maxent_glm.html)  
 __Lab:__ [GLM lab](lectures/11_bayesian_glm_lab.html)   
 __Reading:__ McElreath Chapter 10-11. 
 __Deeper Reading:__ [Poisson and Negative Binomial Regression](https://www.bayesrulesbook.com/chapter-12), [Logistic Regression](https://www.bayesrulesbook.com/chapter-13)  
