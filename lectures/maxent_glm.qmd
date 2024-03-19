@@ -596,7 +596,7 @@ gap::qqunif(qpreds$q, logscale=FALSE)
 ```
 
 # Model Vis with Tidybayes
-```{r, echo = TRUE, eval = FALSE}
+```{r viz_tb, echo = TRUE, eval = FALSE}
 #| code-line-numbers: "|1|6|"
 preds <- add_linpred_draws(UCBadmit, fit_gender)
 
@@ -607,7 +607,7 @@ ggplot(preds, aes(x = dept, y = .linpred,
 ```
 
 # Model Vis with Tidybayes
-```{r, echo = FALSE, eval = TRUE}
+```{r viz_tb, echo = FALSE, eval = TRUE}
 ```
 
 # Prediction Intervals and Binomial GLMs
@@ -726,7 +726,7 @@ $\beta_{dept} \sim \mathcal{N}(0,1)$
 
 
 # Coded
-```{r gender_dept_code}
+```{r gender_dept_code, echo = TRUE}
 mod_apply_add <- alist(
   applications ~ dpois(lambda),
   
@@ -770,7 +770,7 @@ tibble(sd_prior = seq(0.5, 2, length.out = 4) |> round(2)) |>
 
 
 # Better Regularizing Priors
-```{r gender_dept_reg}
+```{r gender_dept_reg, echo = TRUE}
 mod_apply_add <- alist(
   applications ~ dpois(lambda),
   
@@ -784,12 +784,12 @@ fit_apply_add <- quap(mod_apply_add, data = UCBadmit)
 ```
 
 # Was this Any Good?
-```{r}
+```{r, echo = TRUE}
 postcheck(fit_apply_add)
 ```
 
 # What About Gender * Department
-```{r}
+```{r, echo = TRUE}
 UCBadmit <- UCBadmit |>
   mutate(gen_dept = as.numeric(as.factor(paste(gender, dept_id))))
 
@@ -842,7 +842,8 @@ a <- ggplot(preds_all, aes(x = dept, y = abs_pred,
                   group = applicant.gender, 
                   color = applicant.gender)) +
   stat_gradientinterval(position = "dodge") +
-  labs(title = "Probability of Admission\nto Departments")
+  labs(title = "Probability of Admission\nto Departments") +
+  theme(legend.position = "bottom")
 
 b <- linpred_draws(fit_apply, UCBadmit) |>
   ggplot(
@@ -850,7 +851,8 @@ b <- linpred_draws(fit_apply, UCBadmit) |>
            group = applicant.gender, 
            color = applicant.gender)) +
   stat_gradientinterval(position = "dodge")+
-  labs(title = "# of Applicants\nto Departments")
+  labs(title = "# of Applicants\nto Departments")+
+  theme(legend.position = "bottom")
 
 a + b
 ```

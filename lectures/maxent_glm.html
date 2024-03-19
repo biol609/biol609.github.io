@@ -1069,7 +1069,7 @@ delta[6] -2.1727096 0.5468627 -3.0467019 -1.2987173</code></pre>
 <section id="model-vis-with-tidybayes-1" class="title-slide slide level1 center">
 <h1>Model Vis with Tidybayes</h1>
 
-</section>
+<img data-src="maxent_glm_files/figure-revealjs/viz_tb-1.jpeg" width="672" class="r-stretch"></section>
 
 <section id="prediction-intervals-and-binomial-glms" class="title-slide slide level1 center">
 <h1>Prediction Intervals and Binomial GLMs</h1>
@@ -1165,7 +1165,7 @@ delta[6] -2.1727096 0.5468627 -3.0467019 -1.2987173</code></pre>
 <section id="disparities-in-who-applied-where" class="title-slide slide level1 center">
 <h1>Disparities in Who Applied Where?</h1>
 
-<img data-src="maxent_glm_files/figure-revealjs/unnamed-chunk-13-1.jpeg" width="672" class="r-stretch"></section>
+<img data-src="maxent_glm_files/figure-revealjs/unnamed-chunk-11-1.jpeg" width="672" class="r-stretch"></section>
 
 <section id="modeling-how-gender-influences-application" class="title-slide slide level1 center">
 <h1>Modeling How Gender Influences Application</h1>
@@ -1210,19 +1210,30 @@ log(<span class="math inline">\(\lambda_i) = \alpha + \beta_1 x1_i + \beta_2 x2_
 
 <section id="coded" class="title-slide slide level1 center">
 <h1>Coded</h1>
-
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href=""></a>mod_apply_add <span class="ot">&lt;-</span> <span class="fu">alist</span>(</span>
+<span id="cb23-2"><a href=""></a>  applications <span class="sc">~</span> <span class="fu">dpois</span>(lambda),</span>
+<span id="cb23-3"><a href=""></a>  </span>
+<span id="cb23-4"><a href=""></a>  <span class="fu">log</span>(lambda) <span class="ot">&lt;-</span> a[gender] <span class="sc">+</span> b[dept_id],</span>
+<span id="cb23-5"><a href=""></a>  </span>
+<span id="cb23-6"><a href=""></a>  a[gender] <span class="sc">~</span> <span class="fu">dnorm</span>(<span class="dv">0</span>,<span class="dv">1</span>),</span>
+<span id="cb23-7"><a href=""></a>  b[dept_id] <span class="sc">~</span> <span class="fu">dnorm</span>(<span class="dv">0</span>,<span class="dv">1</span>)</span>
+<span id="cb23-8"><a href=""></a>)</span>
+<span id="cb23-9"><a href=""></a></span>
+<span id="cb23-10"><a href=""></a>fit_apply_add <span class="ot">&lt;-</span> <span class="fu">quap</span>(mod_apply_add, <span class="at">data =</span> UCBadmit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 
 <section id="were-those-reasonable-priors" class="title-slide slide level1 center">
 <h1>Were those reasonable priors?</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href=""></a><span class="co">#Let's simulate some priors!</span></span>
-<span id="cb23-2"><a href=""></a>prior_sims_apply <span class="ot">&lt;-</span> <span class="fu">extract.prior</span>(fit_apply_add)</span>
-<span id="cb23-3"><a href=""></a></span>
-<span id="cb23-4"><a href=""></a><span class="co"># What would 1 dept look like for one gender?</span></span>
-<span id="cb23-5"><a href=""></a>ps <span class="ot">&lt;-</span> <span class="fu">exp</span>(prior_sims_apply<span class="sc">$</span>a[,<span class="dv">1</span>] <span class="sc">+</span> prior_sims_apply<span class="sc">$</span>b[,<span class="dv">1</span>]) </span>
-<span id="cb23-6"><a href=""></a> </span>
-<span id="cb23-7"><a href=""></a><span class="fu">hist</span>(ps, <span class="at">main =</span> <span class="st">"Distribiution of Applications"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href=""></a><span class="co">#Let's simulate some priors!</span></span>
+<span id="cb24-2"><a href=""></a>prior_sims_apply <span class="ot">&lt;-</span> <span class="fu">extract.prior</span>(fit_apply_add)</span>
+<span id="cb24-3"><a href=""></a></span>
+<span id="cb24-4"><a href=""></a><span class="co"># What would 1 dept look like for one gender?</span></span>
+<span id="cb24-5"><a href=""></a>ps <span class="ot">&lt;-</span> <span class="fu">exp</span>(prior_sims_apply<span class="sc">$</span>a[,<span class="dv">1</span>] <span class="sc">+</span> prior_sims_apply<span class="sc">$</span>b[,<span class="dv">1</span>]) </span>
+<span id="cb24-6"><a href=""></a> </span>
+<span id="cb24-7"><a href=""></a><span class="fu">hist</span>(ps, <span class="at">main =</span> <span class="st">"Distribiution of Applications"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
 <img data-src="maxent_glm_files/figure-revealjs/prior_sim_pois-1.jpeg" width="672" class="r-stretch"></section>
@@ -1230,7 +1241,7 @@ log(<span class="math inline">\(\lambda_i) = \alpha + \beta_1 x1_i + \beta_2 x2_
 <section id="and-for-real" class="title-slide slide level1 center">
 <h1>And for real</h1>
 
-<img data-src="maxent_glm_files/figure-revealjs/unnamed-chunk-14-1.jpeg" width="672" class="r-stretch"><ul>
+<img data-src="maxent_glm_files/figure-revealjs/unnamed-chunk-12-1.jpeg" width="672" class="r-stretch"><ul>
 <li>Up the SD!</li>
 </ul>
 </section>
@@ -1238,35 +1249,62 @@ log(<span class="math inline">\(\lambda_i) = \alpha + \beta_1 x1_i + \beta_2 x2_
 <section id="priors-at-different-sds" class="title-slide slide level1 center">
 <h1>Priors at Different SDs</h1>
 
-<img data-src="maxent_glm_files/figure-revealjs/unnamed-chunk-15-1.jpeg" width="672" class="r-stretch"></section>
+<img data-src="maxent_glm_files/figure-revealjs/unnamed-chunk-13-1.jpeg" width="672" class="r-stretch"></section>
 
 <section id="better-regularizing-priors" class="title-slide slide level1 center">
 <h1>Better Regularizing Priors</h1>
-
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href=""></a>mod_apply_add <span class="ot">&lt;-</span> <span class="fu">alist</span>(</span>
+<span id="cb25-2"><a href=""></a>  applications <span class="sc">~</span> <span class="fu">dpois</span>(lambda),</span>
+<span id="cb25-3"><a href=""></a>  </span>
+<span id="cb25-4"><a href=""></a>  <span class="fu">log</span>(lambda) <span class="ot">&lt;-</span> a[gender] <span class="sc">+</span> b[dept_id],</span>
+<span id="cb25-5"><a href=""></a>  </span>
+<span id="cb25-6"><a href=""></a>  a[gender] <span class="sc">~</span> <span class="fu">dnorm</span>(<span class="dv">0</span>,<span class="dv">2</span>),</span>
+<span id="cb25-7"><a href=""></a>  b[dept_id] <span class="sc">~</span> <span class="fu">dnorm</span>(<span class="dv">0</span>,<span class="dv">2</span>)</span>
+<span id="cb25-8"><a href=""></a>)</span>
+<span id="cb25-9"><a href=""></a></span>
+<span id="cb25-10"><a href=""></a>fit_apply_add <span class="ot">&lt;-</span> <span class="fu">quap</span>(mod_apply_add, <span class="at">data =</span> UCBadmit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 
 <section id="was-this-any-good" class="title-slide slide level1 center">
 <h1>Was this Any Good?</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href=""></a><span class="fu">postcheck</span>(fit_apply_add)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
-<img data-src="maxent_glm_files/figure-revealjs/unnamed-chunk-16-1.jpeg" width="672" class="r-stretch"></section>
+</div>
+<img data-src="maxent_glm_files/figure-revealjs/unnamed-chunk-14-1.jpeg" width="672" class="r-stretch"></section>
 
 <section id="what-about-gender-department" class="title-slide slide level1 center">
 <h1>What About Gender * Department</h1>
-
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href=""></a>UCBadmit <span class="ot">&lt;-</span> UCBadmit <span class="sc">|&gt;</span></span>
+<span id="cb27-2"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">gen_dept =</span> <span class="fu">as.numeric</span>(<span class="fu">as.factor</span>(<span class="fu">paste</span>(gender, dept_id))))</span>
+<span id="cb27-3"><a href=""></a></span>
+<span id="cb27-4"><a href=""></a>mod_apply <span class="ot">&lt;-</span> <span class="fu">alist</span>(</span>
+<span id="cb27-5"><a href=""></a>  applications <span class="sc">~</span> <span class="fu">dpois</span>(lambda),</span>
+<span id="cb27-6"><a href=""></a>  </span>
+<span id="cb27-7"><a href=""></a>  <span class="fu">log</span>(lambda) <span class="ot">&lt;-</span> a[gen_dept],</span>
+<span id="cb27-8"><a href=""></a>  </span>
+<span id="cb27-9"><a href=""></a>  a[gen_dept] <span class="sc">~</span> <span class="fu">dnorm</span>(<span class="dv">0</span>,<span class="dv">2</span>)</span>
+<span id="cb27-10"><a href=""></a>)</span>
+<span id="cb27-11"><a href=""></a></span>
+<span id="cb27-12"><a href=""></a>fit_apply <span class="ot">&lt;-</span> <span class="fu">quap</span>(mod_apply, UCBadmit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 
 <section id="postcheck" class="title-slide slide level1 center">
 <h1>Postcheck</h1>
 
-<img data-src="maxent_glm_files/figure-revealjs/unnamed-chunk-18-1.jpeg" width="672" class="r-stretch"></section>
+<img data-src="maxent_glm_files/figure-revealjs/unnamed-chunk-16-1.jpeg" width="672" class="r-stretch"></section>
 
 <section id="but-more-parameters-so-compare" class="title-slide slide level1 center">
 <h1>But, More Parameters, so Compare</h1>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>                   WAIC         SE    dWAIC      dSE      pWAIC weight
-fit_apply      110.9544   3.230725    0.000       NA   6.154382      1
-fit_apply_add 2235.8982 496.769827 2124.944 520.7569 608.625647      0</code></pre>
+fit_apply      110.5654   2.724398    0.000       NA   5.952435      1
+fit_apply_add 2249.7668 513.529145 2139.201 538.0993 622.615323      0</code></pre>
 </div>
 </div>
 </section>
@@ -1275,22 +1313,22 @@ fit_apply_add 2235.8982 496.769827 2124.944 520.7569 608.625647      0</code></p
 <section id="what-does-it-mean" class="title-slide slide level1 center">
 <h1>What does it Mean?</h1>
 
-<img data-src="maxent_glm_files/figure-revealjs/unnamed-chunk-20-1.jpeg" width="672" class="r-stretch"></section>
+<img data-src="maxent_glm_files/figure-revealjs/unnamed-chunk-18-1.jpeg" width="672" class="r-stretch"></section>
 <section id="code" class="slide level2">
 <h2>Code</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href=""></a><span class="fu">linpred_draws</span>(fit_apply, UCBadmit) <span class="sc">|&gt;</span></span>
-<span id="cb25-2"><a href=""></a>  <span class="fu">ggplot</span>(</span>
-<span id="cb25-3"><a href=""></a>       <span class="fu">aes</span>(<span class="at">x =</span> dept, <span class="at">y =</span> .value,</span>
-<span id="cb25-4"><a href=""></a>           <span class="at">group =</span> applicant.gender, </span>
-<span id="cb25-5"><a href=""></a>           <span class="at">color =</span> applicant.gender)) <span class="sc">+</span></span>
-<span id="cb25-6"><a href=""></a>  <span class="fu">stat_gradientinterval</span>(<span class="at">position =</span> <span class="st">"dodge"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href=""></a><span class="fu">linpred_draws</span>(fit_apply, UCBadmit) <span class="sc">|&gt;</span></span>
+<span id="cb29-2"><a href=""></a>  <span class="fu">ggplot</span>(</span>
+<span id="cb29-3"><a href=""></a>       <span class="fu">aes</span>(<span class="at">x =</span> dept, <span class="at">y =</span> .value,</span>
+<span id="cb29-4"><a href=""></a>           <span class="at">group =</span> applicant.gender, </span>
+<span id="cb29-5"><a href=""></a>           <span class="at">color =</span> applicant.gender)) <span class="sc">+</span></span>
+<span id="cb29-6"><a href=""></a>  <span class="fu">stat_gradientinterval</span>(<span class="at">position =</span> <span class="st">"dodge"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section></section>
 <section id="its-an-indirect-effect-of-gender" class="title-slide slide level1 center">
 <h1>It’s an Indirect Effect of Gender</h1>
 
-<img data-src="maxent_glm_files/figure-revealjs/unnamed-chunk-22-1.jpeg" width="672" class="r-stretch"></section>
+<img data-src="maxent_glm_files/figure-revealjs/unnamed-chunk-20-1.jpeg" width="672" class="r-stretch"></section>
 
 <section id="a-generalized-outline-3" class="title-slide slide level1 center">
 <h1>A Generalized Outline</h1>
@@ -1315,8 +1353,8 @@ fit_apply_add 2235.8982 496.769827 2124.944 520.7569 608.625647      0</code></p
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>                 WAIC        SE    dWAIC      dSE    pWAIC       weight
-fit_gen_int  89.98682  3.596489  0.00000       NA 6.359451 0.9998965616
-fit_gender  108.33968 15.889794 18.35286 16.49934 9.320503 0.0001034384</code></pre>
+fit_gen_int  89.74512  3.418411  0.00000       NA 6.235318 9.999277e-01
+fit_gender  108.81316 15.813711 19.06804 16.77553 9.515451 7.234299e-05</code></pre>
 </div>
 </div>
 </section>
@@ -1324,7 +1362,7 @@ fit_gender  108.33968 15.889794 18.35286 16.49934 9.320503 0.0001034384</code></
 <section id="department-a-is-biased-towards-women---although-fewer-apply" class="title-slide slide level1 center">
 <h1>Department A is Biased Towards Women - Although Fewer Apply</h1>
 
-<img data-src="maxent_glm_files/figure-revealjs/unnamed-chunk-24-1.jpeg" width="672" class="r-stretch"></section>
+<img data-src="maxent_glm_files/figure-revealjs/unnamed-chunk-22-1.jpeg" width="672" class="r-stretch"></section>
 
 <section id="q2-how-to-turn-poisson-model-into-probabilities" class="title-slide slide level1 center">
 <h1>Q2: How to Turn Poisson Model into Probabilities</h1>
@@ -1354,30 +1392,30 @@ fit_gender  108.33968 15.889794 18.35286 16.49934 9.320503 0.0001034384</code></
 <li>We Can Use our Predictions as Lambda</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27" data-code-line-numbers="|2-3|"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href=""></a>probs <span class="ot">&lt;-</span> <span class="fu">linpred_draws</span>(fit_apply, UCBadmit) <span class="sc">|&gt;</span></span>
-<span id="cb27-2"><a href=""></a>  <span class="fu">group_by</span>(.draw, applicant.gender) <span class="sc">|&gt;</span></span>
-<span id="cb27-3"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">prob =</span> .value <span class="sc">/</span> <span class="fu">sum</span>(.value)) <span class="sc">|&gt;</span></span>
-<span id="cb27-4"><a href=""></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31" data-code-line-numbers="|2-3|"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href=""></a>probs <span class="ot">&lt;-</span> <span class="fu">linpred_draws</span>(fit_apply, UCBadmit) <span class="sc">|&gt;</span></span>
+<span id="cb31-2"><a href=""></a>  <span class="fu">group_by</span>(.draw, applicant.gender) <span class="sc">|&gt;</span></span>
+<span id="cb31-3"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">prob =</span> .value <span class="sc">/</span> <span class="fu">sum</span>(.value)) <span class="sc">|&gt;</span></span>
+<span id="cb31-4"><a href=""></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 
 <section id="big-disparities-in-where-different-genders-apply" class="title-slide slide level1 center">
 <h1>Big Disparities in Where Different Genders Apply</h1>
 
-<img data-src="maxent_glm_files/figure-revealjs/unnamed-chunk-26-1.jpeg" width="672" class="r-stretch"></section>
+<img data-src="maxent_glm_files/figure-revealjs/unnamed-chunk-24-1.jpeg" width="672" class="r-stretch"></section>
 
 <section id="calculating-the-probabilities-of-getting-into-dept-a-as-a-woman" class="title-slide slide level1 center">
 <h1>Calculating the Probabilities of Getting Into Dept A as a Woman</h1>
 <p>Direct Probability of Admission if a Woman:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.8154051</code></pre>
+<pre><code>[1] 0.8139281</code></pre>
 </div>
 </div>
 <p>Probability of Applying to A if a Woman:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.05861735</code></pre>
+<pre><code>[1] 0.05876211</code></pre>
 </div>
 </div>
 <p>0.06 * 0.81 = 0.0486</p>
