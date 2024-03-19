@@ -534,10 +534,10 @@ precis(fit_gender, depth=2)
 What it means
 ```{r p, echo=TRUE}
 #Women
-logistic(-0.43)
+inv_logit(-0.43)
 
 #Men
-logistic(-0.52)
+inv_logit(-0.52)
 ```
 
 # Relative comparison: Slight Female Advantage? Eh.

@@ -988,12 +988,12 @@ delta[6] -2.1727096 0.5468627 -3.0467019 -1.2987173</code></pre>
 <p>What it means</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href=""></a><span class="co">#Women</span></span>
-<span id="cb12-2"><a href=""></a><span class="fu">logistic</span>(<span class="sc">-</span><span class="fl">0.43</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-2"><a href=""></a><span class="fu">inv_logit</span>(<span class="sc">-</span><span class="fl">0.43</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.3941263</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href=""></a><span class="co">#Men</span></span>
-<span id="cb14-2"><a href=""></a><span class="fu">logistic</span>(<span class="sc">-</span><span class="fl">0.52</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-2"><a href=""></a><span class="fu">inv_logit</span>(<span class="sc">-</span><span class="fl">0.52</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.3728522</code></pre>
 </div>
@@ -1302,9 +1302,9 @@ log(<span class="math inline">\(\lambda_i) = \alpha + \beta_1 x1_i + \beta_2 x2_
 <h1>But, More Parameters, so Compare</h1>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>                   WAIC         SE    dWAIC      dSE      pWAIC weight
-fit_apply      110.5654   2.724398    0.000       NA   5.952435      1
-fit_apply_add 2249.7668 513.529145 2139.201 538.0993 622.615323      0</code></pre>
+<pre><code>                   WAIC        SE    dWAIC     dSE      pWAIC weight
+fit_apply      110.2433   3.18072    0.000      NA   5.917586      1
+fit_apply_add 2221.8544 492.01731 2111.611 515.916 603.643871      0</code></pre>
 </div>
 </div>
 </section>
@@ -1353,8 +1353,8 @@ fit_apply_add 2249.7668 513.529145 2139.201 538.0993 622.615323      0</code></p
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>                 WAIC        SE    dWAIC      dSE    pWAIC       weight
-fit_gen_int  89.74512  3.418411  0.00000       NA 6.235318 9.999277e-01
-fit_gender  108.81316 15.813711 19.06804 16.77553 9.515451 7.234299e-05</code></pre>
+fit_gen_int  90.21511  3.396592  0.00000       NA 6.457929 0.9998486738
+fit_gender  107.80696 15.647798 17.59184 16.52952 9.044645 0.0001513262</code></pre>
 </div>
 </div>
 </section>
@@ -1409,13 +1409,13 @@ fit_gender  108.81316 15.813711 19.06804 16.77553 9.515451 7.234299e-05</code></
 <p>Direct Probability of Admission if a Woman:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.8139281</code></pre>
+<pre><code>[1] 0.8152725</code></pre>
 </div>
 </div>
 <p>Probability of Applying to A if a Woman:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.05876211</code></pre>
+<pre><code>[1] 0.05875285</code></pre>
 </div>
 </div>
 <p>0.06 * 0.81 = 0.0486</p>
