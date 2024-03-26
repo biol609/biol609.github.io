@@ -1,0 +1,550 @@
+---
+title: ""
+format: 
+  revealjs:
+    navigation-mode: vertical
+    controls-layout: bottom-right
+    controls-tutorial: true
+    theme: simple
+    incremental: false
+    css: style.css
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+
+opts_chunk$set(fig.height=5, fig.width=7, comment=NA, 
+               warning=FALSE, message=FALSE, 
+               dev="jpeg", echo=FALSE)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(DHARMa)
+library(broom)
+library(broom.mixed)
+
+library(rethinking)
+library(tidybayes)
+library(tidybayes.rethinking)
+
+theme_set(theme_bw(base_size = 15))
+theme_update(plot.title = element_text(hjust = 0.5))
+```
+
+# 
+
+![](./images/overdispersion/overdispersion_distracted_girlfriend.png)
+
+# Reed frogs
+![](./images/overdispersion/Heterixalus_madagascariensis-1280x540.jpg)
+
+# Reed frogs Survival Analysis
+
+```{r read_load, message=FALSE, warning=FALSE, echo = FALSE}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(DHARMa)
+library(broom)
+library(broom.mixed)
+
+theme_set(theme_bw(base_size = 15))
+theme_update(plot.title = element_text(hjust = 0.5))
+```
+
+```{r reed_analysis, message=FALSE, warning=FALSE}
+data("reedfrogs")
+
+head(reedfrogs)
+
+reedfrog_analysis <- glm(cbind(surv, density-surv) ~ density, 
+                         data = reedfrogs,
+                         family = binomial)
+```
+
+# But those QQ plots...
+```{r overdisp_reeds, warning=FALSE}
+rfrog <- simulateResiduals(reedfrog_analysis)
+plotQQunif(rfrog)
+```
+
+# What is Overdispersion
+- We expect Binomial, Poisson, and other relationships to have a fixed relationship with their variance.  
+       - For Poisson, variance = mean. 
+       - For Binomial, the variance is size*p(1-p).  
+
+
+- Overdispersion is when we use these distributions, but fail to meet the above assumption.
+
+# Overdispersed Binomial
+```{r over, echo=FALSE, message=FALSE, results="hide"}
+set.seed(2019)
+over_df <- data.frame(size=30, p = rep(seq(0,1, length.out=10), 20))   |>
+  mutate(binomial = rbinom(length(p), size, p),
+         `overdispersed binomial` = rbetabinom(length(p), size, p, 4))   |>
+  gather(distribution, successes, -p, -size)
+
+ggplot(over_df, aes(x=p, y=successes, color=distribution)) +
+  geom_point(size =2) +
+  facet_wrap(~distribution) +
+  guides(color = "none")
+```
+
+# Overdispersed Poisson
+```{r overpois, echo=FALSE, message=FALSE, results="hide"}
+
+over_p_df <- data.frame(lambda = rep(5:50, 20))   |>
+  mutate(poisson = rpois(length(lambda), lambda),
+         `overdispersed poisson` = rgampois(length(lambda), lambda, 4))   |>
+           #round(rnorm(length(lambda), lambda, sqrt(2*lambda))))   |>
+  gather(distribution, value, -lambda)
+
+ggplot(over_p_df, aes(x=lambda, y=value, color=distribution)) +
+  geom_point(size = 2) +
+  facet_wrap(~distribution) +
+  guides(color = "none")
+```
+
+# What could over/underdispersion indicate?
+1. We are missing key predictors  
+  
+2. We are failing to model heterogeneity in predictions due to autocorrelaiton  
+      - Random Effects  
+      - Temporal autocorrelation  
+      - Spatial autocorrelation  
+  
+3. We are using the wrong error distribution
+
+# Mixture-based solutions
+<div id = "right">
+![](./images/overdispersion/boysenberry-kitchenaid-stand-mixers-ksm150psby-64_1000.jpg)
+</div>
+<div id = "left">
+- We can mix distributions in two ways  
+  
+- First, we can apply a scaling correction - a Quasi-distribution  
+  
+- OR, we can mix together two distributions into one!
+</div>
+
+# Quasi-distributions and a Scaling Parameter
+
+ **Binomial pdf:**
+ $$P(X=k)={n \choose k}p^{k}(1-p)^{n-k}$$
+  
+<div class = "fragment">
+ **Quasi-binomial pdf:**
+ $$P(X=k)={n \choose k}p(p+k\phi)^{k-1}(1-p-k\phi)^{n-k}$$
+</div>
+
+# Some Quasi-Information
+- Parameter estimates unaffected (same estimate of mean trend)  
+  
+- SE might change  
+  
+- Uses 'quasi-likelihood'   
+  
+- We need to use QAIC instead of AIC to account for overdispersion  
+  
+- Really, we fit a model, then futz with $\phi$ to accomodate error
+
+# Let's Cook with Flame: Pure Mixture Distributions
+
+<div id = "left">
+![](./images/overdispersion/flames_kitchenaid.jpg)
+</div>
+
+<div id = "right">
+Consider...  
+&nbsp; &nbsp; $X \sim Bin(n,p)$  
+  
+&nbsp; &nbsp; $p\sim Beta(\alpha,\beta)$  
+
+with
+$\alpha = p \theta$ and $\beta = (1-p) \theta$
+
+<div class = "fragment">
+or  
+  
+&nbsp; &nbsp; $p\sim BetaBin(n, \hat{p},\theta)$   
+  
+
+</div>
+
+</div>
+
+# The Beta
+```{r beta, echo=FALSE}
+beta_df <- crossing(a=1:3, b=1:3, x=seq(0,1,length.out=200))   |>
+  mutate(dens = dbeta(x, a, b))
+
+ggplot(beta_df, aes(x=x, y=dens, color=factor(a), group=paste(a, b, sep=","))) +
+  geom_line() +
+  facet_wrap(~b, labeller = "label_both") +
+  labs(color = "a")
+```
+
+# How does the beta binomial change things?
+```{r betabinom_gen, echo=FALSE}
+rbetabinom_df <- crossing(p = c(0.2, 0.5, 0.8),
+                          theta = c(1,10,100),
+                          x = 1:100)   |>
+  rowwise()   |>
+  mutate(binomial = dbinom(x,size = 100, p),
+         betabinomial = dbetabinom(x,size=100,p,theta),
+         beta = dbeta2(x/100,p,theta))   |>
+  filter(x !=0)   |> filter(x != 1)   |>
+  gather(dist, value, binomial:beta)   |>
+  group_by(dist, theta, p)   |>
+  mutate(value = value/max(value, na.rm=F))   |>
+  ungroup()
+
+```
+
+```{r beta_binom_1, echo=FALSE}
+ggplot(rbetabinom_df   |> filter(p == 0.5 & theta == 10)   |>
+         filter(dist == "binomial"),
+       aes(x = x, y = value, color = dist)) +
+       geom_line() +
+  ggtitle("p = 0.5, theta = 10")
+```
+
+# How does the beta binomial change things?
+
+```{r beta_binom_2, echo=FALSE}
+ggplot(rbetabinom_df   |> filter(p == 0.5 & theta == 10)  |>
+         filter(dist != "betabinomial"),
+       aes(x = x, y = value, color = dist)) +
+       geom_line()+
+  ggtitle("p = 0.5, theta = 10")
+```
+
+# How does the beta binomial change things?
+
+```{r beta_binom_3, echo=FALSE}
+ggplot(rbetabinom_df   |> filter(p == 0.5 & theta == 10),
+       aes(x = x, y = value, color = dist)) +
+       geom_line()+
+  ggtitle("p = 0.5, theta = 10")
+```
+
+
+# How does the beta binomial change things?
+
+```{r beta_binom_5, echo=FALSE, warning=FALSE}
+ggplot(rbetabinom_df   |> filter(p == 0.8),
+       aes(x = x, y = value, color = dist)) +
+       geom_line()+
+  facet_wrap(~theta) +
+  ggtitle("p = 0.8, theta = facet")
+```
+
+
+# A Bayesian Approach
+```{r reed_bb_bayes, echo = TRUE, message=FALSE, results="hide", cache=TRUE}
+reedfrogs$d <- scale(reedfrogs$density)
+
+reed_bb_mod <- alist(
+  # likelihood
+  surv ~ dbetabinom(density, prob, theta),
+  
+  # DGP
+  logit(prob) <- a + b*d,
+  
+  # priors
+  a ~ dnorm(0,2),
+  b ~ dnorm(0,2),
+  theta ~ dexp(1)
+)
+
+reed_bb_fit <- quap(reed_bb_mod, data=reedfrogs)
+```
+
+# An Exponential Prior?
+```{r exp}
+edf <- crossing(x = seq(0,10, .01), rate = 1:4)   |>
+  mutate(density = dexp(x,rate))
+
+ggplot(edf, aes(x = x, y = density, color = factor(rate))) +
+         geom_line()
+```
+
+# Or An Cauchy Prior?
+```{r cauchy}
+cdf <- crossing(x = seq(0,10, .01), location = 0, scale = 1:5)   |>
+  mutate(density = dcauchy(x,location, scale))
+
+ggplot(cdf, aes(x = x, y = density, color = factor(scale))) +
+         geom_line()
+```
+
+# Let's look at an estimate!
+```{r estimate_bb}
+#get samples of parameters
+pred_samps <- linpred_draws(reed_bb_fit,
+                            reedfrogs[33,]) #35 individuals
+
+ggplot(pred_samps,
+       aes(x = .value)) +
+  geom_density(fill = "white")
+```
+
+# How does Overdispersion Affect this?
+```{r over_bb, echo = FALSE, eval = TRUE}
+d <- 35
+d_trans <- (d - mean(reedfrogs$density))/sd(reedfrogs$density)
+
+coef_draws <- tidy_draws(reed_bb_fit) |>
+  mutate(p = inv_logit(a + b*d_trans),
+         p_theta = rbeta2(n(), p, theta)) |>
+  tidyr::pivot_longer(cols = c(p, p_theta))
+
+ggplot(coef_draws,
+       aes(x = value)) +
+  geom_density(fill = "white") +
+  facet_wrap(vars(name))
+```
+
+## Code
+
+```{r over_bb, echo = TRUE, eval = FALSE}
+```
+
+# Variability in Overdispersion by Draw
+```{r}
+thet <- coef_draws |>
+  filter(name == "p")
+
+thet_piece <- thet |>
+  slice(1:100L) |>
+  rename(prob = value) |>
+  crossing(p = seq(0, 1, .01)) |>
+  mutate(dens = dbeta2(p, prob, theta))
+  
+
+thet_summary <- thet |>
+  summarize(prob = mean(value),
+            theta = mean(theta)) |>
+  crossing(p = seq(0, 1, .01)) |>
+  mutate(dens = dbeta2(p, prob, theta))
+
+ggplot(data = thet_piece,
+       aes(x = p, y = dens)) +
+  geom_line(data = thet_piece, 
+            mapping = aes(group = .draw),
+            alpha = 0.1) +
+  geom_line(data = thet_summary, color = "red", linewidth = 1.5)
+```
+
+
+# Did this solve our overdispersion problem?
+```{r, message=FALSE}
+par(mfrow = c(2,2))
+postcheck(reed_bb_fit)
+par(mfrow = c(1,1))
+```
+
+# Results
+```{r, cache = TRUE}
+preds_reed <- predicted_draws(reed_bb_fit,
+                          reedfrogs[c(1,28, 44),],
+                          ndraws = 1000)
+
+
+ggplot(preds_reed, 
+       aes(x = density, y = .prediction)) +
+  stat_gradientinterval(fill_type = "gradient") +
+  geom_point(data = reedfrogs, 
+             mapping = aes(y = surv),
+             color = "red") +
+  labs(y = "# Survived", subtitle = "Predictions and Raw Data")
+```
+
+# A brief note on IC
+- Because of the underlying latent nature of a beta-binomial, use WAIC with care  
+  
+- DIC and LOO more reliable, but stay tuned. 
+
+- But, there are alternate models here with more predictors which might explain away the heterogeneity. 
+
+- Also, RE might handle the hetereogeneity, obviating the need for this overdispersion. 
+
+
+# Hurricanes and Gamma Poisson
+![](./images/overdispersion/hurricanes-names.jpg)
+<div class = small-code>Discover Magazine</div>
+
+# Overdispersed hurricanes
+```{r huric}
+data(Hurricanes)
+head(Hurricanes)
+```
+
+# Overdispersed hurricanes
+```{r}
+ggplot(Hurricanes,
+       aes(x = femininity, y = deaths)) +
+  geom_point()
+```
+
+# Poisson?
+```{r echo = TRUE}
+hur_mod <- glm(deaths ~ femininity, family = poisson,
+               data = Hurricanes)
+
+plotQQunif(simulateResiduals(hur_mod))
+```
+
+# Options for Overdispersed Poisson
+- Quasi-poisson  
+     - $var(Y) = \theta \mu$  
+     - Post-hoc fitting of dispersion parameter  
+  
+- Gamma-poisson mixture  
+     - $Y \sim Pois(\lambda)$  
+     - $\lambda \sim Gamma(\mu, \theta)
+     - Equivalent to a Negative Binomial  
+     - Variance increases with square of mean
+
+# The Gamma Poisson
+$$ Y \sim GammaPoisson(\lambda, \phi)$$
+
+- One of the most useful distributions you will run into is the Gamma Poison.   
+  
+- It's just another name for the negative binomial.  
+  
+- Distribution for count data whose variance increases faster than its mean
+      - Variance is $\lambda + \lambda 2/\phi$
+
+- The $\lambda$ parameter of your standard Poisson is Gamma distributed. 
+
+# The Distribution (mean of 40)
+```{r gampois, echo=FALSE}
+gampois_df <- crossing(x=0:100, scale=c(1,3,5))   |>
+  mutate(dens = dgampois(x, 40, scale))
+
+ggplot(gampois_df, aes(x=x, y=dens, color=factor(scale))) +
+  geom_line() +
+  ggtitle("The Gamma Poisson") +
+  ylab("Density") +
+  labs(color = "Phi (scale)")
+```
+
+# Two approaches to hurricanes with Likelihood
+```{r, message=FALSE, echo = TRUE}
+hur_qp<- glm(deaths ~ femininity, 
+             family = quasipoisson,
+               data = Hurricanes)
+
+library(MASS)
+hur_nb <- glm.nb(deaths ~ femininity, 
+               data = Hurricanes)
+
+```
+
+# Another look at overdispersion
+```{r, echo = TRUE}
+summary(hur_qp)
+```
+
+# How did the Gamma Poisson (NB) Compare?
+```{r, echo = TRUE}
+summary(hur_nb)
+```
+
+# Let's look at the residuals
+```{r, echo = TRUE}
+res_nb <- simulateResiduals(hur_nb)
+plotQQunif(res_nb)
+```
+
+# A Fully Bayesian Gamma Poisson
+
+```{r gp_mod, cache=TRUE, echo = TRUE}
+Hurricanes$f <- scale(Hurricanes$femininity)
+
+huric_mod_gp <- alist(
+  #likelihood
+  deaths ~ dgampois(lambda, scale),
+  
+  #Data generating process
+  log(lambda) <- a + b*f,
+  
+  #priors
+  a ~ dnorm(0,10),
+  b ~ dnorm(0,10),
+  scale ~ dexp(2)
+)
+
+huric_fit_gp <- quap(huric_mod_gp, data=Hurricanes)
+```
+
+# Did it Work?
+
+```{r gp_qq, results="hide"}
+par(mfrow = c(2,3))
+postcheck(huric_fit_gp)
+par(mfrow = c(1,1), ask = FALSE)
+```
+
+# Evaluating Posterior Predictions
+```{r plot_gp_coefs, warning=FALSE}
+huric_coefs_gp <- extract.samples(huric_fit_gp, n=50)
+
+h_coef_dens <- crossing(femininity = c(1, 11),
+                        f = (femininity - 
+                          mean(Hurricanes$femininity))/sd(Hurricanes$femininity), 
+                        x=0:20, data.frame(huric_coefs_gp))   |>
+  mutate(dens = dgampois(x, exp(a + b*femininity), scale))
+
+ggplot(h_coef_dens, 
+       aes(x=x, y=dens, 
+           color=factor(femininity), 
+           group=factor(paste(scale, femininity, a, b)))) +
+  geom_line(alpha=0.2) +
+  facet_wrap(~femininity, labeller="label_both") +
+  scale_color_manual(values=c("red", "blue"), guide="none")
+```
+
+# Did it Predict Well?
+```{r}
+predframe <- tibble(femininity = seq(1, 10.5, length.out=100)) |>
+  mutate(f = (femininity - mean(Hurricanes$femininity))/sd(Hurricanes$femininity))
+
+lpred_huric <- linpred_draws(huric_fit_gp, 
+                             newdata = predframe, 
+                             value = "deaths")
+pred_huric <- predicted_draws(huric_fit_gp, newdata = predframe,
+                              value = "deaths")
+
+ggplot(lpred_huric,
+       aes(x = femininity, y = deaths)) +
+  stat_lineribbon() +
+  geom_point(data = Hurricanes) +
+  scale_fill_brewer()
+```
+
+# Wait, Those Coefs...
+```{r, echo = TRUE}
+plot(huric_fit_gp)
+```
+
+# Well, What did the Predictions Say
+```{r, echo = FALSE}
+
+ggplot(pred_huric,
+       aes(x = femininity, y = deaths)) +
+  stat_lineribbon() +
+  geom_point(data = Hurricanes) +
+  scale_fill_brewer(palette = "Oranges")
+```
+
+# Overdispersion!
+
+- We can use mixtures to model overdispersed data.  
+
+- These mixtures then have core parameters of one distribution as part of a second distribution.  
+
+- This allows us to flexibly model overdispersion, but, sometimes overdispersion means there are parameters we are not accounting for. 
+
+- Think about better models of overdispersion...
