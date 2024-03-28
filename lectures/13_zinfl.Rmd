@@ -15,6 +15,8 @@ library(ggplot2)
 library(glmmTMB)
 library(pscl)
 library(mgcv)
+library(tidybayes)
+library(tidybayes.rethinking)
 theme_set(theme_bw(base_size=12))
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -113,6 +115,8 @@ monk_tmb <- glmmTMB(manuscripts ~ 1,
                     data = monks)
 
 summary(monk_tmb)
+
+fixef(monk_tmb)[2]$zi |> inv_logit()
 ```
 
 The results are the same, but, you can include whatever family you'd like - just include some zero inflation! 
@@ -137,7 +141,7 @@ zip_mod <- alist(
   b ~ dnorm(0,5)
 )
 
-zip_fit <- rethinking::map(zip_mod, data = monks)
+zip_fit <- quap(zip_mod, data = monks)
 ```
 
 This model produces very similar output with differences only due to priors
@@ -146,7 +150,7 @@ This model produces very similar output with differences only due to priors
 precis(zip_fit)
 ```
 
-Feel free to look at postcheck or other diagnostics here to see if we're ok. And, note, when the two parts of this relationship become trickier, you will need to resort to `map2stan`.
+Feel free to look at postcheck or other diagnostics here to see if we're ok. And, note, when the two parts of this relationship become trickier, you will need to resort to `ulam()`.
 
 ## 3. ZIB
 
@@ -210,7 +214,10 @@ mod_zib <- alist(
   b_kids[with_kids] ~ dnorm(0,5)
 )
 
-fit_zib <- map(mod_zib, data = Fish %>% mutate(size = 1, with_kids = as.numeric(with_kids)))
+fit_zib <- quap(mod_zib, 
+               data = Fish |> 
+                 mutate(size = 1, 
+                        with_kids = as.numeric(with_kids)))
 ```
 
 Which produces broadly similar results.
@@ -226,20 +233,25 @@ Given that the probability of catching a fish is the compounded probability of h
 
 ```{r zib_bayes}
 #input data frame
-pred_df <- crossing(persons = seq(1,4,length.out=100), with_kids = c(1,2), size = 100)
+pred_df <- crossing(persons = seq(1,4,length.out=100), 
+                    with_kids = c(1,2), 
+                    size = 100)
 
 #get predictions with error
-out <- sim(fit_zib, pred_df)
-
-#the mean fit
-pred_df <- pred_df %>%
-  mutate(percent_chance_of_fish = colMeans(out),
-         with_kids = as.logical(with_kids-1))
+pred_zib <- predicted_draws(fit_zib, pred_df)|>
+  mutate(caught_anything = .prediction/100,
+         with_kids = c(FALSE, TRUE)[with_kids])
 
 #visualize
 FishPlot +
-  geom_line(data = pred_df, aes(y = percent_chance_of_fish/100),)
-         
+   facet_wrap(~with_kids) +
+  stat_lineribbon(data = pred_zib, 
+                  color = "black", 
+                  alpha = 0.2) +
+  scale_fill_brewer(palette = "Blues")
+ 
+
+
 ```
 
 ## 4. ZINB
@@ -294,18 +306,19 @@ mod_zinb <- alist(
   b_kids[with_kids] ~ dnorm(0,5)
 )
 
-fit_zinb <- map(mod_zinb, data = Fish %>% mutate(size = 1, with_kids = as.numeric(with_kids)))
+fit_zinb <- quap(mod_zinb, 
+                data = Fish %>% mutate(size = 1, 
+                                       with_kids = as.numeric(with_kids)))
 
 ```
 
 -->
-
 ## 5. Gone Fishing - Gama Hurdles
 
 We can also use continuous data. This is most common with Gamma distributed data, as you cannot have a waiting time of 0. Let's use a simulated data set looking at duration of offshore fishing trips in days given average wave height.
 
 ```{r load_data}
-fishing <- read.csv("./data/20/fishing_duration.csv")
+fishing <- read.csv("https://biol609.github.io/lectures/data/20/fishing_duration.csv")
 
 #what's there
 head(fishing)
@@ -373,7 +386,7 @@ It's a bit of a pain, as depending on how you put things together, you can get s
 
 ### 5.4 Priors
 
-In this case, we don't really have any prior information! So we want flat priors. We can use regularization - say, b ~ dnorm(0,10), but how much depends on you. We're also going to want priors for scale or rate parameters. These can be normal, but often cauchy (for scale) or exponential (for rate) priors work well. YMMV.
+In this case, we don't really have any prior information! So we want flat priors. We can use regularization - say, b ~ dnorm(0,3), but how much depends on you. We're also going to want priors for scale or rate parameters. These can be normal, but often cauchy (for scale) or exponential (for rate) priors work well. YMMV.
 
 ### 5.5. Fitting with a Gamma
 
@@ -582,7 +595,7 @@ fishing_zagamma_mod <- alist(
 We have no info on the probability, so, we're just putting in a flat uniform prior between 0 and 1. We could use a beta if we wanted, but, meh. We can then fit this, using our lessons about start values from before.
 
 ```{r zag_fit}
-fishing_zagamma_fit <- map(fishing_zagamma_mod, data=fishing,
+fishing_zagamma_fit <- quap(fishing_zagamma_mod, data=fishing,
                          start = list(a=1, b=-1))
 ```
 
@@ -624,7 +637,42 @@ precis(fishing_zagamma_fit)
 
 No surprise, our coefficients are exactly the same as before! Wahoo! Except now we also know there's a 30% chance on any given day that a fisherman will just say 'meh' and not go do sea.
 
-We can also visualize the results
+We can also visualize the results. First, we will plot the prediction for JUST the non-zero results using the fitted model. Then we will contrast it to putting in the full 0's prediction, which comes from the ZAG distribtion.
+
+```{r}
+# a prediction frame
+pred_zag <- predicted_draws(fishing_zagamma_fit,
+                            data.frame(
+                              seas_m = seq(0, 5,
+                                           length.out = 100)),
+                            value = "days_at_sea")
+
+
+# a linpred frame
+fit_zag <- linpred_draws(fishing_zagamma_fit,
+                            data.frame(
+                              seas_m = seq(0, 5,
+                                           length.out = 100)),
+                            value = "days_at_sea")
+
+# fit interval of link - not with ZAG
+ggplot(fit_zag,
+       aes(x = seas_m, y = days_at_sea)) +
+  stat_lineribbon() +
+  scale_fill_brewer(palette = "Greens") +
+  geom_point(data = fishing)
+
+# prediction interval
+ggplot(pred_zag,
+       aes(x = seas_m, y = days_at_sea)) +
+  stat_lineribbon() +
+  scale_fill_brewer(palette = "Oranges") +
+  geom_point(data = fishing)
+```
+
+Note the difference in CI width and downweighting of the line with just fit. There is a lot more going on here, and the full prediction interval gives us what we need to see.
+
+<!--
 
 ```{r fit, results="hide"}
 #start with a fresh data frame of predicted values
@@ -656,3 +704,4 @@ ggplot(data=pred_df_z,
 ```
 
 It's hard to see the difference relative to the previous plot, but, if you take a gander, the scale of the predictive interval has shrunk a bit. Or, gets pulled towards zero, as it were, as we have a lot of zeroes. Makes sense!
+-->
