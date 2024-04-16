@@ -31,6 +31,8 @@ library(rethinking)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
+library(tidybayes)
+library(tidybayes.rethinking)
 #center plot titles
 theme_set(theme_bw(base_size=17))
 theme_update(plot.title = element_text(hjust = 0.5))
@@ -72,7 +74,7 @@ mod_gender_bad <- alist(
   b[gender] ~ dnorm(0,10)
 )
 
-fit_gender_bad <- map(mod_gender_bad, UCBadmit)
+fit_gender_bad <- quap(mod_gender_bad, UCBadmit)
 ```
 
 ## How does it look?
@@ -173,7 +175,7 @@ make_cor <- function(r) {
   mat
 }
 
-lkj_df <- crossing(eta = c(0.9, 1, 2, 4), r = seq(-1,1,length.out=500))%>%
+lkj_df <- crossing(eta = c(0.3, 0.9, 1, 2, 4), r = seq(-0.99,0.99,length.out=500))%>%
   rowwise() %>%
   mutate(dens = dlkjcorr(make_cor(r), eta)) %>%
 ungroup()
@@ -206,13 +208,14 @@ mod_gender_dept_mixed <- alist(
   #Data generating process
   logit(p) <- a_hat + a[dept_id] + b_hat*isMale + b[dept_id]*isMale,
   
-  c(a,b)[dept_id] ~ dmvnorm2(c(0,0), sigma_dept, Rho),
+  # RE
+  c(a,b)[dept_id] ~ multi_normal(c(0,0), Rho, sigma_dept),
   
   #priors
   a_hat ~ dnorm(0,10),
   b_hat ~ dnorm(0,10),
   
-  sigma_dept ~ dcauchy(0,2),
+  sigma_dept ~ dexp(2),
   Rho ~ dlkjcorr(2)
 )
 
@@ -226,7 +229,7 @@ Our definition of random effects:
 \
 <div class="fragment">
 `sigma_dept` knows there are 2 values:  
-`sigma_dept ~ dcauchy(0,2)`  
+`sigma_dept ~ dexp(2)`  
 </div>
 \
 \
@@ -236,39 +239,31 @@ Our Correlation Prior:
 </div>
 
 ## Fitting
-```{r fit_varslope, echo=TRUE, warning=TRUE, results="hide", cache=TRUE}
-fit_gender_dept_mixed <- map2stan(mod_gender_dept_mixed, UCBadmit,
-                             iter=5000, chains=3)
+```{r fit_varslope, echo=TRUE, warning=TRUE, results="hide", cache=FALSE}
+fit_gender_dept_mixed <- ulam(mod_gender_dept_mixed, 
+                              
+                              UCBadmit |>
+                                select(isMale, dept_id, 
+                                       admit, applications),
+                              
+                              chains=3)
 
 ```
 
-<div class="fragment">
-```{r show_error, eval=FALSE, echo=TRUE}
-Warning: Variable 'applicant.gender' contains dots '.'.
-Will attempt to remove dots internally.
-DIAGNOSTIC(S) FROM PARSER:
-Warning (non-fatal):
-Left-hand side of sampling statement (~) may contain a non-linear transform of a parameter or local variable.
-If it does, you need to include a target += statement with the log absolute determinant of the Jacobian of the transform.
-Left-hand-side of sampling statement:
-    v_ab ~ multi_normal(...)
-
-recompiling to avoid crashing R session
-```
 
 ## Did it blend?
 ```{r plot_chains}
-plot(fit_gender_dept_mixed, pars="a")
+trankplot(fit_gender_dept_mixed, pars="a")
 ```
 
 ## Did it blend?
 ```{r plot_chains2}
-plot(fit_gender_dept_mixed, pars="b")
+trankplot(fit_gender_dept_mixed, pars="b")
 ```
 
 ## Did it blend?
 ```{r plot_chains3}
-plot(fit_gender_dept_mixed, pars=c("Rho", "sigma_dept"))
+trankplot(fit_gender_dept_mixed, pars=c("Rho[1,2]", "sigma_dept"))
 par(mfrow=c(1,1))
 ```
 
@@ -278,9 +273,31 @@ postcheck(fit_gender_dept_mixed)
 ```
 
 ## How correlated were slope and intercept?
-```{r show_cor_slope_int}
-gender_samp <- extract.samples(fit_gender_dept_mixed)
-plot(density(gender_samp$Rho[,1,2]), main="Rho")
+```{r show_cor_slope_int, eval = FALSE, echo = TRUE}
+gender_samp <- tidy_draws(fit_gender_dept_mixed)
+
+ggplot(data = gender_samp, aes(x = `Rho[1,2]`)) +
+  geom_density(fill = "purple", alpha = 0.3)
+```
+
+```{r echo = FALSE}
+gender_samp <- tidy_draws(fit_gender_dept_mixed)
+
+names(gender_samp)
+```
+
+
+## How correlated were slope and intercept?
+```{r show_cor_slope_int_2, eval = TRUE, echo = FALSE}
+gender_samp <- tidy_draws(fit_gender_dept_mixed)
+
+ggplot(data = gender_samp, aes(x = `Rho[1,2]`)) +
+  geom_density(fill = "purple", alpha = 0.3)
+```
+
+
+## How correlated were slope and intercept?
+```{r show_cor_slope_int, eval = TRUE, echo = FALSE}
 ```
 
 ## How important was incorporating a random slope?
@@ -291,25 +308,24 @@ plot(density(gender_samp$Rho[,1,2]), main="Rho")
 \
 
 ## Density of Sigmas
-```{r plot_sigmas, echo=TRUE, eval=FALSE}
-#get samples
-gender_samp <- extract.samples(fit_gender_dept_mixed)
-
-#extract sigma
-sigma_df <- as.data.frame(gender_samp$sigma_dept) %>%
-  rename(sigma_int = V1, sigma_slope = V2) %>%
-  gather(sigma, value)
-
-ggplot(sigma_df, aes(x=value, color=sigma)) +
-  geom_density()
+```{r sigmas, echo = TRUE}
+gender_samp <- gender_samp |>
+  rename(sigma_int = `sigma_dept[1]`,
+         sigma_slope = `sigma_dept[2]`,
+         )
 ```
 
-## Density of Sigmas
-```{r plot_sigmas, echo=FALSE, eval=TRUE}
+```{r plot_sigmas, echo=TRUE, eval=FALSE}
+gender_samp |>
+  select(sigma_int, sigma_slope) |>
+  pivot_longer(cols = everything()) |>
+ggplot(aes(x=value, color=name)) +
+  geom_density()
+
 ```
 
 ## Variable Intercept Only Model
-```{r var_int, echo=TRUE, cache=TRUE, results="hide"}
+```{r var_int, echo=TRUE, cache=FALSE, results="hide"}
 mod_gender_dept_varint <- alist(
   #likelihood
   admit ~ dbinom(applications, p),
@@ -323,23 +339,27 @@ mod_gender_dept_varint <- alist(
   a_hat ~ dnorm(0,10),
   b_hat ~ dnorm(0,10),
   
-  sigma_dept ~ dcauchy(0,2)
+  sigma_dept ~ dexp(2)
 )
 
-fit_gender_dept_varint<- map2stan(mod_gender_dept_varint, UCBadmit,
-                             iter=5000, chains=3)
+fit_gender_dept_varint<- ulam(mod_gender_dept_varint, 
+                               data = UCBadmit |>
+                                select(isMale, dept_id, 
+                                       admit, applications),
+                              chains=3)
 ```
 
 ## Not quite as good of a fit...
 (I assume we've checked the chains...)  
 
 ```{r postcheck_varint, results="hide"}
+par(mfrow = c(1,1))
 postcheck(fit_gender_dept_varint)
 ```
 
 ## WAIC suggests Variable Slope model better...
 ```{r compare_int_slope}
-compare(fit_gender_dept_varint, fit_gender_dept_mixed)
+#compare(fit_gender_dept_varint, fit_gender_dept_mixed)
 ```
 But big SE - what would you do?
 
@@ -374,7 +394,122 @@ Fitting N(0,1) and estimating $\mu$ and $z$ is much more efficient
      - Assumes random effects are centered on 0
 
 ## NC Paramterized Model
-```{r mvparam, echo=TRUE, results="hide", cache=TRUE}
+```{r mvparam, echo=TRUE, results="hide"}
+mod_gender_dept_nc <- alist(
+  #likelihood
+  admit ~ dbinom(applications, p),
+  
+  #Data generating process
+  logit(p) <- a_hat + re_dept[dept_id,1] +
+    b_hat*isMale + re_dept[dept_id,2]*isMale,
+  
+  
+  # NCP RE
+  transpars > matrix[6, 2]:re_dept <- 
+    compose_noncentered(sigma_dept, Rho_dept, z_dept),
+
+
+  #priors
+  a_hat ~ dnorm(0,10),
+  b_hat ~ dnorm(0,10),
+  
+  # NCP priors
+  matrix[2,6]:z_dept ~ normal( 0 , 1 ),
+  vector[2]:sigma_dept ~ dexp(2),
+  cholesky_factor_corr[2]:Rho_dept ~ lkj_corr_cholesky( 2 ),
+  
+  # convert Cholesky to Corr matrix
+  gq> matrix[2,2]:Rho <<- Chol_to_Corr(Rho_dept)
+)
+
+```
+
+## What is going on in this model matrices
+```
+  #Data generating process
+  logit(p) <- a_hat + re_dept[dept_id,1] +
+    b_hat*isMale + re_dept[dept_id,2]*isMale,
+  
+```
+
+- We are using a matrix of random effects.  
+\
+- Can be efficient for large amounts of REs
+
+## Our NCP RE Matrix
+
+```
+  # NCP RE
+  transpars > matrix[6, 2]:re_dept <- 
+    compose_noncentered(sigma_dept, Rho_dept, z_dept),
+```
+
+- `transpars >` says we are creating transformed parameters.\
+\
+- note we define a 6 x 2 matrix of REs - intercepts (col 1) and slopes (col 2).\
+\
+- `z_dept` is now a z-scored hyperprior for our REs
+
+## Our Z-Scored Hyperprior
+
+```
+  # NCP priors
+  matrix[2,6]:z_dept ~ normal( 0 , 1 ),
+```
+
+- note the matrix is transposed\
+\
+- but, every element is N(0,1)
+
+## Our Hyperprior for Departmental Variances
+
+```
+  vector[2]:sigma_dept ~ dexp(2),
+```
+
+- we declare a vector of sigmas for intercept and slope\
+\
+- but otherwise as before
+
+## Our Correlation Matrix
+
+```
+  cholesky_factor_corr[2]:Rho_dept ~ lkj_corr_cholesky( 2 ),
+  
+  # convert Cholesky to Corr matrix
+  gq> matrix[2,2]:Rho <<- Chol_to_Corr(Rho_dept)
+
+```
+
+- We have an object type specific to Cholesky decomposition - `cholesky_factor_corr`\
+\
+- Also a new distribution for the decomposition `lkj_corr_cholesky`\
+\
+- `gq>` means generated quantity - so, something derived from your sampled parameters\
+\
+- Here we convert our Cholesky decomposed matrix to a true correlation matrix
+
+## And let's fit!
+```{r ncp_fit, echo = TRUE, results = "hide", cache=FALSE}
+fit_gender_dept_nc <- ulam(mod_gender_dept_nc, 
+                           data = UCBadmit |>
+                                select(isMale, dept_id, 
+                                       admit, applications),
+                           chains=3)
+```
+
+## How is Z Mixing?
+```{r}
+trankplot(fit_gender_dept_nc, pars = "z_dept")
+```
+
+## But how are our REs Mixing?
+```{r}
+trankplot(fit_gender_dept_nc, pars = "re_dept")
+```
+
+## More transpars for easier comparison
+```{r mvparam_pars, echo=TRUE}
 mod_gender_dept_nc <- alist(
   #likelihood
   admit ~ dbinom(applications, p),
@@ -382,27 +517,47 @@ mod_gender_dept_nc <- alist(
   #Data generating process
   logit(p) <- a_hat + a[dept_id] + b_hat*isMale + b[dept_id]*isMale,
   
-  c(a,b)[dept_id] ~ dmvnormNC(sigma_dept, Rho),
   
+  # NCP RE
+  
+  transpars > vector[6]:a <<- re_dept[,1],
+  transpars > vector[6]:b <<- re_dept[,2],
+  
+  transpars > matrix[6, 2]:re_dept <- 
+    compose_noncentered(sigma_dept, Rho_dept, z_dept),
+
+
   #priors
   a_hat ~ dnorm(0,10),
   b_hat ~ dnorm(0,10),
   
-  sigma_dept ~ dcauchy(0,2),
-  Rho ~ dlkjcorr(2)
+  # NCP priors
+  matrix[2,6]:z_dept ~ normal( 0 , 1 ),
+  vector[2]:sigma_dept ~ dexp(2),
+  cholesky_factor_corr[2]:Rho_dept ~ lkj_corr_cholesky( 2 ),
+  
+  # convert Cholesky to Corr matrix
+  gq> matrix[2,2]:Rho <<- Chol_to_Corr(Rho_dept)
 )
 
-fit_gender_dept_nc <- map2stan(mod_gender_dept_nc, UCBadmit,
-                             iter=5000, chains=3)
 ```
 
+```{r ncp_fit_transpars2, echo = FALSE, results = "hide", cache=FALSE}
+fit_gender_dept_nc <- ulam(mod_gender_dept_nc, 
+                           data = UCBadmit |>
+                                select(isMale, dept_id, 
+                                       admit, applications),
+                           chains=3)
+```
 
 ## Are they different?
 ```{r comp_nc}
-compare(fit_gender_dept_nc, fit_gender_dept_mixed)
+#compare(fit_gender_dept_nc, fit_gender_dept_mixed)
 
-neff <- rbind(data.frame(mod = "Non-Centered", n_eff = precis(fit_gender_dept_nc, depth=2)@output$n_eff),
-              data.frame(mod = "Standard", n_eff = precis(fit_gender_dept_mixed, depth=2)@output$n_eff))
+neff <- rbind(data.frame(mod = "Non-Centered",
+                         n_eff = precis(fit_gender_dept_nc, depth = 2)$ess_bulk),
+              data.frame(mod = "Standard", 
+                         n_eff = precis(fit_gender_dept_mixed, depth = 2)$ess_bulk))
 
 ggplot(neff, mapping=aes(x=mod, y=n_eff)) +
   geom_boxplot()
@@ -417,6 +572,243 @@ precis(fit_gender_dept_mixed, pars="b", depth=2)
 ```
 
 
+## Visualizing Random Effects
+
+>- Viz of models with varying effects is tricky\
+\
+>- WHAT IS YOUR QUESTION?\
+\
+>- We often want only averages\
+\
+>- But, we might want to incorporate our REs for future prediction
+
+## Dinosaur Allometry!
+```{r, echo = FALSE}
+data(Dinosaurs)
+Dinosaurs$age_c <- Dinosaurs$age - mean(Dinosaurs$age)
+Dinosaurs$log_mass <- log(Dinosaurs$mass)
+
+ggplot(Dinosaurs, aes(x=age, y=log_mass, color=species)) +
+  geom_point() + labs(subtitle = "What if we wanted to make\npredictions about unknown dinos?")
+```
+
+## First, a model!
+```{r echo = TRUE}
+Dinosaurs$age_c <- Dinosaurs$age - mean(Dinosaurs$age)
+Dinosaurs$log_mass <- log(Dinosaurs$mass)
+```
+
+Likelihood:
+$log\ mass_i \sim N(\mu_i, \sigma)$\
+
+DGP:
+$\mu_i = \bar{a} + a_{species} + \bar{b} age\ centered_i + b_{species} age\ centered_i$\
+\
+RE:
+$[a_{species}, b_{species}] \sim MVN([0,0], R, [\sigma_a, \sigma_b])$
+
+
+## Code it
+```{r echo = TRUE}
+dino_mod <- alist(
+  
+  # Likelihood
+  
+  # DGP
+  
+  # Varying Effects using NCP
+  
+  # Priors
+  
+  # NCP Priors for Varying Effects
+  
+)
+```
+
+
+## Code it for 6 Species
+
+```{r echo = TRUE}
+dino_mod <- alist(
+  
+  # Likelihood
+  log_mass ~ dnorm(mu, sigma),
+  
+  # DGP
+  mu <- a_bar + a[sp_id] + b_bar * age_c + b[sp_id]* age_c,
+  
+  # Varying Effects using NCP
+  transpars > vector[6]:a <<- re_mat[,1],
+  transpars > vector[6]:b <<- re_mat[,2],
+  
+  transpars > matrix[6, 2]:re_mat <- 
+    compose_noncentered(sigma_re, Rho_chol, z),
+
+
+  #priors
+  a_bar ~ dnorm(0,2),
+  b_bar ~ dnorm(0,2),
+  sigma ~ dexp(2),
+  
+  # NCP Priors for Varying Effects
+  matrix[2,6]:z ~ normal( 0 , 1 ),
+  vector[2]:sigma_re ~ dexp(2),
+  cholesky_factor_corr[2]:Rho_chol ~ lkj_corr_cholesky( 2 ),
+  
+  # convert Cholesky to Corr matrix
+  gq> matrix[2,2]:Rho <<- Chol_to_Corr(Rho_chol)
+ 
+)
+```
+
+## Fit!
+
+```{r dino_fit, results = "hide", cache=FALSE, echo = TRUE}
+dat <- Dinosaurs |>
+  select(log_mass, age, age_c, sp_id, species)
+
+dino_fit <- ulam(dino_mod,
+                 dat,
+                 chains = 3)
+```
+
+# How did it do?
+```{r}
+trankplot(dino_fit, pars = "b")
+```
+
+# How did it do?
+```{r}
+par(mfrow = c(1,2), ask = FALSE)
+postcheck(dino_fit)
+par(mfrow = c(1,1), ask = FALSE)
+```
+
+# Coefficients and Predictions for Individual Species
+
+```{r, echo = TRUE}
+dino_coefs <- tidy_draws(dino_fit)
+
+dat_pred <- tibble(age = seq(1,15, length.out=100),
+                       age_c = age - mean(dat$age)) |>
+  crossing(sp_id = unique(dat$sp_id))
+
+fit_pred <- linpred_draws(object = dino_fit, 
+                          newdata = dat_pred)
+
+  
+```
+
+
+# The Average Fit with Coefficient Uncertainty Only
+```{r}
+base_dino <- ggplot(dat,
+       aes(x = age_c, y = log_mass)) +
+  geom_point(alpha = 0) +
+  geom_abline(data = dino_coefs,
+              aes(slope = b_bar, intercept = a_bar), alpha = 0.05) +
+  theme_bw() 
+base_dino
+```
+
+
+# With Each Species
+```{r}
+base_dino +
+  geom_line(data = fit_pred, color = "grey", 
+            aes(y = .value, 
+                group = paste(sp_id, .draw)), alpha = 0.01) +
+  theme_bw()
+```
+
+# Or Credible Interval
+```{r, echo = TRUE, eval = FALSE}
+crossing(
+  tibble(age = seq(1,15, length.out=50),
+                       age_c = age - mean(dat$age)),
+  dino_coefs[1:500,]
+) |>
+  mutate(log_mass = a_bar + b_bar*age_c) |>
+  ggplot(aes(x = age, y = log_mass)) +
+  stat_lineribbon() +
+  scale_fill_brewer(palette = "Oranges")
+```
+
+# Or Credible Interval
+```{r, echo = FALSE, eval = TRUE}
+interval_dino <- crossing(
+  tibble(age = seq(1,15, length.out=50),
+                       age_c = age - mean(dat$age)),
+  dino_coefs[1:500,]
+) |>
+  mutate(log_mass = a_bar + b_bar*age_c) |>
+  ggplot(aes(x = age, y = log_mass)) +
+  stat_lineribbon() +
+  scale_fill_brewer(palette = "Oranges")
+
+interval_dino
+```
+
+# With Each Species
+```{r}
+interval_dino +
+  geom_line(data = fit_pred, color = "grey", 
+            aes(y = .value, 
+                group = paste(sp_id, .draw)), alpha = 0.01) +
+  theme_bw()
+```
+
+# But What About New Species?
+
+```{r, echo = TRUE}
+new_sp <- dino_coefs |>
+  select(.draw, a_bar, b_bar, `sigma_re[1]`, `sigma_re[2]`, `Rho[1,2]`) |>
+  group_by(.draw) |>
+  reframe(re = rmvnorm2(1, 
+                        sigma = c(`sigma_re[1]`, `sigma_re[2]`), 
+                       Rho = matrix(c(1, `Rho[1,2]`, `Rho[1,2]`, 1), 
+                                    ncol = 2)),
+          a_bar = a_bar, 
+          b_bar = b_bar) |>
+  mutate(intercept = re[,1] + a_bar,
+         slope = re[,2] + b_bar,
+         )
+
+```
+
+# But What About New Species?
+```{r}
+ ggplot(dat,
+       aes(x = age_c, y = log_mass)) +
+  geom_point(alpha = 0) +
+  geom_abline(data = new_sp,
+              aes(slope = slope, intercept = intercept), alpha = 0.05) +
+  geom_abline(data = dino_coefs,
+              aes(slope = b_bar, intercept = a_bar), alpha = 0.03, color = "blue") +
+  theme_bw()  +
+  labs(subtitle = "new species (grey) relative to mean (blue)")
+
+```
+
+# Or Show with Credibility
+```{r}
+new_sp_pred <- crossing(
+  tibble(age = seq(1,15, length.out=50),
+                       age_c = age - mean(dat$age)),
+  new_sp[1:200,]
+) |>
+  mutate(log_mass = intercept + slope*age_c)
+
+ggplot(new_sp_pred,
+       aes(x = age, y = log_mass)) +
+  stat_lineribbon() +
+  scale_fill_brewer(palette = "Reds") +
+  labs(subtitle = "Credible Interval around Line for New Species")
+
+```
+
+
+<!--
 ## Exercise: DINOSAURS!!!!
 ```{r dino_ex}
 data(Dinosaurs)
@@ -446,7 +838,7 @@ mod <- alist(
   #priors
   a ~ dnorm(0,10),
   b ~ dnorm(0,10),
-  sigma_log ~ dcauchy(0,2)
+  sigma_log ~ dexp(2)
 )
 
 fit <- map(mod_fixed, data=Dinosaurs)
@@ -461,7 +853,7 @@ mod_fixed <- alist(
   #priors
   a[sp_id] ~ dnorm(0,10),
   b ~ dnorm(0,10),
-  sigma_log ~ dcauchy(0,2)
+  sigma_log ~ dexp(2)
 )
 
 fit_fixed <- map(mod_fixed, data=Dinosaurs)
@@ -478,8 +870,8 @@ mod_varint <-  alist(
   #priors
   a_bar ~ dnorm(0,10),
   b ~ dnorm(0,10),
-  sigma_log ~ dcauchy(0,2),
-  sigma_sp ~ dcauchy(0,2)
+  sigma_log ~ dexp(2),
+  sigma_sp ~ dexp(2)
 )
 
 fit_varint <- map2stan(mod_varint, data=Dinosaurs,
@@ -499,8 +891,8 @@ mod_varslope <-  alist(
   #priors
   a_bar ~ dnorm(0,10),
   b_bar ~ dnorm(0,10),
-  sigma_log ~ dcauchy(0,2),
-  sigma_species ~ dcauchy(0,2),
+  sigma_log ~ dexp(2),
+  sigma_species ~ dexp(2),
   Rho_species ~ dlkjcorr(4)
 )
 
@@ -522,8 +914,8 @@ mod_varslope2 <-  alist(
   #priors
   a_bar ~ dnorm(0,10),
   b_bar ~ dnorm(0,10),
-  sigma_log ~ dcauchy(0,2),
-  sigma_species ~ dcauchy(0,2),
+  sigma_log ~ dexp(2),
+  sigma_species ~ dexp(2),
   Rho_species ~ dlkjcorr(4)
 )
 
@@ -531,3 +923,5 @@ fit_varslope2 <- map2stan(mod_varslope2, data=Dinosaurs,
                         iter=4000, chains=3)
 
 ```
+
+-->
