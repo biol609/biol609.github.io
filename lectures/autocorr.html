@@ -479,7 +479,7 @@
 <section id="considering-correlation-consider-sampling-for-greeness" class="title-slide slide level1 center">
 <h1>Considering Correlation: Consider sampling for greeness</h1>
 
-<img data-src="autocorr_files/figure-revealjs/landscape-1.jpeg" width="960" class="r-stretch"></section>
+<img data-src="autocorr_files/figure-revealjs/landscape-1.jpeg" width="672" class="r-stretch"></section>
 
 <section id="modeling-greeness-with-a-random-intercept" class="title-slide slide level1 center">
 <h1>Modeling Greeness with a Random Intercept</h1>
@@ -497,13 +497,12 @@
 
 <section id="we-think-in-terms-of-a-continuous-correlation-matrices-of-residuals" class="title-slide slide level1 center">
 <h1>We Think in Terms of a Continuous Correlation Matrices of Residuals</h1>
-<p><span class="math display">\[ \epsilon_{ij} = \rho \epsilon_{j} + \zeta_{i}\]</span></p>
-<p>which produces</p>
 <p><span class="math display">\[cor(\epsilon) = \begin{pmatrix}
 1 &amp; \rho_{12} &amp;\rho_{13} \\
 \rho_{12} &amp;  1&amp; \rho_{23}\\
 \rho_{13} &amp; \rho_{23} &amp; 1
 \end{pmatrix}\]</span></p>
+<p>Maybe <span class="math inline">\(\rho_{12} = \rho_{23} = ...\)</span>, maybe there is a function?</p>
 </section>
 
 <section id="for-a-mvn-we-use-the-covariance-matrix" class="title-slide slide level1 center">
@@ -531,8 +530,8 @@ where <span class="math inline">\(D_{ij} = x_i - x_j\)</span>
 </center>
 </section>
 
-<section id="the-squared-exponential-functionkernel" class="title-slide slide level1 center">
-<h1>The Squared Exponential Function(kernel)</h1>
+<section id="the-squared-exponentialgaussian-functionkernel" class="title-slide slide level1 center">
+<h1>The Squared Exponential/Gaussian Function(kernel)</h1>
 <p><span class="math display">\[K_{ij} = \eta^2 exp \left( -\frac{D_{ij}^2}{2 \mathcal{l}^2} \right)\]</span></p>
 <p>where <span class="math inline">\(\eta^2\)</span> provides the scale of the function and <span class="math inline">\(\mathcal{l}\)</span> the timescale of the process</p>
 </section>

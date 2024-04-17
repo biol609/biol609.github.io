@@ -235,7 +235,7 @@ ggplot(nophylo_res_dist,
 
 
 # Considering Correlation: Consider sampling for greeness
-```{r landscape, fig.height=10, fig.width=10}
+```{r landscape}
 library(SpatialTools)
 set.seed(609)
 nc <- 20
@@ -257,9 +257,13 @@ color <- jet.colors(length(y))
 zfacet <- z[-1, -1] + z[-1, -nc] + z[-nc, -1] + z[-nc, -nc]
 facetcol <- cut(zfacet, length(y))
 
+par(mai = c(0,0,0,0))
 persp(x=1:nc, y=1:nc, z=matrix(y, ncol=nc), col=color[facetcol],
-      theta = 10, phi = 25, xlab="", ylab="", zlab="", box=FALSE, axes=FALSE,
-      mar=c(0,0,0,0) )
+      theta = 20, phi = 35, xlab="", ylab="", zlab="", box=FALSE, axes=FALSE,
+      mar=c(0,0,0,0), 
+      r = 20, expand = 0.3)
+par(mai=c(1.02,0.82,0.82,0.42)) #default
+
 ```
 
 # Modeling Greeness with a Random Intercept
@@ -277,15 +281,14 @@ $a_{patch} \sim dnorm(0, \sigma_{patch})$
 
 # We Think in Terms of a Continuous Correlation Matrices of Residuals
 
-$$ \epsilon_{ij} = \rho \epsilon_{j} + \zeta_{i}$$ 
-
-which produces  
 
 $$cor(\epsilon) = \begin{pmatrix}
 1 & \rho_{12} &\rho_{13} \\ 
 \rho_{12} &  1& \rho_{23}\\ 
 \rho_{13} & \rho_{23} & 1
-\end{pmatrix}$$ 
+\end{pmatrix}$$
+
+Maybe $\rho_{12} = \rho_{23} = ...$, maybe there is a function?
 
 # For a MVN, We Use the Covariance Matrix
 
@@ -309,7 +312,7 @@ $$a_{patch} \sim MVNorm(0, K)$$
 $$K_{ij} = F(D_{ij})$$
 <center>where $D_{ij} = x_i - x_j$</center>
 
-# The Squared Exponential Function(kernel)
+# The Squared Exponential/Gaussian Function(kernel)
 $$K_{ij} = \eta^2 exp \left( -\frac{D_{ij}^2}{2 \mathcal{l}^2} \right)$$  
   
 where $\eta^2$ provides the scale of the function and $\mathcal{l}$ the timescale of the process
