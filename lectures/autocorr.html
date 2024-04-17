@@ -900,25 +900,42 @@ rhosq 1.3945047 1.65297194  0.07653043 4.7089869 1.012138 406.8024</code></pre>
 
 <section id="no-correlation" class="title-slide slide level1 center">
 <h1>No Correlation</h1>
-
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href=""></a>no_phylo <span class="ot">&lt;-</span> <span class="fu">ulam</span>(</span>
+<span id="cb13-2"><a href=""></a>    <span class="fu">alist</span>(</span>
+<span id="cb13-3"><a href=""></a>        <span class="co">#likelihood</span></span>
+<span id="cb13-4"><a href=""></a>        B <span class="sc">~</span> <span class="fu">multi_normal</span>( mu , SIGMA ),</span>
+<span id="cb13-5"><a href=""></a>        </span>
+<span id="cb13-6"><a href=""></a>        <span class="co"># DGP</span></span>
+<span id="cb13-7"><a href=""></a>        mu <span class="ot">&lt;-</span> a <span class="sc">+</span> bM<span class="sc">*</span>M <span class="sc">+</span> bG<span class="sc">*</span>G,</span>
+<span id="cb13-8"><a href=""></a>        </span>
+<span id="cb13-9"><a href=""></a>        <span class="co"># Autocorr</span></span>
+<span id="cb13-10"><a href=""></a>        matrix[N_spp,N_spp]<span class="sc">:</span> SIGMA <span class="ot">&lt;-</span> Imat <span class="sc">*</span> sigma_sq,</span>
+<span id="cb13-11"><a href=""></a>        </span>
+<span id="cb13-12"><a href=""></a>        <span class="co">#priors</span></span>
+<span id="cb13-13"><a href=""></a>        a <span class="sc">~</span> <span class="fu">normal</span>( <span class="dv">0</span> , <span class="dv">1</span> ),</span>
+<span id="cb13-14"><a href=""></a>        <span class="fu">c</span>(bM,bG) <span class="sc">~</span> <span class="fu">normal</span>( <span class="dv">0</span> , <span class="fl">0.5</span> ),</span>
+<span id="cb13-15"><a href=""></a>        sigma_sq <span class="sc">~</span> <span class="fu">exponential</span>( <span class="dv">1</span> )</span>
+<span id="cb13-16"><a href=""></a>    ), <span class="at">data=</span>dat_list , <span class="at">chains=</span><span class="dv">4</span> , <span class="at">cores=</span><span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 
 <section id="making-a-correlation-distance-matrix" class="title-slide slide level1 center">
 <h1>Making a Correlation Distance Matrix</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href=""></a><span class="fu">library</span>(ape)</span>
-<span id="cb13-2"><a href=""></a></span>
-<span id="cb13-3"><a href=""></a><span class="co">#make phylo cov/distance matrices</span></span>
-<span id="cb13-4"><a href=""></a>tree_trimmed <span class="ot">&lt;-</span> <span class="fu">keep.tip</span>( Primates301_nex, spp_obs )</span>
-<span id="cb13-5"><a href=""></a>Rbm <span class="ot">&lt;-</span> <span class="fu">corBrownian</span>( <span class="at">phy=</span>tree_trimmed )</span>
-<span id="cb13-6"><a href=""></a>V <span class="ot">&lt;-</span> <span class="fu">vcv</span>(Rbm)</span>
-<span id="cb13-7"><a href=""></a>Dmat <span class="ot">&lt;-</span> <span class="fu">cophenetic</span>( tree_trimmed )</span>
-<span id="cb13-8"><a href=""></a></span>
-<span id="cb13-9"><a href=""></a><span class="co"># put species in right order</span></span>
-<span id="cb13-10"><a href=""></a>dat_list<span class="sc">$</span>V <span class="ot">&lt;-</span> V[ spp_obs , spp_obs ]</span>
-<span id="cb13-11"><a href=""></a></span>
-<span id="cb13-12"><a href=""></a><span class="co"># convert to correlation matrix</span></span>
-<span id="cb13-13"><a href=""></a>dat_list<span class="sc">$</span>R <span class="ot">&lt;-</span> dat_list<span class="sc">$</span>V <span class="sc">/</span> <span class="fu">max</span>(V)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href=""></a><span class="fu">library</span>(ape)</span>
+<span id="cb14-2"><a href=""></a></span>
+<span id="cb14-3"><a href=""></a><span class="co">#make phylo cov/distance matrices</span></span>
+<span id="cb14-4"><a href=""></a>tree_trimmed <span class="ot">&lt;-</span> <span class="fu">keep.tip</span>( Primates301_nex, spp_obs )</span>
+<span id="cb14-5"><a href=""></a>Rbm <span class="ot">&lt;-</span> <span class="fu">corBrownian</span>( <span class="at">phy=</span>tree_trimmed )</span>
+<span id="cb14-6"><a href=""></a>V <span class="ot">&lt;-</span> <span class="fu">vcv</span>(Rbm)</span>
+<span id="cb14-7"><a href=""></a>Dmat <span class="ot">&lt;-</span> <span class="fu">cophenetic</span>( tree_trimmed )</span>
+<span id="cb14-8"><a href=""></a></span>
+<span id="cb14-9"><a href=""></a><span class="co"># put species in right order</span></span>
+<span id="cb14-10"><a href=""></a>dat_list<span class="sc">$</span>V <span class="ot">&lt;-</span> V[ spp_obs , spp_obs ]</span>
+<span id="cb14-11"><a href=""></a></span>
+<span id="cb14-12"><a href=""></a><span class="co"># convert to correlation matrix</span></span>
+<span id="cb14-13"><a href=""></a>dat_list<span class="sc">$</span>R <span class="ot">&lt;-</span> dat_list<span class="sc">$</span>V <span class="sc">/</span> <span class="fu">max</span>(V)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 
@@ -929,25 +946,70 @@ rhosq 1.3945047 1.65297194  0.07653043 4.7089869 1.012138 406.8024</code></pre>
 
 <section id="brownian-correlation" class="title-slide slide level1 center">
 <h1>Brownian Correlation</h1>
-
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href=""></a>brownian <span class="ot">&lt;-</span> <span class="fu">ulam</span>(</span>
+<span id="cb15-2"><a href=""></a>    <span class="fu">alist</span>(</span>
+<span id="cb15-3"><a href=""></a>        <span class="co">#likelihood</span></span>
+<span id="cb15-4"><a href=""></a>        B <span class="sc">~</span> <span class="fu">multi_normal</span>( mu , SIGMA ),</span>
+<span id="cb15-5"><a href=""></a>        </span>
+<span id="cb15-6"><a href=""></a>        <span class="co"># DGP</span></span>
+<span id="cb15-7"><a href=""></a>        mu <span class="ot">&lt;-</span> a <span class="sc">+</span> bM<span class="sc">*</span>M <span class="sc">+</span> bG<span class="sc">*</span>G,</span>
+<span id="cb15-8"><a href=""></a>        </span>
+<span id="cb15-9"><a href=""></a>        <span class="co"># Autocorr</span></span>
+<span id="cb15-10"><a href=""></a>        matrix[N_spp,N_spp]<span class="sc">:</span> SIGMA <span class="ot">&lt;-</span> R <span class="sc">*</span> sigma_sq,</span>
+<span id="cb15-11"><a href=""></a>        </span>
+<span id="cb15-12"><a href=""></a>        <span class="co">#priors</span></span>
+<span id="cb15-13"><a href=""></a>         a <span class="sc">~</span> <span class="fu">normal</span>( <span class="dv">0</span> , <span class="dv">1</span> ),</span>
+<span id="cb15-14"><a href=""></a>        <span class="fu">c</span>(bM,bG) <span class="sc">~</span> <span class="fu">normal</span>( <span class="dv">0</span> , <span class="fl">0.5</span> ),</span>
+<span id="cb15-15"><a href=""></a>        sigma_sq <span class="sc">~</span> <span class="fu">exponential</span>( <span class="dv">1</span> )</span>
+<span id="cb15-16"><a href=""></a>    ), <span class="at">data=</span>dat_list , <span class="at">chains=</span><span class="dv">4</span> , <span class="at">cores=</span><span class="dv">4</span>, <span class="at">log_lik =</span> <span class="cn">TRUE</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 
 <section id="no-correlation-1" class="title-slide slide level1 center">
 <h1>No Correlation</h1>
-
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href=""></a><span class="co"># add scaled and reordered distance matrix</span></span>
+<span id="cb16-2"><a href=""></a>dat_list<span class="sc">$</span>Dmat <span class="ot">&lt;-</span> Dmat[ spp_obs , spp_obs ] <span class="sc">/</span> <span class="fu">max</span>(Dmat)</span>
+<span id="cb16-3"><a href=""></a></span>
+<span id="cb16-4"><a href=""></a>ou_gp_mod <span class="ot">&lt;-</span> <span class="fu">ulam</span>(</span>
+<span id="cb16-5"><a href=""></a>    <span class="fu">alist</span>(</span>
+<span id="cb16-6"><a href=""></a>        <span class="co">#likelihood</span></span>
+<span id="cb16-7"><a href=""></a>        B <span class="sc">~</span> <span class="fu">multi_normal</span>( mu , SIGMA ),</span>
+<span id="cb16-8"><a href=""></a>        </span>
+<span id="cb16-9"><a href=""></a>        <span class="co"># DGP</span></span>
+<span id="cb16-10"><a href=""></a>        mu <span class="ot">&lt;-</span> a <span class="sc">+</span> bM<span class="sc">*</span>M <span class="sc">+</span> bG<span class="sc">*</span>G,</span>
+<span id="cb16-11"><a href=""></a>        </span>
+<span id="cb16-12"><a href=""></a>        <span class="co"># Autocorr</span></span>
+<span id="cb16-13"><a href=""></a>        matrix[N_spp,N_spp]<span class="sc">:</span> SIGMA <span class="ot">&lt;-</span> <span class="fu">cov_GPL1</span>( Dmat , etasq , rhosq , <span class="fl">0.01</span> ),        </span>
+<span id="cb16-14"><a href=""></a>        <span class="co">#priors</span></span>
+<span id="cb16-15"><a href=""></a>        a <span class="sc">~</span> <span class="fu">normal</span>(<span class="dv">0</span>,<span class="dv">1</span>),</span>
+<span id="cb16-16"><a href=""></a>        <span class="fu">c</span>(bM,bG) <span class="sc">~</span> <span class="fu">normal</span>(<span class="dv">0</span>,<span class="fl">0.5</span>),</span>
+<span id="cb16-17"><a href=""></a>        etasq <span class="sc">~</span> <span class="fu">half_normal</span>(<span class="dv">1</span>,<span class="fl">0.25</span>),</span>
+<span id="cb16-18"><a href=""></a>        rhosq <span class="sc">~</span> <span class="fu">half_normal</span>(<span class="dv">3</span>,<span class="fl">0.25</span>)</span>
+<span id="cb16-19"><a href=""></a>        </span>
+<span id="cb16-20"><a href=""></a>    ), <span class="at">data=</span>dat_list , <span class="at">chains=</span><span class="dv">4</span> , <span class="at">cores=</span><span class="dv">4</span>, <span class="at">log_lik =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 
 <section id="which-model-fits-best" class="title-slide slide level1 center">
 <h1>Which Model Fits Best?</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href=""></a><span class="co">#compare(no_phylo, brownian, ou_gp_mod, func = PSIS)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href=""></a><span class="co">#compare(no_phylo, brownian, ou_gp_mod, func = PSIS)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>NOTE: Does not currently work due to working with matrices. Standby!</p>
 </section>
 
 <section id="comparing-g" class="title-slide slide level1 center">
 <h1>Comparing G</h1>
-
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>                   mean         sd         5.5%      94.5%     rhat  ess_bulk
+no_phylo bG  0.12256875 0.02265879  0.085101822 0.15983441 1.000883 1195.5750
+brownian bG  0.02405600 0.02026626 -0.008841488 0.05663509 1.035008  110.6589
+ou_gp_mod bG 0.04975294 0.02311785  0.012833085 0.08657639 1.001296 2345.3181</code></pre>
+</div>
+</div>
 </section>
 
 <section id="an-autocorrelated-adventure-3" class="title-slide slide level1 center">
@@ -1099,55 +1161,55 @@ w_d \sim \mathcal{N}(0, 1) \\
 <section id="building-the-basis-set-with-30-knots" class="title-slide slide level1 center">
 <h1>Building the Basis Set with 30 knots</h1>
 <div class="cell" data-source-line-numbers="|1-3|5-6|8-12|">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href=""></a><span class="co"># filter NA as it causes problems with matrix multiplication</span></span>
-<span id="cb15-2"><a href=""></a>d <span class="ot">&lt;-</span> ltrmk3 <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(X300m))</span>
-<span id="cb15-3"><a href=""></a>d<span class="sc">$</span>k_s <span class="ot">&lt;-</span> <span class="fu">scale</span>(d<span class="sc">$</span>X300m)</span>
-<span id="cb15-4"><a href=""></a></span>
-<span id="cb15-5"><a href=""></a><span class="co"># make a knot list based on date with 30 knots</span></span>
-<span id="cb15-6"><a href=""></a>knot_list <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fu">min</span>(d<span class="sc">$</span>Date), <span class="fu">max</span>(d<span class="sc">$</span>Date), <span class="at">length.out=</span><span class="dv">30</span>) </span>
-<span id="cb15-7"><a href=""></a></span>
-<span id="cb15-8"><a href=""></a><span class="co"># build the basis set</span></span>
-<span id="cb15-9"><a href=""></a>B <span class="ot">&lt;-</span> <span class="fu">bs</span>(d<span class="sc">$</span>Date,</span>
-<span id="cb15-10"><a href=""></a>    <span class="at">knots=</span>knot_list[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>,num_knots)], </span>
-<span id="cb15-11"><a href=""></a>    <span class="at">degree=</span><span class="dv">1</span>, </span>
-<span id="cb15-12"><a href=""></a>    <span class="at">intercept=</span><span class="cn">TRUE</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href=""></a><span class="co"># filter NA as it causes problems with matrix multiplication</span></span>
+<span id="cb19-2"><a href=""></a>d <span class="ot">&lt;-</span> ltrmk3 <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(X300m))</span>
+<span id="cb19-3"><a href=""></a>d<span class="sc">$</span>k_s <span class="ot">&lt;-</span> <span class="fu">scale</span>(d<span class="sc">$</span>X300m)</span>
+<span id="cb19-4"><a href=""></a></span>
+<span id="cb19-5"><a href=""></a><span class="co"># make a knot list based on date with 30 knots</span></span>
+<span id="cb19-6"><a href=""></a>knot_list <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fu">min</span>(d<span class="sc">$</span>Date), <span class="fu">max</span>(d<span class="sc">$</span>Date), <span class="at">length.out=</span><span class="dv">30</span>) </span>
+<span id="cb19-7"><a href=""></a></span>
+<span id="cb19-8"><a href=""></a><span class="co"># build the basis set</span></span>
+<span id="cb19-9"><a href=""></a>B <span class="ot">&lt;-</span> <span class="fu">bs</span>(d<span class="sc">$</span>Date,</span>
+<span id="cb19-10"><a href=""></a>    <span class="at">knots=</span>knot_list[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>,num_knots)], </span>
+<span id="cb19-11"><a href=""></a>    <span class="at">degree=</span><span class="dv">1</span>, </span>
+<span id="cb19-12"><a href=""></a>    <span class="at">intercept=</span><span class="cn">TRUE</span> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 
 <section id="the-model-in-rethinking" class="title-slide slide level1 center">
 <h1>The Model in Rethinking</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16" data-code-line-numbers="|5-6|12-17|"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href=""></a>kelp_spline_mod <span class="ot">&lt;-</span> <span class="fu">alist</span>(</span>
-<span id="cb16-2"><a href=""></a>  <span class="co"># Likelihood</span></span>
-<span id="cb16-3"><a href=""></a>  K <span class="sc">~</span> <span class="fu">dnorm</span>(mu , sigma),</span>
-<span id="cb16-4"><a href=""></a>  </span>
-<span id="cb16-5"><a href=""></a>  <span class="co"># DGP</span></span>
-<span id="cb16-6"><a href=""></a>  mu <span class="ot">&lt;-</span> a <span class="sc">+</span> B <span class="sc">%*%</span> w,</span>
-<span id="cb16-7"><a href=""></a>  </span>
-<span id="cb16-8"><a href=""></a>  <span class="co"># Priors</span></span>
-<span id="cb16-9"><a href=""></a>  a <span class="sc">~</span> <span class="fu">dnorm</span>(<span class="dv">0</span>, <span class="dv">4</span>),</span>
-<span id="cb16-10"><a href=""></a>  w <span class="sc">~</span> <span class="fu">dnorm</span>(<span class="dv">0</span>, <span class="dv">1</span>),</span>
-<span id="cb16-11"><a href=""></a>  sigma <span class="sc">~</span> <span class="fu">dexp</span>(<span class="dv">1</span>)</span>
-<span id="cb16-12"><a href=""></a>)</span>
-<span id="cb16-13"><a href=""></a></span>
-<span id="cb16-14"><a href=""></a><span class="co"># Fit with start values to give dimensions</span></span>
-<span id="cb16-15"><a href=""></a><span class="co"># and a list to contain different data types</span></span>
-<span id="cb16-16"><a href=""></a>kelp_spline_fit <span class="ot">&lt;-</span> <span class="fu">quap</span>(</span>
-<span id="cb16-17"><a href=""></a>  kelp_spline_mod,</span>
-<span id="cb16-18"><a href=""></a>  <span class="at">data=</span><span class="fu">list</span>( <span class="at">K=</span>d<span class="sc">$</span>k_s , <span class="at">B=</span>B) ,</span>
-<span id="cb16-19"><a href=""></a>  <span class="at">start=</span><span class="fu">list</span>( <span class="at">w=</span><span class="fu">rep</span>( <span class="dv">0</span> , <span class="fu">ncol</span>(B) ) ) )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20" data-code-line-numbers="|5-6|12-17|"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href=""></a>kelp_spline_mod <span class="ot">&lt;-</span> <span class="fu">alist</span>(</span>
+<span id="cb20-2"><a href=""></a>  <span class="co"># Likelihood</span></span>
+<span id="cb20-3"><a href=""></a>  K <span class="sc">~</span> <span class="fu">dnorm</span>(mu , sigma),</span>
+<span id="cb20-4"><a href=""></a>  </span>
+<span id="cb20-5"><a href=""></a>  <span class="co"># DGP</span></span>
+<span id="cb20-6"><a href=""></a>  mu <span class="ot">&lt;-</span> a <span class="sc">+</span> B <span class="sc">%*%</span> w,</span>
+<span id="cb20-7"><a href=""></a>  </span>
+<span id="cb20-8"><a href=""></a>  <span class="co"># Priors</span></span>
+<span id="cb20-9"><a href=""></a>  a <span class="sc">~</span> <span class="fu">dnorm</span>(<span class="dv">0</span>, <span class="dv">4</span>),</span>
+<span id="cb20-10"><a href=""></a>  w <span class="sc">~</span> <span class="fu">dnorm</span>(<span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb20-11"><a href=""></a>  sigma <span class="sc">~</span> <span class="fu">dexp</span>(<span class="dv">1</span>)</span>
+<span id="cb20-12"><a href=""></a>)</span>
+<span id="cb20-13"><a href=""></a></span>
+<span id="cb20-14"><a href=""></a><span class="co"># Fit with start values to give dimensions</span></span>
+<span id="cb20-15"><a href=""></a><span class="co"># and a list to contain different data types</span></span>
+<span id="cb20-16"><a href=""></a>kelp_spline_fit <span class="ot">&lt;-</span> <span class="fu">quap</span>(</span>
+<span id="cb20-17"><a href=""></a>  kelp_spline_mod,</span>
+<span id="cb20-18"><a href=""></a>  <span class="at">data=</span><span class="fu">list</span>( <span class="at">K=</span>d<span class="sc">$</span>k_s , <span class="at">B=</span>B) ,</span>
+<span id="cb20-19"><a href=""></a>  <span class="at">start=</span><span class="fu">list</span>( <span class="at">w=</span><span class="fu">rep</span>( <span class="dv">0</span> , <span class="fu">ncol</span>(B) ) ) )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 
 <section id="what-did-it-all-mean" class="title-slide slide level1 center">
 <h1>What did it all mean?</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17" data-code-line-numbers="|3|"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href=""></a>kelp_pred <span class="ot">&lt;-</span> </span>
-<span id="cb17-2"><a href=""></a>  <span class="fu">linpred_draws</span>(kelp_spline_fit, </span>
-<span id="cb17-3"><a href=""></a>                <span class="at">newdata =</span> <span class="fu">list</span>( <span class="at">K=</span>d<span class="sc">$</span>k_s , <span class="at">B=</span>B , <span class="at">Date =</span> d<span class="sc">$</span>Date)) <span class="sc">|&gt;</span></span>
-<span id="cb17-4"><a href=""></a>  <span class="fu">group_by</span>(Date) <span class="sc">|&gt;</span></span>
-<span id="cb17-5"><a href=""></a>  <span class="fu">summarize</span>(<span class="at">k_s =</span> <span class="fu">mean</span>(.value),</span>
-<span id="cb17-6"><a href=""></a>            <span class="at">X300m =</span> k_s <span class="sc">*</span> <span class="fu">sd</span>(d<span class="sc">$</span>X300m) <span class="sc">+</span> <span class="fu">mean</span>(<span class="fu">sd</span>(d<span class="sc">$</span>X300m)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21" data-code-line-numbers="|3|"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href=""></a>kelp_pred <span class="ot">&lt;-</span> </span>
+<span id="cb21-2"><a href=""></a>  <span class="fu">linpred_draws</span>(kelp_spline_fit, </span>
+<span id="cb21-3"><a href=""></a>                <span class="at">newdata =</span> <span class="fu">list</span>( <span class="at">K=</span>d<span class="sc">$</span>k_s , <span class="at">B=</span>B , <span class="at">Date =</span> d<span class="sc">$</span>Date)) <span class="sc">|&gt;</span></span>
+<span id="cb21-4"><a href=""></a>  <span class="fu">group_by</span>(Date) <span class="sc">|&gt;</span></span>
+<span id="cb21-5"><a href=""></a>  <span class="fu">summarize</span>(<span class="at">k_s =</span> <span class="fu">mean</span>(.value),</span>
+<span id="cb21-6"><a href=""></a>            <span class="at">X300m =</span> k_s <span class="sc">*</span> <span class="fu">sd</span>(d<span class="sc">$</span>X300m) <span class="sc">+</span> <span class="fu">mean</span>(<span class="fu">sd</span>(d<span class="sc">$</span>X300m)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 
