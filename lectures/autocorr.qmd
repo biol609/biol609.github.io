@@ -1248,7 +1248,9 @@ kelp_plot +
 
 - We can model K, the variance-covariance matrix with a MVN process.  
   
-- We can use a spline (computationally faster) that will approximate a Gaussian Process
+- We can use a spline (computationally faster) that will approximate a Gaussian Process.  
+
+- But don't forget about possible overparameterization...
 :::
 
 # 
