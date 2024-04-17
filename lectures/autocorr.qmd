@@ -1,0 +1,1257 @@
+---
+title: ""
+format: 
+  revealjs:
+    navigation-mode: vertical
+    controls-layout: bottom-right
+    controls-tutorial: true
+    theme: simple
+    incremental: false
+    css: style.css
+---
+
+
+```{r setup, include=FALSE}
+library(knitr)
+
+opts_chunk$set(fig.height=5, fig.width=7, comment=NA, 
+               warning=FALSE, message=FALSE, 
+               dev="jpeg", echo=FALSE, root.dir = here::here())
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+library(rethinking)
+library(tidybayes)
+library(tidybayes.rethinking)
+
+theme_set(theme_bw(base_size = 15))
+theme_update(plot.title = element_text(hjust = 0.5))
+```
+
+# Dealing with Autocorrelation
+
+![](images/autocorr/why-are-plots.jpg)
+
+# Are Ecological Global Change Analyses Mostly Wrong?
+
+![](images/autocorr/johnson_et_al_2024_title.png)
+
+
+
+[Johnson et al. 2024](https://www.nature.com/articles/s41586-024-07236-z){.small .left}
+
+# Are Ecological Global Change Analyses Mostly Wrong?
+
+![](images/autocorr/johnson_fig_2.png)
+
+[Johnson et al. 2024](https://www.nature.com/articles/s41586-024-07236-z){.small .left}
+
+# An Autocorrelated Adventure
+
+1. Intro to Autocorrelation
+
+2. Autocorrelation in Space with Gaussian Processes
+
+3. Autocorrelation due to Phylogeny
+
+4. Splines and Autocorrelation in Time
+
+# Measurements Are Often Distributed in Continuous, Not Discrete, Space
+```{r read_boreal}
+boreal <- read.table(paste0(here::here(),
+                            "/lectures/data/06/Boreality.txt"), header=T)
+```
+```{r plot_boreal_raw}
+
+raw_boreal <- qplot(x, y, data=boreal, size=Wet, color=NDVI) +
+  theme_bw() + 
+  scale_size_continuous("Index of Wetness", range=c(0,7)) + 
+  scale_color_gradient("NDVI", low="lightgreen", high="darkgreen")
+
+raw_boreal
+```
+
+# Naive Model
+Wetness -> NDVI
+
+```{r}
+#| echo: true
+boreal <- read.table("./data/06/Boreality.txt", header=T) |>
+  mutate(NDVI_s = standardize(NDVI),
+         Wet_s = standardize(Wet))
+
+
+ndvi_nospatial <- alist(
+  NDVI_s ~ dnorm(mu, sigma),
+  mu <- alpha + beta * Wet_s,
+  alpha ~ dnorm(0,1),
+  beta ~ dnorm(0,1),
+  sigma ~ dexp(2)
+)
+
+# fit
+ndvi_nospatial_fit <- quap(ndvi_nospatial, boreal)
+
+# residuals
+boreal_fit <- linpred_draws(ndvi_nospatial_fit, boreal, ndraws = 1e3) |>
+  mutate(.residuals = NDVI_s - .value) |>
+  group_by(x, y, point) |>
+  summarize(.residuals = mean(.residuals))
+```
+
+# Spatial Autocorrelation in Residuals
+```{r boreal_bad}
+
+## @knitr boreal_gls_residualPlot
+ggplot(boreal_fit, aes(x=x, y=y, size=abs(.residuals),
+       color = factor(.residuals>0))) +
+  geom_point() +
+  scale_size_continuous(range=c(0,5)) +
+  labs(color = "Residual > 0?", size = "Absolute Value\nof Residual")
+```
+
+# What About Time?
+```{r birds}
+allbirds <- read.csv("./data/05/allbirds.csv", stringsAsFactors=FALSE)
+
+oahu_data <- allbirds %>% filter(Site == "Coot.Oahu") %>%
+  arrange(Year) %>%
+  mutate(Birds_Lag = lag(Birds)) %>%
+  mutate(Detrended_Birds = c(NA, residuals(lm(Birds ~ Birds_Lag, data=.)))) |>
+  filter(!is.na(Birds_Lag))
+
+```
+
+```{r oahu_tsplot}
+oahu <- ggplot(oahu_data,
+       mapping=aes(x=Year, y=Birds)) +
+  geom_line() +
+  theme_bw(base_size=17) +
+  ylab("Birds")
+
+oahu + stat_smooth(method = "lm")
+```
+
+# Autocorrelation of Residuals at Different Time Lags
+
+```{r}
+#| echo: false
+
+oahu_acf <- crossing(data.frame(
+  y1 = oahu_data$Year,
+  r1 = residuals(lm(Birds ~ Year, data=oahu_data))),
+  data.frame(
+  y2 = oahu_data$Year,
+  r2 = residuals(lm(Birds ~ Year, data=oahu_data)))) |>
+  mutate(lag_year = y1 - y2) |>
+  filter(lag_year > 0) |>
+  group_by(lag_year) |>
+  summarize(acf = cor(r1, r2))
+
+ggplot(oahu_acf,
+       aes(x = lag_year, y = acf)) +
+  geom_point() +
+  geom_segment(yend=0) +
+  labs(y = "Correlation of Residuals X years Apart",
+       x = "Years Apart") +
+  theme_classic(base_size = 14) +
+  geom_hline(yintercept = 0) +
+  xlim(c(0,20))
+```
+
+
+# Phylogenetic Autocorrelation
+```{r phyloplot}
+data(Primates301)
+data(Primates301_nex)
+# plot it using ape package - install.packages('ape') if needed
+library(ape)
+plot( ladderize(Primates301_nex) , type="fan" , font=1 , no.margin=TRUE ,
+    label.offset=1 , cex=0.5 )
+
+
+d <- Primates301
+d$name <- as.character(d$name)
+dstan <- d[ complete.cases( d$group_size , d$body , d$brain ) , ]
+spp_obs <- dstan$name
+```
+
+# Phylogenetically Correlated Residuals
+
+```{r}
+dat_frame <- data.frame(
+    N_spp = 1:nrow(dstan),
+    M = standardize(log(dstan$body)),
+    B = standardize(log(dstan$brain)),
+    G = standardize(log(dstan$group_size)))
+
+nophylo_fit <- quap(
+    alist(
+        B ~ dnorm( mu , sigma ),
+        mu <- a + bM*M + bG*G,
+        a ~ dnorm( 0 , 1 ),
+        c(bM,bG) ~ dnorm( 0 , 0.5 ),
+        sigma ~ dexp( 2 )
+    ), data=dat_frame )
+
+
+nophylo_res <- linpred_draws(nophylo_fit,dat_frame, ndraws = 1e3) |>
+  mutate(.residuals = B - .value) |>
+  group_by(N_spp) |>
+  summarize(.residuals = mean(.residuals))
+
+#nophylo_res
+
+# make a matrix 
+#dat_list$Dmat <- Dmat[ spp_obs , spp_obs ] / max(Dmat)
+tree_trimmed <- keep.tip( Primates301_nex, spp_obs )
+Rbm <- corBrownian( phy=tree_trimmed )
+V <- vcv(Rbm)
+Dmat <- cophenetic( tree_trimmed )
+Dmat <- Dmat[ spp_obs , spp_obs ] / max(Dmat)
+
+
+nophylo_res_dist <- crossing(nophylo_res|>
+                               rename(spp_1 = N_spp,
+                                      res_1 = .residuals),
+                             nophylo_res |>
+                               rename(spp_2 = N_spp,
+                                      res_2 = .residuals)) |>
+  rowwise() |>
+  mutate(dist = Dmat[spp_1, spp_2]) |>
+  group_by(dist) |>
+  summarize(res_cor = cor(res_1, res_2)) |>
+  filter(dist>0)
+
+ggplot(nophylo_res_dist,
+       aes(x = dist, y = res_cor)) +
+  geom_point() +
+  stat_smooth() +
+  labs(y = "Correlation of Residuals",
+       x = "Standardized Phylogenetic Distance")
+
+```
+
+
+# Considering Correlation: Consider sampling for greeness
+```{r landscape, fig.height=10, fig.width=10}
+library(SpatialTools)
+set.seed(609)
+nc <- 20
+x <- expand.grid(1:nc, 1:nc)
+z <- dist1(as.matrix(x))
+
+cov_fun <- function(d, etasq = 1, l = 3){
+  etasq*exp(-(d/(2*l))^2)
+}
+
+
+k2 <- cov_fun(z, 1, 2)
+
+y <- rmvnorm(1, rep(0, nrow(k2)), k2)
+z <- matrix(y, ncol=nc)
+
+jet.colors <- colorRampPalette( c("brown", "brown", "green", "lightgreen") )
+color <- jet.colors(length(y))
+zfacet <- z[-1, -1] + z[-1, -nc] + z[-nc, -1] + z[-nc, -nc]
+facetcol <- cut(zfacet, length(y))
+
+persp(x=1:nc, y=1:nc, z=matrix(y, ncol=nc), col=color[facetcol],
+      theta = 10, phi = 25, xlab="", ylab="", zlab="", box=FALSE, axes=FALSE,
+      mar=c(0,0,0,0) )
+```
+
+# Modeling Greeness with a Random Intercept
+
+**Likelihood**  
+$Green_i \sim Normal(\mu_{green}, \sigma_{green})$  
+  
+**Data Generating Process**  
+$\mu_{green} = \overline{a} + a_{patch}$  
+  
+$a_{patch} \sim dnorm(0, \sigma_{patch})$  
+  
+<div class="fragment"><center><font color="red">But "patch" isn't discrete - it's continuous, and we know how close they are to each other!</font></center></div>
+
+
+# We Think in Terms of a Continuous Correlation Matrices of Residuals
+
+$$ \epsilon_{ij} = \rho \epsilon_{j} + \zeta_{i}$$ 
+
+which produces  
+
+$$cor(\epsilon) = \begin{pmatrix}
+1 & \rho_{12} &\rho_{13} \\ 
+\rho_{12} &  1& \rho_{23}\\ 
+\rho_{13} & \rho_{23} & 1
+\end{pmatrix}$$ 
+
+# For a MVN, We Use the Covariance Matrix
+
+$$K_{ij} = \begin{pmatrix}
+\sigma_1^2 & \sigma_1\sigma_2 &\sigma_1\sigma_3 \\ 
+\sigma_1\sigma_2 &  \sigma_2^2& \sigma_2\sigma_3\\ 
+\sigma_1\sigma_3 & \sigma_2\sigma_3 & \sigma_3^2
+\end{pmatrix}$$ 
+  
+
+But: what is the function that defines $\sigma_i\sigma_j$ based on the distance between i and j?
+
+# Different Shapes of Autocorrelation
+![](./images/06/autocor_shape.jpg) 
+
+# Introducing Gaussian Processes
+A GP is a random process creating a multivariate normal distribution between points where the covariance between points is related to their distance.  
+  
+$$a_{patch} \sim MVNorm(0, K)$$  
+  
+$$K_{ij} = F(D_{ij})$$
+<center>where $D_{ij} = x_i - x_j$</center>
+
+# The Squared Exponential Function(kernel)
+$$K_{ij} = \eta^2 exp \left( -\frac{D_{ij}^2}{2 \mathcal{l}^2} \right)$$  
+  
+where $\eta^2$ provides the scale of the function and $\mathcal{l}$ the timescale of the process
+
+# The Squared Exponential Covariance Function (kernel)
+```{r show_l}
+cov_fun <- function(d, etasq = 1, l = 1){
+  etasq*exp(-(d^2/(2*l^2)))
+}
+
+set.seed(609)
+testdf <- crossing(x=seq(0,50,length.out=200), l = c(0.1, 1, 10)) %>%
+  dplyr::group_by(l) %>%
+  dplyr::mutate(l3 = l[1], y = rmvnorm(1, rep(0, length(x)), 
+                     cov_fun(as.matrix(dist(x)), l = l[1]))[,1]) %>%
+  ungroup()
+
+qplot(x,y, data=testdf, geom="line", color=factor(l), group=l) +
+  facet_wrap(~l, labeller = labeller(l = function(x) paste("l =", x, sep=" ")))
+```
+
+# A surface from a Squared Exponential GP
+```{r landscape, fig.height=9, fig.width=9}
+```
+
+
+# Squared Exponential v. Linear Dropoff
+```{r show_cov_fun}
+cov_fun <- function(d, etasq = 1, l = 1){
+  etasq*exp(-(d^2/(2*l^2)))
+}
+
+x <- seq(1,50, length.out=200)
+xdist <- as.matrix(dist(x))
+x_cov <- cov_fun(xdist, l=5)
+
+ggplot(data.frame(x=x, y_exp = x_cov[1,], y_lin = rev(xdist[1,]/max(xdist))^2)) +
+  geom_line(mapping=aes(x=x, y=y_exp), color="red", lwd=1.3) +
+  geom_line(mapping=aes(x=x, y=y_lin), color="blue", lwd=1.3) 
+```
+
+# Other Covariance Functions
+::: {.incremental}
+- Periodic:  $K_{P}(i,j) = \exp\left(-\frac{ 2\sin^2\left(\frac{D_{ij}}{2} \right)}{\mathcal{l}^2} \right)$  
+
+- Ornstein–Uhlenbeck:  $K_{OI}(i,j) = \eta^2 exp \left( -\frac{|D_{ij}|}{\mathcal{l}} \right)$  
+  
+- Quadratic $K_{RQ}(i,j)=(1+|d|^{2})^{-\alpha },\quad \alpha \geq 0$
+
+- Note, all of the above can be folded into 1D or 3D, etc autocorrelation  
+
+- AR1, AR2, etc., are just modifications of the above
+:::
+
+# The Squared Exponential Function in rethinking (with cov_GPL2)
+$$K_{ij} = \eta^2 exp \left( -\frac{D_{ij}^2}{2 \mathcal{l}^2} \right)$$  
+Rethinking:  
+$$K_{ij} = \eta^2 exp \left( -\rho^2 D_{ij}^2 \right) + \delta_{ij}\sigma^2$$  
+  
+<li class="fragment"> $\rho^2 = \frac{1}{2 \mathcal{l}^2}$</li>  
+  
+<li class="fragment"> $\delta_{ij}$ introduces extra covariance due to replicate measurements</li>
+
+# Operationalizing a GP
+Let's assume a Squared Exponential GP with an $\eta^2$ and $\mathcal{l}$ of 1. Many possible curves:
+```{r possible}
+poss_df <- data.frame(x=seq(0,50, length.out=200))
+poss_df <- cbind(poss_df, rmvnorm(10, rep(0, nrow(poss_df)), 
+                     cov_fun(as.matrix(dist(poss_df$x))))) %>%
+  gather(sim, y, -x)
+
+qplot(x, y, data=poss_df, group=sim, color=I("grey"), geom="line")
+```
+
+# Operationalizing a GP
+And actually, on average
+```{r show_gp}
+ggplot() +
+  xlim(c(0,50)) +
+  ylim(c(-3,3)) +
+  geom_ribbon(data=data.frame(ymin=c(-2, -2), ymax=c(2,2), x = c(0,50)),
+                              mapping=aes(ymin=ymin, ymax=ymax, x=x), fill="grey") +
+  geom_hline(yintercept=0)  +
+  ylab("") 
+```
+
+# But once we add some data...
+Pinching in around observations!
+```{r show_gp_2}
+
+#draws on http://www.jameskeirstead.ca/blog/gaussian-process-regression-with-r/
+predict_gp <- function(xold, xnew, yold,
+                      etasq=1, l=1, cfun = cov_fun){
+  dmat_old <- as.matrix(dist(xold))
+  
+  if(class(xold) == "matrix"){
+    dmat_new_all <- as.matrix(dist(c(xold, xnew)))
+  }else{
+    dmat_new_all <- as.matrix(dist(c(xold, xnew)))
+  }
+  
+  dmat_old_new <- dmat_new_all[-c(1:length(xold)), -c((length(xold)+1):ncol(dmat_new_all))]
+  dmat_new_old <- dmat_new_all[-c((length(xold)+1):nrow(dmat_new_all)), -c(1:length(xold))]
+  dmat_new_new <- dmat_new_all[-c(1:length(xold)), -c(1:length(xold))]
+  
+  k_old <- cfun(dmat_old, etasq = etasq, l = l)
+  k_old_new <- cfun(dmat_old_new, etasq = etasq, l = l)
+  
+  #for cov
+  k_new_old <- cfun(dmat_new_old, etasq = etasq, l = l)
+  k_new_new <- cfun(dmat_new_new, etasq = etasq, l = l)
+  
+  diag(k_old) <- etasq
+  diag(k_new_new) <- etasq
+  
+  mu <- k_old_new %*% solve(k_old) %*%yold
+  cov_pred <- k_new_new - k_old_new %*%  solve(k_old) %*% k_new_old
+  
+  data.frame(fit = mu, fit_se = sqrt(diag(cov_pred)))
+
+}
+
+#make a GP dataset
+set.seed(609)
+x1 <- runif(10, 0,40)
+dmat <- as.matrix(dist(x1))
+kmat <- cov_fun(dmat)
+diag(kmat) <- 1
+y1 <- rmvnorm(1, rep(0, length(x1)), kmat)[,1]
+xnew <- seq(0,50,length.out=200)
+preds <- predict_gp(x1, xnew, y1)
+preds$x <- xnew
+old <- data.frame(x=x1, fit=y1)
+
+ggplot(data=preds, mapping=aes(x=x, y=fit)) +
+  geom_ribbon(mapping=aes(ymin=fit-fit_se*2, ymax=fit+fit_se*2), alpha=0.4, color="grey") +
+  geom_line() +
+  geom_point(data=old) +
+  ylab("") +
+  xlim(c(0,50)) +
+  ylim(c(-3,3)) 
+#100, 10, 18 9:3
+```
+
+# Warnings!
+:::{.incremental}
+1. Not mechanistic!  
+  
+2. But can incorporate many sources of variability  
+     - e.g., recent analysis showing multiple GP underlying Zika for forecasting  
+  
+3. Can mix mechanism and GP
+
+:::
+
+# An Autocorrelated Adventure
+
+1. Intro to Autocorrelation
+
+2. [Autocorrelation in Space with Gaussian Processes]{.red}
+
+3. Autocorrelation due to Phylogeny
+
+4. Splines and Autocorrelation in Time
+
+# Oceanic Tool Use
+![](./images/gp/tool_map.jpg){width="45%"}
+```{r kline}
+data(Kline2)
+head(Kline2)
+```
+
+# Distances between islands
+```{r kline_dist, echo=TRUE}
+data(islandsDistMatrix)
+islandsDistMatrix
+```
+
+# What if I needed to make a distance matrix?
+```{r make_dist, echo=TRUE}
+dist(cbind(Kline2$lat, Kline2$lon))
+```
+
+Well, convert lat/lon to UTM first, and to matrix after `dist`
+
+# Our GP Model
+**Likelihood**  
+$Tools_i \sim Poisson(\lambda_i)$  
+  
+**Data Generating Process**
+$log(\lambda_i) = \alpha + \gamma_{society} + \beta log(Population_i)$  
+  
+:::{.fragment}
+**Gaussian Process**
+$\gamma_{society} \sim MVNormal((0, ....,0), K)$  
+$K_{ij} = \eta^2 exp \left( -\rho^2 D_{ij}^2 \right) + \delta_{ij}(0.01)$
+:::  
+
+:::{.fragment}
+**Priors**  
+$\alpha \sim Normal(0,10)$  
+$\beta \sim Normal(0,1)$  
+$\eta^2 \sim Exponential(2)$  
+$\rho^2 \sim Exponential(0.5)$
+:::
+
+
+# Our model
+```{r kline2_mod, echo=TRUE}
+Kline2$society <- 1:nrow(Kline2)
+
+k2mod <-   alist(
+  # likelihood
+  total_tools ~ dpois(lambda),
+  
+  # Data Generating Process
+  log(lambda) <- a + k[society] + bp*logpop,
+
+  # Gaussian Process
+  vector[10]:k ~ multi_normal( 0 , SIGMA ),
+  matrix[10,10]:SIGMA <- cov_GPL2( Dmat , etasq , rhosq , 0.01 ),
+  
+  # Priors
+  a ~ dnorm(0,10),
+  bp ~ dnorm(0,1),
+  etasq ~ dexp(2),
+  rhosq ~ dexp(0.5)
+  )
+```
+
+# GPL2
+<center>`g[society] ~ cov_GPL2( Dmat , etasq , rhosq , 0.01)`</center>  
+  
+- Note that we supply a distance matrix  
+  
+- `cov_GPL2` explicitly creates the MV Normal density, but only requires parameters
+
+# Fitting - a list shall lead them
+- We have data of various classes (e.g. matrix, vectors)  
+- Hence, we use a list  
+- This can be generalized to many cases, e.g. true multilevel models
+
+```{r kline2_fit, echo=TRUE, eval=FALSE, results="hide"}
+k2fit <- ulam(k2mod,
+ data = list(
+    total_tools = Kline2$total_tools,
+    logpop = Kline2$logpop,
+    society = Kline2$society,
+    Dmat = islandsDistMatrix),
+ chains=3)
+```
+
+```{r load_fit}
+#save(k2fit, file="lectures/data/gp/k2fit.Rdata")
+load(file="./data/gp/k2fit.Rdata")
+```
+
+# Did it converge?
+```{r converge_k2, results="hide"}
+traceplot(k2fit)
+par(mfrow = c(1,1), ask=FALSE)
+```
+
+# Did it fit?
+```{r postcheck_k2, results="hide"}
+postcheck(k2fit)
+par(ask=FALSE)
+```
+
+# What does it all mean?
+```{r show_coef}
+precis(k2fit)
+```
+
+# What is our covariance function by distance?
+```{r get_cov, echo=TRUE}
+#get samples
+k2_samp <- tidy_draws(k2fit) 
+
+#covariance function
+cov_fun_rethink <- function(d, etasq, rhosq){
+  etasq * exp( -rhosq * d^2)
+}
+
+#make curves
+decline_df <- crossing(data.frame(x = seq(0,10,length.out=200)), 
+                       data.frame(etasq = k2_samp$etasq[1:100],
+                                  rhosq = k2_samp$rhosq[1:100])) %>%
+ dplyr::mutate(covariance = cov_fun_rethink(x, etasq, rhosq))
+  
+```
+
+# Covariance by distance
+```{r plot_cov_dist}
+ggplot(decline_df) +
+  aes(x=x, y=covariance, group=etasq) +
+  geom_line(alpha=0.3) +
+  xlab("Distance")
+```
+
+# Correlation Matrix
+```{r mats, echo=TRUE}
+cov_mat <- cov_fun_rethink(islandsDistMatrix,
+                           median(k2_samp$etasq),
+                           median(k2_samp$rhosq))
+
+cor_mat <- cov2cor(cov_mat)
+```
+
+# Putting it all together...
+```{r plot_res}
+Kline_pts <- crossing(Kline2, 
+                      Kline2 |>
+                        rename_with(~paste0(., "_2")))
+#names(Kline_pts)[11:20] <- paste(names(Kline_pts)[11:20], "2", sep = "_")
+
+cmat <- as.data.frame(cor_mat)
+cmat$culture <- rownames(cmat)
+cmat_df <- gather(cmat, culture_2, correlation, -culture) %>%
+  left_join(Kline_pts)
+
+is_plot <- ggplot(data=Kline2) +
+  aes(x=logpop, y=total_tools) +
+  geom_point(size=2) +
+  geom_segment(data=cmat_df, 
+               mapping=aes(xend = logpop_2, yend = total_tools_2, alpha=correlation)) +
+  scale_alpha_continuous(range = c(0,1)) +ylim(c(0,100)) +
+  xlim(c(7,13))
+
+is_plot
+```
+
+# Putting it all together...
+```{r show_sims, cache=TRUE}
+k2_pred <- crossing(data.frame(logpop = seq(7, 13, length.out=200)),
+                    data.frame(a=k2_samp$a, b=k2_samp$bp)) %>%
+  dplyr::mutate(y = exp(a + b*logpop)) %>%
+  group_by(logpop) %>%
+  dplyr::summarise(total_tools = median(y),
+                   ymin = HPDI(y)[1], ymax=HPDI(y)[2]) %>%
+  ungroup()
+
+is_plot +
+  geom_line(data=k2_pred, color="red") +
+  geom_line(data=k2_pred, mapping=aes(y=ymin), lty=2)+
+  geom_line(data=k2_pred, mapping=aes(y=ymax), lty=2) 
+```
+
+
+# An Autocorrelated Adventure
+
+1. Intro to Autocorrelation
+
+2. Autocorrelation in Space with Gaussian Processes
+
+3. [Autocorrelation due to Phylogeny]{.red}
+
+4. Splines and Autocorrelation in Time
+
+# What About Phylogenetic Autocorrelation?
+```{r phyloplot}
+```
+
+# Does Primate Group Size Select for Brain Size?
+```{r}
+library(dagitty)
+library(ggdag)
+
+
+
+shorten_dag_arrows <- function(tidy_dag, proportion){
+# Update underlying ggdag object
+tidy_dag$data <- dplyr::mutate(tidy_dag$data, 
+                             xend = (1-proportion/2)*(xend - x) + x, 
+                             yend = (1-proportion/2)*(yend - y) + y,
+                             xstart = (1-proportion/2)*(x - xend) + xend,
+                             ystart = (1-proportion/2)*(y-yend) + yend)
+return(tidy_dag)
+}
+
+
+set.seed(609)
+brain_mod <- dagify(
+  brain_size ~ mass + group_size + relatedness,
+  group_size ~ mass + relatedness,
+  mass ~ relatedness
+)
+
+brain_mod <- shorten_dag_arrows(tidy_dagitty(brain_mod), proportion = 0.2)
+
+ggdag(brain_mod,
+      node_size = 32) +
+  ylim(c(-1.2,0.6))+ 
+  theme_dag_blank() 
+```
+
+# Possibilities for Incorporating Relatedness
+
+$$group \ size \sim MVN(\mu, \Sigma)\\ 
+\mu_i = \alpha + \beta_G G_i + \beta_M M_i$$
+
+:::{.incremental}
+- Nothing: $\Sigma = \sigma^2 I$  
+
+- Linear/Brownian: $\Sigma_{ij} = \rho_{ij} \sigma^2$  
+
+- OU/Linear GP: $K_{ij} = \eta^2 exp \left( -\rho^2 D_{ij} \right)$
+
+:::
+
+# Data Prep
+
+```{r, echo = TRUE}
+data(Primates301)
+
+dstan <- Primates301 |>
+  mutate(name = as.character(name)) |>
+  filter(!is.na(group_size),
+         !is.na(body),
+         !is.na(brain)
+         )
+
+# for matrices
+spp_obs <- dstan$name
+
+# A list of data and an Identity Matrix
+dat_list <- list(
+    N_spp = nrow(dstan),
+    M = standardize(log(dstan$body)),
+    B = standardize(log(dstan$brain)),
+    G = standardize(log(dstan$group_size)),
+    Imat = diag(nrow(dstan)) )
+
+```
+
+# No Correlation
+```{r, eval = FALSE}
+no_phylo <- ulam(
+    alist(
+        #likelihood
+        B ~ multi_normal( mu , SIGMA ),
+        
+        # DGP
+        mu <- a + bM*M + bG*G,
+        
+        # Autocorr
+        matrix[N_spp,N_spp]: SIGMA <- Imat * sigma_sq,
+        
+        #priors
+        a ~ normal( 0 , 1 ),
+        c(bM,bG) ~ normal( 0 , 0.5 ),
+        sigma_sq ~ exponential( 1 )
+    ), data=dat_list , chains=4 , cores=4)
+```
+
+```{r}
+#save(no_phylo, file="lectures/data/gp/no_phylo.Rdata")
+load(file="./data/gp/no_phylo.Rdata")
+```
+
+
+# Making a Correlation Distance Matrix
+```{r, echo = TRUE}
+library(ape)
+
+#make phylo cov/distance matrices
+tree_trimmed <- keep.tip( Primates301_nex, spp_obs )
+Rbm <- corBrownian( phy=tree_trimmed )
+V <- vcv(Rbm)
+Dmat <- cophenetic( tree_trimmed )
+
+# put species in right order
+dat_list$V <- V[ spp_obs , spp_obs ]
+
+# convert to correlation matrix
+dat_list$R <- dat_list$V / max(V)
+
+```
+
+# The Correlation Matrix
+
+```{r}
+image(dat_list$R)
+```
+
+# Brownian Correlation
+```{r, eval = FALSE}
+brownian <- ulam(
+    alist(
+        #likelihood
+        B ~ multi_normal( mu , SIGMA ),
+        
+        # DGP
+        mu <- a + bM*M + bG*G,
+        
+        # Autocorr
+        matrix[N_spp,N_spp]: SIGMA <- R * sigma_sq,
+        
+        #priors
+         a ~ normal( 0 , 1 ),
+        c(bM,bG) ~ normal( 0 , 0.5 ),
+        sigma_sq ~ exponential( 1 )
+    ), data=dat_list , chains=4 , cores=4, log_lik = TRUE )
+```
+
+```{r}
+#save(brownian, file="lectures/data/gp/brownian.Rdata")
+load(file="./data/gp/brownian.Rdata")
+```
+
+
+# No Correlation
+```{r, eval = FALSE}
+# add scaled and reordered distance matrix
+dat_list$Dmat <- Dmat[ spp_obs , spp_obs ] / max(Dmat)
+
+ou_gp_mod <- ulam(
+    alist(
+        #likelihood
+        B ~ multi_normal( mu , SIGMA ),
+        
+        # DGP
+        mu <- a + bM*M + bG*G,
+        
+        # Autocorr
+        matrix[N_spp,N_spp]: SIGMA <- cov_GPL1( Dmat , etasq , rhosq , 0.01 ),        
+        #priors
+        a ~ normal(0,1),
+        c(bM,bG) ~ normal(0,0.5),
+        etasq ~ half_normal(1,0.25),
+        rhosq ~ half_normal(3,0.25)
+        
+    ), data=dat_list , chains=4 , cores=4, log_lik = TRUE)
+```
+
+```{r load_ou}
+#save(ou_gp_mod, file="lectures/data/gp/ou_gp_mod.Rdata")
+load(file="./data/gp/ou_gp_mod.Rdata")
+```
+
+# Which Model Fits Best?
+
+```{r comare, echo=TRUE}
+#compare(no_phylo, brownian, ou_gp_mod, func = PSIS)
+```
+
+NOTE: Does not currently work due to working with matrices. Standby!
+
+# Comparing G
+
+```{r, coef_compare, eval = FALSE}
+out <- rbind(
+  precis(no_phylo, pars = "bG"),
+  precis(brownian, pars = "bG"),
+  precis(ou_gp_mod, pars = "bG"))
+
+rownames(out) <- c("no_phylo bG", "brownian bG", "ou_gp_mod bG")
+
+out
+```
+
+# An Autocorrelated Adventure
+
+1. Intro to Autocorrelation
+
+2. Autocorrelation in Space with Gaussian Processes
+
+3. Autocorrelation due to Phylogeny
+
+4. [Splines and Autocorrelation in Time]{.red}
+
+# Kelp from spaaaace!!!
+![](./images/gp/kelp_landsat.jpg)  
+
+Cavanaugh et al. 2011, Bell et al. 2015
+
+# The Mohawk Transect 3 300m Timeseries
+```{r ltrmk_plot}
+ltrmk3 <- read.csv(paste0(here::here(),
+                           "/lectures/data/gp/LANDSAT_1999_2009_mohawk.csv")) %>%
+  mutate(Date = lubridate::parse_date_time(Date, orders="ymd"))
+
+kelp_plot <- ggplot(ltrmk3, aes(x = Date, y = X300m)) +
+  geom_line() +
+  ylab("Kelp Biomass in 300m Pixel")
+kelp_plot
+```
+
+# Polynomials Only Go So Far
+
+```{r}
+kelp_plot +
+  stat_smooth(method = "lm", fill = NA, color = "red")+
+  stat_smooth(method = "lm", fill = NA, color = "blue",
+              formula = y~poly(x,2)) +
+  stat_smooth(method = "lm", fill = NA, color = "purple",
+              formula = y~poly(x,10)) +
+  ylim(c(-2,60000)) +
+  labs(subtitle="Order Polynomial: Red=1, Blue=2, Purple=10")
+```
+
+
+# We Can Use Gaussian Processes...
+```{r}
+library(mgcv)
+kelp_plot +
+  stat_smooth(method = "gam", fill = NA, color = "red",
+              formula = y~s(x,bs = "gp", k = 40)) +
+  labs(subtitle="Red: Gaussian Process Regression")
+```
+
+# A Gaussian Process is a General Case of a Spline in a Generalized Additive Model
+
+```{r}
+library(mgcv)
+kelp_plot +
+  stat_smooth(method = "gam", fill = NA, color = "red",
+              formula = y~s(x,bs = "gp", k = 40)) +
+  stat_smooth(method = "gam", fill = NA, color = "blue",
+              formula = y~s(x,bs = "bs", k = 21)) +
+  labs(subtitle="Red: Gaussian Process Regression, Blue = B-Spline")
+```
+
+:::{.fragment}
+A Spline with many knots converges to a Gaussian Process
+:::
+
+# How do we Make a Spline: Start
+
+We start with a synthetic variable evenly along the X-axis spread using "knots"
+```{r}
+library(splines)
+num_knots <- 5
+
+smooth_date <- ltrmk3$Date |> as.Date() |> as.numeric()
+smooth_dates <- seq(min(ltrmk3$Date), max(ltrmk3$Date),
+                    length.out = 200) |> as.Date() |> as.POSIXct()
+
+knot_list <- quantile( smooth_dates , probs=seq(0,1,length.out=num_knots) )
+#knot_list <- seq(min(ltrmk3$Date), max(ltrmk3$Date) ,length.out=num_knots) 
+
+B <- bs(smooth_dates,
+    knots=knot_list[-c(1,num_knots)] ,
+    degree=1 , intercept=TRUE )
+
+matplot(B, type = "l", lty = 1, xaxt="n")
+axis(1, 
+     at = seq(0, 200, length.out = num_knots), 
+     labels = knot_list |> as.Date())
+```
+
+# How do we Make a Spline: Weighting
+```{r}
+
+d <- ltrmk3 |> filter(!is.na(X300m))
+d$k_s <- scale(d$X300m)
+
+knot_list <- seq(min(d$Date), max(d$Date) ,length.out=num_knots) 
+
+B_dat <- bs(d$Date,
+    knots=knot_list[-c(1,num_knots)] ,
+    degree=1 , intercept=TRUE )
+
+
+spline_mod <- quap(
+    alist(
+        K ~ dnorm( mu , sigma ) ,
+        mu <- a + B %*% w ,
+        a ~ dnorm(0,4),
+        w ~ dnorm(0,1),
+        sigma ~ dexp(1)
+    ),
+    data=list( K=d$k_s , B=B_dat) ,
+    start=list( w=rep( 0 , ncol(B) ) ) )
+
+w_mod <- extract.samples(spline_mod)$w |> colMeans() 
+
+
+#kelp_plot + geom_line(data = z, color = "blue")
+```
+
+```{r weight_plot}
+# matplot(B %*% w_mod, type = "l", lty = 1, xaxt="n")
+# axis(1, 
+#      at = seq(0, 200, length.out = num_knots), 
+#      labels = knot_list |> as.Date())
+
+plot( NULL , xlim=c(0,200) , ylim=c(-1,1) ,
+    xlab="date" , ylab="basis * weight" , xaxt="n")
+for ( i in 1:ncol(B) ) lines( 1:200 , w_mod[i]*B[,i], col = i)
+axis(1, 
+     at = seq(0, 200, length.out = num_knots), 
+     labels = knot_list |> as.Date())
+```
+
+# How do we Make a Spline: Sum Weighted Basis Set
+```{r}
+plot( NULL , xlim=c(0,200) , ylim=c(-1,1) ,
+    xlab="date" , ylab="basis * weight" , xaxt="n")
+for ( i in 1:ncol(B) ) lines( 1:200 , w_mod[i]*B[,i], col = i)
+axis(1, 
+     at = seq(0, 200, length.out = num_knots), 
+     labels = knot_list |> as.Date())
+
+matplot(B %*% w_mod, type = "l", lty = 1, xaxt="n", add = TRUE,
+        lwd = 5)
+```
+
+
+# Predictions from Spline
+```{r}
+z <- linpred_draws(spline_mod, newdata = list( K=d$k_s , B=B_dat , Date = d$Date)) |>
+  group_by(Date) |>
+  summarize(k_s = mean(.value),
+            X300m = k_s * sd(d$X300m) + mean(sd(d$X300m)))
+
+kelp_plot +
+  geom_line(data = z, color = "blue", linewidth = 2)
+```
+
+
+# B-Splines with Different Knots
+
+```{r splines_knots}
+make_spline_plot <- function(num_knots, degree, fun = bs, ...){
+  
+knot_list <- quantile( smooth_dates , probs=seq(0,1,length.out=num_knots) )
+
+B <- fun(smooth_dates,
+    knots=knot_list[-c(1,num_knots)] ,
+    degree=degree , intercept=TRUE )
+
+matplot(B, type = "l", lty = 1, xaxt="n", ...)
+axis(1, 
+     at = seq(0, 200, length.out = num_knots), 
+     labels = knot_list |> as.Date())
+}
+
+par(mfrow = c(2,2))
+make_spline_plot(5, 1, main = "5 knots")
+make_spline_plot(10, 1, main = "10 knots")
+make_spline_plot(20, 1, main = "20 knots")
+make_spline_plot(30, 1, main = "30 knots")
+par(mfrow = c(1,1))
+
+```
+
+# B-Splines of Different Degrees to Control "Wiggliness"
+
+```{r}
+par(mfrow = c(2,2))
+make_spline_plot(5, 1, main = "5 knots, Order 1")
+make_spline_plot(5, 3, main = "5 knots, Order 3")
+make_spline_plot(5, 5, main = "5 knots, Order 5")
+make_spline_plot(5, 7, main = "5 knots, Order 7")
+par(mfrow = c(1,1))
+```
+
+# Splines Basis Sets of Different Types
+
+```{r}
+par(mfrow = c(2,2))
+make_spline_plot(5, 7, main = "B-Spline")
+#make_spline_plot(5, 7, fun = splines2::mSpline, main = "M-Spline")
+make_spline_plot(5, 7, fun = splines2::iSpline, main = "I-Spline")
+make_spline_plot(5, 7, fun = splines2::naturalSpline, main = "Cubic Spline")
+
+# Thin Plate
+TSPLINE <- npreg::basis.tps(smooth_dates,
+    knots=knot_list[-c(1,num_knots)] ,
+    m=2 , intercept=TRUE )
+
+matplot(TSPLINE, type = "l", lty = 1, xaxt="n", main = "Thin Plate Splines")
+axis(1, 
+     at = seq(0, 200, length.out = num_knots), 
+     labels = knot_list |> as.Date())
+
+
+par(mfrow = c(1,1))
+```
+
+And More...
+
+# The GAM Formulation as a Model
+
+**Likelihood:**
+$$y_i\sim \mathcal{N}(\mu_i, \sigma^{2})$$
+  
+**Data Generating Process:**  
+$$g(\mu_i) = f(x_i)$$  
+   
+$$ f(x_i) = \sum_{j=1}^{d}\gamma_jB_j(x_i)$$
+
+:::{.fragment}
+- $B_j(x)$ is your basis function with $d$ elements.  
+   
+- $\gamma_j$ is a weight for each element of the basis set.  
+  
+- You can have other linear predictors
+:::
+
+# The Cental Idea Behind GAMs
+![](./images/gams/fig1_ultithread_stitchfix.svg)
+
+
+# Basis Functions: You've seen them before
+$$f(X) = \sum_{j=1}^{d}\gamma_jB_j(x)$$
+  
+  
+Linear Regression as a Basis Function:  
+$$d = 1$$
+
+$$B_j(x) = x$$
+
+<div class = "fragment">
+So....
+$$f(x) = \gamma_j x$$
+</div>
+
+
+# Basis Functions: You've seen them before
+$$f(X) = \sum_{j=1}^{d}\gamma_jB_j(x)$$
+  
+  
+Polynomial Regression as a Basis Function:  
+$$f(x) = \gamma_0 + \gamma_1\cdot x^1 \ldots +\gamma_d\cdot x^d$$
+
+# Basis Functions in GAMs
+- You can think of every $B_j(x)$ as a transformation of x  
+  
+- In GAMs, we base j off of K knots  
+  
+- A knot is a place where we split our data into pieces  
+     - We optimize knot choice, but let's just split evenly for a demo
+  
+- For each segment of the data, we fit a seprate function, then add them together
+
+# A Model for the Z-Transformed Kelp Time Series
+
+**Likelihood:**
+$$Kelp\:Std_i \sim \mathcal{N}(\mu_i, \sigma)$$
+
+:::{.fragment}
+- We Z-Transform for ease of fit and to not worry about 0 problem
+:::
+
+:::{.fragment}
+**Data Generating Process:**
+$$\mu_i = \alpha + \sum_{d=1}^D w_d B_{d,i}$$
+
+- Here, remember, B is a transform of Date
+:::
+
+**Priors:**
+$$\alpha \sim \mathcal{N}(0, 2) \\
+w_d \sim \mathcal{N}(0, 1) \\
+\sigma \sim \mathcal{Exp}(1)$$
+
+
+
+# Building the Basis Set with 30 knots
+
+```{r}
+#| echo: true
+#| source-line-numbers: "|1-3|5-6|8-12|"
+# filter NA as it causes problems with matrix multiplication
+d <- ltrmk3 |> filter(!is.na(X300m))
+d$k_s <- scale(d$X300m)
+
+# make a knot list based on date with 30 knots
+knot_list <- seq(min(d$Date), max(d$Date), length.out=30) 
+
+# build the basis set
+B <- bs(d$Date,
+    knots=knot_list[-c(1,num_knots)], 
+    degree=1, 
+    intercept=TRUE )
+
+```
+
+
+# The Model in Rethinking
+
+```{r spline_mod}
+#| echo: true
+#| code-line-numbers: "|5-6|12-17|"
+kelp_spline_mod <- alist(
+  # Likelihood
+  K ~ dnorm(mu , sigma),
+  
+  # DGP
+  mu <- a + B %*% w,
+  
+  # Priors
+  a ~ dnorm(0, 4),
+  w ~ dnorm(0, 1),
+  sigma ~ dexp(1)
+)
+
+# Fit with start values to give dimensions
+# and a list to contain different data types
+kelp_spline_fit <- quap(
+  kelp_spline_mod,
+  data=list( K=d$k_s , B=B) ,
+  start=list( w=rep( 0 , ncol(B) ) ) )
+```
+
+
+# What did it all mean?
+```{r}
+#| echo: true
+#| eval: true
+#| code-line-numbers: "|3|"
+kelp_pred <- 
+  linpred_draws(kelp_spline_fit, 
+                newdata = list( K=d$k_s , B=B , Date = d$Date)) |>
+  group_by(Date) |>
+  summarize(k_s = mean(.value),
+            X300m = k_s * sd(d$X300m) + mean(sd(d$X300m)))
+```
+
+# What did it all mean?
+```{r}
+kelp_plot +
+  geom_line(data = kelp_pred, color = "blue", linewidth = 2)
+```
+
+# Space, Time, And All of That
+
+:::{.incremental}
+- Fundamentally, we assume things close to each other are more similar than things that are far apart.  
+  
+- If our predictors account for all variation, this *might* not be necessary.  
+
+- But, if we wish to account for other correlated drivers or autocorrelation in residuals, we have many options
+
+- We can model K, the variance-covariance matrix with a MVN process.  
+  
+- We can use a spline (computationally faster) that will approximate a Gaussian Process
+:::
+
+# 
+
+![](./images/gams/gam_gam_style.jpg)
+
