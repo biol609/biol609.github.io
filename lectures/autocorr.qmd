@@ -821,7 +821,7 @@ load(file="./data/gp/brownian.Rdata")
 ```
 
 
-# No Correlation
+# OU/Linear GP Correlation
 ```{r, eval = FALSE, echo = TRUE}
 # add scaled and reordered distance matrix
 dat_list$Dmat <- Dmat[ spp_obs , spp_obs ] / max(Dmat)
