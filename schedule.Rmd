@@ -146,7 +146,7 @@ __Further Readings:__ [Methods to account for spatial autocorrelation in the ana
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
-__Lecture:__ Measurement Error, Missing Data, and Bayesian Meta-Analysis  
+__Lecture:__ [Measurement Error, Missing Data, and Bayesian Meta-Analysis ](lectures/missing_data_and_metaanalysis.html)    
 __Reading:__ McElreath Chapter 15.  
 __Homework:__ Project Proposals Due  
 
