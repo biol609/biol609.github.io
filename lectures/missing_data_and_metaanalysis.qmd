@@ -1,0 +1,878 @@
+---
+title: ""
+format: 
+  revealjs:
+    navigation-mode: vertical
+    controls-layout: bottom-right
+    controls-tutorial: true
+    theme: simple
+    incremental: false
+    css: style.css
+---
+
+
+
+```{r setup, include=FALSE}
+library(knitr)
+
+opts_chunk$set(fig.height=5, fig.width=7, comment=NA, 
+               warning=FALSE, message=FALSE, 
+               dev="jpeg", echo=FALSE, root.dir = here::here())
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+library(rethinking)
+library(tidybayes)
+library(tidybayes.rethinking)
+
+theme_set(theme_bw(base_size = 15))
+theme_update(plot.title = element_text(hjust = 0.5))
+
+ext <- read.csv("data/missing/extinctionMetaClean.csv") |>
+  filter(Trait.category == "Broad" & Aggregate.Trait=="Geographic Range") |>
+  select(study.ID, lnorReg, vlnorReg, mean_d34S.prok, stdev_d34S.prok) |>
+  mutate(measurement_id = paste0(study.ID, 1:n())) |>
+  filter(!is.na(mean_d34S.prok))
+```
+
+# Missing Data
+![](images/missing/missingparents.png)
+
+# Three Major Missing Data Problems 
+
+1. Meta-analysis as a missing data problem  
+
+2. Measurement error in X
+
+3. Missing datapoints
+
+
+# What is Meta-Analysis
+:::{.incremental}
+- Let's say you want to summarize results across many studies.  
+     - Hey, that's very Bayesian - what is the full posterior?!
+     
+- BUT, all you have is means and standard deviations of results.  
+     - Folk often won't share raw data.  
+     - Or it's old! No longer exists!
+     
+- Fundamentally, the data is **missing**.   
+      - BUT, we have information about it to calculate an **effect size**
+
+:::
+
+# Effect Sizes
+
+- For Group A, you know a mean and SD
+
+- For Group B, you know a mean and SD
+
+- You can then calculate an effect size
+     - eg, log ratio = ln(A) - ln(B) 
+     - Hedge's G = (A-B)/pooled SD
+     - etc...
+
+# Can you Survive Extinction?
+![](images/missing/orz_header.png)
+
+
+# Does Broad v. Narrow Distribution Size Matter?
+![](images/missing/Geographic-distribution-of-marine-mussels-of-the-genus-Mytilus-Approximate-distributions_W640.jpg)
+
+[Gaitán-Espitia et al. 2016]{.small}
+
+
+# Calculating an Effect Size: Log Odds Ratio
+
+- s1 species survive an event in group 1, and e1 go extinct.  
+  
+- So p1 fraction of species survived an event in group 1 and p2 in group 2
+
+$$lnor = \frac{p1/(1-p1)}{p2/(1-p2)}$$
+
+$$var \: lnor = \sqrt{1/s_1 + 1/e_1 + 1/s_2 + 1/e_2}$$
+
+# Summarizing Studies
+
+```{r vis_broad}
+ggplot(ext, aes(y = study.ID, x = lnorReg,
+                xmin = lnorReg-2*sqrt(vlnorReg), 
+                xmax = lnorReg+2*sqrt(vlnorReg), 
+                group = measurement_id,
+                color = study.ID)) +
+  geom_point( position = position_dodge(width = 1)) +
+  geom_linerange(position = position_dodge(width = 1)) +
+  scale_color_discrete(guide = "none") + 
+  geom_vline(xintercept = 0, lty = 2) +
+  annotate("text", y = 11.5, x = -4, label = "Advantage Narrow") +
+  annotate("text", y = 11.5, x = 5, label = "Advantage Broad") +
+  labs(x = "Log Odds Ratio", y = "", subtitle = "Effect of broad or narrow species range distribution\non probability of extinction during\nmass extinction event")
+```
+
+Data from Orzechowski et al. 2015 Global Change Biology
+
+# Are these All Just Samples from One Effect Size?
+![](images/missing/nakagawa_4a_fe.png)
+[Nakagawa et al. 2017]{.small}
+
+
+# Fixed/Common Effect Meta-Analysis
+
+Likelihood:
+$$y_i \sim N(\mu, \sigma_i)$$
+
+Prior:
+$$\mu \sim N(0,1)$$
+
+We have **observed** $\sigma_i$.
+
+# Bayesian Fit of a FE Meta-Analysis
+
+```{r fe_fit}
+#| echo: true
+fe_meta <- quap(
+  alist(
+    
+    # likelihood
+    lnorReg ~ dnorm(mu, sd_lnor),
+    
+    # Prior
+    mu ~ dnorm(0, 1)
+  ),
+  data = ext |>
+    select(lnorReg, vlnorReg) |>
+    mutate(sd_lnor = sqrt(vlnorReg))
+)
+```
+
+# What if the Effect Varies from Study to Study?
+![](images/missing/nakagawa_4b_re.png)
+
+[Nakagawa et al. 2017]{.small}
+
+# Random Effects Meta-Analysis
+
+Likelihood:
+$$y_i \sim N(\theta_i, \sigma_i)$$
+
+Random Effects:
+$$\theta_i \sim N(\mu, \tau)$$
+
+
+Prior:
+$$\mu \sim N(0,1)$$
+$$\tau \sim halfN(0,2)$$
+
+We have **observed** $\sigma_i$ and $y_i$.
+
+# Bayesian Fit of a RE Meta-Analysis
+
+```{r re_meta}
+#| eval: false
+#| echo: true
+re_meta <- ulam(
+  alist(
+    
+    # likelihood
+    lnorReg ~ dnorm(theta[measurement_id], sd_lnor),
+    
+    # RE
+    theta[measurement_id] ~ dnorm(mu, tau),
+    
+    # Prior
+    mu ~ dnorm(0, 1),
+    tau ~ dhalfnorm(0,2)
+  ),
+  data = ext |>
+    select(lnorReg, vlnorReg) |>
+    mutate(sd_lnor = sqrt(vlnorReg),
+           measurement_id = 1:n()),
+  chains = 3, log_lik = TRUE
+)
+```
+
+
+
+# Bayesian Fit of a RE Meta-Analysis using NCP
+
+```{r ncp_re}
+#| echo: true
+#| eval: false
+re_meta <- ulam(
+  alist(
+    
+    # likelihood
+    lnorReg ~ dnorm(theta, sd_lnor),
+    
+    # DGP
+    theta <- mu + measure_dev[measurement_id],
+
+    # RE
+    measure_dev[measurement_id] ~ dnorm(0, tau),
+    
+    # Prior
+    mu ~ dnorm(0, 1),
+    tau ~ dhalfnorm(0,2)
+  ),
+  data = ext |>
+    select(lnorReg, vlnorReg) |>
+    mutate(sd_lnor = sqrt(vlnorReg),
+           measurement_id = 1:n()),
+  chains = 3
+)
+```
+
+```{r load_re}
+#| echo: false
+#| eval: true
+#saveRDS(re_meta, "lectures/missing_models/re_meta.rds")
+re_meta <- readRDS("missing_models/re_meta.rds")
+```
+
+# How do BLUPs compare to Means?
+```{r blup_plot}
+preds <- linpred_draws(re_meta, newdata = ext |>
+    select(study.ID,  vlnorReg) |>
+    mutate(sd_lnor = sqrt(vlnorReg),
+           measurement_id = 1:n())) |>
+  group_by(study.ID, measurement_id) |>
+  summarize(lnorReg = mean(.value))
+
+mu <- tidy_draws(re_meta) |>
+  select(mu) |>
+  summarize(mu_lower = HPDI(mu)[1],
+            mu_upper = HPDI(mu)[2],
+            mu = mean(mu))
+
+ggplot(ext |> mutate(sd_lnor = sqrt(vlnorReg),
+           measurement_id = 1:n()),
+        aes(y = study.ID, x = lnorReg,
+                group = measurement_id)) +
+       geom_point(position = position_dodge(width = 1))+
+       geom_point(data = preds, 
+                  position = position_dodge(width = 1),
+                  color = "blue") + 
+  geom_vline(xintercept = mu$mu, lty = 2) +
+  geom_rect(ymin = 0, ymax = 14, xmin = mu$mu_lower, xmax = mu$mu_upper, 
+            alpha = 0.01, fill = "grey") +
+  labs(x = "Log Odds Ratio", y = "", subtitle = "black = data, blue = BLUP, dash = mu")
+```
+
+# How Much Does and Effect Differ Between Studies?
+
+```{r i2_plot}
+tidy_draws(re_meta) |>
+  ggplot(aes(x = tau^2/(tau^2 + mean(ext$vlnorReg)))) +
+  geom_density(fill = "goldenrod") +
+  labs(x = "I^2 = tau^2/(tau^2 + mean measurement variance)",
+       subtitle = "Porportional Heterogeneity Between Studies in Effect Size")
+```
+
+
+# What If Studies Have Multiple Measurements?
+![](images/missing/nakagawa_4c_mixed.png)
+
+
+[Nakagawa et al. 2017]{.small}
+
+
+# Multilevel Meta-Analysis
+
+Likelihood:
+$$y_{ij} \sim N(\theta_{ij}, \sigma_{ij})$$
+
+Random Effects:
+$$\theta_{ij} \sim N(\psi_i, \omega_{i})$$
+$$\psi_{i} \sim N(\mu, \tau)$$
+
+
+Prior:
+$$\mu \sim N(0,1)$$
+$$\omega \sim halfN(0,2)$$
+$$\tau \sim halfN(0,2)$$
+
+We have **observed** $\sigma_{ij}$ and $y_{ij}$.
+
+# Bayesian Multilevel Meta-Analysis
+
+```{r multi_meta}
+#| eval: false
+#| echo: true
+multi_meta <- ulam(
+  alist(
+    
+    # likelihood
+    lnorReg ~ dnorm(theta[measurement_id], sd_lnor),
+    
+    # RE
+    theta[measurement_id] ~ dnorm(psi[study_id], omega),
+    psi[study_id] ~ dnorm(mu, tau),
+    
+    # Prior
+    mu ~ dnorm(0, 1),
+    tau ~ dhalfnorm(0,2),
+    omega ~ dhalfnorm(0,2)
+  ),
+  data = ext |>
+    select(lnorReg, vlnorReg, study.ID) |>
+    mutate(sd_lnor = sqrt(vlnorReg),
+           measurement_id = 1:n(),
+           study_id = as.numeric(as.factor(study.ID))),
+  chains = 4, log_lik = TRUE, iter = 4e3
+)
+```
+
+# NCP Bayesian Multilevel Meta-Analysis
+
+```{r multi_meta_ncp}
+#| eval: false
+#| echo: true
+multi_meta <- ulam(
+  alist(
+    
+    # likelihood
+    lnorReg ~ dnorm(theta[measurement_id], sd_lnor),
+    
+    # DGP
+    theta <- mu + measure_dev[measurement_id] + study_dev[study_id],
+    
+    # RE
+    measure_dev[measurement_id] ~ dnorm(0, omega),
+    study_dev[study_id] ~ dnorm(0, tau),
+    
+    # Prior
+    mu ~ dnorm(0, 1),
+    tau ~ dhalfnorm(0,2),
+    omega ~ dhalfnorm(0,2)
+  ),
+  data = ext |>
+    select(lnorReg, vlnorReg, study.ID) |>
+    mutate(sd_lnor = sqrt(vlnorReg),
+           measurement_id = 1:n(),
+           study_id = as.numeric(as.factor(study.ID))),
+  chains = 4, log_lik = TRUE, iter = 4e3
+)
+```
+
+
+```{r load_multi_meta}
+#| echo: false
+#| eval: true
+#saveRDS(multi_meta, "lectures/missing_models/multi_meta.rds")
+multi_meta <- readRDS("missing_models/multi_meta.rds")
+```
+
+
+# How Much Does and Effect Differ Between Studies?
+
+```{r i2_multi_meta}
+tidy_draws(multi_meta) |>
+  mutate(between = tau^2 / (tau^2 + omega^2 + mean(ext$vlnorReg)),
+         within = omega^2 / (tau^2 + omega^2 + mean(ext$vlnorReg)),
+         ) |>
+  select(.draw, between, within) |>
+  pivot_longer(-.draw) |>
+  ggplot(aes(x = value, fill = name)) +
+  geom_density() +
+  facet_wrap(vars(name)) +
+  scale_fill_manual(values = c("goldenrod", "firebrick4"))+
+  labs(x = "Porportion Heterogeneity",
+       subtitle = "Sources of Heterogeneity in Effect Size")
+```
+
+# Bayesian Meta-Analysis
+
+:::{.incremental}
+1. When you want to know the state of a field, META-ANALYSIS!  
+  
+2. We can estimate relationships when we have one more more source of uncertainty in Y. 
+  
+3. Ask yourself, what are my sources of variation. 
+      - Meta-regrssion is possible, too!
+
+4. It's distributions all the way down (NCP can help)!      
+:::
+
+<!--
+<!-- # What About a Predictor? -->
+<!-- ```{r predictor_plot} -->
+
+<!-- base_plot <- ggplot(ext, aes(x = mean_d34S.prok, y = lnorReg, -->
+<!--                 ymin = lnorReg-2*sqrt(vlnorReg),  -->
+<!--                 ymax = lnorReg+2*sqrt(vlnorReg),  -->
+<!--                 xmin = mean_d34S.prok-2*stdev_d34S.prok,  -->
+<!--                 xmax = mean_d34S.prok+2*stdev_d34S.prok,  -->
+<!--                 color = study.ID))  + -->
+<!--   geom_point(size = 2) + -->
+<!--   scale_color_discrete(guide = "none") + -->
+<!--   geom_hline(yintercept = 0,  lty = 2) + -->
+<!--    labs(y = "Log Odds Ratio", y = "delta 34S")   -->
+
+<!-- base_plot -->
+<!-- ``` -->
+
+
+<!-- # What We've Been Working With -->
+<!-- ```{r} -->
+<!-- base_plot + geom_linerange() -->
+<!-- ``` -->
+
+<!-- # A Bayesian Metaregression -->
+
+<!-- ```{r metareg} -->
+<!-- #| eval: false -->
+<!-- #| echo: true -->
+<!-- metareg <- ulam( -->
+<!--   alist( -->
+
+<!--     # likelihood -->
+<!--     lnorReg ~ dnorm(theta[measurement_id], sd_lnor), -->
+
+<!--     # DGP -->
+<!--     theta <- mu + beta *d34S + -->
+<!--       measure_dev[measurement_id] + study_dev[study_id], -->
+
+<!--     # RE -->
+<!--     measure_dev[measurement_id] ~ dnorm(0, omega), -->
+<!--     study_dev[study_id] ~ dnorm(0, tau), -->
+
+<!--     # Prior -->
+<!--     mu ~ dnorm(0, 1), -->
+<!--     beta ~ dnorm(0, 1), -->
+<!--     tau ~ dcauchy(0,2), -->
+<!--     omega ~ dcauchy(0,2) -->
+<!--   ), -->
+<!--   data = ext |> -->
+<!--     select(lnorReg, vlnorReg, mean_d34S.prok, study.ID) |> -->
+<!--     rename(d34S = mean_d34S.prok) |> -->
+<!--     mutate(sd_lnor = sqrt(vlnorReg), -->
+<!--            measurement_id = 1:n(), -->
+<!--            study_id = as.numeric(as.factor(study.ID))), -->
+<!--   chains = 4, log_lik = TRUE, iter = 4e3 -->
+<!-- ) -->
+<!-- ``` -->
+
+<!-- # Variability in X -->
+<!-- ```{r} -->
+<!-- base_plot +  -->
+<!--   geom_linerange() + -->
+<!--   geom_errorbarh() -->
+<!-- ``` -->
+
+<!-- # A Bayesian Metaregression -->
+<!-- ```{r metareg_unbiased} -->
+<!-- #| eval: false -->
+<!-- #| echo: true -->
+<!-- metareg_dat<- ext |> -->
+<!--     select(lnorReg, vlnorReg, stdev_d34S.prok, mean_d34S.prok, study.ID) |> -->
+<!--     rename(d34S = mean_d34S.prok, -->
+<!--            sd_d34S = stdev_d34S.prok) |> -->
+<!--       filter(!is.na(sd_d34S)) |> -->
+<!--     mutate(sd_lnor = sqrt(vlnorReg), -->
+<!--            measurement_id = 1:n(), -->
+<!--            study_id = as.numeric(as.factor(study.ID))) |> -->
+<!--   select(-study.ID) -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- metareg_unbiased <- ulam( -->
+<!--   alist( -->
+
+<!--     # likelihood -->
+<!--     lnorReg ~ dnorm(theta[measurement_id], sd_lnor), -->
+
+<!--     # DGP -->
+<!--     theta <- mu + beta *d34S_est[measurement_id] + -->
+<!--       measure_dev[measurement_id] + study_dev[study_id], -->
+
+<!--     # X -->
+<!--     d34S_est[measurement_id] ~ dnorm(d34S, sd_d34S), -->
+
+<!--     # RE -->
+<!--      measure_dev[measurement_id] ~ dnorm(0, omega), -->
+<!--     study_dev[study_id] ~ dnorm(0, tau), -->
+
+<!--     # Prior -->
+<!--     mu ~ dnorm(0, 1), -->
+<!--     beta ~ dnorm(0, 1), -->
+<!--     tau ~ dcauchy(0,2), -->
+<!--     omega ~ dcauchy(0,2) -->
+<!--   ), -->
+<!--  data = metareg_dat, -->
+<!--   chains = 4, iter = 4e3, -->
+<!--  start = list(d34S_est = rep(0, nrow(metareg_dat))) -->
+<!-- ) -->
+<!-- ``` -->
+
+
+<!-- # How Different are the Beta Estimates? -->
+
+<!-- ```{r} -->
+<!-- ctab <- tidy_draws(metareg) |> mutate(model = "no se") -->
+<!-- ctab_u <- tidy_draws(metareg_unbiased)|> mutate(model = "se") -->
+
+<!-- library(ggridges) -->
+<!-- bind_rows(ctab |> select(model, beta), -->
+<!--           ctab_u |> select(model, beta)) |> -->
+<!--   ggplot(aes(y = model, x = beta, fill = model)) + -->
+<!--   ggridges::stat_density_ridges() + -->
+<!--   geom_vline(xintercept = 0, lty = 2) + -->
+<!--   scale_fill_brewer(palette = "Accent") + -->
+<!--   labs(y="") -->
+          
+
+<!-- ``` -->
+
+<!-- :::{.fragment} -->
+<!-- *Phew* -->
+<!-- ::: -->
+
+-->
+
+# Three Major Missing Data Problems 
+
+1. Meta-analysis as a missing data problem  
+
+2. [Measurement error in X]{.red}
+
+3.  Missing datapoints
+
+# Does Measurement Error in Y Bias our Estimates?
+
+Likelihood:
+$$Y_i \sim N(\hat{Y_i}, \sigma)$$
+
+
+DGP:
+$$\hat{Y_i} = \alpha + \beta X_i$$
+
+:::{.fragment}
+Oh wait! The measurement error is already there - $\sigma$ has both process error AND measurement error!
+:::
+
+# Does Measurement Error in Y Bias our Estimates?
+
+Old School notation:
+$$Y_i = \alpha + \beta X_i + \epsilon_i + \gamma_i$$
+
+:::{.incremental}
+- Error is now decomposed into process error ($\epsilon_i$) and measurement error ($\gamma_i$).  
+
+- Both are normally distributed. Does not affect bias in estimate of $\beta$
+:::
+
+# Does Measurement Error in X Bias our Estimates?
+
+Likelihood:
+$$Y_i \sim N(\hat{Y_i}, \sigma)$$
+
+
+DGP in our Model:
+$$\hat{Y_i} = \alpha + \beta_1 X_i + \beta_1 \nu_i$$
+
+Where, $\nu_i \sim N(0, \tau)$
+
+Our estimate of $\beta_1$ is biased by $\nu_i$
+
+# What Does Measurement Error Do
+![](images/missing/biggs_et_al_2009_scatter.png)
+
+[Biggs et al. 2009](https://academic.oup.com/bioscience/article/59/1/65/307134){.small}
+
+
+# Solution
+![](images/missing/biggs_et_al_2009_solution.png)
+
+[Biggs et al. 2009](https://academic.oup.com/bioscience/article/59/1/65/307134){.small}
+
+# What we Want
+
+Likelihood:
+$$Y_i \sim N(\hat{Y_i}, \sigma)$$
+
+Measurement Error in X:
+$$X_i \sim N(\hat{X_i}, \tau)$$
+
+
+DGP in our Model:
+$$\hat{Y_i} = \alpha + \beta_1 \hat{X_i}$$
+
+# Example: Lakes and Phosphorus Simulation from Biggs et al. 2009
+
+```{r make_lakes}
+set.seed(31415)
+n <- 30
+m <- rmvnorm2(n, Mu = rep(100, 2), sigma = rep(10, 2), 
+              Rho = matrix(c(1, 0.5, 0.5, 1), nrow=2))
+
+lake_dat <- tibble(
+  phosphorus = m[,1],
+  nitrogen = m[,2],
+  chl = rnorm(n, 25 + 10*phosphorus + 25*nitrogen, 10),
+  phosphorus_measured = phosphorus + rnorm(n, 0, 10),
+  nitrogen_measured = nitrogen + rnorm(n, 0, 10)
+  
+)
+
+ggplot(lake_dat |>
+         pivot_longer(c(phosphorus, phosphorus_measured)), 
+       aes(x =value, y = chl)) +
+  geom_point() +
+  stat_smooth(method = "lm") +
+  facet_wrap(vars(name))
+
+```
+
+# Our Model
+
+Likelihood:
+$$chl_i \sim N(\hat{chl_i}, \sigma)$$
+
+Measurement Error in X:
+$$P_i \sim N(\hat{P_i}, \tau)$$
+
+
+DGP in our Model:
+$$\hat{chl_i} = \alpha + \beta_1 \hat{P_i}$$
+
+# How do we Fit This?
+```{r chl_mod, echo = TRUE, eval = FALSE}
+#| code-line-numbers: "|12-14|17|24-25|"
+
+d <- lake_dat |> select(chl, phosphorus_measured) |>
+    mutate(chl_s = standardize(chl), 
+           phosphorus_measured_s = standardize(phosphorus_measured),
+           idx = 1:n())
+
+chl_fit <- ulam(
+  alist(
+    # likelihood
+    chl_s ~ dnorm(chl_hat_s, sigma),
+    
+    
+    # ME
+    phosphorus_measured_s ~ dnorm(phosphorus_s[idx], tau),
+    phosphorus_s[idx] ~ dnorm( 0, 10 ),
+    
+    
+    # DGP
+    chl_hat_s <- a + b*phosphorus_s[idx],
+    
+    
+    # Priors
+    a ~ dnorm(0,1),
+    b ~ dnorm(0,1),
+    sigma ~ dhalfnorm(0,2),
+    tau ~ dhalfnorm(0,10)
+
+  ),
+  
+  data = d,
+  
+  chains = 3, iter = 6e3)
+```
+
+
+```{r load_chl }
+#| echo: false
+#| eval: true
+#saveRDS(chl_fit, "lectures/missing_models/chl_fit.rds")
+chl_fit <- readRDS("missing_models/chl_fit.rds")
+```
+
+# Imputed versus Measured Phosphorus Values
+```{r}
+res <- (tidy_draws(chl_fit) |>
+  colMeans())[1:n+1]
+
+dat <- lake_dat |> select(chl, phosphorus_measured, phosphorus) |>
+    mutate(chl_s = standardize(chl), 
+           phosphorus_s = standardize(phosphorus),
+           phosphorus_measured_s = standardize(phosphorus_measured),
+           idx = 1:n(),
+           phosphorus_s_est = res
+           )
+  
+GGally::ggpairs(dat |> 
+                  select(phosphorus_s, 
+                         phosphorus_measured_s, 
+                         phosphorus_s_est)) 
+
+```
+
+# Comparison of Slopes with Versus Without Measurement Error
+
+```{r}
+true_fit <- quap(alist(
+   # likelihood
+    chl_s ~ dnorm(chl_hat_s, sigma),
+    
+    
+    # DGP
+    chl_hat_s <- a + b*phosphorus_s,
+    
+    
+    # Priors
+    a ~ dnorm(0,0.1),
+    b ~ dnorm(0,1),
+    sigma ~ dexp(2)
+  ),
+  
+  data = dat)
+
+naive_fit <- quap(alist(
+   # likelihood
+    chl_s ~ dnorm(chl_hat_s, sigma),
+    
+    
+    # DGP
+    chl_hat_s <- a + b*phosphorus_measured_s,
+    
+    
+    # Priors
+    a ~ dnorm(0,0.1),
+    b ~ dnorm(0,1),
+    sigma ~ dexp(2)
+  ),
+  
+  data = dat)
+
+plot(coeftab(true_fit, naive_fit, chl_fit), pars = c("a", "b", "sigma"))
+```
+
+# Going from Standardized to Unstandardized Coefficients
+:::{.incremental}
+- $$b_{std} = b_{unstd} * sd(x)/sd(y)$$ 
+
+- $$b_{unstd} = b_{nstd} * sd(y)/sd(x)$$  
+  
+- $$sd(x_{true}) = sd(x_{with\: error})*\sqrt{1-\tau^2}$$
+:::
+
+# So on an Unstandardized Scale
+```{r}
+ctab <- sapply(list(true_fit, naive_fit, chl_fit), precis)
+names(ctab) <- c("True fit", "Naieve fit", "Corrected Fit")
+
+ctab_unstd <- purrr::map(ctab, ~.x[rownames(.x)=="b",]) |>
+  purrr::list_rbind(names_to = "model") |>
+  select(-rhat, -ess_bulk) 
+
+sd_phos_s <- sqrt(1-mean(tidy_draws(chl_fit)$tau))
+
+ctab_unstd[1,2:3] <- ctab_unstd[1,2:3] * sd(dat$chl)/sd(dat$phosphorus)
+ctab_unstd[2,2:3] <- ctab_unstd[2,2:3] * sd(dat$chl)/sd(dat$phosphorus_measured)
+ctab_unstd[3,2:3] <- ctab_unstd[3,2:3] * sd(dat$chl)/(sd(dat$phosphorus_measured)*sd_phos_s)
+
+rownames(ctab_unstd) <- NULL
+ctab_unstd
+```
+
+# Take-Aways
+
+- Measurement error can bias coefficient estimates. 
+     - This is a HUGE problem
+  
+- But, it doesn't bias fit as much in some cases.  
+   - More error, potentially more bias, particularly if it is not random.  
+
+- What are you seeking to ask? What is important for your project?
+
+# Three Major Missing Data Problems 
+
+1. Meta-analysis as a missing data problem  
+
+2. Measurement error in X
+
+3. [ Missing datapoints]{.red}
+
+
+#
+
+![](images/missing/ask_stats.jpg)
+
+# Previously, We Removed Missing Data from Monkies and Milk
+![](images/14/monkies_milk.jpg)
+
+# Different Ways for Data to be Missing
+![](images/missing/missingness.png)
+
+# Monkey Prep
+```{r}
+#| echo: true
+data(milk)
+
+d <- milk
+d$neocortex.prop <- d$neocortex.perc / 100
+d$logmass <- log(d$mass)
+dat_list <- list(
+    K = standardize( d$kcal.per.g ),
+    B = standardize( d$neocortex.prop ),
+    M = standardize( d$logmass ) )
+```
+
+# A Missing Monkey Model
+```{r}
+#| echo: true
+#| eval: false
+
+monkey_mod <- ulam(
+    alist(
+        # Likelihood
+        K ~ dnorm( mu , sigma ),
+        
+        # DGP
+        mu <- a + bB*B + bM*M,
+        
+        # Missing Data
+        B ~ dnorm( nu , sigma_B ),
+        
+        # Priors
+        c(a,nu) ~ dnorm( 0 , 0.5 ),
+        c(bB,bM) ~ dnorm( 0, 0.5 ),
+        sigma_B ~ dexp( 1 ),
+        sigma ~ dexp( 1 )
+    ) , data=dat_list , chains=4 , cores=4 )
+```
+
+```{r monkey_save}
+#| echo: false
+#| eval: true
+#saveRDS(monkey_mod, "lectures/missing_models/monkey_mod.rds")
+monkey_mod <- readRDS("missing_models/monkey_mod.rds")
+```
+
+# What were the Values?
+```{r}
+precis( monkey_mod , depth=2 )
+```
+
+# Imputing Increases Precision
+```{r}
+obs_idx <- which( !is.na(d$neocortex.prop) )
+dat_list_obs <- list(
+    K = dat_list$K[obs_idx],
+    B = dat_list$B[obs_idx],
+    M = dat_list$M[obs_idx] )
+monkeys_observed <- quap(
+    alist(
+        K ~ dnorm( mu , sigma ),
+        mu <- a + bB*B + bM*M,
+        B ~ dnorm( nu , sigma_B ),
+        c(a,nu) ~ dnorm( 0 , 0.5 ),
+        c(bB,bM) ~ dnorm( 0, 0.5 ),
+        sigma_B ~ dexp( 1 ),
+        sigma ~ dexp( 1 )
+    ) , data=dat_list_obs )
+
+plot(coeftab(monkey_mod, monkeys_observed), pars=c("bB","bM"))
+```
+
+# Missing Data Extravaganza
+
+- We can impute data!  
+  
+- It's all just distributions, anyway
+  
+- But, be wary of the structure of missingness and how observation error enters the fray
