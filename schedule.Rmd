@@ -7,7 +7,7 @@ To see the code of a lecture, load the slides, then change the file extension in
 
 ```{r dates, echo=FALSE, message=FALSE, warning=FALSE}
 library(lubridate)
-current_date = parse_date_time("2022-01-23", orders="ymd")
+current_date = parse_date_time("2024-01-23", orders="ymd")
 datestring <- paste(month(current_date), day(current_date), year(current_date), sep="/")
 ```    
 
@@ -50,6 +50,8 @@ __Etherpad:__ https://etherpad.wikimedia.org/p/609-linreg-2024
 __Lab:__ [Linear Bayesian Models](lab/linear.html)  
 
 ### Week 4.
+```{r next_date, echo=FALSE}
+```
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
@@ -154,7 +156,7 @@ __Homework:__ Project Proposals Due
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
-__Lecture:__ Bayes Outside of Rethinking  
+__Lecture:__ [Working with advanced models](lab/missing_and_spatial_prediction.html), [Bayes Outside of Rethinking](lab/missing_and_spatial_prediction.html)  
 __Reading:__ brms, INLA, stan?
 
 ### Week 15.
