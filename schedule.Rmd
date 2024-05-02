@@ -156,8 +156,8 @@ __Homework:__ Project Proposals Due
 ```{r next_date, echo=FALSE}
 ```
 `r datestring`   
-__Lecture:__ [Working with advanced models](lab/missing_and_spatial_prediction.html), [Bayes Outside of Rethinking](lab/missing_and_spatial_prediction.html)  
-__Reading:__ brms, INLA, stan?
+__Lecture:__ [Working with advanced models](lab/missing_and_spatial_prediction.html), [Bayes Outside of Rethinking](lab/alt_to_rethinking.html)  
+
 
 ### Week 15.
 ```{r next_date, echo=FALSE}

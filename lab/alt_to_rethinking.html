@@ -96,6 +96,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#comparing-inla-and-rethinking-fits" id="toc-comparing-inla-and-rethinking-fits" class="nav-link" data-scroll-target="#comparing-inla-and-rethinking-fits">6.2 Comparing inla and rethinking fits</a></li>
   </ul></li>
   <li><a href="#tmbstan" id="toc-tmbstan" class="nav-link" data-scroll-target="#tmbstan">7. tmbstan</a></li>
+  <li><a href="#thanks" id="toc-thanks" class="nav-link" data-scroll-target="#thanks">Thanks!</a></li>
   </ul>
 </nav>
 </div>
@@ -243,13 +244,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">pars =</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"Rho[2,1]"</span>, <span class="st">"sigma"</span>, <span class="st">"sigma_beach"</span>))</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>rethink_coefs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                      mean         sd        5.5%      94.5%     rhat  ess_bulk
-a               1.84586597 0.16336447  1.58470225  2.1013168 1.014808 301.22237
-b              -0.53754385 0.11378226 -0.71007402 -0.3763989 1.015616 349.88723
-Rho[2,1]        0.01973319 0.41465703 -0.62702861  0.6897833 1.002462 476.65837
-sigma           0.36666623 0.05709385  0.28180081  0.4612161 1.002717 564.27630
-sigma_beach[1]  0.45191866 0.15151914  0.26101168  0.7128389 1.001198 452.71827
-sigma_beach[2]  0.23420553 0.14333865  0.03579547  0.4727332 1.044450  77.01396</code></pre>
+<pre><code>                      mean         sd        5.5%      94.5%     rhat ess_bulk
+a               1.85328132 0.16581035  1.59898895  2.1140389 1.004576 347.9711
+b              -0.52134358 0.10444569 -0.68694787 -0.3603289 1.000133 654.6056
+Rho[2,1]        0.02585529 0.45105629 -0.69813861  0.7740703 1.002170 440.2373
+sigma           0.36438927 0.05626415  0.28474234  0.4618096 1.000797 405.1865
+sigma_beach[1]  0.45831339 0.14240046  0.27002523  0.7226320 1.002689 686.5553
+sigma_beach[2]  0.23656693 0.13037749  0.05525915  0.4588028 1.004756 203.5294</code></pre>
 </div>
 </div>
 </section>
@@ -460,24 +461,24 @@ generated quantities {
 <div class="cell">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>rethink_coefs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                      mean         sd        5.5%      94.5%     rhat  ess_bulk
-a               1.84586597 0.16336447  1.58470225  2.1013168 1.014808 301.22237
-b              -0.53754385 0.11378226 -0.71007402 -0.3763989 1.015616 349.88723
-Rho[2,1]        0.01973319 0.41465703 -0.62702861  0.6897833 1.002462 476.65837
-sigma           0.36666623 0.05709385  0.28180081  0.4612161 1.002717 564.27630
-sigma_beach[1]  0.45191866 0.15151914  0.26101168  0.7128389 1.001198 452.71827
-sigma_beach[2]  0.23420553 0.14333865  0.03579547  0.4727332 1.044450  77.01396</code></pre>
+<pre><code>                      mean         sd        5.5%      94.5%     rhat ess_bulk
+a               1.85328132 0.16581035  1.59898895  2.1140389 1.004576 347.9711
+b              -0.52134358 0.10444569 -0.68694787 -0.3603289 1.000133 654.6056
+Rho[2,1]        0.02585529 0.45105629 -0.69813861  0.7740703 1.002170 440.2373
+sigma           0.36438927 0.05626415  0.28474234  0.4618096 1.000797 405.1865
+sigma_beach[1]  0.45831339 0.14240046  0.27002523  0.7226320 1.002689 686.5553
+sigma_beach[2]  0.23656693 0.13037749  0.05525915  0.4588028 1.004756 203.5294</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>rikz_stan<span class="sc">$</span><span class="fu">summary</span>(<span class="at">variables =</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"sigma"</span>, <span class="st">"sigma_beach"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 10
   variable      mean median     sd    mad      q5    q95  rhat ess_bulk ess_tail
   &lt;chr&gt;        &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-1 a            1.84   1.84  0.189  0.165   1.53    2.14   1.01     486.     578.
-2 b           -0.523 -0.519 0.117  0.0973 -0.708  -0.339  1.00     804.     800.
-3 sigma        0.366  0.360 0.0569 0.0610  0.283   0.464  1.01     405.    1353.
-4 sigma_beac…  0.467  0.435 0.154  0.125   0.271   0.763  1.00     894.    1510.
-5 sigma_beac…  0.236  0.225 0.138  0.131   0.0383  0.479  1.01     180.     138.</code></pre>
+1 a            1.85   1.85  0.165  0.155   1.59    2.13   1.01     712.     889.
+2 b           -0.522 -0.522 0.110  0.0986 -0.704  -0.349  1.01    1035.    1101.
+3 sigma        0.366  0.359 0.0585 0.0578  0.282   0.473  1.00     933.    1242.
+4 sigma_beac…  0.455  0.431 0.146  0.128   0.267   0.728  1.00    1345.    1633.
+5 sigma_beac…  0.247  0.233 0.133  0.117   0.0536  0.488  1.00     441.     396.</code></pre>
 </div>
 </div>
 <p>Maybe some rounding error here and there, but, matches. (and it should, as I modified the stan code from the stan code generated by the rethinking model.)</p>
@@ -621,25 +622,25 @@ sigma_beach[2]  0.23420553 0.14333865  0.03579547  0.4727332 1.044450  77.01396<
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># compare</span></span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>rethink_coefs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                      mean         sd        5.5%      94.5%     rhat  ess_bulk
-a               1.84586597 0.16336447  1.58470225  2.1013168 1.014808 301.22237
-b              -0.53754385 0.11378226 -0.71007402 -0.3763989 1.015616 349.88723
-Rho[2,1]        0.01973319 0.41465703 -0.62702861  0.6897833 1.002462 476.65837
-sigma           0.36666623 0.05709385  0.28180081  0.4612161 1.002717 564.27630
-sigma_beach[1]  0.45191866 0.15151914  0.26101168  0.7128389 1.001198 452.71827
-sigma_beach[2]  0.23420553 0.14333865  0.03579547  0.4727332 1.044450  77.01396</code></pre>
+<pre><code>                      mean         sd        5.5%      94.5%     rhat ess_bulk
+a               1.85328132 0.16581035  1.59898895  2.1140389 1.004576 347.9711
+b              -0.52134358 0.10444569 -0.68694787 -0.3603289 1.000133 654.6056
+Rho[2,1]        0.02585529 0.45105629 -0.69813861  0.7740703 1.002170 440.2373
+sigma           0.36438927 0.05626415  0.28474234  0.4618096 1.000797 405.1865
+sigma_beach[1]  0.45831339 0.14240046  0.27002523  0.7226320 1.002689 686.5553
+sigma_beach[2]  0.23656693 0.13037749  0.05525915  0.4588028 1.004756 203.5294</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(rikz_brms)[,<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 6
   group    term                 estimate std.error conf.low conf.high
   &lt;chr&gt;    &lt;chr&gt;                   &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
-1 &lt;NA&gt;     (Intercept)            1.86      0.169    1.53       2.21 
-2 &lt;NA&gt;     NAP                   -0.523     0.105   -0.730     -0.293
-3 Beach_c  sd__(Intercept)        0.454     0.144    0.231      0.790
-4 Beach_c  sd__NAP                0.235     0.134    0.0175     0.533
-5 Beach_c  cor__(Intercept).NAP   0.0144    0.434   -0.777      0.823
-6 Residual sd__Observation        0.371     0.0595   0.273      0.499</code></pre>
+1 &lt;NA&gt;     (Intercept)            1.85      0.173    1.51       2.20 
+2 &lt;NA&gt;     NAP                   -0.524     0.118   -0.760     -0.277
+3 Beach_c  sd__(Intercept)        0.455     0.153    0.230      0.818
+4 Beach_c  sd__NAP                0.234     0.140    0.0133     0.549
+5 Beach_c  cor__(Intercept).NAP   0.0250    0.456   -0.842      0.877
+6 Residual sd__Observation        0.373     0.0629   0.273      0.517</code></pre>
 </div>
 </div>
 <p>Again, rounding error.</p>
@@ -698,8 +699,8 @@ sigma_beach[2]  0.23420553 0.14333865  0.03579547  0.4727332 1.044450  77.01396<
 </section>
 <section id="inla" class="level2">
 <h2 class="anchored" data-anchor-id="inla">6. inla</h2>
-<p><a href="https://www.r-inla.org/">inla</a> is a really interesting package that rose up to work with spatial and spatiotemporal data using laplacian approximation. The key insight of Laplacian approximation is that underlying each element of a model are latent gaussian variables. Think the random effects themselves. Once we have that at the core, there are algorithmic solutions that, while not always as precise as HMC, work very well and very fast for very complex models.</p>
-<p>inla has a lot of non-standard dependencies, so you’ll need to istall it from the inla repo.</p>
+<p><a href="https://www.r-inla.org/">inla</a> is a really interesting package that rose up to work with spatial and spatiotemporal data using laplacian approximation. The key insight of Laplacian approximation is that underlying each element of a model are latent gaussian variables. Think the random effects themselves. Once we have that at the core, there are algorithmic solutions that work very well and very fast for very complex models.</p>
+<p>inla has a lot of non-standard dependencies, so you’ll need to i.stall it from the inla repo.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"INLA"</span>,</span>
 <span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">repos=</span><span class="fu">c</span>(<span class="fu">getOption</span>(<span class="st">"repos"</span>),</span>
@@ -725,7 +726,7 @@ sigma_beach[2]  0.23420553 0.14333865  0.03579547  0.4727332 1.044450  77.01396<
 </ol>
 <p>here’s what that all looks like</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>rikz_inla <span class="ot">&lt;-</span> <span class="fu">inla</span>(log_richness <span class="sc">~</span> NAP <span class="sc">+</span></span>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>rikz_inla_noprior <span class="ot">&lt;-</span> <span class="fu">inla</span>(log_richness <span class="sc">~</span> NAP <span class="sc">+</span></span>
 <span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>                      </span>
 <span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">f</span>(Beach, </span>
 <span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>                      <span class="at">model=</span><span class="st">"iid2d"</span>, </span>
@@ -738,52 +739,101 @@ sigma_beach[2]  0.23420553 0.14333865  0.03579547  0.4727332 1.044450  77.01396<
 </div>
 <section id="priors-in-inla" class="level3">
 <h3 class="anchored" data-anchor-id="priors-in-inla">6.1 Priors in inla</h3>
-<p>Priors in inla are a hair harder to implement. Each <code>f()</code> has a <code>hyper</code> argument where you can specify priors. For fixed effects, we need to wrap them in a <code>f()</code> function where <code>model = "linear"</code>. Right now…. they don’t seem to take hyperparameters? See <code>inla.models()$latent$linear$hyper</code> or <code>?inla.models</code></p>
-<p>Anyone have any advice on linear terms, I’d love to hear it!</p>
-<p>For the random effects, it’s a bit more straightforard. They take priors for their error terms - theta. But - it’s not a prior on a sd. It’s a prior in a precision, or <code>prec</code>, term. Precision = 1/variance. So, you’ll have to wrap your brain around it a bit more. And so do I, in order to translate, say, an exponential prior on a standard deviation to a precision or log precision. So I’m going to walk away until someone smarter weighs in.</p>
+<p>Priors in inla are a hair wilder to implement as you don’t implement all of the priors in one place. First, for the fixed effects, we can use <code>control.fixed</code> and specify a list of items. See <code>?control.fixed</code>. We can supply a list of means and precisions for each element. The intercept is supplied separatetely. In this case, for precision, we’d use <code>1/(2^2)</code> as our sd from previous priors is 2.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>inla_fixed_priors <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean =</span> <span class="fu">list</span>(<span class="at">NAP =</span> <span class="dv">0</span>),</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">prec =</span> <span class="fu">list</span>(<span class="at">NAP =</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">2</span><span class="sc">^</span><span class="dv">2</span>)),</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">mean.intercept =</span> <span class="dv">2</span>,</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">prec.intercept =</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">2</span><span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>For error terms, we use the <code>control.family</code> argument. Here we need to specify <code>hyper</code> as an element of the list, as that’s where our prior lives. We’re using precisions here instead of standard deviations. We can see what we’re working with using</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">inla.models</span>()<span class="sc">$</span>likelihood<span class="sc">$</span>gaussian<span class="sc">$</span>hyper<span class="sc">$</span>theta1<span class="sc">$</span>short.name</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "prec"
+attr(,"inla.read.only")
+[1] FALSE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">inla.models</span>()<span class="sc">$</span>likelihood<span class="sc">$</span>gaussian<span class="sc">$</span>hyper<span class="sc">$</span>theta1<span class="sc">$</span>prior</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "loggamma"
+attr(,"inla.read.only")
+[1] FALSE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">inla.models</span>()<span class="sc">$</span>likelihood<span class="sc">$</span>gaussian<span class="sc">$</span>hyper<span class="sc">$</span>theta1<span class="sc">$</span>param</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1e+00 5e-05
+attr(,"inla.read.only")
+[1] FALSE</code></pre>
+</div>
+</div>
+<p>For the random effects, we supply priors for their error terms - theta. For the moment, we can use the same prior.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>prec.prior <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">prec =</span> <span class="fu">list</span>(<span class="at">prior =</span> <span class="st">"loggamma"</span>, </span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>                               <span class="at">param =</span> <span class="fu">c</span>(<span class="fl">0.01</span>, <span class="fl">5e-05</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>For the moment, though, as I have no idea what I’m doing with priors for precision and wanting them to match up with the <code>dexp(2)</code>, I’m not going to set this. Smarter people than me can weight in on the corresponding inverse precision prior here….</p>
+<p>We can implement the priors in the model like so:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>rikz_inla <span class="ot">&lt;-</span> <span class="fu">inla</span>(log_richness <span class="sc">~</span> NAP <span class="sc">+</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>                      </span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">f</span>(Beach, </span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>                      <span class="at">model=</span><span class="st">"iid2d"</span>, </span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>                      <span class="at">n =</span> <span class="dv">2</span><span class="sc">*</span><span class="fu">max</span>(d<span class="sc">$</span>Beach))<span class="sc">+</span></span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>                      </span>
+<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a>                    <span class="sc">+</span> <span class="fu">f</span>(Beach1, NAP, </span>
+<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a>                        <span class="at">copy =</span> <span class="st">"Beach"</span>), </span>
+<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a>                  </span>
+<span id="cb57-10"><a href="#cb57-10" aria-hidden="true" tabindex="-1"></a>                  <span class="at">control.fixed =</span> inla_fixed_priors,</span>
+<span id="cb57-11"><a href="#cb57-11" aria-hidden="true" tabindex="-1"></a>                    </span>
+<span id="cb57-12"><a href="#cb57-12" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> d <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">Beach1 =</span> Beach <span class="sc">+</span> <span class="fu">max</span>(Beach)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="comparing-inla-and-rethinking-fits" class="level3">
 <h3 class="anchored" data-anchor-id="comparing-inla-and-rethinking-fits">6.2 Comparing inla and rethinking fits</h3>
-<p>As you can see, I’m not deep in the inla world, so don’t have a lot of experience with the diagnostics we need. BUT - we can look compare fits. Even without priors for the moment.</p>
+<p>As you can see, I’m not deep in the inla world, so don’t have a lot of experience with the diagnostics we need. I really need to look at <a href="https://inlatools.netlify.app/">inlatools</a>.</p>
+<p>BUT - we can compare coefficients.</p>
 <p>First, run this function which will make better output.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>tidy.inla <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># x = model_inla</span></span>
-<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>  term_names <span class="ot">&lt;-</span> <span class="fu">rownames</span>(x<span class="sc">$</span>summary.fixed)</span>
-<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>  re_term_names <span class="ot">&lt;-</span> <span class="fu">rownames</span>(x<span class="sc">$</span>summary.hyperpar)</span>
-<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">as_tibble</span>(<span class="fu">bind_rows</span>(x<span class="sc">$</span>summary.fixed, x<span class="sc">$</span>summary.hyperpar)) <span class="sc">%&gt;%</span></span>
-<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">terms =</span> <span class="fu">c</span>(term_names, re_term_names)) <span class="sc">%&gt;%</span></span>
-<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">select</span>(terms,</span>
-<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a>                  dplyr<span class="sc">::</span><span class="fu">everything</span>())</span>
-<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>tidy.inla <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># x = model_inla</span></span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>  term_names <span class="ot">&lt;-</span> <span class="fu">rownames</span>(x<span class="sc">$</span>summary.fixed)</span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>  re_term_names <span class="ot">&lt;-</span> <span class="fu">rownames</span>(x<span class="sc">$</span>summary.hyperpar)</span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">as_tibble</span>(<span class="fu">bind_rows</span>(x<span class="sc">$</span>summary.fixed, x<span class="sc">$</span>summary.hyperpar)) <span class="sc">%&gt;%</span></span>
+<span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">terms =</span> <span class="fu">c</span>(term_names, re_term_names)) <span class="sc">%&gt;%</span></span>
+<span id="cb58-10"><a href="#cb58-10" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">select</span>(terms,</span>
+<span id="cb58-11"><a href="#cb58-11" aria-hidden="true" tabindex="-1"></a>                  dplyr<span class="sc">::</span><span class="fu">everything</span>())</span>
+<span id="cb58-12"><a href="#cb58-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb58-13"><a href="#cb58-13" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Then</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>rethink_coefs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>rethink_coefs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                      mean         sd        5.5%      94.5%     rhat  ess_bulk
-a               1.84586597 0.16336447  1.58470225  2.1013168 1.014808 301.22237
-b              -0.53754385 0.11378226 -0.71007402 -0.3763989 1.015616 349.88723
-Rho[2,1]        0.01973319 0.41465703 -0.62702861  0.6897833 1.002462 476.65837
-sigma           0.36666623 0.05709385  0.28180081  0.4612161 1.002717 564.27630
-sigma_beach[1]  0.45191866 0.15151914  0.26101168  0.7128389 1.001198 452.71827
-sigma_beach[2]  0.23420553 0.14333865  0.03579547  0.4727332 1.044450  77.01396</code></pre>
+<pre><code>                      mean         sd        5.5%      94.5%     rhat ess_bulk
+a               1.85328132 0.16581035  1.59898895  2.1140389 1.004576 347.9711
+b              -0.52134358 0.10444569 -0.68694787 -0.3603289 1.000133 654.6056
+Rho[2,1]        0.02585529 0.45105629 -0.69813861  0.7740703 1.002170 440.2373
+sigma           0.36438927 0.05626415  0.28474234  0.4618096 1.000797 405.1865
+sigma_beach[1]  0.45831339 0.14240046  0.27002523  0.7226320 1.002689 686.5553
+sigma_beach[2]  0.23656693 0.13037749  0.05525915  0.4588028 1.004756 203.5294</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(rikz_inla)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(rikz_inla)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 8
   terms         mean    sd `0.025quant` `0.5quant` `0.975quant`    mode      kld
   &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt;        &lt;dbl&gt;      &lt;dbl&gt;        &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;
-1 (Intercep…  1.87   0.181        1.51      1.87          2.24   1.87    1.68e-7
-2 NAP        -0.527  0.153       -0.831    -0.526        -0.223 -0.526   1.46e-7
-3 Precision… 10.5    2.77         5.98     10.2          16.8    9.62   NA      
-4 Precision…  4.93   2.23         1.88      4.51         10.5    3.75   NA      
-5 Precision…  7.32   3.35         2.78      6.67         15.7    5.52   NA      
-6 Rho1:2 fo… -0.0493 0.303       -0.616    -0.0521        0.533 -0.0525 NA      </code></pre>
+1 (Intercep…  1.88   0.180        1.52      1.88          2.23   1.88    1.67e-7
+2 NAP        -0.524  0.152       -0.826    -0.524        -0.221 -0.524   1.47e-7
+3 Precision… 10.5    2.77         5.99     10.2          16.8    9.61   NA      
+4 Precision…  4.94   2.23         1.88      4.51         10.5    3.76   NA      
+5 Precision…  7.33   3.34         2.78      6.68         15.7    5.54   NA      
+6 Rho1:2 fo… -0.0482 0.302       -0.615    -0.0505        0.532 -0.0488 NA      </code></pre>
 </div>
 </div>
 <p>Slope and NAP not far off. To understand other terms, you can calculate sqrt(1/prec) to compare back.</p>
@@ -795,67 +845,71 @@ sigma_beach[2]  0.23420553 0.14333865  0.03579547  0.4727332 1.044450  77.01396<
 <p>What’s great about this is that at the same time, Ben Bolker has been working priors into <code>glmmTMB</code> for purposes of stability. We can put the two together, and then create a model that will run in stan using glmmTMB, if you so desire.</p>
 <p>The prior system is not well documented yet, and doesn’t seem to have an exponential? Also, instead of sd, we use <code>theta</code>. Here, let’s create priors for both our slopes and intercepts and then for our sd terms. I’m currently unclear on how to set a prior for the correlation term.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># glmmTMB and tmbstan</span></span>
-<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glmmTMB)</span>
-<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tmbstan)</span>
-<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>cprior <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">prior =</span> <span class="fu">c</span>(<span class="st">"normal(2,2)"</span>, <span class="st">"normal(0,2)"</span>),</span>
-<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>                     <span class="at">class =</span> <span class="fu">rep</span>(<span class="st">"beta"</span>, <span class="dv">2</span>),</span>
-<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>                     <span class="at">coef =</span> <span class="fu">c</span>(<span class="st">"(Intercept)"</span>, <span class="st">""</span>))</span>
-<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a>sprior <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">prior =</span> <span class="fu">c</span>(<span class="st">"cauchy(0, 2)"</span>),</span>
-<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a>                     <span class="at">class =</span> <span class="fu">c</span>(<span class="st">"theta"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="co"># glmmTMB and tmbstan</span></span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glmmTMB)</span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tmbstan)</span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>cprior <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">prior =</span> <span class="fu">c</span>(<span class="st">"normal(2,2)"</span>, <span class="st">"normal(0,2)"</span>),</span>
+<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a>                     <span class="at">class =</span> <span class="fu">rep</span>(<span class="st">"beta"</span>, <span class="dv">2</span>),</span>
+<span id="cb63-7"><a href="#cb63-7" aria-hidden="true" tabindex="-1"></a>                     <span class="at">coef =</span> <span class="fu">c</span>(<span class="st">"(Intercept)"</span>, <span class="st">""</span>))</span>
+<span id="cb63-8"><a href="#cb63-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-9"><a href="#cb63-9" aria-hidden="true" tabindex="-1"></a>sprior <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">prior =</span> <span class="fu">c</span>(<span class="st">"cauchy(0, 2)"</span>),</span>
+<span id="cb63-10"><a href="#cb63-10" aria-hidden="true" tabindex="-1"></a>                     <span class="at">class =</span> <span class="fu">c</span>(<span class="st">"theta"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>With this, we can fit a standard <a href="https://github.com/glmmTMB/glmmTMB">glmmTMB</a> model with a <code>prior</code> argument.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>rikz_glmmTMB <span class="ot">&lt;-</span> <span class="fu">glmmTMB</span>(log_richness <span class="sc">~</span> NAP <span class="sc">+</span></span>
-<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>                      (NAP <span class="sc">+</span> <span class="dv">1</span><span class="sc">|</span>Beach),</span>
-<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">prior =</span> cprior,</span>
-<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data =</span> d)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>rikz_glmmTMB <span class="ot">&lt;-</span> <span class="fu">glmmTMB</span>(log_richness <span class="sc">~</span> NAP <span class="sc">+</span></span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>                      (NAP <span class="sc">+</span> <span class="dv">1</span><span class="sc">|</span>Beach),</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">prior =</span> cprior,</span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data =</span> d)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Inside of that fit object, the <code>$obj</code> part is a <a href="https://github.com/kaskr/adcomp/wiki">Template Model Builder</a> object.. We can then feed this to <code>tmbstan()</code>.</p>
+<p>Inside of that fit object, the <code>$obj</code> part is a <a href="https://github.com/kaskr/adcomp/wiki">Template Model Builder</a> object. We can then feed this to <code>tmbstan()</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>rikz_tmbstan <span class="ot">&lt;-</span> <span class="fu">tmbstan</span>(rikz_glmmTMB<span class="sc">$</span>obj,</span>
-<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">chains =</span> <span class="dv">3</span>,</span>
-<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">iter =</span> <span class="dv">2000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>rikz_tmbstan <span class="ot">&lt;-</span> <span class="fu">tmbstan</span>(rikz_glmmTMB<span class="sc">$</span>obj,</span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">chains =</span> <span class="dv">3</span>,</span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">iter =</span> <span class="dv">2000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>This takes a while, indicating to me that the code is not quite as optimized.</p>
 <p>There is a tidier here we can use to compare</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>rethink_coefs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>rethink_coefs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                      mean         sd        5.5%      94.5%     rhat  ess_bulk
-a               1.84586597 0.16336447  1.58470225  2.1013168 1.014808 301.22237
-b              -0.53754385 0.11378226 -0.71007402 -0.3763989 1.015616 349.88723
-Rho[2,1]        0.01973319 0.41465703 -0.62702861  0.6897833 1.002462 476.65837
-sigma           0.36666623 0.05709385  0.28180081  0.4612161 1.002717 564.27630
-sigma_beach[1]  0.45191866 0.15151914  0.26101168  0.7128389 1.001198 452.71827
-sigma_beach[2]  0.23420553 0.14333865  0.03579547  0.4727332 1.044450  77.01396</code></pre>
+<pre><code>                      mean         sd        5.5%      94.5%     rhat ess_bulk
+a               1.85328132 0.16581035  1.59898895  2.1140389 1.004576 347.9711
+b              -0.52134358 0.10444569 -0.68694787 -0.3603289 1.000133 654.6056
+Rho[2,1]        0.02585529 0.45105629 -0.69813861  0.7740703 1.002170 440.2373
+sigma           0.36438927 0.05626415  0.28474234  0.4618096 1.000797 405.1865
+sigma_beach[1]  0.45831339 0.14240046  0.27002523  0.7226320 1.002689 686.5553
+sigma_beach[2]  0.23656693 0.13037749  0.05525915  0.4588028 1.004756 203.5294</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(rikz_tmbstan)[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">3</span><span class="sc">:</span><span class="dv">21</span>),]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(rikz_tmbstan)[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">3</span><span class="sc">:</span><span class="dv">21</span>),]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 3
   term     estimate std.error
   &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;
-1 beta[1]     1.82     0.143 
-2 beta[2]    -0.538    0.0705
-3 theta[1]   -0.936    0.322 
-4 theta[2]   -3.09     0.968 
-5 theta[3]  -14.8    664.    </code></pre>
+1 beta[1]     1.89     0.168 
+2 beta[2]    -0.438    0.0996
+3 theta[1]   -0.842    0.400 
+4 theta[2]   -3.57     0.960 
+5 theta[3]  -25.4    157.    </code></pre>
 </div>
 </div>
 <p>slopes look good. I need to have a think about the other coefficients, as a negative theta seems odd. But hopefully better documentation will come our way on doing something wild like this, and I’ll incorporate it here.</p>
 <p>More work eneded, as we can see that theta is not mixing well with this model version.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">traceplot</span>(rikz_tmbstan, <span class="at">pars =</span> <span class="fu">c</span>(<span class="st">"beta"</span>, <span class="st">"theta"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">traceplot</span>(rikz_tmbstan, <span class="at">pars =</span> <span class="fu">c</span>(<span class="st">"beta"</span>, <span class="st">"theta"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="alt_to_rethinking_files/figure-html/unnamed-chunk-22-1.jpeg" class="img-fluid figure-img" width="672"></p>
+<p><img src="alt_to_rethinking_files/figure-html/unnamed-chunk-26-1.jpeg" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
+</section>
+<section id="thanks" class="level2">
+<h2 class="anchored" data-anchor-id="thanks">Thanks!</h2>
+<p>Thanks to Bob O’Hara, Ben Bolker, and others for feedback!</p>
 </section>
 
 </main>

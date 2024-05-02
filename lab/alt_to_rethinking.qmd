@@ -85,7 +85,7 @@ At this point, we should all be pretty comfortable with `rethinking`. Let's code
 For priors, let's make slope and intercept pretty wide. Eyeballing the figure, `log_richness` goes from 0-4 and NAP from -1.4-2.3. OK, so intercept slope can be normal(2,2) and slope is normal(0,2). Too wide, likely, but, eh. We'll set all sigmas to be exponential(2) and the correlation to lkj(1). We could make other choices, but this should do for now.
 
 
-```{r, cache = TRUE, results = "hide"}
+```{r, cache = FALSE, results = "hide"}
 # Rethinking
 library(rethinking)
 
@@ -356,7 +356,7 @@ model{
 
 We then use `cmdstan_model()` to compile it.
 
-```{r compile_cmdstan, cache = TRUE}
+```{r compile_cmdstan, cache = FALSE}
 # compile
 rikz_stan_mod <- cmdstan_model(f)
 ```
@@ -369,7 +369,7 @@ rikz_stan_mod$check_syntax()
 
 Each function has a help file.  Finally, we can use `rikz_stan_mod$sample()` to actually run the model, much like we do with `ulam`.
 
-```{r sample, cache = TRUE, results = "hide"}
+```{r sample, cache = FALSE, results = "hide"}
 rikz_stan <- rikz_stan_mod$sample(
   data = d_list,
   chains = 3,
@@ -421,7 +421,7 @@ rikz_prior <- c(prior(normal(2,2), class = "Intercept"), # handles intercept
 
 With this created, we can just use our priors as the value for the `prior` argument in `brm`. Note, the only funky think I'd going here is using `Beach_c`, as it will play better with `modelbased` later on.
 
-```{r brms, cache = TRUE, results = "hide"}
+```{r brms, cache = FALSE, results = "hide"}
 rikz_brms <- brm(log_richness ~ NAP +
                       (NAP + 1|Beach_c),
                       prior = rikz_prior,
@@ -491,9 +491,9 @@ There's a big community here, and one well worth diving in for models that aren'
 
 ## 6. inla
 
-[inla](https://www.r-inla.org/) is a really interesting package that rose up to work with spatial and spatiotemporal data using laplacian approximation. The key insight of Laplacian approximation is that underlying each element of a model are latent gaussian variables. Think the random effects themselves. Once we have that at the core, there are algorithmic solutions that, while not always as precise as HMC, work very well and very fast for very complex models.
+[inla](https://www.r-inla.org/) is a really interesting package that rose up to work with spatial and spatiotemporal data using laplacian approximation. The key insight of Laplacian approximation is that underlying each element of a model are latent gaussian variables. Think the random effects themselves. Once we have that at the core, there are algorithmic solutions that work very well and very fast for very complex models.
 
-inla has a lot of non-standard dependencies, so you'll need to istall it from the inla repo.
+inla has a lot of non-standard dependencies, so you'll need to i.stall it from the inla repo.
 
 ```{r, eval = FALSE}
 install.packages("INLA",
@@ -530,7 +530,7 @@ Now, it would be nice if we could just add NAP to that somehow. But, inla doesn'
 here's what that all looks like
 
 ```{r}
-rikz_inla <- inla(log_richness ~ NAP +
+rikz_inla_noprior <- inla(log_richness ~ NAP +
                       
                     f(Beach, 
                       model="iid2d", 
@@ -544,15 +544,56 @@ rikz_inla <- inla(log_richness ~ NAP +
 
 ### 6.1 Priors in inla
 
-Priors in inla are a hair harder to implement. Each `f()` has a `hyper` argument where you can specify priors. For fixed effects, we need to wrap them in a `f()` function where `model = "linear"`. Right now.... they don't seem to take hyperparameters? See `inla.models()$latent$linear$hyper` or `?inla.models`
+Priors in inla are a hair wilder to implement as you don't implement all of the priors in one place. First, for the fixed effects, we can use `control.fixed` and specify a list of items. See `?control.fixed`. We can supply a list of means and precisions for each element. The intercept is supplied separatetely. In this case, for precision, we'd use `1/(2^2)` as our sd from previous priors is 2.
 
-Anyone have any advice on linear terms, I'd love to hear it!
+```{r}
+inla_fixed_priors <- list(
+  mean = list(NAP = 0),
+  prec = list(NAP = 1/(2^2)),
+  mean.intercept = 2,
+  prec.intercept = 1/(2^2)
+)
+```
 
-For the random effects, it's a bit more straightforard. They take priors for their error terms - theta. But - it's not a prior on a sd. It's a prior in a precision, or `prec`, term. Precision = 1/variance. So, you'll have to wrap your brain around it a bit more. And so do I, in order to translate, say, an exponential prior on a standard deviation to a precision or log precision. So I'm going to walk away until someone smarter weighs in.
+For error terms, we use the `control.family` argument. Here we need to specify `hyper` as an element of the list, as that's where our prior lives. We're using precisions here instead of standard deviations. We can see what we're working with using 
+```{r}
+inla.models()$likelihood$gaussian$hyper$theta1$short.name
+inla.models()$likelihood$gaussian$hyper$theta1$prior
+inla.models()$likelihood$gaussian$hyper$theta1$param
+```
+
+For the random effects, we supply priors for their error terms - theta. For the moment, we can use the same prior.
+
+```{r}
+prec.prior <- list(prec = list(prior = "loggamma", 
+                               param = c(0.01, 5e-05)))
+```
+
+For the moment, though, as I have no idea what I'm doing with priors for precision and wanting them to match up with the `dexp(2)`, I'm not going to set this. Smarter people than me can weight in on the corresponding inverse precision prior here....
+
+We can implement the priors in the model like so:
+
+
+```{r}
+rikz_inla <- inla(log_richness ~ NAP +
+                      
+                    f(Beach, 
+                      model="iid2d", 
+                      n = 2*max(d$Beach))+
+                      
+                    + f(Beach1, NAP, 
+                        copy = "Beach"), 
+                  
+                  control.fixed = inla_fixed_priors,
+                    
+                  data = d |> mutate(Beach1 = Beach + max(Beach)))
+```
 
 ### 6.2 Comparing inla and rethinking fits
 
-As you can see, I'm not deep in the inla world, so don't have a lot of experience with the diagnostics we need. BUT - we can look compare fits. Even without priors for the moment.
+As you can see, I'm not deep in the inla world, so don't have a lot of experience with the diagnostics we need. I really need to look at [inlatools](https://inlatools.netlify.app/).
+
+BUT - we can compare coefficients.
 
 First, run this function which will make better output.
 
@@ -615,9 +656,9 @@ rikz_glmmTMB <- glmmTMB(log_richness ~ NAP +
                     data = d)
 ```
 
-Inside of that fit object, the `$obj` part is a [Template Model Builder](https://github.com/kaskr/adcomp/wiki) object.. We can then feed this to `tmbstan()`.
+Inside of that fit object, the `$obj` part is a [Template Model Builder](https://github.com/kaskr/adcomp/wiki) object. We can then feed this to `tmbstan()`.
 
-```{r tmbstan, cache = TRUE, results = "hide"}
+```{r tmbstan, cache = FALSE, results = "hide"}
 rikz_tmbstan <- tmbstan(rikz_glmmTMB$obj,
                         chains = 3,
                         iter = 2000)
@@ -639,3 +680,7 @@ More work eneded, as we can see that theta is not mixing well with this model ve
 ```{r}
 traceplot(rikz_tmbstan, pars = c("beta", "theta"))
 ```
+
+## Thanks!
+
+Thanks to Bob O'Hara, Ben Bolker, and others for feedback!
